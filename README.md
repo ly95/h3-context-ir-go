@@ -11,10 +11,10 @@
 需要 Go 1.25+。私有仓库调用方需要相应 GitHub 访问权限，可按环境设置 `GOPRIVATE=github.com/ly95/*`，不要把凭据放进 module URL。
 
 ```sh
-go get github.com/ly95/contextir@codex/readiness-audit
+go get github.com/ly95/contextir@v0.1.1-0.20261020083223-e7197d4c2aa7
 ```
 
-当前为开发验收分支。旧标签 `v0.1.0` 不包含后续实现和修复，不会重写该标签。生产使用应固定经过自己验收的提交。
+以上版本已完成仓库外下载、独立构建及公共 API 重放验证，详见 [验证记录](conformance/reports/contextir-private-consumer-e7197d4-v3.json)。后续说明与审计记录在 `codex/readiness-audit` 开发验收分支。旧标签 `v0.1.0` 不包含后续实现和修复，不会重写该标签。生产使用应固定经过自己验收的提交。
 
 历史模型输出、源码快照和测试报告保存在独立的审计 module `conformance/reports`。安装 Go 库不下载这些历史文件；需要完整证据时克隆 Git 仓库。
 
