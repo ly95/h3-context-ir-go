@@ -169,11 +169,16 @@ prepare replay resolutions without reading the held-out expectations:
 ```sh
 /tmp/contextir-upstream-venv/bin/python conformance/import_semantic.py \
   --run /tmp/path-to-actual-run --label a-new-round
-go test ./plan -run TestUpstreamCorpus -count=1
+CONTEXTIR_PLAN_CORPUS_REPORT="$PWD/conformance/reports/go-plan-corpus.json" \
+  go test ./plan -run TestUpstreamCorpus -count=1
 /tmp/contextir-upstream-venv/bin/python conformance/update_matrix.py \
   --core-report conformance/reports/go-core-pytest-round19.json \
   --licence-report conformance/reports/go-licence-result-pytest-round4.json
 ```
+
+Ordinary `go test` writes corpus output only into `t.TempDir`; the explicit
+`CONTEXTIR_PLAN_CORPUS_REPORT` path above opts into a retained audit report.
+Downloaded Go module sources do not need a writable reports directory.
 
 The importer refuses overwriting a labelled archive and checks original input
 hashes. It does not call a model, synthesize a target, or alter expected outputs.

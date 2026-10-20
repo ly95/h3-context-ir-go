@@ -32,6 +32,8 @@
 
 早期三个自编案例仅保留在 [evals](../evals/README.md) 作开发历史，不作为上游功能验收。JSON 有效、机械规则通过或那三个例子成功，都不能证明自由文本语义已经正确。
 
+最终产品源码的本地 `go test ./...`、`go test -race ./...`、`go vet ./...`、gofmt 与 diff check 全部通过，逐条命令和输出见 [本地验证](../conformance/reports/local-validation-final-test-io.json)。冻结的 279 文件快照已独立重建，产品二进制 SHA-256 相同；后续变动仅为测试桥 DTO 投影和测试报告临时目录，不把测试修改混称为新的真实模型推理。普通 `go test` 不写仓库审计目录，下载后的模块也可运行测试。
+
 ## 明确的策略差异
 
 - 自由文本通过类型化模型理解，不移植上游的关键词意图分类器；未知或矛盾结果不能靠词表猜测修补。
@@ -48,6 +50,6 @@
 2. 抽帧视频仅有部分视觉覆盖；ffprobe 元数据与 ASR 不能证明听过音色、音乐或节奏。默认感知覆盖要求不放宽，调用方必须明确接纳部分覆盖或注入相应能力。
 3. 结构、Fact 引用与原文 quote 能检查来源关联，不能数学证明任意自然语言都完整蕴含于请求/观察。多个语义检查和原始测试也不能换算成总体可靠率。
 4. 公开 H3 协议没有明确编码的边界（例如可见文字中的嵌套 ASCII 双引号、独立画外歌唱）继续明确拒绝，不自行发明可能误解的格式。
-5. 已推送提交 `246a4be` 的 GitHub Actions 两个 job 因账户付款或 spending limit 未启动，不能算远端 CI 通过。实际远端记录保存在 `conformance/reports/remote-ci-246a4be.json`；本地验证单独报告。
+5. 已推送提交 `71a4bb5` 的 GitHub Actions 两个 job 因账户付款或 spending limit 未启动，不能算远端 CI 通过。实际远端注释保存在 [remote-ci-71a4bb5.json](../conformance/reports/remote-ci-71a4bb5.json)；旧提交记录保留，本地验证单独报告。
 
 运行方式、固定上游 SHA、许可证与重放限制见 [conformance](../conformance/README.md)、[架构](ARCHITECTURE.md)、[来源](UPSTREAM.md) 和各包 README。

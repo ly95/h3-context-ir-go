@@ -189,7 +189,11 @@ func TestUpstreamCorpus(t *testing.T) {
 	if e != nil {
 		t.Fatal(e)
 	}
-	if e = os.WriteFile("../conformance/reports/go-plan-corpus.json", append(b, '\n'), 0644); e != nil {
+	reportPath := os.Getenv("CONTEXTIR_PLAN_CORPUS_REPORT")
+	if reportPath == "" {
+		reportPath = filepath.Join(t.TempDir(), "go-plan-corpus.json")
+	}
+	if e = os.WriteFile(reportPath, append(b, '\n'), 0644); e != nil {
 		t.Fatal(e)
 	}
 	t.Logf("native plan corpus: %v; function results: %v", counts, functions)
