@@ -67,7 +67,20 @@ func canonicalReferenceContract(b Brief, st Structure, req contextir.Request, su
 		if !validRole(role) {
 			return out, invalid("bindings", "A reference requires its resolved attachment responsibility.")
 		}
-		if binding.Role != rootRole(role) && binding.Role != contextir.RoleKeyframe {
+		frameIdentity := false
+		if binding.Role == contextir.RoleIdentity && binding.Anchor == nil && (role == RoleFirstFrame || role == RoleLastFrame) {
+			anchored, projected := false, false
+			for _, companion := range req.Bindings {
+				anchored = anchored || companion.Role == contextir.RoleKeyframe && companion.Anchor != nil && sameJSON(companion.Source, binding.Source)
+			}
+			for _, subject := range subjects {
+				for _, source := range subject.Sources {
+					projected = projected || source.Role == contextir.RoleIdentity && sameJSON(source.Source, binding.Source)
+				}
+			}
+			frameIdentity = anchored && projected
+		}
+		if binding.Role != rootRole(role) && binding.Role != contextir.RoleKeyframe && !frameIdentity {
 			return out, invalid("bindings.role", "The reference binding must preserve the resolved attachment responsibility.")
 		}
 		if (binding.Role == contextir.RoleFirstFrame || binding.Role == contextir.RoleLastFrame || binding.Role == contextir.RoleKeyframe) && binding.Anchor == nil {

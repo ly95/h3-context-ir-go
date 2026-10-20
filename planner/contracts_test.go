@@ -97,6 +97,7 @@ func TestSharedKeyframeReferenceLocksOnlyExplicitAnchors(t *testing.T) {
 	anchor := contextir.Time(1000)
 	d.References[0].Roles = []contextir.Role{contextir.RoleStyle, contextir.RoleKeyframe}
 	d.References[0].Anchor = &anchor
+	d.References[0].Retention = contextir.FullyPreserved
 	r.Bindings = bindingsFor(d)
 	// The style responsibility has no target-time constraint; the keyframe does.
 	r.Bindings[0].Anchor = nil

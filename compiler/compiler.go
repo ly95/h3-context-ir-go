@@ -588,6 +588,9 @@ func requestFor(b Brief, target contextir.Target, st Structure, scope Scope) (co
 		req.Bindings = append(req.Bindings, contextir.AssetBinding{Source: contextir.SourceRef{AssetID: a.AssetID, Track: contextir.TrackVisual}, Role: contextir.RoleKeyframe, Anchor: &at})
 		_ = i
 	}
+	if err := bindProjectedFrameIdentities(b, st, &req); err != nil {
+		return req, err
+	}
 	speakerByHint := map[string]string{}
 	for i, line := range st.Dialogue {
 		lang := line.Language

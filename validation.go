@@ -762,6 +762,13 @@ func (v *validationState) reference(r Reference, p string, d Document) {
 		}
 	}
 	anchorRole := hasRole(r.Roles, RoleFirstFrame) || hasRole(r.Roles, RoleLastFrame) || hasRole(r.Roles, RoleKeyframe)
+	if anchorRole {
+		if r.Retention != FullyPreserved {
+			v.bad(p+".retention", "frame anchors require fully_preserved retention")
+		}
+	} else if r.Kind == ReferencePicture && r.Retention == AttributeTransfer {
+		v.bad(p+".retention", "picture references cannot transfer attributes; describe subject transfers on subjects")
+	}
 	if anchorRole && r.Anchor == nil {
 		v.bad(p+".anchor_ms", "frame roles require an explicit anchor")
 	}

@@ -32,9 +32,11 @@
 
 早期三个自编案例仅保留在 [evals](../evals/README.md) 作开发历史，不作为上游功能验收。JSON 有效、机械规则通过或那三个例子成功，都不能证明自由文本语义已经正确。
 
-最终产品源码的本地 `go test ./...`、`go test -race ./...`、`go vet ./...`、gofmt 与 diff check 全部通过，逐条命令和输出见 [本地验证](../conformance/reports/local-validation-final-test-io.json)。冻结的 279 文件快照已独立重建，产品二进制 SHA-256 相同；后续变动仅为测试桥 DTO 投影和测试报告临时目录，不把测试修改混称为新的真实模型推理。普通 `go test` 不写仓库审计目录，下载后的模块也可运行测试。
+针对五项失败新增的原生 Go 行为契约测试全部通过：5 组、8 个主测试、17 个子测试，零失败、零跳过；明确调整合法输入与依赖注入，保留业务要求和失败负例。测试又发现并推动修复了帧锚点主体来源映射与保留标记漏校验，不能将这些实际缺陷归为可忽略的策略差异。独立五项映射、原始 JSON events、源码快照与运行结果见 [Go 适配验收](../conformance/reports/go-adapted-native-contracts-v1.json)，[旧源码 RED 记录](../conformance/reports/go-adapted-before-fixes-red-v1.json)验证新断言确实能检出修复前的问题。原 991 项运行与 Go 适配运行分别记录，不合并通过数。
 
-提交 `e7197d4` 已在仓库外的临时 Go module 中从真实私有远端下载并独立构建；实际版本为 `v0.1.1-0.20261020083223-e7197d4c2aa7`，模块 ZIP 为 5,785,651 字节，无 `replace` 或工作区源码引用。Document/H3 编译、序列化与 Artifact 重放、哈希、离线评分/聚合/比较/门卫及下载后的 `plan/TestUpstreamCorpus` 全通过，见 [消费者验证](../conformance/reports/contextir-private-consumer-e7197d4-v3.json) 和 [复验脚本](../conformance/verify_private_consumer.py)。这项验证针对安装与公共 API；确定性消费者输入是另标记的 smoke，不计入原 991 项。两次首次下载失败历史与后续成功报告分别保留。
+本轮全部 Go 测试、race、vet、gofmt 与 diff check 的原始命令和结果见 [本地验证](../conformance/reports/local-validation-go-adapted-v1.json)。上一轮冻结的 279 文件快照及同二进制重建记录继续保留，不把后续产品修复说成旧快照已验证。普通 `go test` 不写仓库审计目录，下载后的模块也可运行测试。
+
+上一轮提交 `e7197d4` 已在仓库外的临时 Go module 中从真实私有远端下载并独立构建；实际版本为 `v0.1.1-0.20261020083223-e7197d4c2aa7`，模块 ZIP 为 5,785,651 字节，无 `replace` 或工作区源码引用。Document/H3 编译、序列化与 Artifact 重放、哈希、离线评分/聚合/比较/门卫及下载后的 `plan/TestUpstreamCorpus` 全通过，见 [消费者验证](../conformance/reports/contextir-private-consumer-e7197d4-v3.json) 和 [复验脚本](../conformance/verify_private_consumer.py)。这项验证针对安装与公共 API；确定性消费者输入是另标记的 smoke，不计入原 991 项。两次首次下载失败历史与后续成功报告分别保留。
 
 ## 明确的策略差异
 

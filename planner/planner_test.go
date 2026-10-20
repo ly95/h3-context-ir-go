@@ -131,6 +131,13 @@ func document(r contextir.Request) contextir.Document {
 				ref.Kind, ref.Roles, ref.Source.Track = contextir.ReferenceAudio, []contextir.Role{contextir.RoleRhythm}, contextir.TrackAudio
 			}
 		}
+		// An actual frame binds the complete supplied pixels. Keep this test
+		// provider's positive fixture valid without changing non-frame markers.
+		for _, role := range ref.Roles {
+			if role == contextir.RoleFirstFrame || role == contextir.RoleLastFrame || role == contextir.RoleKeyframe {
+				ref.Retention = contextir.FullyPreserved
+			}
+		}
 		d.References = append(d.References, ref)
 	}
 	return d

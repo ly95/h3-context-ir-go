@@ -242,7 +242,14 @@ func mapCompatibilitySubjects(b Brief, subs []plan.SubjectPlan, manifest []plan.
 			if !ok {
 				return nil, invalid("subjects.sources", "Compatibility subject source asset is unknown.")
 			}
-			out.Sources = append(out.Sources, contextir.Attribution{Source: sourceFor(input, Role(m.Role)), Role: rootRole(Role(m.Role))})
+			attributionRole := rootRole(Role(m.Role))
+			if m.Role == string(RoleFirstFrame) || m.Role == string(RoleLastFrame) {
+				// The picture supplies this depicted identity. Its independent
+				// Reference owns the exact frame/time relationship; frame roles
+				// are never legal Subject attribution roles in the root IR.
+				attributionRole = contextir.RoleIdentity
+			}
+			out.Sources = append(out.Sources, contextir.Attribution{Source: sourceFor(input, Role(m.Role)), Role: attributionRole})
 		}
 		for _, shot := range shots {
 			out.ShotIDs = append(out.ShotIDs, shot.ID)
@@ -250,4 +257,43 @@ func mapCompatibilitySubjects(b Brief, subs []plan.SubjectPlan, manifest []plan.
 		result = append(result, out)
 	}
 	return result, nil
+}
+
+// Identity depicted in an actual Ref2VA frame is a separate, explicit source
+// responsibility from that frame's target-time anchor. Only an observed typed
+// subject which the native mapper actually projected earns this companion.
+func bindProjectedFrameIdentities(b Brief, st Structure, req *contextir.Request) error {
+	if req.Mode != contextir.ModeReference {
+		return nil
+	}
+	frames := map[string]bool{}
+	for _, binding := range req.Bindings {
+		if binding.Role == contextir.RoleKeyframe && binding.Anchor != nil {
+			if card, observed := cardByID(b.Cards, binding.Source.AssetID); observed && len(card.Subjects) > 0 {
+				frames[binding.Source.AssetID] = true
+			}
+		}
+	}
+	if len(frames) == 0 {
+		return nil
+	}
+	subjects, err := compatibilitySubjects(b, st, nil)
+	if err != nil {
+		return err
+	}
+	for _, subject := range subjects {
+		for _, source := range subject.Sources {
+			if source.Role != contextir.RoleIdentity || !frames[source.Source.AssetID] {
+				continue
+			}
+			alreadyBound := false
+			for _, binding := range req.Bindings {
+				alreadyBound = alreadyBound || binding.Role == contextir.RoleIdentity && sameJSON(binding.Source, source.Source)
+			}
+			if !alreadyBound {
+				req.Bindings = append(req.Bindings, contextir.AssetBinding{Source: source.Source, Role: contextir.RoleIdentity})
+			}
+		}
+	}
+	return nil
 }

@@ -5,23 +5,55 @@ The acceptance target is the complete existing behavior corpus in
 pinned to `fd031e136ae3d89147324c0d1b2aa65e838c21f5` (Python package 0.4.1).
 The three earlier self-authored DeepSeek smoke cases do not replace these tests.
 
+## Go-native migration of the five remaining contracts
+
+The five behavioral requirements also have native Go tests, using valid Go API
+inputs and explicit dependencies at the appropriate IR/format/runtime boundary.
+All five contract groups pass: 8 root tests and 17 subtests, zero failures/skips.
+[The mapping](go_adapted_cases.json) records every original nodeid, input
+adjustment and test prefix; [the native run](reports/go-adapted-native-contracts-v1.json)
+is separate from the unchanged Python corpus below. Positive output assertions
+are paired with invalid-output and unsupported-runtime controls. The old
+986/5 result is never rewritten or added to the native pass count.
+
+```sh
+go test ./compiler -run '^TestGoConformance' -count=1 -v
+python3 conformance/run_go_adapted.py --label a-new-go-contract-round
+```
+
+The runner rejects reused labels and missing, skipped or failing tests, retains
+raw Go JSON events and archives the hash-verified sources. Tests use explicit
+in-process doubles or integrity-checked real recordings, without live providers.
+Runtime reports are not test dependencies of the downloadable Go module.
+An [independent old-source RED run](reports/go-adapted-before-fixes-red-v1.json)
+checks that the new negative cases detect the actual bugs before the narrow
+production fixes.
+
+## Unchanged original Python assertions
+
 **The latest frozen whole-Draft original-assert run is 986 passed / 5 failed.**
 865 nodeids actually execute Go (860 passed, 5 failed); 126 remain Python-only.
 117 nodeids enter public `Compiler.Draft`, with 125 calls, 121 native artifacts
 and 122 actual `h3.Compile` renders of the same authoritative Document. Another
 52 nodeids call only native plan construction and 696 call other native components.
 The original evaluate boundary also executes 14 calls across 8 original nodeids.
-The five remaining assertions retain four explicit native publication constraints
-and one legacy medium-taxonomy difference; none is waived or counted as passed.
-See [the complete report](reports/go-draft-pytest-9454474408ea-frozen-dto-v2.json),
-[boundary classification](reports/draft-boundaries-9454474408ea-frozen-dto-v2.json),
+The five historical failures comprise four early native entry/profile rejections
+and one legacy medium-taxonomy difference. They did not reach all intended
+behavior assertions; the native migration above tests those requirements and
+exposes actual adapter/validation bugs, now fixed. Original failures are never
+rewritten or counted as original-assert passes.
+See [the complete report](reports/go-draft-pytest-go-adapted-contracts-v1.json),
+[boundary classification](reports/draft-boundaries-go-adapted-contracts-v1.json),
 [the five exact failures](reports/draft-failures-9454474408ea-frozen-dto-v2.json),
 and [the verification inventory](../docs/UPSTREAM_TESTS.md) first.
 
-The native bridge is built from a separately archived 279-file snapshot derived
-from `9454474408ea…`, with one explicitly recorded bridge-only DTO change. The
-unchanged evaluation executable was independently rebuilt byte-identically; the exact bridge hash, adapter archive and fixture hashes
-are in [the provenance record](reports/go-draft-pytest-9454474408ea-frozen-dto-v2-provenance.json).
+The current bridge was independently built from the 317-file frozen source
+snapshot of product binary `4b04ae91d01f…`, including all 33 self-contained medium
+recording files. Its exact bridge hash, source archive, adapters and fixtures
+are in [the provenance record](reports/go-draft-pytest-go-adapted-contracts-v1-provenance.json).
+[The regression comparison](reports/original-regression-go-adapted-contracts-v1.json)
+confirms the same five original failures and zero new regressions; earlier
+byte-identical rebuilds and all old failures remain retained.
 423 licence/style calls verify all 1,418 consumed actual recorded model requests
 against Stage/System/Input/Schema before replay. Source binary lineage remains
 explicit. The five failures, 126 Python-only tests, and all earlier failing

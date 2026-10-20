@@ -1,12 +1,35 @@
 # 上游完整行为验收
 
+**按 Go package 接口迁移的五项行为契约全部通过：8 个主测试、17 个子测试，0 failed、0 skipped。** 全仓 Go 测试、race 与 vet 也通过。它们使用明确记录的合法 Go 输入与依赖注入，原 Python 测试的历史结果另列如下，不合并计数。
+
 **尚未达到完整原生等价。最新同源冻结、完整 Go Draft 入口的原断言运行是 986 passed、5 failed：865 个 nodeid 实际执行 Go，其中 860 passed、5 failed；126 个仍仅执行 Python。** 原始 991 条断言与输入没有修改，0 skipped、0 xfailed。
 
 本轮 117 个 nodeid 实际进入公开 `Compiler.Draft`，共 125 次调用，121 次返回原生 Document/Artifact；122 次渲染实际调用同一 Document 的 `h3.Compile`。另有 52 个 nodeid 只调用 Go `plan.Build`，696 个调用其他 Go 组件，不能称为完整 Draft 已通过。原 evaluate 的 8 个 nodeid / 14 次调用也在本轮实际执行 Go。
 
-详见 [完整 JSON](../conformance/reports/go-draft-pytest-9454474408ea-frozen-dto-v2.json)、[原 pytest 输出](../conformance/reports/go-draft-pytest-9454474408ea-frozen-dto-v2.txt)、[逐节点边界](../conformance/reports/draft-boundaries-9454474408ea-frozen-dto-v2.json) 与 [5 项失败原值](../conformance/reports/draft-failures-9454474408ea-frozen-dto-v2.json)。本轮 bridge `5490448e922c…` 由产品 `9454474408ea…` 的 279 文件快照派生，唯一差异是测试桥的两项 DTO 投影，独立 archive 逐文件记录。产品 eval 二进制实际重建仍与原 `9454474408ea…` 字节相同；[来源证明](../conformance/reports/go-draft-pytest-9454474408ea-frozen-dto-v2-provenance.json) 同时归档 adapter 源码、fixture hashes 和构建记录。旧 953/38、971/20 等失败报告全部保留。
+详见 [本轮完整 JSON](../conformance/reports/go-draft-pytest-go-adapted-contracts-v1.json)、[原 pytest 输出](../conformance/reports/go-draft-pytest-go-adapted-contracts-v1.txt)、[逐节点边界](../conformance/reports/draft-boundaries-go-adapted-contracts-v1.json) 和 [与上一轮逐项比较](../conformance/reports/original-regression-go-adapted-contracts-v1.json)。本轮产品 eval 二进制为 `4b04ae91d01f…`，317 文件快照包含新增 Go 测试及 33 个自包含录音文件，fresh bridge `2c02e06fc3c7…` 从该快照独立构建；[来源证明](../conformance/reports/go-draft-pytest-go-adapted-contracts-v1-provenance.json) 同时保留源码 archive、fixture hashes 和构建记录。原 991 项仍为 986/5，五个失败 nodeid 完全相同，零新增原断言回归。旧 945 DTO-v2、953/38、971/20 等报告全部保留。
 
-## 最新严格边界与剩余差异
+## 按 Go package 分层迁移的五项行为测试
+
+这五条原测试的业务要求另以 Go 原生测试验证，映射与输入调整记录在 [go_adapted_cases.json](../conformance/go_adapted_cases.json)，运行记录见 [Go 适配报告](../conformance/reports/go-adapted-native-contracts-v1.json)。五组全部通过；逐测试 JSON、完整源码快照和哈希均保留。原 Python 测试和历史 986/5 记录保持不变，两种运行不合并计数。
+
+| 原要求 | Go 测试边界与明确调整 |
+|---|---|
+| 导演不能覆盖调用方锁定的镜头数 | 有效无素材 `t2va`，保留用户 2 镜和导演 3 镜的冲突。检查实际 Draft、模型请求/schema、错误结构响应和镜头数错误的最终成品；空素材 `ref2va` 仍需拒绝。 |
+| 文本的引用必须有真实 manifest 绑定 | 原 `ref1.png`、原需求和 SHA 不变，显式注入已归档真实观察的稳定字段；检查真实 Draft/Artifact 的非空 manifest、正文引用、文件/ID/socket/hash 对应，并拒绝 phantom 引用。调用者 note 不充当观察。 |
+| 实际帧锚点应保留图片中的姿态 | 原 POSE/IDENTITY 合成测试 card，显式 `OfficialProfile`。高层 first-frame 在 reference 模式表示为 `keyframe@0`，主体身份与帧 Reference 分开；普通 subject 不获得 pose 许可。同一 Document 的 ComfyUI 执行能力拒绝另测，使用合法帧网格排除无关失败。 |
+| 风格变换不能篡改保留关系 | 原图/card/变换要求不变，subject、首帧、尾帧分别使用合法 `ref2va`、`i2va`、`l2va`。风格前后关系不变；恶意 `attribute_transfer` 帧必须失败，单图 `fl2va` 仍拒绝。 |
+| 未知分类不能产生错误风格判断 | 保留 `1990s cel animation` 全部目标文字，允许类型化模型识别为 2D。检查同属 2D 时仍落实具体变换，未知分类不武断比较，也不等于风格正确；已知跨类别退回源风格仍能被检查发现。真实录音重放不调用付费模型。 |
+
+新负例发现并推动修复两处实际代码缺陷：一是 frame role 错写进主体来源，二是 base-mode 正文不打印 retention 时错误的 frame marker 能逃过检查。独立旧源码运行记录见 [修复前 RED](../conformance/reports/go-adapted-before-fixes-red-v1.json)。严格的源引用与后端能力校验保持启用；没有通过放宽断言掩盖这两处缺陷。
+
+```sh
+go test ./compiler -run '^TestGoConformance' -count=1 -v
+python3 conformance/run_go_adapted.py --label a-new-go-contract-round
+```
+
+runner 使用新的不可覆盖标签，保存逐测试 Go JSON events、五项映射、完整来源哈希和可重建源码归档；缺测试、跳过、失败或运行中源码变化均不算通过。
+
+## 原样 Python 断言的五项历史失败
 
 原 `deterministic_draft(brief, mode, cards, ...)` 入口真实执行 Go Draft，mode 来自原调用参数；返回的 NativePlan 由原生 Artifact 渲染，Python writer 不生成其正文。独立许可/风格边界使用真实模型录音，显式选择部分 cards 策略，不声称观察完整媒体。其他 source Plan 的 renderer、部分 composer/orchestration 与静态 helper 仍是 Python。
 
@@ -16,13 +39,13 @@
 |---|---|
 | `tests/test_director.py::test_direction_cannot_move_a_shot_count_the_caller_pinned` | `invalid_document` / `request` / `assets`：reference mode requires at least one media asset。原内部构造传 ref2va 与空 assets。 |
 | `tests/test_hardening.py::test_every_label_in_the_text_has_a_manifest_entry_behind_it` | `perception_failed` / `perception` / `assets`：缺少 supplied observed evidence 或 perception adapter；caller note 没有伪作已观察。 |
-| `tests/test_reference_licence.py::test_a_frame_anchor_DOES_licence_its_pose` | `unsupported_capability` / `compiler` / `bindings.anchor_ms`：当前 runtime 不能保证 reference 模式 exact frame anchor，明确拒绝。 |
+| `tests/test_reference_licence.py::test_a_frame_anchor_DOES_licence_its_pose` | `unsupported_capability` / `compiler` / `bindings.anchor_ms`：该原断言桥使用 ComfyUIProfile，因该执行配置不支持 reference exact frame anchor 而拒绝；OfficialProfile 的 Go 正例另测。 |
 | `tests/test_reference_licence.py::test_a_frame_anchor_is_exempt_from_a_transformation_marker` | `invalid_document` / `request` / `assets`：keyframe mode requires its exact number of image assets。原内部构造传 fl2va 与一张图。 |
 | `tests/test_reference_licence.py::test_the_rule_is_NOT_armed_when_the_requested_medium_is_unclassifiable` | 原断言要求 `1990s cel animation` 的旧词表分类是 None，actual requested_medium 为 `2d-animation`；没有伪造 unknown。 |
 
 另外两项源内部表示已由原断言实际验证：base SourcePlan 的观察元数据仅从真实 native Evidence 投影，与 target Document.Subjects/appearances 分开；`{{CAM}}` 仅映射已验证的实际 camera Event。packet 的 `dto_projections` 明示这些测试 DTO 政策，native Artifact 始终直接由原 Document 的 `h3.Compile` 产生。945 原 7-failure 轮保留，未追改。
 
-423 次许可/风格调用消费的 **1,418 个实际模型请求**均由 Go 在消费录音前核对 Stage/System/Input/Schema；0 未验证消费、0 缺少 exact input、0 不适用录音。972a 全量结果与 448 环境/permission 补录的 binary 谱系分别保留，未把重放称作新付费调用。详见 [请求适用性报告](../conformance/reports/semantic-replay-applicability-9454474408ea-frozen-dto-v2.json)。
+423 次许可/风格调用消费的 **1,418 个实际模型请求**均由 Go 在消费录音前核对 Stage/System/Input/Schema；0 未验证消费、0 缺少 exact input、0 不适用录音。972a 全量结果与 448 环境/permission 补录的 binary 谱系分别保留，未把重放称作新付费调用。详见 [请求适用性报告](../conformance/reports/semantic-replay-applicability-go-adapted-contracts-v1.json)。
 
 ## 历史组件证据
 
