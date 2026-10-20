@@ -272,7 +272,7 @@ func renderShots(doc contextir.Document, state bindingState) string {
 		prefix := fmt.Sprintf("[Shot %d] ", i+1)
 		if i > 0 {
 			prefix += "At " + timestamp(shot.Start) + ", "
-			if shot.Transition == "" {
+			if shot.Transition == "" || shot.Transition == "cut" {
 				prefix += "the shot cuts to "
 			} else {
 				prefix += sentence(shot.Transition) + " "
@@ -356,10 +356,23 @@ func renderDialogue(part contextir.DialoguePart, state bindingState, mode contex
 }
 
 func taskTypes(doc contextir.Document) []string {
+	return TaskTypes(doc)
+}
+
+// TaskTypes derives conditioning responsibilities from the authoritative IR.
+// Source-video actors do not add a new identity reference merely by existing.
+func TaskTypes(doc contextir.Document) []string {
 	set := map[string]bool{}
 	for _, subject := range doc.Subjects {
-		if len(subject.Sources) > 0 {
-			set["reference generation"] = true
+		for _, source := range subject.Sources {
+			switch source.Role {
+			case contextir.RoleEditSource:
+				set["video editing"] = true
+			case contextir.RoleContinuation:
+				set["video continuation"] = true
+			default:
+				set["reference generation"] = true
+			}
 		}
 	}
 	for _, ref := range doc.References {
@@ -368,6 +381,9 @@ func taskTypes(doc contextir.Document) []string {
 				set["audio reuse"] = true
 			} else {
 				set["audio reference"] = true
+			}
+			if containsRole(ref.Roles, contextir.RoleVoice) {
+				set["reference generation"] = true
 			}
 			continue
 		}
@@ -386,6 +402,9 @@ func taskTypes(doc contextir.Document) []string {
 				set["reference generation"] = true
 			}
 		}
+	}
+	if len(set) == 0 && doc.Mode == contextir.ModeReference {
+		set["reference generation"] = true
 	}
 	var out []string
 	for _, task := range []string{"video editing", "video continuation", "keyframe completion", "reference generation", "audio reuse", "audio reference"} {

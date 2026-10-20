@@ -17,6 +17,7 @@ def main():
     parser.add_argument('--plan-report',type=Path,default=ROOT/'conformance/reports/go-plan-pytest-round3.json')
     parser.add_argument('--scope-legacy-report',type=Path,default=ROOT/'conformance/reports/go-scope-legacy-pytest-round1.json')
     parser.add_argument('--combined-report',type=Path,default=ROOT/'conformance/reports/go-combined-pytest-ca28-frozen.json')
+    parser.add_argument('--draft-report',type=Path,help='Strict complete native Draft original-assert run; reported separately from component coverage.')
     args=parser.parse_args()
     baseline=read(ROOT/'conformance/reports/upstream-pytest.json')
     core_path=args.core_report.resolve();core=read(core_path)
@@ -37,6 +38,10 @@ def main():
     by_combined={t['nodeid']:t for t in combined['collected']} if combined else {}
     combined_calls=collections.defaultdict(collections.Counter)
     for call in combined['go_core_calls'] if combined else []:combined_calls[call['nodeid']][call['function']]+=1
+    draft=read(args.draft_report.resolve()) if args.draft_report else None
+    by_draft={t['nodeid']:t for t in draft['collected']} if draft else {}
+    draft_calls=collections.defaultdict(collections.Counter)
+    for call in draft['go_core_calls'] if draft else []:draft_calls[call['nodeid']][call['function']]+=1
     plan_path=ROOT/'conformance/reports/go-plan-corpus.json'
     plan=read(plan_path) if plan_path.exists() else {'calls':[]}
     by_core={t['nodeid']:t for t in core['collected']}
@@ -56,6 +61,14 @@ def main():
                                    'report':str(core_path.relative_to(ROOT)),
                                    'scope':core['implementation_under_test']}
         item['go_plan_corpus']=dict(plan_calls[node])
+        dr=by_draft.get(node)
+        item['go_whole_draft_run']={'status':dr['upstream_status'] if dr and dr['native_go_touched'] else 'not_covered',
+            'functions':dict(draft_calls[node]),'full_native_draft_calls':dr.get('full_native_draft_calls',0) if dr else 0,
+            'native_draft_artifacts':dr.get('full_native_draft_artifacts',0) if dr else 0,
+            'native_draft_render_calls':dr.get('native_draft_artifact_render_calls',0) if dr else 0,
+            'native_plan_only':dr.get('native_plan_only',False) if dr else False,
+            'report':str(args.draft_report.resolve().relative_to(ROOT)) if draft else None,
+            'scope':'Original complete deterministic_draft entries execute public Go Compiler.Draft; their renderer executes native h3.Compile on the same Document. Per-entry calls distinguish those boundaries from other native components and Python collaborators. Failed native calls are not counted as complete Draft passes.'}
         co=by_combined.get(node)
         item['go_combined_assertions']={'status':co['upstream_status'] if co and co['native_go_touched'] else 'not_covered',
             'functions':dict(combined_calls[node]),'report':str(args.combined_report.resolve().relative_to(ROOT)) if combined else None,
@@ -90,6 +103,9 @@ def main():
          'whole_feature_go_tests_counted_as_passed':0,
          'combined_native_assertion_counts':combined['native_go_assertion_counts'] if combined else {},
          'combined_python_only_count':combined['native_go_not_covered_count'] if combined else None,
+         'whole_draft_run_counts':draft['counts'] if draft else None,
+         'whole_draft_run_native_counts':draft['native_go_assertion_counts'] if draft else None,
+         'whole_draft_run_python_only_count':draft['native_go_not_covered_count'] if draft else None,
          'note':'Native module assertions and corpus comparisons are separate from whole-feature end-to-end native implementation.'}
     path=ROOT/'conformance/matrix.json';path.write_text(json.dumps(out,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
     rows=[]
@@ -105,6 +121,10 @@ def main():
                      'combined_native_assertions_passed':sum(i['go_combined_assertions']['status']=='passed' for i in cases),
                      'combined_native_assertions_failed':sum(i['go_combined_assertions']['status']=='failed' for i in cases),
                      'combined_python_only':sum(i['go_combined_assertions']['status']=='not_covered' for i in cases),
+                     'whole_draft_run_native_assertions_passed':sum(i['go_whole_draft_run']['status']=='passed' for i in cases),
+                     'whole_draft_run_native_assertions_failed':sum(i['go_whole_draft_run']['status']=='failed' for i in cases),
+                     'whole_draft_run_python_only':sum(i['go_whole_draft_run']['status']=='not_covered' for i in cases),
+                     'full_native_draft_nodeids':sum(i['go_whole_draft_run']['full_native_draft_calls']>0 for i in cases),
                      'native_whole_feature':'pending'})
     (ROOT/'conformance/reports/coverage_by_file.json').write_text(json.dumps({'files':rows},indent=2)+'\n')
     print(json.dumps({k:out[k] for k in ('native_go_assertion_counts','native_go_not_covered_count','native_plan_corpus_counts')}))

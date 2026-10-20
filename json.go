@@ -76,8 +76,11 @@ func decodeStrictJSON[T any](r io.Reader, options DecodeOptions, kind string) (T
 	var shape any
 	decoder = json.NewDecoder(bytes.NewReader(data))
 	decoder.UseNumber()
-	if err := decoder.Decode(&shape); err != nil || !strictShape(shape, reflect.TypeFor[T]()) {
+	if err := decoder.Decode(&shape); err != nil {
 		return invalid()
+	}
+	if issue := strictShapeIssue(shape, reflect.TypeFor[T](), "$"); issue != nil {
+		return result, &Error{Code: CodeModelOutput, Stage: "decode", Issues: []Issue{*issue}}
 	}
 	// JSON Schema integers may be written as 5000.0 or 5e3. Normalize their
 	// exact value without passing through float64 or rejecting legal JSON.
@@ -102,16 +105,28 @@ func decodeStrictJSON[T any](r io.Reader, options DecodeOptions, kind string) (T
 // Go's decoder matches keys case-insensitively and accepts null for scalars.
 // The wire schema does neither. Check the exact shape before assigning fields.
 func strictShape(value any, typ reflect.Type) bool {
+	return strictShapeIssue(value, typ, "$") == nil
+}
+
+// Diagnostic paths contain only schema-owned field names and array indexes.
+// Unknown model keys and values never enter errors or repair feedback.
+func strictShapeIssue(value any, typ reflect.Type, path string) *Issue {
+	invalid := func(message string) *Issue {
+		return &Issue{Code: CodeModelOutput, Path: path, Message: message}
+	}
 	if typ.Kind() == reflect.Pointer {
-		return value != nil && strictShape(value, typ.Elem())
+		if value == nil {
+			return invalid("Omit an optional property instead of returning null.")
+		}
+		return strictShapeIssue(value, typ.Elem(), path)
 	}
 	switch typ.Kind() {
 	case reflect.Struct:
 		object, ok := value.(map[string]any)
 		if !ok {
-			return false
+			return invalid("Expected a JSON object.")
 		}
-		fields := map[string]reflect.Type{}
+		fields := map[string]bool{}
 		for i := 0; i < typ.NumField(); i++ {
 			field := typ.Field(i)
 			tag := strings.Split(field.Tag.Get("json"), ",")
@@ -122,7 +137,7 @@ func strictShape(value any, typ reflect.Type) bool {
 			if name == "" {
 				name = field.Name
 			}
-			fields[name] = field.Type
+			fields[name] = true
 			optional := false
 			for _, part := range tag[1:] {
 				if part == "omitempty" {
@@ -130,52 +145,66 @@ func strictShape(value any, typ reflect.Type) bool {
 				}
 			}
 			if _, exists := object[name]; !exists && !optional {
-				return false
+				return &Issue{Code: CodeModelOutput, Path: path + "." + name, Message: "A required JSON property is missing."}
+			}
+			if child, exists := object[name]; exists {
+				if issue := strictShapeIssue(child, field.Type, path+"."+name); issue != nil {
+					return issue
+				}
 			}
 		}
-		for key, child := range object {
-			field, exists := fields[key]
-			if !exists || !strictShape(child, field) {
-				return false
+		for key := range object {
+			if !fields[key] {
+				return invalid("Unknown JSON properties are not allowed; use only the exact schema field names.")
 			}
 		}
-		return true
+		return nil
 	case reflect.Slice:
 		if value == nil {
-			return true
+			return nil
 		} // nil and empty lists share the same IR meaning.
 		array, ok := value.([]any)
 		if !ok {
-			return false
+			return invalid("Expected a JSON array.")
 		}
-		for _, child := range array {
-			if !strictShape(child, typ.Elem()) {
-				return false
+		for i, child := range array {
+			if issue := strictShapeIssue(child, typ.Elem(), path+"["+strconv.Itoa(i)+"]"); issue != nil {
+				return issue
 			}
 		}
-		return true
+		return nil
 	case reflect.String:
-		_, ok := value.(string)
-		return ok
+		if _, ok := value.(string); !ok {
+			return invalid("Expected a JSON string; omit unused optional properties instead of returning null.")
+		}
+		return nil
 	case reflect.Bool:
-		_, ok := value.(bool)
-		return ok
+		if _, ok := value.(bool); !ok {
+			return invalid("Expected a JSON boolean.")
+		}
+		return nil
 	case reflect.Float64:
 		n, ok := value.(json.Number)
 		if !ok {
-			return false
+			return invalid("Expected a finite JSON number.")
 		}
 		f, err := strconv.ParseFloat(string(n), 64)
-		return err == nil && !math.IsNaN(f) && !math.IsInf(f, 0)
+		if err != nil || math.IsNaN(f) || math.IsInf(f, 0) {
+			return invalid("Expected a finite JSON number.")
+		}
+		return nil
 	case reflect.Int, reflect.Int64:
 		number, ok := value.(json.Number)
 		if !ok {
-			return false
+			return invalid("Expected an exact JSON integer within the supported range.")
 		}
 		_, valid := exactInteger(string(number))
-		return valid
+		if !valid {
+			return invalid("Expected an exact JSON integer within the supported range.")
+		}
+		return nil
 	}
-	return false
+	return invalid("Unsupported JSON property type.")
 }
 
 // exactInteger parses mathematical JSON integers in linear time and bounded

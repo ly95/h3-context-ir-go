@@ -20,6 +20,10 @@ type RenderingPermission struct {
 }
 
 func (c *Compiler) decideRenderingPermission(ctx context.Context, b Brief, visual bool) (RenderingPermission, error) {
+	return c.renderingPermissionAttempts(ctx, b, visual, nil, c.options.MaxStructureRetries+1, 0)
+}
+
+func (c *Compiler) renderingPermissionAttempts(ctx context.Context, b Brief, visual bool, diagnostics []contextir.Issue, maxAttempts, previousAttempts int) (RenderingPermission, error) {
 	if !visual {
 		return RenderingPermission{Kind: "no_reference", Disposition: "no_reference", Reasoning: "No supplied reference has authority over the rendering medium."}, nil
 	}
@@ -31,9 +35,9 @@ func (c *Compiler) decideRenderingPermission(ctx context.Context, b Brief, visua
 	const system = `Resolve only whether the caller authorizes departing from an attached visual reference's rendering. You receive no source look, taxonomy, target geometry or director: none can grant permission. Read the complete caller request and constraints.
 Choose rendering_transformation when the caller expressly asks to transform/reinterpret/restyle the rendering, with an authorizing operation and its target. Choose target_rendition when a grammatical instruction directly specifies the result's rendering in a target style or medium, even without a separate transformation verb. Choose preserve when no such instruction exists. A detached adjective or noun-phrase style tag appended to scene action is descriptive metadata, not a rendering operation or a complete target-rendition directive. A fragment does not become authoritative simply because it has its own sentence punctuation. Do not treat every style mention as authorization.
 Interpret grammatical and semantic relationships, not keyword lists. A rendering operation can target a technique of unknown taxonomy and can stay within the same coarse family as the source. A change in depicted subject, motion, setting, dreamlike content or mood alone is not a rendering conversion. For an authorized instruction, operation_quote is its exact complete authorizing caller phrase and target is the complete requested rendition noun phrase. For preserve, operation_quote and target must be empty. Return only typed JSON. Do not infer what the unseen reference looks like.`
-	var diagnostics []contextir.Issue
 	var lastErr error
-	for attempt := 1; attempt <= c.options.MaxStructureRetries+1; attempt++ {
+	for current := 1; current <= maxAttempts; current++ {
+		attempt := previousAttempts + current
 		if ctx.Err() != nil {
 			return out, failure(contextir.CodeCanceled, "rendering_permission", "context", "Rendering permission interpretation was canceled.", ctx.Err())
 		}

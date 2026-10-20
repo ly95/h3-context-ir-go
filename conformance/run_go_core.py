@@ -18,14 +18,14 @@ def main():
     parser.add_argument('--source',type=Path,required=True)
     parser.add_argument('--binary',type=Path,required=True)
     parser.add_argument('--label',required=True)
-    parser.add_argument('--plugin',choices=('pytest_go_core','pytest_go_plan','pytest_go_scope','pytest_go_scope_legacy','pytest_go_combined'),default='pytest_go_core')
+    parser.add_argument('--plugin',choices=('pytest_go_core','pytest_go_plan','pytest_go_scope','pytest_go_scope_legacy','pytest_go_combined','pytest_go_draft'),default='pytest_go_core')
     parser.add_argument('--bridge-provenance',type=Path,help='Verified immutable-source bridge build record; its binary hash must match --binary.')
     args=parser.parse_args()
     if not re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9_-]*',args.label):raise SystemExit('label must be one plain filename component')
     source=args.source.resolve();binary=args.binary.resolve()
     if subprocess.check_output(['git','rev-parse','HEAD'],cwd=source,text=True).strip()!=PIN or subprocess.check_output(['git','status','--porcelain','--untracked-files=no'],cwd=source,text=True):
         raise SystemExit('Expected a clean source checkout at the pinned SHA')
-    category={'pytest_go_core':'core','pytest_go_plan':'plan','pytest_go_scope':'scope','pytest_go_scope_legacy':'scope-legacy','pytest_go_combined':'combined'}[args.plugin]
+    category={'pytest_go_core':'core','pytest_go_plan':'plan','pytest_go_scope':'scope','pytest_go_scope_legacy':'scope-legacy','pytest_go_combined':'combined','pytest_go_draft':'draft'}[args.plugin]
     report=ROOT/f'conformance/reports/go-{category}-pytest-{args.label}.json'
     provenance=report.with_name(report.stem+'-provenance.json')
     adapter_archive=report.with_name(report.stem+'-adapters.tar.gz')

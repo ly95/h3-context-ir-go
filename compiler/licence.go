@@ -27,6 +27,7 @@ type StyleDecision struct {
 // sheet presentation remain in the observed subject record, with a separate
 // mechanism-owned permission rather than being promoted into identity.
 type IdentityDecision struct {
+	RequestBinding       string                        `json:"request_binding,omitempty"`
 	DescriptorSource     string                        `json:"descriptor_source,omitempty"`
 	TargetMention        string                        `json:"target_mention,omitempty"`
 	Kind                 string                        `json:"kind,omitempty"`
@@ -203,7 +204,17 @@ func (c *Compiler) decideLicence(ctx context.Context, brief Brief, additional []
 			sheets[entry.Label] = true
 		}
 	}
-	identity, identityCalls, identityErr := c.decideIdentityRequirements(ctx, b, out.Subjects, sheets)
+	responsibilities := map[string][]Role{}
+	for _, subject := range out.Subjects {
+		for _, source := range subject.Sources {
+			for _, entry := range manifest {
+				if entry.Label == source && !contains(responsibilities[subject.Label], Role(entry.Role)) {
+					responsibilities[subject.Label] = append(responsibilities[subject.Label], Role(entry.Role))
+				}
+			}
+		}
+	}
+	identity, identityCalls, identityErr := c.decideIdentityRequirements(ctx, b, out.Subjects, sheets, responsibilities)
 	out.Calls = append(out.Calls, identityCalls...)
 	if identityErr != nil {
 		return out, identityErr

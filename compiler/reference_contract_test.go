@@ -154,6 +154,19 @@ func referenceTestDocument(req contextir.Request) contextir.Document {
 	return d
 }
 
+func TestVoiceReferencePreservesCallerPropertiesWithoutInventingObservedSpeech(t *testing.T) {
+	_, b, req := referenceTestContract(t, RoleVoiceTimbre)
+	b.Assets[0].Description = "calm and low"
+	req.Assets[0].Description = b.Assets[0].Description
+	c, err := canonicalReferenceContract(b, Structure{Mode: req.Mode}, req, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(c.References) != 1 || !strings.Contains(c.References[0].Description, "calm and low") || !strings.Contains(c.References[0].Description, "does not establish an auditory observation") || len(req.Dialogue) != 0 || c.References[0].Retention != contextir.AudioReference {
+		t.Fatal("voice properties disappeared or were promoted into speech/signal copying", c)
+	}
+}
+
 func TestReferenceContractHostAssemblyAndRawRejection(t *testing.T) {
 	c, _, req := referenceTestContract(t, RoleBGM)
 	d := referenceTestDocument(req)

@@ -1,0 +1,42 @@
+........................................................................ [  7%]
+..................................................................F..... [ 14%]
+........................................................................ [ 21%]
+........................................................................ [ 29%]
+........................................................................ [ 36%]
+........................................................................ [ 43%]
+........................................................................ [ 50%]
+........................................................................ [ 58%]
+........................................................................ [ 65%]
+........................................................................ [ 72%]
+........................................................................ [ 79%]
+........................................................................ [ 87%]
+........................................................................ [ 94%]
+.......................................................                  [100%]
+=================================== FAILURES ===================================
+___________________ test_a_stored_run_carries_its_provenance ___________________
+
+    def test_a_stored_run_carries_its_provenance():
+        """A baseline is a reference point, so it has to say which pipeline it references. `commit` was
+        on the dataclass but not in `Run.dict()`, and `note` was a Run field assigned AFTER run_suite had
+        already saved -- so the baseline written to record provenance recorded commit=None and an empty
+        note. Both were reported as done without being looked at."""
+        from h3ir.evalloop.suite import Run, RunConfig, _commit
+    
+        d = Run(config=RunConfig(label="x", note="supersedes the composed path"), commit="abc1234").dict()
+        assert d["commit"] == "abc1234"
+        assert d["config"]["note"] == "supersedes the composed path"
+>       assert d["config"]["compose_prompt"] is None and d["config"]["omit"] == ()
+E       assert (None is None and [] == ()
+E         
+E         Use -v to get more diff)
+
+tests/test_creativity.py:501: AssertionError
+=============================== warnings summary ===============================
+tests/test_capacity.py:17
+  /private/tmp/open-h3-ir-review-fd031e13/tests/test_capacity.py:17: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_creativity.py::test_a_stored_run_carries_its_provenance - a...
+1 failed, 990 passed, 1 warning in 7.61s

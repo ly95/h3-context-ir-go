@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"reflect"
 	"sort"
 	"strings"
 
@@ -16,13 +17,15 @@ import (
 // The transcript contains actual prior model outputs, never oracle answers. This
 // adapter is test-only; production DecideMode still owns every host decision.
 type semanticTape struct {
-	Responses   []semanticResponse
-	Next        int
-	LastRequest *contextir.ModelRequest
+	Responses        []semanticResponse
+	Next             int
+	LastRequest      *contextir.ModelRequest
+	VerifiedRequests int
 }
 type semanticResponse struct {
-	Stage    string                  `json:"stage"`
-	Response contextir.ModelResponse `json:"response"`
+	Stage           string                  `json:"stage"`
+	Response        contextir.ModelResponse `json:"response"`
+	RecordedRequest *contextir.ModelRequest `json:"recorded_request,omitempty"`
 }
 
 func (t *semanticTape) Generate(ctx context.Context, request contextir.ModelRequest) (contextir.ModelResponse, error) {
@@ -33,9 +36,23 @@ func (t *semanticTape) Generate(ctx context.Context, request contextir.ModelRequ
 	if t.Next >= len(t.Responses) || request.Stage != t.Responses[t.Next].Stage {
 		return contextir.ModelResponse{UsageInvalid: true}, fmt.Errorf("no actual recorded model output for stage %s", request.Stage)
 	}
+	if recorded := t.Responses[t.Next].RecordedRequest; recorded != nil {
+		if recorded.Stage != request.Stage || recorded.System != request.System || !sameRecordedJSON(recorded.Input, request.Input) || !sameRecordedJSON(recorded.ResponseSchema, request.ResponseSchema) {
+			return contextir.ModelResponse{UsageInvalid: true}, fmt.Errorf("native %s request differs from its actual recorded request; this model tape is not applicable", request.Stage)
+		}
+		t.VerifiedRequests++
+	}
 	response := t.Responses[t.Next].Response
 	t.Next++
 	return response, nil
+}
+
+func sameRecordedJSON(a, b json.RawMessage) bool {
+	var x, y any
+	if json.Unmarshal(a, &x) != nil || json.Unmarshal(b, &y) != nil {
+		return false
+	}
+	return reflect.DeepEqual(x, y)
 }
 func semanticOperation(name string, b json.RawMessage) (any, error) {
 	var a struct {
@@ -84,7 +101,7 @@ func semanticOperation(name string, b json.RawMessage) (any, error) {
 			readings = append(readings, compiler.LicenceReference{ID: id, Kind: contextir.MediaKind(card.Kind), Card: compiler.CardFromOriginal(id, card)})
 		}
 		decision, err := c.DecideLicenceWithReferences(context.Background(), brief, readings)
-		value := map[string]any{"decision": decision, "recorded_outputs_consumed": model.Next}
+		value := map[string]any{"decision": decision, "recorded_outputs_consumed": model.Next, "actual_recorded_requests_verified": model.VerifiedRequests}
 		if err != nil {
 			value["rejected_replay_request"] = model.LastRequest
 		}

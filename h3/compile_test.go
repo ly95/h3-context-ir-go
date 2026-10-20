@@ -166,7 +166,8 @@ func TestMixedMediaAndDialogueBindings(t *testing.T) {
 		"<scenetrans>", "The audio continues seamlessly across the cut.",
 		"says in an off-screen voiceover",
 		"<cutoff>", "\"营业中：“请进”\"", "Do not add background music.",
-		"<Audio 1> ([Shot 1], [Shot 2]; soundtrack): partially_copy", "<Audio 2> ([Shot 1], [Shot 2]; voice timbre and delivery): reference",
+		"<Audio 1>: partially_copy", "<Audio 2>: reference",
+		"Applicable scope: ([Shot 1], [Shot 2]; soundtrack).", "Applicable scope: ([Shot 1], [Shot 2]; voice timbre and delivery).",
 	} {
 		if !strings.Contains(a.Prompt, text) {
 			t.Fatalf("missing required rendering %q:\n%s", text, a.Prompt)

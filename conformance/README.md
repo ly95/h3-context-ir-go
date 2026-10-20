@@ -5,10 +5,33 @@ The acceptance target is the complete existing behavior corpus in
 pinned to `fd031e136ae3d89147324c0d1b2aa65e838c21f5` (Python package 0.4.1).
 The three earlier self-authored DeepSeek smoke cases do not replace these tests.
 
+**The latest frozen whole-Draft original-assert run is 986 passed / 5 failed.**
+865 nodeids actually execute Go (860 passed, 5 failed); 126 remain Python-only.
+117 nodeids enter public `Compiler.Draft`, with 125 calls, 121 native artifacts
+and 122 actual `h3.Compile` renders of the same authoritative Document. Another
+52 nodeids call only native plan construction and 696 call other native components.
+The original evaluate boundary also executes 14 calls across 8 original nodeids.
+The five remaining assertions retain four explicit native publication constraints
+and one legacy medium-taxonomy difference; none is waived or counted as passed.
+See [the complete report](reports/go-draft-pytest-9454474408ea-frozen-dto-v2.json),
+[boundary classification](reports/draft-boundaries-9454474408ea-frozen-dto-v2.json),
+[the five exact failures](reports/draft-failures-9454474408ea-frozen-dto-v2.json),
+and [the verification inventory](../docs/UPSTREAM_TESTS.md) first.
+
+The native bridge is built from a separately archived 279-file snapshot derived
+from `9454474408ea…`, with one explicitly recorded bridge-only DTO change. The
+unchanged evaluation executable was independently rebuilt byte-identically; the exact bridge hash, adapter archive and fixture hashes
+are in [the provenance record](reports/go-draft-pytest-9454474408ea-frozen-dto-v2-provenance.json).
+423 licence/style calls verify all 1,418 consumed actual recorded model requests
+against Stage/System/Input/Schema before replay. Source binary lineage remains
+explicit. The five failures, 126 Python-only tests, and all earlier failing
+rounds remain; no whole-feature equivalence is claimed.
+
 ## What each artifact establishes
 
 | Artifact | Actual implementation under test | Meaning |
 |---|---|---|
+| `reports/go-draft-pytest-*.json` | Complete native Draft and native Artifact renderer | Actual original mode argument; no Python writer generates NativeDraft output. Explicit partial-card policy, rejected unsupported inputs, exact per-node full Draft versus plan-only scope, and all failures retained. |
 | `reports/upstream-pytest.json` | Original Python | 991 tests in 42 files passed; collection parameters, assert source, phase results retained. No Go claim. |
 | `fixtures/controls.json` | Original Python oracle | All 23 original controls, exact prompt, complete Context, original findings and named expectations. |
 | `fixtures/validator_calls.json` | Original Python oracle | All 386 actual validator calls from the complete run, attributed to 295 original test nodeids. |
@@ -117,7 +140,7 @@ configuration or credentials.
 
 `pytest_go_core.py` extends the same bridge to grid/Target, exact token counting,
 manifest/subject/speaker construction, shot allocation and task-type derivation.
-The original assertions remain unchanged. Current core round19 passes all 991 original tests; 770 nodeids touch native Go and 221 remain Python-only. This is component evidence; the whole source renderer/orchestration and other original collaborators remain Python. This does not establish whole-flow parity.
+The original assertions remain unchanged. Historical core round19 passed all 991 original tests; 770 nodeids touched native Go and 221 remained Python-only. Its original Draft body/renderer remained Python. The newer complete Draft bridge above exposes 38 failures and takes precedence for that boundary; the historical core result does not cover them.
 
 ```sh
 go build -o /tmp/contextir-go-operations ./conformance/bridge
@@ -181,25 +204,40 @@ A shared green component or corpus result never upgrades an unexecuted full feat
 
 `fixtures/render_calls.json` retains 1,927 original render/textnorm calls, including complete RenderResult and mutable argument after-states. Only the 250 style_sentence/style_prefix/render_summary calls currently have an exact native helper differential; the whole original renderer and orchestration remain outside that claim.
 
-The full combined adapter uses real mode, scope and licence model output tapes through
-native Go APIs in one unchanged original run. The ca28 frozen-source bridge run has
-977 passed and 14 failed, including five licence differences and nine missing exact
-native-audio transcripts. All 857 touched nodeids and 134 untouched nodeids are explicit.
-The first run retains 200 failures from an incompatible older licence schema; a working
-checkout run with 18 failures is also retained and is not presented as frozen acceptance.
-The frozen bridge was built in another directory after all 222 archived source hashes
-were checked; its provenance sidecar links the source archive and exact binary hash.
+The historical combined adapter uses real mode, scope and licence tapes through
+native APIs, while its Draft body/renderer stays Python. Its final 972a same-source
+run after ten exact native-audio recordings has 990 passed and one failed (the
+legacy cel-medium taxonomy assertion), with 857 Go-touched and 134 Python-only
+nodeids. This does not override the stricter full Draft result at the top.
+The older 200-, 18- and 14-failure rounds remain immutable. Frozen bridges are
+built in fresh directories after archive and per-file hash verification.
 
 ```sh
 python conformance/run_go_core.py --source /tmp/open-h3-ir-reference \
   --binary /tmp/contextir-go-operations --plugin pytest_go_combined --label a-new-round
 ```
 
+Use `--plugin pytest_go_draft` to replace the whole original deterministic draft
+entry and render its actual native Artifact. Other source Plan renderers remain
+separate collaborators. Native draft edits that cannot be mapped to the
+authoritative Document fail explicitly; the source Python writer is never used to
+paper over that failure. `summarize_draft.py` records full Draft calls, returned
+artifacts, native renders and plan-only nodeids independently.
+
+The extra 16-role production Compile batches reuse the original Brief/cards
+subset, but omit the source deterministic draft's explicit `mode` argument.
+They are additional full-pipeline tests, not identical function input contracts;
+the actual original arguments are in `reports/roles-compile-contract.json`.
+
 `reports/combined_latest.json` points to the last complete immutable combined report,
 including failures. `reports/coverage_union.json` distinguishes execution coverage,
 historical-output consumption and every per-run status. `coverage_gaps.json` classifies
 all remaining original assertions; only the two Python grammar checks are not applicable
 to Go. Do not turn coverage unions into pass claims.
+
+`reports/draft_latest.json` separately points to the stricter complete Draft
+boundary. Semantic full-Compile outputs, original-assert replay, field agreement,
+and manual prose review remain different evidence classes.
 
 All live importers retain every `call-*` artifact, including rejected raw text.
 Existing archives received additive `supplement-manifest-v1.json` evidence without
@@ -215,7 +253,7 @@ the archive hash and every source hash before building in a fresh directory:
 python conformance/build_frozen_bridge.py \
   --manifest conformance/reports/builds/RECORDED_BINARY_SHA.json --label new-frozen
 python conformance/run_go_core.py --source /tmp/open-h3-ir-reference \
-  --binary /path/printed/by/the/build-helper/bridge --plugin pytest_go_combined \
+  --binary /path/printed/by/the/build-helper/bridge --plugin pytest_go_draft \
   --bridge-provenance conformance/reports/builds/new-frozen-bridge.json \
   --label new-frozen
 ```

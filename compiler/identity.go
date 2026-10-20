@@ -65,7 +65,8 @@ func canonicalSubjects(b Brief, st Structure, req contextir.Request, licence *Li
 			if identity.Kind != "" {
 				subject.Kind = identity.Kind
 			}
-			subject.Attributes = append(append([]string(nil), identity.RetainedAttributes...), identity.RequestedAttributes...)
+			retained := targetEnvironmentAttributes(b, resolved[index], manifest, identity.RetainedAttributes)
+			subject.Attributes = append(retained, identity.RequestedAttributes...)
 			for i, attribute := range subject.Attributes {
 				for _, adjustment := range identity.AdjustedAttributes {
 					if attribute == adjustment.Source {
@@ -74,7 +75,7 @@ func canonicalSubjects(b Brief, st Structure, req contextir.Request, licence *Li
 					}
 				}
 			}
-			if identity.RequestQuote != "" {
+			if identity.RequestQuote != "" && identity.RequestBinding != "describes_other_scene_entity" {
 				subject.Origin = "user"
 				subject.Retention = contextir.PartiallyPreserved
 				subject.RetentionDetails = "The referenced identity is retained; explicit requested attributes replace the corresponding source characteristics."

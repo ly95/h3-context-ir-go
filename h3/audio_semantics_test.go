@@ -148,7 +148,7 @@ func TestAudioShotScopeAffectsPromptRetentionAndManifest(t *testing.T) {
 			t.Fatalf("incorrect effective audio scope: %+v", use)
 		}
 	}
-	if !strings.Contains(a.Prompt, "<Audio 1> ([Shot 1]; sound texture): partially_copy") || !strings.Contains(b.Prompt, "<Audio 1> ([Shot 2]; sound texture): partially_copy") {
+	if !strings.Contains(a.Prompt, "<Audio 1>: partially_copy") || !strings.Contains(a.Prompt, "Applicable scope: ([Shot 1]; sound effect).") || !strings.Contains(b.Prompt, "Applicable scope: ([Shot 2]; sound effect).") {
 		t.Fatal("audio retention lost its target scope")
 	}
 	second := strings.Index(a.Prompt, "[Shot 2] At")

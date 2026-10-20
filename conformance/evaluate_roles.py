@@ -13,7 +13,7 @@ import json
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-VERSION = 'contextir-role-evaluator/v2'
+VERSION = 'contextir-role-evaluator/v4'
 UPSTREAM_SHA = 'fd031e136ae3d89147324c0d1b2aa65e838c21f5'
 ROLE_WIRE = {
     'subject': 'identity', 'environment': 'scene', 'style': 'style',
@@ -111,7 +111,9 @@ def evaluate_case(item, expectation, actual):
     oracle = expectation['expected']
     row = {k: item[k] for k in ('case_id', 'nodeid', 'input_sha256')}
     row.update(actual_status=actual.get('status'), checks=[], adapter_differences=[], human_review_required=True,
-               semantic_status='not_determined_by_structural_evaluator')
+               semantic_status='not_determined_by_structural_evaluator',
+               original_explicit_draft_mode=oracle['mode'],
+               actual_input_brief_mode=item['input']['brief'].get('mode'))
     add(row, 'input.sha256', expectation['input_sha256'], actual.get('input_sha256'), 'Actual original request must match the independent held-out case.', 'native_integrity')
     if actual.get('status') != 'compiled':
         row.update(status='native_compile_failed', native_contract_status='failed', original_field_status='not_evaluable', error=actual.get('error'), issues=actual.get('issues'))
@@ -126,7 +128,7 @@ def evaluate_case(item, expectation, actual):
     add(row, 'result.status', 'compiled', native.get('status'), 'The inner lifecycle must also have completed.', 'native_integrity')
     add(row, 'document.locked_target', native.get('request', {}).get('target'), target, 'The writer did not alter the prepared request target.', 'native_integrity')
     add(row, 'document.locked_assets', sequence(native.get('request', {}).get('assets')), sequence(d.get('assets')), 'The writer did not substitute or drop original sources.', 'native_integrity')
-    add(row, 'mode', oracle['mode'], d.get('mode'), 'Production interpretation differences remain failures, never adapter exceptions.')
+    add(row, 'mode', oracle['mode'], d.get('mode'), 'Exact field comparison only: original deterministic_draft receives an explicit mode argument, while this additional Compile run receives the original Brief/cards. A difference is not a replayed original assertion failure and is never silently marked equal.')
     add(row, 'target.frames', oracle['target']['frames'], target.get('frame_count'), 'Exact original frame target.')
     add(row, 'target.canvas', oracle['target']['canvas'], [target.get('width'), target.get('height')], 'Exact original canvas target.')
     fps = target.get('fps') or {}
@@ -252,14 +254,15 @@ def evaluate_case(item, expectation, actual):
             expected_native_scope = [s['id'] for s in shots]
         else:
             expected_native_scope = [shots[n - 1]['id'] for n in expected['appears_in'] if 0 < n <= len(shots)]
-        add(row, prefix + '.declared_scope', expected_native_scope, declared, 'Original all-shot scope maps to all final shots; a reduced declaration cannot erase a required appearance.', 'native_integrity')
+        add(row, prefix + '.declared_scope', expected_native_scope, declared, 'Exact comparison to original automatic plan scope, not a claim that every preserved actor must appear in every new unpinned composition.', 'original_contract')
         if expected['taken_over_by']:
             add(row, prefix + '.removed_actor_actual_uses', [], actual_shots, 'A replaced actor contributes relation/transfer metadata, not its old visible appearance.', 'native_integrity')
         else:
-            # Source fixtures scope these identities to every original shot. An
-            # unpinned native shot count may differ; compare presence in every
-            # declared native target shot rather than forcing an old auto-cut.
-            add(row, prefix + '.actual_uses_cover_declared_shots', sorted(expected_native_scope, key=shot_order.get), actual_shots, 'Scope metadata alone is insufficient: target description/event/speaker spans must actually use the identity.', 'native_integrity')
+            # Keep the old auto-plan scope comparison above unequal when it
+            # differs. Independently compare the actual final scope to actual
+            # typed uses; moving an unpinned cut does not create an obligation
+            # to show every source actor in every resulting shot.
+            add(row, prefix + '.actual_uses_cover_declared_shots', sorted(declared or [s['id'] for s in shots], key=shot_order.get), actual_shots, 'Final scope metadata must agree with actual target description/event/speaker uses; original automatic shot allocation is compared separately.', 'native_integrity')
             add(row, prefix + '.actual_use_exists', True, bool(actual_shots), 'Placed/preserved subjects must occur in an actual scene body, not only definitions.', 'native_integrity')
         row.setdefault('subject_uses', []).append(dict(original_label=expected['label'], native_id=actual_subject['id'], original_shot_indices=expected['appears_in'], declared_native_shots=declared, actual_native_shots=actual_shots, removed=bool(expected['taken_over_by'])))
     native_ok = all(x['matched'] for x in row['checks'] if not x.get('explicit_adapter_difference'))
@@ -283,6 +286,9 @@ def evaluate(inputs, expected, report):
     rows = [evaluate_case(item, expected_by_id[item['case_id']], results[item['case_id']]) for item in inputs['cases']]
     return dict(evaluator_version=VERSION, source_commit=inputs['source_commit'], actual_executable_sha256=report['executable_sha256'],
                 scope='Independent held-out structural comparisons, not semantic or rendered-video acceptance. Original differences remain explicit. Role Cards are synthetic upstream inputs, not fresh real video/audio observations.',
+                comparison_entrypoints=dict(original='h3ir.draft.deterministic_draft(brief, mode, cards, opts)', actual='compiler.Compile(Brief, synthetic Cards)',
+                                            same_entrypoint=False, omitted_original_call_argument='mode',
+                                            interpretation='The fixture preserves the Brief/cards exactly, but not the original separate mode argument. These live runs exercise an additional production pipeline. Exact field differences remain recorded; neither equality nor difference counts as executing the original draft assertion.'),
                 exact_original_fields_all_equal=all(x['original_field_status'] == 'all_equal' for x in rows), native_contract_checks_all_passed=all(x['native_contract_status'] == 'passed' for x in rows),
                 counts=dict(Counter(x['status'] for x in rows)), native_contract_counts=dict(Counter(x['native_contract_status'] for x in rows)),
                 adapter_difference_counts=dict(Counter(a['kind'] for x in rows for a in x['adapter_differences'])), cases=rows)

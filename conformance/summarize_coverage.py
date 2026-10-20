@@ -15,17 +15,25 @@ def main():
     p.add_argument('--plan',type=Path,default=ROOT/'conformance/reports/go-plan-pytest-round3.json')
     p.add_argument('--licence',type=Path,default=ROOT/'conformance/reports/go-licence-result-pytest-round2.json')
     p.add_argument('--combined',type=Path,default=ROOT/'conformance/reports/go-combined-pytest-round1.json')
+    p.add_argument('--draft',type=Path,help='Strict original whole-Draft run, with all failures retained.')
+    p.add_argument('--evaluate',type=Path,default=ROOT/'conformance/reports/go-evaluate-pytest-round2.json')
     a=p.parse_args()
     base=json.loads((ROOT/'conformance/reports/upstream-pytest.json').read_text());nodes={x['nodeid']:{'nodeid':x['nodeid'],'source':x['source'],'native_execution':[],'recorded_native_result_assertions':[]} for x in base['collected']}
     unattributed=[]
-    for label,path in (('core',a.core),('scope_default',a.scope),('scope_explicit_legacy',a.legacy_scope),('full_plan',a.plan),('combined_including_failed_contract_replays',a.combined)):
+    for label,path in (('core',a.core),('scope_default',a.scope),('scope_explicit_legacy',a.legacy_scope),('full_plan',a.plan),('combined_including_failed_contract_replays',a.combined),('strict_whole_draft',a.draft),('evaluate_only',a.evaluate)):
+        if path is None:continue
         if not path.is_file():continue
         r=json.loads(path.read_text());states={x['nodeid']:x['upstream_status'] for x in r['collected']};calls={}
         for c in r.get('go_core_calls',[]):calls.setdefault(c['nodeid'],Counter())[c['function']]+=1
         for c in r.get('validator_calls',[]):calls.setdefault(c['nodeid'],Counter())['h3ir.validate.validate']+=1
         for node,functions in calls.items():
             if node not in nodes:unattributed.append({'run':label,'nodeid':node,'functions':dict(functions)});continue
-            nodes[node]['native_execution'].append({'run':label,'report':str(path.resolve().relative_to(ROOT)),'status':states[node],'functions':dict(functions),'binary_sha256':r.get('go_bridge_sha256')})
+            execution={'run':label,'report':str(path.resolve().relative_to(ROOT)),'status':states[node],'functions':dict(functions),'binary_sha256':r.get('go_bridge_sha256')}
+            if label=='strict_whole_draft':
+                execution['complete_draft_calls']=functions.get('h3ir.draft.deterministic_draft',0)
+                execution['native_draft_render_calls']=functions.get('h3ir.render.native_draft',0)
+                execution['native_plan_only']=not execution['complete_draft_calls'] and bool(functions.get('h3ir.plan.build_plan'))
+            nodes[node]['native_execution'].append(execution)
     r=json.loads(a.licence.read_text());states={x['nodeid']:x['upstream_status'] for x in r['collected']};calls={}
     for c in r['licence_result_calls']:calls.setdefault(c['nodeid'],Counter())[c['function']]+=1
     for node,functions in calls.items():nodes[node]['recorded_native_result_assertions'].append({'report':str(a.licence.resolve().relative_to(ROOT)),'status':states[node],'functions':dict(functions),

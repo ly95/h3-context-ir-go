@@ -3,6 +3,7 @@ package compiler
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
 	"unicode"
 	"unicode/utf8"
 
@@ -121,6 +122,13 @@ func canonicalReferenceContract(b Brief, st Structure, req contextir.Request, su
 		if role == RoleContinuationSource {
 			r.Retention = contextir.PartiallyPreserved
 		}
+		if r.Kind == contextir.ReferenceAudio {
+			if description := strings.TrimSpace(a.Description); description != "" {
+				// Caller metadata specifies desired reference properties. It is
+				// not evidence that an analyzer heard those properties or words.
+				r.Description += " Caller-provided reference metadata: " + description + ". This description does not establish an auditory observation, authorize additional speech, or change the declared copy/property relationship."
+			}
+		}
 		if binding.Role == contextir.RoleVoice {
 			target := bindings[binding.Source.AssetID]
 			if target == "" && len(fixedSpeakers) == 0 {
@@ -186,11 +194,11 @@ func referenceRoleDescription(role Role) (string, string) {
 	case RoleBGM:
 		return "The supplied background-music recording to reuse beneath the new audio.", "The original recorded BGM signal is copied in part or mixed beneath new audio; it is not merely a style reference."
 	case RoleMusicStyle:
-		return "Instrumentation, tempo and musical-style property reference only.", "Generate new music following those properties, without copying the source recording."
+		return "a music-style reference for the target video's newly generated score, supplying musical style, instrumentation and tempo without copying the original signal.", "Generate new music following its musical style, instrumentation and tempo without copying the original signal."
 	case RoleBeatReference:
-		return "Beat and cutting/action rhythm property reference only.", "Use the rhythm for cut and action timing; do not copy the recorded signal."
+		return "a beat reference whose rhythm sets the timing of the target video's cuts and action without copying the original signal.", "Its beat sets the timing of the cuts and the action without copying the original signal."
 	case RoleSFX:
-		return "Sound-texture property reference only.", "Generate a new sound matching the defined texture; do not play or copy the source recording."
+		return "a sound-texture reference for the target video without copying the original signal.", "Generate a new sound matching the defined texture without copying the original signal."
 	}
 	return "", ""
 }

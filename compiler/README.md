@@ -32,7 +32,8 @@ empty. It receives no upload description, locator, director or target request.
 The original facts, IDs, analyzer and coverage remain unchanged, and
 `Result.ObservationCards` records the derivation and metered attempts. Unsupported
 card claims fail the configured repair contract. Supplying an existing valid
-Card skips this stage; an explicit model-free Draft therefore needs a Card.
+Card skips this stage. Explicit deterministic Draft preserves facts-only Evidence
+without running this interpretation stage or claiming it acquired a typed Card.
 
 The pipeline exposes its actual interpretation boundaries: `DecideMode`,
 `DecideRoles`, `ResolveReplacements`, `DecideScope`, and `DecideLicence`. Each
@@ -121,12 +122,43 @@ the original keyword recognizer's omissions. A cel-animation target can therefor
 be classified as `2d-animation` where the original closed vocabulary returned
 unknown; this is a recorded compatibility difference. The cross-medium guard is
 armed only when source and target classifications are both known and different.
+If a conversion permission contradicts a classification with no requested visual
+style, medium or treatment, it cannot become a style string. Only that typed
+contradiction can re-examine the existing `rendering_permission` stage within its
+remaining configured repair budget, followed by medium classification again.
+The ordered ledger retains all calls. No remaining budget means an explicit
+failure; authoritative structured Style and valid styles of unknown taxonomy
+remain supported. A permission's action target is never used as a style fallback.
 
 Replacement interpretation compares the complete observed candidate set, including
 already assigned figures. Unsupported identifying qualifiers and broad names
 matching multiple people produce an explicitly labeled `user_symbolic` removed
 figure. They never borrow a leftover identity. Source and target relationships
 then pass through `plan.BindReplacements`.
+
+`Brief.ReplacementTargets` provides complete explicit graph choices without a
+replacement-model call: each incoming attachment ID maps to a pre-binding native
+`subject-N` identity. All replacement attachments must be covered. An empty value
+explicitly selects an unobserved figure and requires that attachment's nonempty
+`Replaces` description. Source ownership, compatible kind, unique occupancy and
+conflicts with existing identity selectors are checked mechanically. Draft and
+Compile use this same relationship boundary; an explicit choice is never
+reinterpreted from its descriptive words.
+
+Resolved environment responsibilities also bind identity interpretation: an
+environment remains a setting, even when its source attributes describe a car
+inside that setting. The environment-only `IdentityDecision.RequestBinding`
+distinguishes a change to that reference entity from a request concerning another
+actor. The latter binding can retain exact `target_mention`/`request_quote` as
+caller context, without granting identity-change authority or changing the
+setting's observed origin. Only a quoted change of the setting itself permits renaming it. Other
+identity-only requests retain the same stage contract and do not acquire this
+additional field or call.
+
+Native environment target attributes also retain their field ownership: another
+depicted person's or object's traits remain in Evidence rather than becoming
+properties of the floor or setting. The legacy `plan` DTO remains compatible with
+its original flattened representation.
 
 Action authority applies to the actor and behavior the caller actually changes,
 not every figure in an edit. Host-owned `ReplacementMotionObligations` carry the
@@ -149,6 +181,16 @@ protocol placeholders trigger the configured repair, never publication.
 Base formats require literal narrative spans with natural complete subject
 mentions; Ref2VA retains structural subject/reference labels. This prevents
 arbitrary definition sentences from being spliced into base-mode noun phrases.
+
+High-level base writers return no standalone subject metadata: identities remain
+in their literal prose and original frame evidence. In reference mode the host
+derives target `Subject.ShotIDs` from actual typed narrative and speaker-dialogue
+bindings after composition. A figure that exits need not remain in later shots.
+Outgoing replacement figures carry the incoming figure's transfer scope rather
+than claiming physical target appearances. Unused source-video observations stay
+in Evidence rather than being declared as target actors. This projection applies
+only to host/model-created high-level metadata; lower-level caller-supplied
+Document appearance declarations retain their normal contract.
 
 The `plan` stage composes a versioned root `Document` inside those constraints.
 The same document produces the H3 prompt, socket manifest, hashes, and budget
@@ -177,6 +219,14 @@ Cached supplied evidence incurs no new perception call in that request. The opti
 explicit `FailurePolicyDraft` returns a separately labeled deterministic draft,
 with the original error, diagnostics and model calls retained. `Draft` can also be
 called directly without a model. Drafting makes no claim of model interpretation.
+
+Only explicit Draft may bind an unobserved actual-frame attachment without a
+perceiver or Card. It records `explicit_draft_unobserved_frames` and leaves its
+Evidence absent; upload notes never become observations. An injected perceiver's
+failure remains an error. Compile still requires observed evidence. First/last
+Draft narration puts the first plate and its available observed state at the
+opening, preserves the caller's literal intent as the path, and introduces the
+last plate's state only at the closing. Camera events remain host-owned.
 
 The H3 writing checker is a production gate, not a test-only utility. ERRORs enter
 the same bounded repair path and prevent artifact publication; findings retain the

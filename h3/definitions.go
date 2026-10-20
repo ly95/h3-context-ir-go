@@ -26,6 +26,17 @@ func renderDefinitions(doc contextir.Document, state bindingState) (string, stri
 			continue // Original subjects have no source retention relationship to claim.
 		}
 		shots := subjectShots(doc, subject)
+		if subject.TakenOverBy != "" && len(shots) == 0 {
+			// A removed identity is a transfer relationship, not a separately
+			// visible actor. Its implicit scope follows the incoming figure.
+			// Caller-supplied explicit scope remains authoritative above.
+			for _, incoming := range doc.Subjects {
+				if incoming.ID == subject.TakenOverBy {
+					shots = subjectShots(doc, incoming)
+					break
+				}
+			}
+		}
 		if len(shots) == 0 {
 			return "", "", profileIssue(contextir.CodeInvalid, fmt.Sprintf("subjects[%d].shot_ids", i), "referenced subjects require an explicit or structurally bound shot appearance")
 		}
@@ -34,7 +45,7 @@ func renderDefinitions(doc contextir.Document, state bindingState) (string, stri
 		}
 		retentions = append(retentions, label+" (appears in "+strings.Join(shots, ", ")+"): "+string(subject.Retention)+" - "+retentionDetails(subject.Retention, subject.RetentionDetails))
 		if subject.TakenOverBy != "" {
-			retentions[len(retentions)-1] += " Its position in frame, actions and timing are transferred to " + state.subjects[subject.TakenOverBy] + "; its source appearance is not retained."
+			retentions[len(retentions)-1] += " This scope describes transferred behavior, not the removed figure appearing as a separate actor. Its position in frame, actions and timing are transferred to " + state.subjects[subject.TakenOverBy] + "; its source appearance is not retained."
 		}
 	}
 	// Several semantic references may point to the same conditioning input.
@@ -58,6 +69,12 @@ func renderDefinitions(doc contextir.Document, state bindingState) (string, stri
 		var description, reasons []string
 		var contexts []string
 		for _, item := range group {
+			if containsRole(item.Roles, contextir.RoleStoryboard) {
+				shots := referenceShots(doc, item)
+				if len(shots) > 0 {
+					description = append(description, "a storyboard reference for "+strings.Join(shots, " and ")+", defining their viewpoint, subject placement, and shot order.")
+				}
+			}
 			description = append(description, sentence(item.Description))
 			roles := make([]string, 0, len(item.Roles))
 			for _, role := range item.Roles {
@@ -87,7 +104,7 @@ func renderDefinitions(doc contextir.Document, state bindingState) (string, stri
 			}
 			if item.SpeakerID != "" {
 				speaker := state.voices[item.SpeakerID]
-				identity := speaker.Description
+				identity := "the speaker"
 				if speaker.SubjectID != "" {
 					identity = state.subjects[speaker.SubjectID]
 				}
@@ -95,6 +112,9 @@ func renderDefinitions(doc contextir.Document, state bindingState) (string, stri
 					identity += " " + sid
 				}
 				description = append(description, sentence("It supplies the voice reference for "+identity))
+				if speaker.SubjectID == "" && speaker.Description != "" {
+					description = append(description, "Speaker description: "+sentence(speaker.Description))
+				}
 			}
 			if item.Anchor != nil {
 				description = append(description, "It anchors the target frame at "+timestamp(*item.Anchor)+".")
@@ -102,7 +122,11 @@ func renderDefinitions(doc contextir.Document, state bindingState) (string, stri
 			if item.Source.Interval != nil {
 				description = append(description, "Its selected source segment runs from "+timestamp(item.Source.Interval.Start)+" to "+timestamp(item.Source.Interval.End)+".")
 			}
-			reasons = append(reasons, retentionDetails(item.Retention, item.RetentionDetails))
+			reason := retentionDetails(item.Retention, item.RetentionDetails)
+			if item.Kind == contextir.ReferenceAudio && containsRole(item.Roles, contextir.RoleSoundTexture) && item.Retention == contextir.AudioReference {
+				reason = label + "'s sound texture is referenced. " + reason
+			}
+			reasons = append(reasons, reason)
 			shots := referenceShots(doc, item)
 			if item.Kind == contextir.ReferenceAudio {
 				shots = audioShots(doc, item)
@@ -121,7 +145,21 @@ func renderDefinitions(doc contextir.Document, state bindingState) (string, stri
 		if len(contexts) > 0 {
 			context = " (" + strings.Join(contexts, "; ") + ")"
 		}
-		retentions = append(retentions, label+context+": "+string(ref.Retention)+" - "+strings.Join(reasons, " "))
+		reason := strings.Join(reasons, " ")
+		if ref.Kind == contextir.ReferenceAudio {
+			// Keep the published audio marker directly after its label. Scope
+			// remains explicit in the same retention line and in the manifest.
+			if context != "" {
+				reason += " Applicable scope:" + context + "."
+			}
+			context = ""
+		} else if containsRole(ref.Roles, contextir.RoleStoryboard) {
+			if context != "" {
+				reason += " Applicable scope:" + context + "."
+			}
+			context = " (storyboard reference)"
+		}
+		retentions = append(retentions, label+context+": "+string(ref.Retention)+" - "+reason)
 	}
 	return strings.Join(definitions, "\n"), strings.Join(retentions, "\n"), nil
 }
@@ -161,7 +199,7 @@ func roleName(role contextir.Role) string {
 		contextir.RoleContinuation: "source video for continuation",
 		contextir.RoleVoice:        "voice timbre and delivery", contextir.RoleMusic: "music",
 		contextir.RoleRhythm: "rhythm", contextir.RoleSoundtrack: "soundtrack",
-		contextir.RoleSoundEffect:        "sound texture",
+		contextir.RoleSoundEffect:        "sound effect",
 		contextir.RoleSoundTexture:       "sound texture",
 		contextir.RoleStructure:          "camera movement and cutting structure only",
 		contextir.RolePlacedSubject:      "a subject placed into the edited scene",

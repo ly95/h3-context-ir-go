@@ -11,6 +11,8 @@ import (
 
 func operation(name string, b json.RawMessage) (any, error) {
 	switch name {
+	case "h3ir.draft.deterministic_draft", "h3ir.render.native_draft":
+		return draftOperation(name, b)
 	case "h3ir.tokens.count":
 		var a struct {
 			Text string `json:"text"`
@@ -191,6 +193,9 @@ func operation(name string, b json.RawMessage) (any, error) {
 	}
 	if strings.HasPrefix(name, "h3ir.uploads.") {
 		return uploadOperation(name, b)
+	}
+	if strings.HasPrefix(name, "h3ir.evalloop.") {
+		return evaluateOperation(name, b)
 	}
 	if strings.HasPrefix(name, "h3ir.analyse.") {
 		return mediaOperation(name, b)

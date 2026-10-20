@@ -2,7 +2,9 @@ package planner_test
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
+	"strings"
 	"testing"
 
 	"github.com/ly95/contextir"
@@ -27,5 +29,39 @@ func TestNonContentGuardFailureDoesNotRetryPaidWriting(t *testing.T) {
 				t.Fatal("guard failure retried writing, changed its typed error, or erased actual writer usage", err, calls, result.Calls)
 			}
 		})
+	}
+}
+
+func TestMalformedOptionalSpanGetsSafeSpecificRepairAndRetainsCalls(t *testing.T) {
+	calls := 0
+	model := modelFunc(func(_ context.Context, in contextir.ModelRequest) (contextir.ModelResponse, error) {
+		calls++
+		input := inputOf(t, in)
+		r := response(t, document(input.Request))
+		if calls == 1 {
+			var wire map[string]any
+			if err := json.Unmarshal(r.JSON, &wire); err != nil {
+				t.Fatal(err)
+			}
+			wire["summary"] = []any{map[string]any{"text": "A controlled scene.", "subject_id": nil}}
+			var err error
+			r.JSON, err = json.Marshal(wire)
+			if err != nil {
+				t.Fatal(err)
+			}
+		} else {
+			if len(input.Diagnostics) != 1 || input.Diagnostics[0].Path != "$.summary[0].subject_id" || !strings.Contains(input.Diagnostics[0].Message, "omit") {
+				t.Fatalf("repair did not identify the exact known schema property: %+v", input.Diagnostics)
+			}
+		}
+		return r, nil
+	})
+	p, err := planner.New(model, nil, planner.Options{MaxRetries: 1})
+	if err != nil {
+		t.Fatal(err)
+	}
+	r, err := p.Plan(context.Background(), request(contextir.ModeText))
+	if err != nil || calls != 2 || len(r.Calls) != 2 || !r.Calls[0].Valid || !r.Calls[1].Valid || len(r.Document.Shots) == 0 {
+		t.Fatal("bounded contract repair or paid-call evidence failed", err, calls, r.Calls)
 	}
 }

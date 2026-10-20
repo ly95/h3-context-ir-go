@@ -1,0 +1,861 @@
+{
+  "review_version": "contextir/independent-text-review-addendum/v1",
+  "source_commit": "fd031e136ae3d89147324c0d1b2aa65e838c21f5",
+  "scope": "Independent read-only audit of two actual final rechecks, plus explicitly versioned selection of20 previously reviewed complete results. No provider calls, no credentials and no generated-video assessment.",
+  "prior_complete_batch_review": "conformance/reports/manual-semantic-review-20261020T073646Z-08e0247d2bfe-v1.json",
+  "prior_complete_batch_review_sha256": "8195601af0e863e38a57a954310b4bf8820d6c78decbd7ebe178fd4f5ca54c8f",
+  "recheck_executable_sha256": "448091c691cb263d467ad15d04c13c01c2e87df61a9cdc48714ea5311f4c7598",
+  "new_cases": [
+    {
+      "case_id": "compiler-00533",
+      "lifecycle_status": "compiled",
+      "manual_verdict": "main_reference_responsibility_met",
+      "result_file": "conformance/reports/live-roles-environment-round1/compiler-00533/result.json",
+      "result_file_sha256": "77f773d16cebaa4cd0bd3d3d747999480e12a79a7a83b3205ec3c8b367735a48",
+      "actual_executable_sha256": "448091c691cb263d467ad15d04c13c01c2e87df61a9cdc48714ea5311f4c7598",
+      "input_sha256": "3f867f7a4ce4a15e73ae4c8abb8fac8dbca3c1688386a2d41ee155485968ac8e",
+      "same_original_role_input_hash_verified": true,
+      "target": {
+        "duration_ms": 5167,
+        "frame_count": 124,
+        "aspect_ratio": "16:9",
+        "fps": {
+          "numerator": 24,
+          "denominator": 1
+        },
+        "width": 1344,
+        "height": 768
+      },
+      "mode": "ref2va",
+      "canonical_evidence": {
+        "kind": "environment",
+        "origin": "observed",
+        "descriptor": "an empty showroom floor",
+        "attributes": [],
+        "retention": "fully_preserved",
+        "sources": [
+          {
+            "source": {
+              "asset_id": "asset-1",
+              "track": "visual"
+            },
+            "role": "scene"
+          }
+        ],
+        "shot_ids": [
+          "shot-1"
+        ]
+      },
+      "body_evidence": [
+        {
+          "quote": "At the rear of <Subject 1>, darkness pools",
+          "meaning": "The environment is a location, not a moving vehicle."
+        },
+        {
+          "quote": "The black sports car rolls forward out of the rear shadow across <Subject 1>",
+          "meaning": "The separate car performs movement across the stationary floor."
+        },
+        {
+          "quote": "The car eases to a gradual halt on <Subject 1>",
+          "meaning": "Actor and location remain grammatically distinct."
+        }
+      ],
+      "source_aggregation_boundary": {
+        "source_file": "h3ir/plan.py",
+        "source_function": "_collapse_environment",
+        "source_commit": "fd031e136ae3d89147324c0d1b2aa65e838c21f5",
+        "semantics": "One scene subject whose attributes are the place's notable features. Original implementation aggregates depicted parts and their features into the scene. Unlike structure/style/storyboard, environment is not a blanket ban on depicted inventory.",
+        "calibration": "The earlier provisional objection to carbon-fibre car detail in the environment scene is not a supported contradiction. Caller names the black sports car and requests its action; source aggregation permits the scene inventory. No new lexical filter or stricter requirement is introduced.",
+        "remaining_internal_observation": "Licence/raw source inventory still records car details; final authoritative floor Subject has no mistaken car-body attributes or object kind."
+      },
+      "composition_review": [
+        {
+          "version": "contextir/composition-review/v2",
+          "required": true,
+          "passed": true,
+          "calls": [
+            {
+              "stage": "semantic_review",
+              "attempt": 1,
+              "model": "deepseek-flash",
+              "usage": {
+                "input_tokens": 1890,
+                "output_tokens": 2889
+              },
+              "valid": true
+            }
+          ]
+        }
+      ],
+      "isolated_structural_oracle": {
+        "case_id": "compiler-00533",
+        "nodeid": "tests/test_every_role_renders.py::test_every_role_renders_a_draft_that_passes_its_own_validator[environment]",
+        "input_sha256": "3f867f7a4ce4a15e73ae4c8abb8fac8dbca3c1688386a2d41ee155485968ac8e",
+        "actual_status": "compiled",
+        "checks": [
+          {
+            "field": "input.sha256",
+            "expected": "3f867f7a4ce4a15e73ae4c8abb8fac8dbca3c1688386a2d41ee155485968ac8e",
+            "actual": "3f867f7a4ce4a15e73ae4c8abb8fac8dbca3c1688386a2d41ee155485968ac8e",
+            "matched": true,
+            "scope": "Actual original request must match the independent held-out case.",
+            "category": "native_integrity"
+          },
+          {
+            "field": "result.status",
+            "expected": "compiled",
+            "actual": "compiled",
+            "matched": true,
+            "scope": "The inner lifecycle must also have completed.",
+            "category": "native_integrity"
+          },
+          {
+            "field": "document.locked_target",
+            "expected": {
+              "duration_ms": 5167,
+              "frame_count": 124,
+              "aspect_ratio": "16:9",
+              "fps": {
+                "numerator": 24,
+                "denominator": 1
+              },
+              "width": 1344,
+              "height": 768
+            },
+            "actual": {
+              "duration_ms": 5167,
+              "frame_count": 124,
+              "aspect_ratio": "16:9",
+              "fps": {
+                "numerator": 24,
+                "denominator": 1
+              },
+              "width": 1344,
+              "height": 768
+            },
+            "matched": true,
+            "scope": "The writer did not alter the prepared request target.",
+            "category": "native_integrity"
+          },
+          {
+            "field": "document.locked_assets",
+            "expected": [
+              {
+                "id": "asset-1",
+                "kind": "image",
+                "description": "the black sports car",
+                "metadata": {
+                  "width": 1024,
+                  "height": 576,
+                  "fps": {
+                    "numerator": 0,
+                    "denominator": 0
+                  }
+                },
+                "preparation": {
+                  "sizing": "match",
+                  "width": 1024,
+                  "height": 576
+                }
+              }
+            ],
+            "actual": [
+              {
+                "id": "asset-1",
+                "kind": "image",
+                "description": "the black sports car",
+                "metadata": {
+                  "width": 1024,
+                  "height": 576,
+                  "fps": {
+                    "numerator": 0,
+                    "denominator": 0
+                  }
+                },
+                "preparation": {
+                  "sizing": "match",
+                  "width": 1024,
+                  "height": 576
+                }
+              }
+            ],
+            "matched": true,
+            "scope": "The writer did not substitute or drop original sources.",
+            "category": "native_integrity"
+          },
+          {
+            "field": "mode",
+            "expected": "ref2va",
+            "actual": "ref2va",
+            "matched": true,
+            "scope": "Exact field comparison only: original deterministic_draft receives an explicit mode argument, while this additional Compile run receives the original Brief/cards. A difference is not a replayed original assertion failure and is never silently marked equal.",
+            "category": "original_contract"
+          },
+          {
+            "field": "target.frames",
+            "expected": 124,
+            "actual": 124,
+            "matched": true,
+            "scope": "Exact original frame target.",
+            "category": "original_contract"
+          },
+          {
+            "field": "target.canvas",
+            "expected": [
+              1344,
+              768
+            ],
+            "actual": [
+              1344,
+              768
+            ],
+            "matched": true,
+            "scope": "Exact original canvas target.",
+            "category": "original_contract"
+          },
+          {
+            "field": "target.fps",
+            "expected": "24",
+            "actual": "24",
+            "matched": true,
+            "scope": "Exact rational frame rate; a zero denominator is invalid.",
+            "category": "original_contract"
+          },
+          {
+            "field": "target.duration_ms.original_floor",
+            "expected": 5166,
+            "actual": 5167,
+            "matched": false,
+            "scope": "Original frame-derived integer endpoint.",
+            "category": "original_contract",
+            "explicit_adapter_difference": {
+              "kind": "frame_duration_floor_to_nearest",
+              "explanation": "Upstream endpoint truncates the frame-derived duration; native Time rounds to nearest millisecond. Both values are retained."
+            }
+          },
+          {
+            "field": "target.duration_ms.native_nearest",
+            "expected": 5167,
+            "actual": 5167,
+            "matched": true,
+            "scope": "The explicit native millisecond policy must hold exactly.",
+            "category": "native_integrity"
+          },
+          {
+            "field": "artifact.target",
+            "expected": {
+              "duration_ms": 5167,
+              "frame_count": 124,
+              "aspect_ratio": "16:9",
+              "fps": {
+                "numerator": 24,
+                "denominator": 1
+              },
+              "width": 1344,
+              "height": 768
+            },
+            "actual": {
+              "duration_ms": 5167,
+              "frame_count": 124,
+              "aspect_ratio": "16:9",
+              "fps": {
+                "numerator": 24,
+                "denominator": 1
+              },
+              "width": 1344,
+              "height": 768
+            },
+            "matched": true,
+            "scope": "Artifact and authoritative Document target must be identical.",
+            "category": "native_integrity"
+          },
+          {
+            "field": "artifact.mode",
+            "expected": "ref2va",
+            "actual": "ref2va",
+            "matched": true,
+            "scope": "Artifact mode must preserve Document mode.",
+            "category": "native_integrity"
+          },
+          {
+            "field": "artifact.frames",
+            "expected": 124,
+            "actual": 124,
+            "matched": true,
+            "scope": "Final artifact frame count is not inferred from compiled status.",
+            "category": "original_contract"
+          },
+          {
+            "field": "timeline.starts_at_zero",
+            "expected": 0,
+            "actual": 0,
+            "matched": true,
+            "scope": "Exact complete target timeline.",
+            "category": "native_integrity"
+          },
+          {
+            "field": "timeline.ends_at_target",
+            "expected": 5167,
+            "actual": 5167,
+            "matched": true,
+            "scope": "Exact complete target timeline.",
+            "category": "native_integrity"
+          },
+          {
+            "field": "asset.count",
+            "expected": 1,
+            "actual": 1,
+            "matched": true,
+            "scope": "No dropped/added source occurrence.",
+            "category": "native_integrity"
+          },
+          {
+            "field": "manifest.source_occurrences",
+            "expected": [
+              "asset-1"
+            ],
+            "actual": [
+              "asset-1"
+            ],
+            "matched": true,
+            "scope": "All original source IDs reach actual manifest media.",
+            "category": "native_integrity"
+          },
+          {
+            "field": "manifest.subject_ids",
+            "expected": [
+              "subject-1"
+            ],
+            "actual": [
+              "subject-1"
+            ],
+            "matched": true,
+            "scope": "Every target subject has exactly one manifest label.",
+            "category": "native_integrity"
+          },
+          {
+            "field": "manifest.reference_ids",
+            "expected": [],
+            "actual": [],
+            "matched": true,
+            "scope": "Every Reference has exactly one manifest label.",
+            "category": "native_integrity"
+          },
+          {
+            "field": "source.asset-environment.document_asset",
+            "expected": true,
+            "actual": true,
+            "matched": true,
+            "scope": "The output retains each supplied source occurrence.",
+            "category": "native_integrity"
+          },
+          {
+            "field": "source.asset-environment.typed_roles",
+            "expected": [
+              "scene"
+            ],
+            "actual": [
+              "scene"
+            ],
+            "matched": true,
+            "scope": "Explicit source role mapping: environment -> scene; no unlicensed extra responsibility.",
+            "category": "original_contract"
+          },
+          {
+            "field": "source.asset-environment.manifest_binding_count",
+            "expected": 1,
+            "actual": 1,
+            "matched": true,
+            "scope": "A physical source track has exactly one conditioning binding.",
+            "category": "native_integrity"
+          },
+          {
+            "field": "source.asset-environment.socket.original",
+            "expected": "ref_image_1",
+            "actual": "ref_image_1",
+            "matched": true,
+            "scope": "Exact retained original socket.",
+            "category": "original_contract"
+          },
+          {
+            "field": "source.asset-environment.socket.native",
+            "expected": "ref_image_1",
+            "actual": "ref_image_1",
+            "matched": true,
+            "scope": "Explicit checkpoint socket policy.",
+            "category": "native_integrity"
+          },
+          {
+            "field": "subject.<Subject 1>.exists",
+            "expected": true,
+            "actual": true,
+            "matched": true,
+            "scope": "Original stable subject occurrence.",
+            "category": "original_contract"
+          },
+          {
+            "field": "subject.<Subject 1>.kind",
+            "expected": "environment",
+            "actual": "environment",
+            "matched": true,
+            "scope": "Exact original structured subject field.",
+            "category": "original_contract"
+          },
+          {
+            "field": "subject.<Subject 1>.descriptor",
+            "expected": "an empty showroom floor",
+            "actual": "an empty showroom floor",
+            "matched": true,
+            "scope": "Exact original structured subject field.",
+            "category": "original_contract"
+          },
+          {
+            "field": "subject.<Subject 1>.retention",
+            "expected": "fully_preserved",
+            "actual": "fully_preserved",
+            "matched": true,
+            "scope": "Exact original structured subject field.",
+            "category": "original_contract"
+          },
+          {
+            "field": "subject.<Subject 1>.attributes",
+            "expected": [
+              "the black sports car — carbon fibre body"
+            ],
+            "actual": [],
+            "matched": false,
+            "scope": "No identity/pose facts are silently discarded.",
+            "category": "original_contract"
+          },
+          {
+            "field": "subject.<Subject 1>.pose",
+            "expected": [],
+            "actual": [],
+            "matched": true,
+            "scope": "No identity/pose facts are silently discarded.",
+            "category": "original_contract"
+          },
+          {
+            "field": "subject.<Subject 1>.pose_licensed",
+            "expected": false,
+            "actual": false,
+            "matched": true,
+            "scope": "Pose authority is a structured role property.",
+            "category": "original_contract"
+          },
+          {
+            "field": "subject.<Subject 1>.source_ids",
+            "expected": [
+              "asset-1"
+            ],
+            "actual": [
+              "asset-1"
+            ],
+            "matched": true,
+            "scope": "Subject provenance refers to the original source occurrence.",
+            "category": "native_integrity"
+          },
+          {
+            "field": "subject.<Subject 1>.taken_over_by",
+            "expected": "",
+            "actual": "",
+            "matched": true,
+            "scope": "Replacement retains the same source/target identity relationship.",
+            "category": "original_contract"
+          },
+          {
+            "field": "subject.<Subject 1>.declared_scope",
+            "expected": [
+              "shot-1"
+            ],
+            "actual": [
+              "shot-1"
+            ],
+            "matched": true,
+            "scope": "Exact comparison to original automatic plan scope, not a claim that every preserved actor must appear in every new unpinned composition.",
+            "category": "original_contract"
+          },
+          {
+            "field": "subject.<Subject 1>.actual_uses_cover_declared_shots",
+            "expected": [
+              "shot-1"
+            ],
+            "actual": [
+              "shot-1"
+            ],
+            "matched": true,
+            "scope": "Final scope metadata must agree with actual target description/event/speaker uses; original automatic shot allocation is compared separately.",
+            "category": "native_integrity"
+          },
+          {
+            "field": "subject.<Subject 1>.actual_use_exists",
+            "expected": true,
+            "actual": true,
+            "matched": true,
+            "scope": "Placed/preserved subjects must occur in an actual scene body, not only definitions.",
+            "category": "native_integrity"
+          }
+        ],
+        "adapter_differences": [
+          {
+            "field": "target.duration_ms.original_floor",
+            "original": 5166,
+            "native": 5167,
+            "kind": "frame_duration_floor_to_nearest",
+            "explanation": "Upstream endpoint truncates the frame-derived duration; native Time rounds to nearest millisecond. Both values are retained."
+          }
+        ],
+        "human_review_required": true,
+        "semantic_status": "not_determined_by_structural_evaluator",
+        "original_explicit_draft_mode": "ref2va",
+        "actual_input_brief_mode": null,
+        "source_uses": [
+          {
+            "source_sha": "asset-environment",
+            "native_asset_id": "asset-1",
+            "original_role": "environment",
+            "native_role": "scene",
+            "references": [],
+            "observed_subject_ids": [
+              "subject-1"
+            ],
+            "actual_reference_narrative_shots": {}
+          }
+        ],
+        "subject_uses": [
+          {
+            "original_label": "<Subject 1>",
+            "native_id": "subject-1",
+            "original_shot_indices": [
+              1,
+              2
+            ],
+            "declared_native_shots": [
+              "shot-1"
+            ],
+            "actual_native_shots": [
+              "shot-1"
+            ],
+            "removed": false
+          }
+        ],
+        "native_contract_status": "failed",
+        "original_field_status": "difference",
+        "status": "heldout_field_difference",
+        "original_task_types": [
+          "reference generation"
+        ],
+        "final_prompt": "subject_definitions:\n<Subject 1> is an empty showroom floor. Its environment is referenced from <Picture 1>\n\nsummary:\n[reference generation] At the rear of <Subject 1>, darkness pools in a wide, low-lit space. The black sports car waits there as little more than a silhouette; then it rolls slowly forward, its carbon-fibre body emerging into the dim showroom light. Thin highlights travel along the flanks and roofline as the car advances toward the foreground, revealing sculpted panels and a low nose. The movement is steady and unhurried, while the empty floor around it stays clear and quiet. As the car reaches the open floor, the engine note settles and the tyres whisper across the smooth surface. The car eases to a gradual halt, holding in the low light with the showroom stretching empty beyond it.\n\nretention_analysis:\n<Subject 1> (appears in [Shot 1]): fully_preserved - Preserve this canonical target identity and its listed stable attributes.\n\ndetailed_description:\nThe target video is in live-action style, cinematic.\n[Shot 1] At the rear of <Subject 1>, darkness pools in a wide, low-lit space. The black sports car waits there as little more than a silhouette; then it rolls slowly forward, its carbon-fibre body emerging into the dim showroom light. Thin highlights travel along the flanks and roofline as the car advances toward the foreground, revealing sculpted panels and a low nose. The movement is steady and unhurried, while the empty floor around it stays clear and quiet. As the car reaches the open floor, the engine note settles and the tyres whisper across the smooth surface. The car eases to a gradual halt, holding in the low light with the showroom stretching empty beyond it. At 00:00.000, A low engine hum starts deep in the dark, swelling into a steady resonance that fills the still showroom. At 00:00.900, The black sports car rolls forward out of the rear shadow across <Subject 1>, its carbon-fibre body crossing from silhouette into the dim light, panel by panel, as the low nose angles toward the foreground. At 00:02.500, Soft tyre whisper moves across the floor beneath the engine note, a quiet friction that rises as the car advances and settles when it slows. At 00:04.100, The car eases to a gradual halt on <Subject 1>, its dark shape held in the low light as the last motion fades. The camera pushes in with small amplitude at slow speed. Throughout the target video: Do not add spoken or sung lines.\n\noverall_soundscape:\nA low engine hum swells and settles beneath a faint showroom room tone, with soft tyre whisper across the floor and a quiet fade after the car stops.\n\nnon_diegetic_music:\nN/A\n",
+        "actual_executable_sha256": "448091c691cb263d467ad15d04c13c01c2e87df61a9cdc48714ea5311f4c7598"
+      },
+      "limitations": [
+        "Original role Card is synthetic, not an actual image/video observation.",
+        "Original floor5166 versus native nearest5167 difference remains explicitly unequal.",
+        "Exact original environment attributes field remains different: source aggregated [the black sports car — carbon fibre body], native final floor attributes=[] while source inventory is retained in Evidence/licence/body. This check remains unequal and is not silently marked an adapter pass."
+      ]
+    },
+    {
+      "case_id": "i2va_animate",
+      "lifecycle_status": "compiled",
+      "manual_verdict": "main_text_and_rendering_authority_met_with_recorded_aspect_limit",
+      "result_file": "conformance/reports/live-suite-style-round1/i2va_animate/result.json",
+      "result_file_sha256": "2405486d49fad10ccb9736200809ec9d1422e26435c0c09923eee1d454103bbd",
+      "actual_executable_sha256": "448091c691cb263d467ad15d04c13c01c2e87df61a9cdc48714ea5311f4c7598",
+      "input_sha256": "",
+      "same_original_input_hash_verified": false,
+      "input_identity_limit": "Runner input_sha256 is blank; it is not filled in or treated as hash verification. Original intent/seconds/aspect and imageSHA were compared to suite_briefs.json after native normalization.",
+      "target": {
+        "duration_ms": 5167,
+        "frame_count": 124,
+        "aspect_ratio": "16:9",
+        "fps": {
+          "numerator": 24,
+          "denominator": 1
+        },
+        "width": 1344,
+        "height": 768
+      },
+      "mode": "i2va",
+      "rendering_evidence": {
+        "disposition": "preserve",
+        "medium_transferred": false,
+        "style_source": "reference",
+        "actual_style": "Photorealistic cinematic character concept and reference sheet, moody, low-key, high-contrast, with a wet-night atmosphere, top panel uses cinematic low-key night lighting with a cool blue-white key from the left, warm amber background practicals, and wet reflections; studio panels use soft directional low-key lighting with dark falloff"
+      },
+      "frame_evidence": {
+        "id": "reference-asset-1-1",
+        "kind": "picture",
+        "source": {
+          "asset_id": "asset-1",
+          "track": "visual"
+        },
+        "roles": [
+          "first_frame"
+        ],
+        "description": "The complete supplied image is the actual target frame, including its full layout, panels, labels, background, subject placement and lighting.",
+        "retention": "fully_preserved",
+        "retention_details": "Preserve the entire supplied frame at the exact anchor; do not extract a hero panel, discard sheet presentation, or redraw a new composition.",
+        "shot_ids": [
+          "shot-1"
+        ],
+        "anchor_ms": 0
+      },
+      "body_evidence": [
+        {
+          "quote": "The complete supplied character reference sheet fills the image at the opening instant",
+          "meaning": "Actual first frame is the whole source image."
+        },
+        {
+          "quote": "the wide environmental hero view across the top, the three full-body turnaround views in the middle, and the four close detail studies along the bottom",
+          "meaning": "All eight panels are retained."
+        },
+        {
+          "quote": "thin panel divisions and printed section headings remain exactly in place",
+          "meaning": "Panel borders and labels are not extracted away."
+        },
+        {
+          "quote": "Across the whole sheet the layout never breaks apart or re-composes",
+          "meaning": "Whole-image composition remains through the gentle internal animation."
+        }
+      ],
+      "composition_review": [
+        {
+          "version": "contextir/composition-review/v2",
+          "required": true,
+          "passed": true,
+          "calls": [
+            {
+              "stage": "semantic_review",
+              "attempt": 1,
+              "model": "deepseek-flash",
+              "usage": {
+                "input_tokens": 2855,
+                "output_tokens": 922
+              },
+              "valid": true
+            }
+          ]
+        }
+      ],
+      "limitations": [
+        "Source733×1100, proposed input preparation736×1088 and target1344×768 retain an aspect mismatch. ModeDecision.needs_clarification=true under explicit continue_with_recorded_choice.",
+        "No crop/resize/canvas IO was executed, so this is not proof of solved exact-frame pixel alignment.",
+        "No H3 video was generated or assessed.",
+        "Literal paragraphs are joined without a space at damp haze.Slow and scene.The; small final-prompt readability issue remains."
+      ]
+    }
+  ],
+  "composite_selection": {
+    "case_count": 22,
+    "previously_reviewed_cases": 20,
+    "new_rechecked_cases": 2,
+    "all_selected_cases_compiled": true,
+    "major_text_responsibilities_reviewed": "met within recorded fixture/source/aspect limits",
+    "single_binary_run": false,
+    "new_full22_model_run": false,
+    "case_versions": {
+      "08e0247d2bfe011ee0b3afbcdc77248ae2bd8fbc1d5c03350ae9da48c9e25743": 20,
+      "448091c691cb263d467ad15d04c13c01c2e87df61a9cdc48714ea5311f4c7598": 2
+    },
+    "cases": [
+      {
+        "case_id": "compiler-00521",
+        "result_file": "conformance/reports/live-roles-round4/compiler-00521/result.json",
+        "result_file_sha256": "717144069d4625ff95fb6105e61f0a2a9b599b350803ea17f2369c523c18c279",
+        "actual_executable_sha256": "08e0247d2bfe011ee0b3afbcdc77248ae2bd8fbc1d5c03350ae9da48c9e25743",
+        "manual_verdict": "main_reference_responsibility_met",
+        "review_report": "conformance/reports/manual-semantic-review-20261020T073646Z-08e0247d2bfe-v1.json"
+      },
+      {
+        "case_id": "compiler-00533",
+        "result_file": "conformance/reports/live-roles-environment-round1/compiler-00533/result.json",
+        "result_file_sha256": "77f773d16cebaa4cd0bd3d3d747999480e12a79a7a83b3205ec3c8b367735a48",
+        "actual_executable_sha256": "448091c691cb263d467ad15d04c13c01c2e87df61a9cdc48714ea5311f4c7598",
+        "manual_verdict": "main_reference_responsibility_met",
+        "review_report": "conformance/reports/manual-semantic-addendum-20261020T075902Z-448091c691cb-v1.json"
+      },
+      {
+        "case_id": "compiler-00545",
+        "result_file": "conformance/reports/live-roles-round4/compiler-00545/result.json",
+        "result_file_sha256": "6d8a86d40bff17f6c74326fe171ac136a5ad083441e7d7976bc2914445cc400f",
+        "actual_executable_sha256": "08e0247d2bfe011ee0b3afbcdc77248ae2bd8fbc1d5c03350ae9da48c9e25743",
+        "manual_verdict": "main_reference_responsibility_met",
+        "review_report": "conformance/reports/manual-semantic-review-20261020T073646Z-08e0247d2bfe-v1.json"
+      },
+      {
+        "case_id": "compiler-00557",
+        "result_file": "conformance/reports/live-roles-round4/compiler-00557/result.json",
+        "result_file_sha256": "84066d1e0bea15493441d6349d94219b067bb14b2058bf8f299060dd2a9a9ba5",
+        "actual_executable_sha256": "08e0247d2bfe011ee0b3afbcdc77248ae2bd8fbc1d5c03350ae9da48c9e25743",
+        "manual_verdict": "main_reference_responsibility_met",
+        "review_report": "conformance/reports/manual-semantic-review-20261020T073646Z-08e0247d2bfe-v1.json"
+      },
+      {
+        "case_id": "compiler-00569",
+        "result_file": "conformance/reports/live-roles-round4/compiler-00569/result.json",
+        "result_file_sha256": "e714409aaf0f286c74f2c116790575c1dd8c75102bdcd67e2cc5ded7165b4a01",
+        "actual_executable_sha256": "08e0247d2bfe011ee0b3afbcdc77248ae2bd8fbc1d5c03350ae9da48c9e25743",
+        "manual_verdict": "main_reference_responsibility_met",
+        "review_report": "conformance/reports/manual-semantic-review-20261020T073646Z-08e0247d2bfe-v1.json"
+      },
+      {
+        "case_id": "compiler-00581",
+        "result_file": "conformance/reports/live-roles-round4/compiler-00581/result.json",
+        "result_file_sha256": "a98f73b2fe280bb9d52be24e48102044b1282b185110c6dad5302e93e28d0405",
+        "actual_executable_sha256": "08e0247d2bfe011ee0b3afbcdc77248ae2bd8fbc1d5c03350ae9da48c9e25743",
+        "manual_verdict": "main_reference_responsibility_met",
+        "review_report": "conformance/reports/manual-semantic-review-20261020T073646Z-08e0247d2bfe-v1.json"
+      },
+      {
+        "case_id": "compiler-00593",
+        "result_file": "conformance/reports/live-roles-round4/compiler-00593/result.json",
+        "result_file_sha256": "ebda9892261f3661d879758bf142af4f309c8496ad743edb7ba56c4b8179a89f",
+        "actual_executable_sha256": "08e0247d2bfe011ee0b3afbcdc77248ae2bd8fbc1d5c03350ae9da48c9e25743",
+        "manual_verdict": "main_reference_responsibility_met",
+        "review_report": "conformance/reports/manual-semantic-review-20261020T073646Z-08e0247d2bfe-v1.json"
+      },
+      {
+        "case_id": "compiler-00605",
+        "result_file": "conformance/reports/live-roles-round4/compiler-00605/result.json",
+        "result_file_sha256": "7aa59747f969d04cb952fe87fdca644f956079bced63b14fe74a8236122fc19e",
+        "actual_executable_sha256": "08e0247d2bfe011ee0b3afbcdc77248ae2bd8fbc1d5c03350ae9da48c9e25743",
+        "manual_verdict": "main_reference_responsibility_met",
+        "review_report": "conformance/reports/manual-semantic-review-20261020T073646Z-08e0247d2bfe-v1.json"
+      },
+      {
+        "case_id": "compiler-00617",
+        "result_file": "conformance/reports/live-roles-round4/compiler-00617/result.json",
+        "result_file_sha256": "8e8b60f71d8b1a3dddd7571a52215f22f02aadc50f8a0f2e13e397de6bed096e",
+        "actual_executable_sha256": "08e0247d2bfe011ee0b3afbcdc77248ae2bd8fbc1d5c03350ae9da48c9e25743",
+        "manual_verdict": "main_reference_responsibility_met_with_source_limit",
+        "review_report": "conformance/reports/manual-semantic-review-20261020T073646Z-08e0247d2bfe-v1.json"
+      },
+      {
+        "case_id": "compiler-00629",
+        "result_file": "conformance/reports/live-roles-round4/compiler-00629/result.json",
+        "result_file_sha256": "7fa9fe603d1667e093d40dadbfcdf6f3660ff56604269c99ec28b9f07cdbaf44",
+        "actual_executable_sha256": "08e0247d2bfe011ee0b3afbcdc77248ae2bd8fbc1d5c03350ae9da48c9e25743",
+        "manual_verdict": "main_reference_responsibility_met_with_source_limit",
+        "review_report": "conformance/reports/manual-semantic-review-20261020T073646Z-08e0247d2bfe-v1.json"
+      },
+      {
+        "case_id": "compiler-00641",
+        "result_file": "conformance/reports/live-roles-round4/compiler-00641/result.json",
+        "result_file_sha256": "9919c0b8ea27a6234e53444abf910bf50ad6757a4fc80794d750d0f493314e3d",
+        "actual_executable_sha256": "08e0247d2bfe011ee0b3afbcdc77248ae2bd8fbc1d5c03350ae9da48c9e25743",
+        "manual_verdict": "main_reference_responsibility_met",
+        "review_report": "conformance/reports/manual-semantic-review-20261020T073646Z-08e0247d2bfe-v1.json"
+      },
+      {
+        "case_id": "compiler-00653",
+        "result_file": "conformance/reports/live-roles-round4/compiler-00653/result.json",
+        "result_file_sha256": "94ba45f53d5b06c006f6c50cbdffd847cc2a54bc4b0a196b11c7c863def33cf6",
+        "actual_executable_sha256": "08e0247d2bfe011ee0b3afbcdc77248ae2bd8fbc1d5c03350ae9da48c9e25743",
+        "manual_verdict": "main_reference_responsibility_met",
+        "review_report": "conformance/reports/manual-semantic-review-20261020T073646Z-08e0247d2bfe-v1.json"
+      },
+      {
+        "case_id": "compiler-00665",
+        "result_file": "conformance/reports/live-roles-round4/compiler-00665/result.json",
+        "result_file_sha256": "c1898e89d180ce3c223818db315d8875a3cf106eb3d1f1bc2bed9c6189602ee4",
+        "actual_executable_sha256": "08e0247d2bfe011ee0b3afbcdc77248ae2bd8fbc1d5c03350ae9da48c9e25743",
+        "manual_verdict": "main_reference_responsibility_met_with_source_limit",
+        "review_report": "conformance/reports/manual-semantic-review-20261020T073646Z-08e0247d2bfe-v1.json"
+      },
+      {
+        "case_id": "compiler-00677",
+        "result_file": "conformance/reports/live-roles-round4/compiler-00677/result.json",
+        "result_file_sha256": "f17cab627fce544638d635679ba05a5c959678f0914377c6d34ec448e72537ab",
+        "actual_executable_sha256": "08e0247d2bfe011ee0b3afbcdc77248ae2bd8fbc1d5c03350ae9da48c9e25743",
+        "manual_verdict": "main_reference_responsibility_met",
+        "review_report": "conformance/reports/manual-semantic-review-20261020T073646Z-08e0247d2bfe-v1.json"
+      },
+      {
+        "case_id": "compiler-00689",
+        "result_file": "conformance/reports/live-roles-round4/compiler-00689/result.json",
+        "result_file_sha256": "050f500f83b92112ea2ec318cf9a61952f6aea5e11811ab4967b5fc542e7150f",
+        "actual_executable_sha256": "08e0247d2bfe011ee0b3afbcdc77248ae2bd8fbc1d5c03350ae9da48c9e25743",
+        "manual_verdict": "main_reference_responsibility_met_with_original_scope_difference",
+        "review_report": "conformance/reports/manual-semantic-review-20261020T073646Z-08e0247d2bfe-v1.json"
+      },
+      {
+        "case_id": "compiler-00701",
+        "result_file": "conformance/reports/live-roles-round4/compiler-00701/result.json",
+        "result_file_sha256": "0874417cbcfe81f5dc090851589bdbc451a6d0b1f9b13486bed8300149b2c646",
+        "actual_executable_sha256": "08e0247d2bfe011ee0b3afbcdc77248ae2bd8fbc1d5c03350ae9da48c9e25743",
+        "manual_verdict": "main_reference_responsibility_met_with_original_attribute_difference",
+        "review_report": "conformance/reports/manual-semantic-review-20261020T073646Z-08e0247d2bfe-v1.json"
+      },
+      {
+        "case_id": "i2va_animate",
+        "result_file": "conformance/reports/live-suite-style-round1/i2va_animate/result.json",
+        "result_file_sha256": "2405486d49fad10ccb9736200809ec9d1422e26435c0c09923eee1d454103bbd",
+        "actual_executable_sha256": "448091c691cb263d467ad15d04c13c01c2e87df61a9cdc48714ea5311f4c7598",
+        "manual_verdict": "main_text_and_rendering_authority_met_with_recorded_aspect_limit",
+        "review_report": "conformance/reports/manual-semantic-addendum-20261020T075902Z-448091c691cb-v1.json"
+      },
+      {
+        "case_id": "ref2va_two_subjects",
+        "result_file": "conformance/reports/live-suite-round8/ref2va_two_subjects/result.json",
+        "result_file_sha256": "4a784f3ef12d1753d4f435a408be5fce880b12bbae35f768f150f38469bbff08",
+        "actual_executable_sha256": "08e0247d2bfe011ee0b3afbcdc77248ae2bd8fbc1d5c03350ae9da48c9e25743",
+        "manual_verdict": "main_text_requirements_met_with_prose_issue",
+        "review_report": "conformance/reports/manual-semantic-review-20261020T073646Z-08e0247d2bfe-v1.json"
+      },
+      {
+        "case_id": "t2va_battle",
+        "result_file": "conformance/reports/live-suite-round8/t2va_battle/result.json",
+        "result_file_sha256": "29f38bde406bf8428fc3e91438979ce050b054ad86f50bebe7c47d1926a51102",
+        "actual_executable_sha256": "08e0247d2bfe011ee0b3afbcdc77248ae2bd8fbc1d5c03350ae9da48c9e25743",
+        "manual_verdict": "main_text_requirements_met",
+        "review_report": "conformance/reports/manual-semantic-review-20261020T073646Z-08e0247d2bfe-v1.json"
+      },
+      {
+        "case_id": "t2va_dialogue_dense",
+        "result_file": "conformance/reports/live-suite-round8/t2va_dialogue_dense/result.json",
+        "result_file_sha256": "d31c0f71a3fde686784c5f04fb73fd4b718ed6d339f2d4d3738c1ed7f0bfa5b3",
+        "actual_executable_sha256": "08e0247d2bfe011ee0b3afbcdc77248ae2bd8fbc1d5c03350ae9da48c9e25743",
+        "manual_verdict": "main_text_requirements_met",
+        "review_report": "conformance/reports/manual-semantic-review-20261020T073646Z-08e0247d2bfe-v1.json"
+      },
+      {
+        "case_id": "t2va_long",
+        "result_file": "conformance/reports/live-suite-round8/t2va_long/result.json",
+        "result_file_sha256": "2b52652858bb961764e3502584aad711e6eb1f214d6a5e4d6ecef9217e541a39",
+        "actual_executable_sha256": "08e0247d2bfe011ee0b3afbcdc77248ae2bd8fbc1d5c03350ae9da48c9e25743",
+        "manual_verdict": "main_text_requirements_met",
+        "review_report": "conformance/reports/manual-semantic-review-20261020T073646Z-08e0247d2bfe-v1.json"
+      },
+      {
+        "case_id": "t2va_silent",
+        "result_file": "conformance/reports/live-suite-round8/t2va_silent/result.json",
+        "result_file_sha256": "b52b75a92cd43bcb10974d47203d8b4fb9834da520ef1bb48c25a5ec98c5fc5a",
+        "actual_executable_sha256": "08e0247d2bfe011ee0b3afbcdc77248ae2bd8fbc1d5c03350ae9da48c9e25743",
+        "manual_verdict": "main_text_requirements_met",
+        "review_report": "conformance/reports/manual-semantic-review-20261020T073646Z-08e0247d2bfe-v1.json"
+      }
+    ]
+  },
+  "runtime_version_boundary": {
+    "final_runtime_prefix_reported_by_parent": "9454474408ea",
+    "final_runtime_model_calls_reexecuted": false,
+    "note": "The final runtime differs in cut/voice template and Draft continuity handling. This report does not relabel the actual08e0/448 model results or prompt hashes as a945 single-binary run."
+  },
+  "input_and_output_hashes": {
+    "conformance/reports/live-roles-environment-round1/report.json": "7c98560f7102e87df6c0da5856e002dba783dc6e76811385a3921a24b9b9aa26",
+    "conformance/reports/live-suite-style-round1/report.json": "e3397e0edc12f403476aa2c39465b321bd6d0a5622c9d65d5d9e53f55eef9995",
+    "conformance/reports/live-roles-environment-round1/compiler-00533/result.json": "77f773d16cebaa4cd0bd3d3d747999480e12a79a7a83b3205ec3c8b367735a48",
+    "conformance/reports/live-suite-style-round1/i2va_animate/result.json": "2405486d49fad10ccb9736200809ec9d1422e26435c0c09923eee1d454103bbd",
+    "conformance/fixtures/role_briefs.json": "94d049867b3cf68d48694c3e897747341971228f929f29f7e8c67e381c58a701",
+    "conformance/fixtures/role_expectations.json": "fe85461926dc81618ce2fd45e3d3deb70b6cbf087728835ef0b8c0595727296a",
+    "conformance/fixtures/suite_briefs.json": "584c387738bed43e88f871d0819f82c68f10dd5d5b6a7857b0d407abe1766e4e"
+  },
+  "history_preserved": "08e0 environment failure and animation-style error, earlier semantic failures, original structural differences and all failed model outputs remain unchanged. This addendum selects later evidence without rewriting earlier outcomes.",
+  "acceptance_limits": [
+    "This is not an assertion that all991 original tests execute or pass in Go. Original whole-Draft replay retains its separately reported boundaries.",
+    "Synthetic role Cards do not establish real video/audio observation quality, beat measurements, waveform fidelity or unseen-source continuity.",
+    "The composed22-case selection is not a same-binary22-case run or a statistical reliability claim.",
+    "Exact original millisecond/socket/source-field differences remain explicit, not silently waived."
+  ],
+  "conclusion": "The two previously identified major text/role defects are repaired in these actual448 results. Combined with20 qualified08e0 cases, the selected22-case evidence preserves the intended major text responsibilities, subject to explicit aspect/source/prose limitations and separate original-test parity boundaries."
+}

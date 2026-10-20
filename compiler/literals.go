@@ -114,12 +114,19 @@ func writerResponseSchema(raw json.RawMessage, req contextir.Request) (json.RawM
 	}
 	if req.Mode != contextir.ModeReference {
 		defs["Span"] = map[string]any{"type": "object", "additionalProperties": false, "required": []string{"text"}, "properties": map[string]any{"text": map[string]any{"type": "string", "minLength": 1}}}
+		props["subjects"] = map[string]any{"const": []contextir.Subject{}}
+		if speaker, ok := defs["Speaker"].(map[string]any); ok {
+			if fields, ok := speaker["properties"].(map[string]any); ok {
+				fields["subject_id"] = map[string]any{"const": ""}
+			}
+		}
 	}
 	if !req.AllowGeneratedDialogue {
 		props["dialogue"] = map[string]any{"enum": []any{nil, []contextir.DialogueLine{}}}
 	}
 	subject, _ := defs["Subject"].(map[string]any)
 	if subjectProps, ok := subject["properties"].(map[string]any); ok {
+		subjectProps["shot_ids"] = map[string]any{"const": []string{}}
 		subjectProps["origin"] = map[string]any{"type": "string", "enum": []string{"", "observed", "user", "creative", "user_symbolic"}}
 		subjectProps["kind"] = map[string]any{"type": "string", "enum": []string{"", "subject", "person", "animal", "object", "environment", "style", "action"}}
 	}

@@ -36,12 +36,15 @@ func (c *Compiler) draft(ctx context.Context, brief Brief, known *Structure) (Re
 	if b.Seed != nil || b.Effort != "" {
 		r.Decisions = append(r.Decisions, decision("execution", "explicit_draft_operation", ExecutionOptions{Seed: b.Seed, Effort: b.Effort}, "The explicitly requested deterministic draft makes no model calls, so sampling and reasoning choices do not apply to this artifact."))
 	}
-	observed, err := c.collectEvidence(ctx, b)
+	observed, unobservedFrames, err := c.collectDraftEvidence(ctx, b, known)
 	evidence := observed.Evidence
 	r.Evidence = evidence
 	r.Calls = append(r.Calls, observed.Calls...)
 	r.ObservationCards = observed.ObservationCards
 	r.UnmeteredAssetIDs = observed.UnmeteredAssetIDs
+	if len(unobservedFrames) > 0 {
+		r.Decisions = append(r.Decisions, decision("evidence", "explicit_draft_unobserved_frames", unobservedFrames, "The explicitly requested deterministic draft binds these actual-frame sockets without claiming to have inspected their pixels. No facts, card, content description or perceptual usage were fabricated; Compile still requires observation."))
+	}
 	if len(observed.UnmeteredAssetIDs) > 0 {
 		r.UsageComplete = false
 	}
@@ -135,6 +138,9 @@ func (c *Compiler) draft(ctx context.Context, brief Brief, known *Structure) (Re
 		return r, err
 	}
 	r.Structure = st
+	if len(b.ReplacementTargets) > 0 && st.Mode != contextir.ModeReference {
+		return r, invalid("replacement_targets", "Explicit replacement graph choices require reference mode.")
+	}
 	r.Scope = scopeFor(b, st)
 	req, err := requestFor(b, target, st, r.Scope)
 	r.Request = req
@@ -198,6 +204,11 @@ func draftDocument(b Brief, req contextir.Request, st Structure, evidence []cont
 			return d, subjectErr
 		}
 	}
+	if req.Mode == contextir.ModeText {
+		for i := 1; i < len(d.Shots); i++ {
+			d.Shots[i].Description = append(contextir.Text("another view of the same scene: "), d.Shots[i].Description...)
+		}
+	}
 
 	references, referenceErr := canonicalReferenceContract(b, st, req, d.Subjects, b.VoiceBindings)
 	if referenceErr != nil {
@@ -205,6 +216,7 @@ func draftDocument(b Brief, req contextir.Request, st Structure, evidence []cont
 	}
 	d.References = references.References
 	d.Speakers = references.Speakers
+	applyDraftFrameNarrative(&d, b)
 
 	for i, line := range req.Dialogue {
 		hint := "the requested speaker"

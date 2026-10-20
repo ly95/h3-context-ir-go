@@ -155,44 +155,7 @@ func transformedFrom(licence LicenceDecision) string {
 }
 
 func derivedTasks(d contextir.Document) []string {
-	set := map[string]bool{}
-	for _, s := range d.Subjects {
-		if len(s.Sources) > 0 {
-			set["reference generation"] = true
-		}
-	}
-	for _, ref := range d.References {
-		if ref.Kind == contextir.ReferenceAudio {
-			if ref.Retention == contextir.FullyCopy || ref.Retention == contextir.PartiallyCopy {
-				set["audio reuse"] = true
-			} else {
-				set["audio reference"] = true
-			}
-			continue
-		}
-		for _, role := range ref.Roles {
-			switch role {
-			case contextir.RoleFirstFrame, contextir.RoleLastFrame, contextir.RoleKeyframe:
-				set["keyframe completion"] = true
-			case contextir.RoleEditSource:
-				set["video editing"] = true
-			case contextir.RoleContinuation:
-				set["video continuation"] = true
-			case contextir.RolePlacedSubject, contextir.RoleReplacementSubject:
-				set["reference generation"] = true
-				set["video editing"] = true
-			default:
-				set["reference generation"] = true
-			}
-		}
-	}
-	var tasks []string
-	for _, s := range []string{"video editing", "video continuation", "keyframe completion", "reference generation", "audio reuse", "audio reference"} {
-		if set[s] {
-			tasks = append(tasks, s)
-		}
-	}
-	return tasks
+	return h3.TaskTypes(d)
 }
 
 // FindingsError formats safe validation diagnostics without provider content.

@@ -68,6 +68,9 @@ func TestCompileReviewUsesOneOrderedLedgerAndStopsNonContentFailures(t *testing.
 					d.Soundscape = "Quiet outdoor ambience."
 					for i := range d.Shots {
 						d.Shots[i].Description = contextir.Text("A car pulls forward across the referenced ground while the environment stays in place.")
+						if len(in.Controls.Subjects) > 0 {
+							d.Shots[i].Description = append(d.Shots[i].Description, contextir.Span{Text: " The setting is "}, contextir.Span{SubjectID: in.Controls.Subjects[0].ID}, contextir.Span{Text: "."})
+						}
 						d.Shots[i].Events = nil
 					}
 					finalFragment = reviewRich(d.Shots[0].Description)

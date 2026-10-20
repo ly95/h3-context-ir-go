@@ -28,7 +28,11 @@ func referenceIdentityReply(t *testing.T, request contextir.ModelRequest) json.R
 				source = "presentation_cleanup"
 			}
 		}
-		identities = append(identities, map[string]any{"label": subject.Label, "descriptor_source": source, "descriptor": subject.Descriptor, "target_mention": "", "kind": subject.Kind, "retained_attributes": append([]string{}, subject.Attributes...), "requested_attributes": []string{}, "request_quote": "", "wardrobe_attributes": []string{}, "adjusted_attributes": []IdentityAttributeAdjustment{}, "excluded_presentation": []string{}, "claims": []IdentityClaim{}})
+		identity := map[string]any{"label": subject.Label, "descriptor_source": source, "descriptor": subject.Descriptor, "target_mention": "", "kind": subject.Kind, "retained_attributes": append([]string{}, subject.Attributes...), "requested_attributes": []string{}, "request_quote": "", "wardrobe_attributes": []string{}, "adjusted_attributes": []IdentityAttributeAdjustment{}, "excluded_presentation": []string{}, "claims": []IdentityClaim{}}
+		if subject.Kind == "environment" {
+			identity["request_binding"] = "no_reference_change"
+		}
+		identities = append(identities, identity)
 	}
 	raw, _ := json.Marshal(map[string]any{"identity": identities})
 	return raw

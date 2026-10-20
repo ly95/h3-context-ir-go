@@ -106,6 +106,8 @@ def configure(config,*,mode_replay=True):
     scope_contract_bridge.install(native_operation)
     import render_format_bridge
     render_format_bridge.install(native_operation,cap.plain)
+    import evaluate_bridge
+    evaluate_bridge.install(native_operation)
     import plan_bridge
     plan_bridge.install(native_operation,cap.plain)
     if mode_replay:

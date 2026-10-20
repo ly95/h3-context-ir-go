@@ -13,6 +13,7 @@
 | 用户控制 | 固定对白与可见文字、歌唱与复用音轨 cue、跨镜分片逐字拼接、镜头与切点锁定、摄影机闭集、四档创意、七个导演及自定义导演、LoRA 注册与权重验证 |
 | 唯一 IR 产物 | 根 `Document`、严格 JSON 与 Schema、不可变输入保护、观察覆盖与来源；同一 Document 确定性派生 H3 prompt、manifest、准备指令、预算与哈希 |
 | 检查与预算 | `h3check` 原规则/等级/修复提示、帧网格、画布与 latent rows；`tokens` 使用完整 Qwen2.5 词表进行精确 BPE，不以字符估计 token |
+| 离线评分与回归 | `evaluate` / `cmd/contextir-score`：最终产物评分、聚合、保留测量缺失状态的历史基线、比较与失败门卫；篇幅/警告数/差异度只作报告 |
 | 真实媒体 | `media` 的真实文件头、ffprobe、ffmpeg 抽帧；显式 frame/card cache；真实像素观察；可注入 ASR；facts-only 感知器通过有 Fact 原文出处的类型化步骤构造卡片 |
 | 模型和计量 | `deepseek` 与 `chatcompat`，显式模型/端点/结构化模式；有界合同修复；成功、失败、感知及修订调用进入同一用量账本，未知用量明确标记 |
 | 可选宿主接口 | 标准库 HTTP handler、上传配额/在途预留/TTL/LRU、版本记录、待澄清状态、修订前依赖检查；`comfy` 图操作与远端 HTTP；可复验 CLI |
@@ -47,6 +48,6 @@
 2. 抽帧视频仅有部分视觉覆盖；ffprobe 元数据与 ASR 不能证明听过音色、音乐或节奏。默认感知覆盖要求不放宽，调用方必须明确接纳部分覆盖或注入相应能力。
 3. 结构、Fact 引用与原文 quote 能检查来源关联，不能数学证明任意自然语言都完整蕴含于请求/观察。多个语义检查和原始测试也不能换算成总体可靠率。
 4. 公开 H3 协议没有明确编码的边界（例如可见文字中的嵌套 ASCII 双引号、独立画外歌唱）继续明确拒绝，不自行发明可能误解的格式。
-5. GitHub Actions 先前因账户付款或 spending limit 未启动，不能算远端 CI 通过。本地验证与已配置的上游 CI 必须和实际远端运行状态分别报告。
+5. 已推送提交 `246a4be` 的 GitHub Actions 两个 job 因账户付款或 spending limit 未启动，不能算远端 CI 通过。实际远端记录保存在 `conformance/reports/remote-ci-246a4be.json`；本地验证单独报告。
 
 运行方式、固定上游 SHA、许可证与重放限制见 [conformance](../conformance/README.md)、[架构](ARCHITECTURE.md)、[来源](UPSTREAM.md) 和各包 README。

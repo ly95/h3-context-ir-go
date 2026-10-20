@@ -16,6 +16,8 @@ go get github.com/ly95/contextir@codex/readiness-audit
 
 当前为开发验收分支。旧标签 `v0.1.0` 不包含后续实现和修复，不会重写该标签。生产使用应固定经过自己验收的提交。
 
+历史模型输出、源码快照和测试报告保存在独立的审计 module `conformance/reports`。安装 Go 库不下载这些历史文件；需要完整证据时克隆 Git 仓库。
+
 ## 从一句需求编译
 
 ```go
@@ -70,6 +72,8 @@ if r.Status == "needs_input" {
 
 完整 Go API 见 [compiler](compiler/README.md)；低层 `plan`、`budget`、`tokens`、`h3check` 可单独使用。
 
+[evaluate](evaluate/README.md) 提供独立离线评分、聚合、历史基线和回归比较。指标读取最终 H3 正文与真实调用记录；编译和校验失败阻断验收，篇幅、警告数与镜头差异度只作报告。旧基线没有测量的指标保持缺失，不补零参与比较。
+
 ## 素材感知与外部执行
 
 `media` 提供显式本地解析器、文件头事实、ffprobe/ffmpeg 量测、真实视频抽帧及可选的调用方目录缓存。`deepseek.ImagePerceiver` 和 `chatcompat.Client` 接受真实像素；素材的文字 note 不是观察事实。
@@ -97,6 +101,9 @@ go run ./cmd/contextir contract
 go run ./cmd/contextir directors
 go run ./cmd/contextir validate < document.json
 go run ./cmd/contextir compile -profile comfyui < document.json
+go run ./cmd/contextir-score score -kind result -in compile-result.json -as-run -out run.json
+go run ./cmd/contextir-score baseline -in run.json -out baseline.json
+go run ./cmd/contextir-score compare -baseline baseline.json -candidate next-run.json
 
 go test ./...
 go test -race ./...

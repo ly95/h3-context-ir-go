@@ -31,13 +31,6 @@ type ReplacementDecision struct {
 // unobserved qualifiers or multiple compatible people produce a user-symbolic
 // removed figure instead of borrowing whichever observed person remains.
 func (c *Compiler) ResolveReplacements(ctx context.Context, b Brief, mode contextir.Mode) (ReplacementDecision, error) {
-	if c.needsExecution(b) {
-		next, err := c.executionFor(ctx, b)
-		if err != nil {
-			return ReplacementDecision{}, err
-		}
-		return next.ResolveReplacements(ctx, b, mode)
-	}
 	out := ReplacementDecision{Targets: map[string]string{}}
 	if c == nil {
 		return out, invalid("compiler", "Initialize the compiler with New.")
@@ -48,6 +41,26 @@ func (c *Compiler) ResolveReplacements(ctx context.Context, b Brief, mode contex
 		return out, err
 	}
 	observed := plan.BuildSubjects(manifest, cards)
+	explicit, explicitErr := explicitReplacementTargets(b, manifest, observed)
+	if explicitErr != nil {
+		return out, explicitErr
+	}
+	if len(explicit) > 0 {
+		if mode != contextir.ModeReference {
+			return out, invalid("replacement_targets", "Explicit replacement graph choices require reference mode.")
+		}
+		out.Targets = explicit
+		for _, entry := range manifest {
+			if target, exists := explicit[entry.Label]; exists {
+				compatible := []string{}
+				if target != "" {
+					compatible = append(compatible, target)
+				}
+				out.Bindings = append(out.Bindings, ReplacementBinding{Picture: entry.Label, Target: target, Compatible: compatible, Status: "caller_explicit", Reason: "The caller selected an explicit graph identity; code verified the relationship without interpreting descriptive words."})
+			}
+		}
+		return out, nil
+	}
 	editLabel := ""
 	for _, m := range manifest {
 		if m.Role == string(RoleEditSource) {
@@ -114,6 +127,13 @@ func (c *Compiler) ResolveReplacements(ctx context.Context, b Brief, mode contex
 			out.Bindings = append(out.Bindings, ReplacementBinding{Picture: picture.Label, Target: target, Compatible: append([]string(nil), available...), Status: status, Reason: "The typed source reading establishes a unique compatible figure, or the caller names an unobserved one."})
 		}
 		return out, nil
+	}
+	if c.needsExecution(b) {
+		next, err := c.executionFor(ctx, b)
+		if err != nil {
+			return out, err
+		}
+		return next.ResolveReplacements(ctx, b, mode)
 	}
 	if isNil(c.model) {
 		return out, failure(contextir.CodeModel, "replacement", "model", "Semantic replacement identity needs a model adapter.", nil)

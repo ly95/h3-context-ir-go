@@ -2,6 +2,8 @@
 
 `evaluate_roles.py` reads `fixtures/role_briefs.json`, the separate held-out `fixtures/role_expectations.json`, and an archived complete role run's `report.json`. It makes no provider calls. Original inputs and expected fields are never supplied to a model by this evaluator.
 
+The live runs exercise **an additional production Compile path**. The original `test_every_role_renders.py` calls `deterministic_draft(brief, mode, cards, opts)`, including a separate explicit mode argument. The live fixture preserves the original Brief/cards, whose `brief.mode` is normally unset, but omits that separate draft argument. Reports version 3 and later record both entrypoints and this omitted argument. A resulting mode difference is an exact field difference, not proof that a replayed original assertion failed. This evaluator does not execute or replace the original draft assertion; the original-entrypoint bridge is separately required.
+
 ```sh
 python conformance/evaluate_roles.py \
   --run conformance/reports/live-roles-round1 \
@@ -20,7 +22,7 @@ Each result separates:
 
 The checks include the prepared versus final target/assets, exact frame/canvas/fps, timeline endpoints, each source responsibility and retention, waveform copying versus property reference, socket, anchor and containing shot, reciprocal voice binding, and complete Document-to-Artifact target-use records. It rejects camera/storyboard IDs used as narrative locations and observed actors imported from property sources. It verifies that preserved or placed subjects have actual typed narrative/event/speaker uses in their required shots; declaring `shot_ids` or naming someone in literal prose does not count. A replaced figure contributes transfer metadata and must not reappear as its former visible actor.
 
-The original automatic shot count may differ from the production model's unpinned allocation. An original subject scoped to every shot must therefore remain scoped and actually used in every final shot. The evaluator does not keyword-match text to infer actor identity or action meaning. For example, a typed environment used grammatically as a moving car still needs human semantic review even if the IDs and appearances are structurally valid.
+The original automatic shot count may differ from the production model's unpinned allocation. Version4 keeps the original all-shot scope versus final scope as an exact original-field comparison, and separately checks that final scope agrees with actual typed uses. An original automatic cut allocation is not an instruction to show every source actor in every new unpinned shot. Neither difference is silently erased. The evaluator does not keyword-match text to infer actor identity or action meaning. For example, a typed environment used grammatically as a moving car still needs human semantic review even if the IDs and appearances are structurally valid.
 
 Three adapter representations are kept explicit, with the original check still marked unequal:
 

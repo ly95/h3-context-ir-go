@@ -45,6 +45,9 @@ func validateExplicitReplacementInputs(b Brief) error {
 		if incoming.Role != RoleReplacementSubject || incoming.Replaces != "" {
 			continue
 		}
+		if _, selected := b.ReplacementTargets[incoming.ID]; selected {
+			continue // explicit selectors receive full graph validation after reading
+		}
 		card, observed := cardByID(b.Cards, incoming.ID)
 		if !observed || len(card.Subjects) == 0 {
 			continue

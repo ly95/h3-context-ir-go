@@ -168,6 +168,16 @@ func resolvedCompatibilityPlan(b Brief, st Structure) ([]plan.SubjectPlan, []pla
 	for incoming, target := range st.ReplacementTargets {
 		targets[incoming] = target
 	}
+	explicit, err := explicitReplacementTargets(b, manifest, subs)
+	if err != nil {
+		return nil, nil, err
+	}
+	for incoming, target := range explicit {
+		if previous, exists := targets[incoming]; exists && previous != target {
+			return nil, nil, invalid("replacement_targets", "The structural plan cannot override an explicit caller replacement identity.")
+		}
+		targets[incoming] = target
+	}
 	// Ambiguous caller names are deliberately left for the typed structural stage.
 	// The planner accepts only exact identity keys or a unique compatible figure;
 	// no leftover selection and no automatic unobserved-figure assertion occurs.
@@ -201,6 +211,7 @@ func mapCompatibilitySubjects(b Brief, subs []plan.SubjectPlan, manifest []plan.
 	}
 	var result []contextir.Subject
 	for _, s := range subs {
+		s.Attributes = targetEnvironmentAttributes(b, s, manifest, s.Attributes)
 		descriptor := s.Descriptor
 		if s.PoseLicensed && s.TakenOverBy == "" && len(s.Pose) > 0 {
 			descriptor += "; " + strings.Join(s.Pose, ", ")
@@ -209,6 +220,9 @@ func mapCompatibilitySubjects(b Brief, subs []plan.SubjectPlan, manifest []plan.
 			descriptor += "; " + strings.Join(s.Attributes, ", ")
 		}
 		out := contextir.Subject{ID: labels[s.Label], Kind: s.Kind, Descriptor: s.Descriptor, Attributes: append([]string(nil), s.Attributes...), PoseLicensed: s.PoseLicensed, Origin: s.Origin, Description: descriptor, Retention: contextir.Retention(s.Retention), RetentionDetails: plan.RetentionNote(s), TakenOverBy: labels[s.TakenOverBy]}
+		if s.Kind == "environment" {
+			out.RetentionDetails = "Preserve the referenced setting and its listed environment properties; other depicted entities retain their own identity ownership."
+		}
 		if out.Origin == "" {
 			out.Origin = "observed"
 		}

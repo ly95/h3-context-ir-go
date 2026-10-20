@@ -25,6 +25,11 @@ class RoleEvaluatorTests(unittest.TestCase):
         self.assertFalse(report['exact_original_fields_all_equal'])
         self.assertFalse(report['native_contract_checks_all_passed'])
         self.assertEqual(report['counts']['native_compile_failed'], 2)
+        self.assertFalse(report['comparison_entrypoints']['same_entrypoint'])
+        self.assertEqual(report['comparison_entrypoints']['omitted_original_call_argument'], 'mode')
+        subject = next(x for x in report['cases'] if x['case_id'] == 'compiler-00521')
+        self.assertEqual(subject['original_explicit_draft_mode'], 'ref2va')
+        self.assertIsNone(subject['actual_input_brief_mode'])
         self.assertTrue(all(x['semantic_status'] == 'not_determined_by_structural_evaluator' for x in report['cases']))
 
     def test_socket_correction_is_explicit_and_cannot_waive_a_mode_change(self):
@@ -99,6 +104,16 @@ class RoleEvaluatorTests(unittest.TestCase):
         result['results'].append(result['results'][0])
         with self.assertRaises(ValueError):
             evaluate(self.inputs, self.expected, result)
+
+    def test_original_auto_cut_scope_is_separate_from_final_internal_scope(self):
+        actual = json.loads((ROOT / 'conformance/reports/live-roles-round4/compiler-00689/result.json').read_text())
+        row = self.case('compiler-00689', actual)
+        original = next(x for x in row['checks'] if x['field'] == 'subject.<Subject 2>.declared_scope')
+        final = next(x for x in row['checks'] if x['field'] == 'subject.<Subject 2>.actual_uses_cover_declared_shots')
+        self.assertFalse(original['matched'])
+        self.assertEqual(original['category'], 'original_contract')
+        self.assertTrue(final['matched'])
+        self.assertEqual(row['native_contract_status'], 'failed')  # original difference stays explicit
 
 
 if __name__ == '__main__':

@@ -35,6 +35,7 @@ def main():
         cases.append({k:x.get(k) for k in ('case_id','input_sha256','status','reused_from','licence_decision','calls','issues','error')})
         cases[-1]['run_report']=str((target/'report.json').relative_to(ROOT))
     data={'source_commit':report['Source'],'model':report['Model'],'reasoning':report['Reasoning'],
+        'executable_sha256':report['executable_sha256'],
         'scope':'Actual production DecideLicence results and model tapes only; held-out expectations were not read.',
         'input_fixture':str(a.inputs.resolve().relative_to(ROOT)),
         'input_fixture_sha256':hashlib.sha256(a.inputs.read_bytes()).hexdigest(),

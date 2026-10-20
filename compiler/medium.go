@@ -95,6 +95,31 @@ reference_medium and requested_medium are the supplied semantic taxonomy IDs; un
 		if err == nil && b.Style != "" && (reply.Target != b.Style && visual || reply.RequestedStyle != b.Style) {
 			err = invalid("medium.target", "Preserve the explicit structured Style exactly.")
 		}
+		if err == nil && reply.Disposition == "convert" && b.Style == "" && reply.RequestedStyle == "" && reply.RequestedMedium == "" && len(reply.Treatments) == 0 {
+			contradiction := invalid("rendering_permission.target", "The classification found no requested visual style, medium or treatment. Re-examine whether the quoted operation changes rendering or only depicted action, motion or content; an empty visual target cannot authorize a style conversion.")
+			remaining := c.options.MaxStructureRetries + 1 - len(permission.Calls)
+			if remaining <= 0 || attempt > c.options.MaxStructureRetries {
+				return out, failure(contextir.CodeModelOutput, "medium", "rendering_permission.target", "Rendering conversion contradicts the empty typed visual target; no configured repair attempt remains.", contradiction)
+			}
+			repaired, repairErr := c.renderingPermissionAttempts(ctx, b, visual, repairDiagnostics(contradiction, "rendering_permission.target", "Resolve the caller's rendering authority against the typed absence of a requested visual target, without using the source look."), remaining, len(permission.Calls))
+			out.Calls = append(out.Calls, repaired.Calls...)
+			prior := permission.Calls
+			permission = repaired
+			permission.Calls = append(append([]contextir.CallUsage(nil), prior...), repaired.Calls...)
+			out.Permission = &permission
+			if repairErr != nil {
+				return out, repairErr
+			}
+			props["disposition"] = map[string]any{"const": permission.Disposition}
+			props["operation_quote"] = map[string]any{"const": permission.OperationQuote}
+			props["target"] = map[string]any{"const": permission.Target}
+			schema, _ = json.Marshal(object(props))
+			diagnostics = repairDiagnostics(contradiction, "medium.requested_style", "The rendering permission has been re-examined. Preserve its new schema constants and classify only an actual requested rendering style, medium or treatment.")
+			continue
+		}
+		if err == nil && reply.Disposition == "convert" && reply.RequestedMedium != "" && reply.RequestedStyle == "" {
+			err = invalid("medium.requested_style", "A known requested rendering medium needs its complete style noun phrase; never substitute the permission target or an action description as the style.")
+		}
 		if err == nil {
 			calls := out.Calls
 			out = reply
@@ -180,8 +205,8 @@ func resolvedVisualStyle(b Brief, medium MediumDecision, readings []LicenceRefer
 	case b.Style != "":
 		style.Phrase = b.Style
 		style.Source = "request"
-	case medium.Disposition == "convert":
-		style.Phrase = medium.Target
+	case medium.Disposition == "convert" && medium.RequestedStyle != "":
+		style.Phrase = medium.RequestedStyle
 		style.Source = "request"
 	case observed != "":
 		style.Phrase = observed
