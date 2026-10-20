@@ -1,0 +1,810 @@
+{
+  "$defs": {
+    "Asset": {
+      "additionalProperties": false,
+      "properties": {
+        "description": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "image",
+            "video",
+            "audio"
+          ],
+          "type": "string"
+        },
+        "metadata": {
+          "$ref": "#/$defs/MediaMetadata"
+        },
+        "sha256": {
+          "type": "string"
+        },
+        "uri": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "kind"
+      ],
+      "type": "object"
+    },
+    "Attribution": {
+      "additionalProperties": false,
+      "properties": {
+        "details": {
+          "type": "string"
+        },
+        "fact_ids": {
+          "items": {
+            "type": "string"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "role": {
+          "enum": [
+            "identity",
+            "appearance",
+            "clothing",
+            "scene",
+            "style",
+            "action",
+            "pose",
+            "camera",
+            "storyboard",
+            "first_frame",
+            "last_frame",
+            "keyframe",
+            "edit_source",
+            "continuation_source",
+            "voice",
+            "music",
+            "rhythm",
+            "soundtrack",
+            "sound_effect"
+          ],
+          "type": "string"
+        },
+        "source": {
+          "$ref": "#/$defs/SourceRef"
+        }
+      },
+      "required": [
+        "source",
+        "role"
+      ],
+      "type": "object"
+    },
+    "Claim": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "origin": {
+          "enum": [
+            "user",
+            "observed",
+            "creative"
+          ],
+          "type": "string"
+        },
+        "sources": {
+          "items": {
+            "$ref": "#/$defs/SourceRef"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "text": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "origin",
+        "text"
+      ],
+      "type": "object"
+    },
+    "Constraint": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "requirement",
+            "prohibition",
+            "silence",
+            "no_music",
+            "no_dialogue"
+          ],
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "kind",
+        "text"
+      ],
+      "type": "object"
+    },
+    "DialogueLine": {
+      "additionalProperties": false,
+      "properties": {
+        "delivery": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "language": {
+          "type": "string"
+        },
+        "speaker_ids": {
+          "items": {
+            "type": "string"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "text": {
+          "type": "string"
+        },
+        "voiceover": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "speaker_ids",
+        "language",
+        "text"
+      ],
+      "type": "object"
+    },
+    "DialoguePart": {
+      "additionalProperties": false,
+      "properties": {
+        "continues_from_previous": {
+          "type": "boolean"
+        },
+        "continues_to_next": {
+          "type": "boolean"
+        },
+        "cut_off": {
+          "type": "boolean"
+        },
+        "line_id": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "line_id",
+        "text"
+      ],
+      "type": "object"
+    },
+    "Document": {
+      "additionalProperties": false,
+      "properties": {
+        "assets": {
+          "items": {
+            "$ref": "#/$defs/Asset"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "claims": {
+          "items": {
+            "$ref": "#/$defs/Claim"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "constraints": {
+          "items": {
+            "$ref": "#/$defs/Constraint"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "dialogue": {
+          "items": {
+            "$ref": "#/$defs/DialogueLine"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/Evidence"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "mode": {
+          "enum": [
+            "t2va",
+            "i2va",
+            "l2va",
+            "fl2va",
+            "ref2va"
+          ],
+          "type": "string"
+        },
+        "music": {
+          "type": "string"
+        },
+        "references": {
+          "items": {
+            "$ref": "#/$defs/Reference"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "shots": {
+          "items": {
+            "$ref": "#/$defs/Shot"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "soundscape": {
+          "type": "string"
+        },
+        "speakers": {
+          "items": {
+            "$ref": "#/$defs/Speaker"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "style": {
+          "type": "string"
+        },
+        "subjects": {
+          "items": {
+            "$ref": "#/$defs/Subject"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "summary": {
+          "items": {
+            "$ref": "#/$defs/Span"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "target": {
+          "$ref": "#/$defs/Target"
+        },
+        "version": {
+          "const": "contextir/v1",
+          "type": "string"
+        }
+      },
+      "required": [
+        "version",
+        "mode",
+        "target",
+        "shots",
+        "soundscape",
+        "music"
+      ],
+      "type": "object"
+    },
+    "Event": {
+      "additionalProperties": false,
+      "properties": {
+        "at_ms": {
+          "maximum": 9223372036854775807,
+          "minimum": -9223372036854775808,
+          "type": "integer"
+        },
+        "description": {
+          "items": {
+            "$ref": "#/$defs/Span"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "dialogue": {
+          "$ref": "#/$defs/DialoguePart"
+        },
+        "kind": {
+          "enum": [
+            "visual",
+            "action",
+            "camera",
+            "sound",
+            "dialogue",
+            "visible_text"
+          ],
+          "type": "string"
+        },
+        "visible_text": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind"
+      ],
+      "type": "object"
+    },
+    "Evidence": {
+      "additionalProperties": false,
+      "properties": {
+        "analyzer_version": {
+          "type": "string"
+        },
+        "asset_id": {
+          "type": "string"
+        },
+        "facts": {
+          "items": {
+            "$ref": "#/$defs/Fact"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "limitations": {
+          "items": {
+            "type": "string"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "model": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "asset_id",
+        "facts",
+        "analyzer_version"
+      ],
+      "type": "object"
+    },
+    "Fact": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "source": {
+          "$ref": "#/$defs/SourceRef"
+        },
+        "text": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "text",
+        "source"
+      ],
+      "type": "object"
+    },
+    "Interval": {
+      "additionalProperties": false,
+      "properties": {
+        "end_ms": {
+          "maximum": 9223372036854775807,
+          "minimum": -9223372036854775808,
+          "type": "integer"
+        },
+        "start_ms": {
+          "maximum": 9223372036854775807,
+          "minimum": -9223372036854775808,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "start_ms",
+        "end_ms"
+      ],
+      "type": "object"
+    },
+    "MediaMetadata": {
+      "additionalProperties": false,
+      "properties": {
+        "duration_ms": {
+          "maximum": 9223372036854775807,
+          "minimum": -9223372036854775808,
+          "type": "integer"
+        },
+        "fps": {
+          "$ref": "#/$defs/Rational"
+        },
+        "height": {
+          "maximum": 9223372036854775807,
+          "minimum": -9223372036854775808,
+          "type": "integer"
+        },
+        "width": {
+          "maximum": 9223372036854775807,
+          "minimum": -9223372036854775808,
+          "type": "integer"
+        }
+      },
+      "required": [],
+      "type": "object"
+    },
+    "Rational": {
+      "additionalProperties": false,
+      "properties": {
+        "denominator": {
+          "maximum": 9223372036854775807,
+          "minimum": -9223372036854775808,
+          "type": "integer"
+        },
+        "numerator": {
+          "maximum": 9223372036854775807,
+          "minimum": -9223372036854775808,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "numerator",
+        "denominator"
+      ],
+      "type": "object"
+    },
+    "Reference": {
+      "additionalProperties": false,
+      "properties": {
+        "anchor_ms": {
+          "maximum": 9223372036854775807,
+          "minimum": -9223372036854775808,
+          "type": "integer"
+        },
+        "description": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "picture",
+            "video",
+            "audio"
+          ],
+          "type": "string"
+        },
+        "retention": {
+          "enum": [
+            "fully_preserved",
+            "partially_preserved",
+            "attribute_transfer",
+            "weak_reference",
+            "fully_copy",
+            "partially_copy",
+            "reference"
+          ],
+          "type": "string"
+        },
+        "retention_details": {
+          "type": "string"
+        },
+        "roles": {
+          "items": {
+            "enum": [
+              "identity",
+              "appearance",
+              "clothing",
+              "scene",
+              "style",
+              "action",
+              "pose",
+              "camera",
+              "storyboard",
+              "first_frame",
+              "last_frame",
+              "keyframe",
+              "edit_source",
+              "continuation_source",
+              "voice",
+              "music",
+              "rhythm",
+              "soundtrack",
+              "sound_effect"
+            ],
+            "type": "string"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "shot_ids": {
+          "items": {
+            "type": "string"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "source": {
+          "$ref": "#/$defs/SourceRef"
+        },
+        "speaker_id": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "kind",
+        "source",
+        "roles",
+        "description",
+        "retention"
+      ],
+      "type": "object"
+    },
+    "Shot": {
+      "additionalProperties": false,
+      "properties": {
+        "description": {
+          "items": {
+            "$ref": "#/$defs/Span"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "end_ms": {
+          "maximum": 9223372036854775807,
+          "minimum": -9223372036854775808,
+          "type": "integer"
+        },
+        "events": {
+          "items": {
+            "$ref": "#/$defs/Event"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "id": {
+          "type": "string"
+        },
+        "start_ms": {
+          "maximum": 9223372036854775807,
+          "minimum": -9223372036854775808,
+          "type": "integer"
+        },
+        "transition": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "start_ms",
+        "end_ms",
+        "description"
+      ],
+      "type": "object"
+    },
+    "SourceRef": {
+      "additionalProperties": false,
+      "properties": {
+        "asset_id": {
+          "type": "string"
+        },
+        "interval": {
+          "$ref": "#/$defs/Interval"
+        },
+        "track": {
+          "enum": [
+            "visual",
+            "audio"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "asset_id",
+        "track"
+      ],
+      "type": "object"
+    },
+    "Span": {
+      "additionalProperties": false,
+      "oneOf": [
+        {
+          "maxProperties": 1,
+          "required": [
+            "text"
+          ]
+        },
+        {
+          "maxProperties": 1,
+          "required": [
+            "subject_id"
+          ]
+        },
+        {
+          "maxProperties": 1,
+          "required": [
+            "reference_id"
+          ]
+        }
+      ],
+      "properties": {
+        "reference_id": {
+          "type": "string"
+        },
+        "subject_id": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        }
+      },
+      "required": [],
+      "type": "object"
+    },
+    "Speaker": {
+      "additionalProperties": false,
+      "properties": {
+        "description": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "subject_id": {
+          "type": "string"
+        },
+        "voice_reference_id": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "description"
+      ],
+      "type": "object"
+    },
+    "Subject": {
+      "additionalProperties": false,
+      "properties": {
+        "description": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "retention": {
+          "enum": [
+            "fully_preserved",
+            "partially_preserved",
+            "attribute_transfer",
+            "weak_reference",
+            "fully_copy",
+            "partially_copy",
+            "reference"
+          ],
+          "type": "string"
+        },
+        "retention_details": {
+          "type": "string"
+        },
+        "shot_ids": {
+          "items": {
+            "type": "string"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "sources": {
+          "items": {
+            "$ref": "#/$defs/Attribution"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "description"
+      ],
+      "type": "object"
+    },
+    "Target": {
+      "additionalProperties": false,
+      "properties": {
+        "aspect_ratio": {
+          "type": "string"
+        },
+        "duration_ms": {
+          "maximum": 9223372036854775807,
+          "minimum": -9223372036854775808,
+          "type": "integer"
+        },
+        "fps": {
+          "$ref": "#/$defs/Rational"
+        },
+        "frame_count": {
+          "maximum": 9223372036854775807,
+          "minimum": -9223372036854775808,
+          "type": "integer"
+        },
+        "height": {
+          "maximum": 9223372036854775807,
+          "minimum": -9223372036854775808,
+          "type": "integer"
+        },
+        "width": {
+          "maximum": 9223372036854775807,
+          "minimum": -9223372036854775808,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "duration_ms",
+        "aspect_ratio",
+        "fps"
+      ],
+      "type": "object"
+    }
+  },
+  "$id": "https://github.com/ly95/contextir/schema/contextir-v1.json",
+  "$ref": "#/$defs/Document",
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}
