@@ -36,7 +36,9 @@
 
 本轮全部 Go 测试、race、vet、gofmt 与 diff check 的原始命令和结果见 [本地验证](../conformance/reports/local-validation-go-adapted-v1.json)。上一轮冻结的 279 文件快照及同二进制重建记录继续保留，不把后续产品修复说成旧快照已验证。普通 `go test` 不写仓库审计目录，下载后的模块也可运行测试。
 
-上一轮提交 `e7197d4` 已在仓库外的临时 Go module 中从真实私有远端下载并独立构建；实际版本为 `v0.1.1-0.20261020083223-e7197d4c2aa7`，模块 ZIP 为 5,785,651 字节，无 `replace` 或工作区源码引用。Document/H3 编译、序列化与 Artifact 重放、哈希、离线评分/聚合/比较/门卫及下载后的 `plan/TestUpstreamCorpus` 全通过，见 [消费者验证](../conformance/reports/contextir-private-consumer-e7197d4-v3.json) 和 [复验脚本](../conformance/verify_private_consumer.py)。这项验证针对安装与公共 API；确定性消费者输入是另标记的 smoke，不计入原 991 项。两次首次下载失败历史与后续成功报告分别保留。
+本轮提交 `fe1feb7` 在仓库外从真实私有远端下载为 `v0.1.1-0.20261020092710-fe1feb7727b0`，模块 ZIP 为 5,879,718 字节，无 `replace` 或工作区源码引用。消费者独立 build/run、Document/H3 编译、保存重放、哈希、评分与 plan corpus 全通过，见 [本轮消费者验证](../conformance/reports/contextir-private-consumer-fe1feb7-go-adapted-v1.json)。还直接对下载包运行五组 Go 适配测试，8 主测试/17 子测试全部通过、零跳过，[完整 Go JSON events](../conformance/reports/private-go-adapted-tests-fe1feb7-v1.json)记录实际 module-cache 导入目录；测试阶段不转发 provider 凭据并禁止依赖/VCS 网络，证明录音 testdata 没有依赖仓库审计目录。
+
+上一轮 `e7197d4` 的 [消费者记录](../conformance/reports/contextir-private-consumer-e7197d4-v3.json) 和两次初始下载失败历史继续保留。[复验脚本](../conformance/verify_private_consumer.py)验证安装与公共 API，确定性消费者 smoke 不计入原 991 项。
 
 ## 明确的策略差异
 
