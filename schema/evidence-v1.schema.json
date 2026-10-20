@@ -1,0 +1,174 @@
+{
+  "$defs": {
+    "Evidence": {
+      "additionalProperties": false,
+      "properties": {
+        "analyzer_version": {
+          "type": "string"
+        },
+        "asset_id": {
+          "type": "string"
+        },
+        "coverage": {
+          "$ref": "#/$defs/PerceptionCoverage"
+        },
+        "facts": {
+          "items": {
+            "$ref": "#/$defs/Fact"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "limitations": {
+          "items": {
+            "type": "string"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "model": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "asset_id",
+        "facts",
+        "analyzer_version"
+      ],
+      "type": "object"
+    },
+    "Fact": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "source": {
+          "$ref": "#/$defs/SourceRef"
+        },
+        "text": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "text",
+        "source"
+      ],
+      "type": "object"
+    },
+    "Interval": {
+      "additionalProperties": false,
+      "properties": {
+        "end_ms": {
+          "maximum": 9223372036854775807,
+          "minimum": -9223372036854775808,
+          "type": "integer"
+        },
+        "start_ms": {
+          "maximum": 9223372036854775807,
+          "minimum": -9223372036854775808,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "start_ms",
+        "end_ms"
+      ],
+      "type": "object"
+    },
+    "PerceptionCoverage": {
+      "additionalProperties": false,
+      "properties": {
+        "absent_tracks": {
+          "items": {
+            "enum": [
+              "visual",
+              "audio"
+            ],
+            "type": "string"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "intervals": {
+          "items": {
+            "$ref": "#/$defs/Interval"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "sample_times_ms": {
+          "items": {
+            "maximum": 9223372036854775807,
+            "minimum": -9223372036854775808,
+            "type": "integer"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "status": {
+          "enum": [
+            "complete",
+            "partial"
+          ],
+          "type": "string"
+        },
+        "tracks": {
+          "items": {
+            "enum": [
+              "visual",
+              "audio"
+            ],
+            "type": "string"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "status",
+        "tracks"
+      ],
+      "type": "object"
+    },
+    "SourceRef": {
+      "additionalProperties": false,
+      "properties": {
+        "asset_id": {
+          "type": "string"
+        },
+        "interval": {
+          "$ref": "#/$defs/Interval"
+        },
+        "track": {
+          "enum": [
+            "visual",
+            "audio"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "asset_id",
+        "track"
+      ],
+      "type": "object"
+    }
+  },
+  "$id": "https://github.com/ly95/contextir/schema/evidence-v1.json",
+  "$ref": "#/$defs/Evidence",
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

@@ -20,6 +20,25 @@ type MediaBinding struct {
 	SHA256     string                  `json:"sha256,omitempty"`
 	Socket     string                  `json:"socket"`
 	PairedWith string                  `json:"paired_with,omitempty"`
+	TargetUses []TargetUse             `json:"target_uses,omitempty"`
+}
+
+// TargetUse carries the semantic role and target timeline of one reference.
+// Empty audio ShotIDs in the document mean the entire target unless structural
+// use in a shot narrows the scope; each compiled use records concrete intervals.
+type TargetUse struct {
+	ReferenceID string              `json:"reference_id"`
+	Roles       []contextir.Role    `json:"roles"`
+	Retention   contextir.Retention `json:"retention"`
+	SpeakerID   string              `json:"speaker_id,omitempty"`
+	Anchor      *contextir.Time     `json:"anchor_ms,omitempty"`
+	Shots       []TargetShot        `json:"shots"`
+}
+
+type TargetShot struct {
+	ID       string             `json:"id"`
+	Index    int                `json:"index"`
+	Interval contextir.Interval `json:"interval"`
 }
 
 type IDBinding struct {
@@ -163,7 +182,14 @@ func bind(doc contextir.Document) bindingState {
 		return label
 	}
 	for i, image := range images {
-		label := add(image, contextir.ReferencePicture, fmt.Sprintf("ref_image_%d", i+1), "")
+		socket := fmt.Sprintf("ref_image_%d", i+1)
+		if doc.Mode != contextir.ModeReference {
+			socket = "last_frame"
+			if containsRole(baseImageRefs[i].Roles, contextir.RoleFirstFrame) {
+				socket = "first_frame"
+			}
+		}
+		label := add(image, contextir.ReferencePicture, socket, "")
 		if doc.Mode != contextir.ModeReference {
 			s.refs[baseImageRefs[i].ID] = label
 		}
@@ -198,6 +224,12 @@ func bind(doc contextir.Document) bindingState {
 		}
 		s.refs[reference.ID] = label
 		s.manifest.References = append(s.manifest.References, IDBinding{ID: reference.ID, Label: label})
+		for i := range s.manifest.Media {
+			if s.manifest.Media[i].Label == label {
+				s.manifest.Media[i].TargetUses = append(s.manifest.Media[i].TargetUses, targetUse(doc, reference))
+				break
+			}
+		}
 	}
 	assignSpeaker := func(id string) {
 		if s.speakers[id] != "" {
@@ -258,4 +290,25 @@ func checkLimits(manifest Manifest, p Profile) error {
 		}
 	}
 	return nil
+}
+
+func targetUse(doc contextir.Document, ref contextir.Reference) TargetUse {
+	use := TargetUse{ReferenceID: ref.ID, Roles: append([]contextir.Role(nil), ref.Roles...), Retention: ref.Retention, SpeakerID: ref.SpeakerID, Shots: []TargetShot{}}
+	if ref.Anchor != nil {
+		anchor := *ref.Anchor
+		use.Anchor = &anchor
+	}
+	labels := referenceShots(doc, ref)
+	if ref.Kind == contextir.ReferenceAudio {
+		labels = audioShots(doc, ref)
+	}
+	for i, shot := range doc.Shots {
+		for _, label := range labels {
+			if label == fmt.Sprintf("[Shot %d]", i+1) {
+				use.Shots = append(use.Shots, TargetShot{ID: shot.ID, Index: i + 1, Interval: contextir.Interval{Start: shot.Start, End: shot.End}})
+				break
+			}
+		}
+	}
+	return use
 }

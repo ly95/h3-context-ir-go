@@ -12,7 +12,7 @@ import (
 func TestCLIValidateCompileAndSchema(t *testing.T) {
 	doc := contextir.Document{Version: contextir.Version, Mode: contextir.ModeText, Target: contextir.Target{Duration: 8000, AspectRatio: "16:9", FPS: contextir.Rational{Numerator: 24, Denominator: 1}}, Shots: []contextir.Shot{{ID: "shot", Start: 0, End: 8000, Description: contextir.Text("A clock ticks on a wooden desk.")}}, Soundscape: "A clock ticks.", Music: "N/A"}
 	data, _ := json.Marshal(doc)
-	for _, args := range [][]string{{"validate"}, {"compile"}, {"compile", "-profile", "comfyui"}, {"schema"}} {
+	for _, args := range [][]string{{"validate"}, {"compile"}, {"compile", "-profile", "comfyui"}, {"schema"}, {"schema", "-type", "evidence"}} {
 		var out, errOut bytes.Buffer
 		if code := run(args, bytes.NewReader(data), &out, &errOut); code != 0 {
 			t.Fatalf("%v: exit %d: %s", args, code, errOut.String())
@@ -24,7 +24,7 @@ func TestCLIValidateCompileAndSchema(t *testing.T) {
 }
 
 func TestCLIFailureIsExplicitAndSafe(t *testing.T) {
-	for _, args := range [][]string{nil, {"unknown"}, {"compile", "-profile", "missing"}, {"compile"}, {"validate"}} {
+	for _, args := range [][]string{nil, {"unknown"}, {"schema", "-type", "missing"}, {"compile", "-profile", "missing"}, {"compile"}, {"validate"}} {
 		var out, errOut bytes.Buffer
 		if code := run(args, strings.NewReader(`{"private":"do-not-leak"}`), &out, &errOut); code == 0 {
 			t.Fatalf("%v succeeded", args)

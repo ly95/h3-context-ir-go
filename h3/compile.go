@@ -19,6 +19,8 @@ type Artifact struct {
 	Version                  string             `json:"version"`
 	CompilerVersion          string             `json:"compiler_version"`
 	FormatVersion            string             `json:"format_version"`
+	Mode                     contextir.Mode     `json:"mode"`
+	Target                   contextir.Target   `json:"target"`
 	Profile                  Profile            `json:"profile"`
 	Prompt                   string             `json:"prompt"`
 	Manifest                 Manifest           `json:"manifest"`
@@ -72,6 +74,7 @@ func Compile(doc contextir.Document, profile Profile) (Artifact, error) {
 	manifestJSON, _ := json.Marshal(state.manifest)
 	a := Artifact{
 		Version: ArtifactVersion, CompilerVersion: CompilerVersion, FormatVersion: FormatVersion,
+		Mode: doc.Mode, Target: doc.Target,
 		Profile: profile, Prompt: prompt, Manifest: state.manifest,
 		Frames: frames, EffectiveDurationSeconds: duration,
 		DocumentSHA256: digest(docJSON), ProfileSHA256: digest(profileJSON),
@@ -209,6 +212,13 @@ func renderShots(doc contextir.Document, state bindingState) string {
 	shots := make([]string, 0, len(doc.Shots))
 	for i, shot := range doc.Shots {
 		body := sentence(rich(shot.Description, doc, state))
+		if doc.Mode == contextir.ModeReference {
+			for _, ref := range doc.References {
+				if ref.Kind == contextir.ReferenceAudio && audioAppliesToShot(doc, ref, shot.ID) {
+					body += " " + audioApplication(ref, state.refs[ref.ID])
+				}
+			}
+		}
 		if i == 0 && doc.Mode != contextir.ModeReference && doc.Style != "" {
 			body = sentence(doc.Style) + " " + body
 		}
@@ -220,6 +230,12 @@ func renderShots(doc contextir.Document, state bindingState) string {
 					text += " "
 				}
 				text += renderDialogue(*event.Dialogue, state, doc.Mode)
+			case contextir.EventAudioCue:
+				if text != "" {
+					text += " "
+				}
+				cue := event.AudioCue
+				text += "The reused audio " + state.refs[cue.ReferenceID] + " reaches the phrase <d>[" + cue.Language + "] " + cue.Text + "</d>."
 			case contextir.EventVisibleText:
 				if text != "" {
 					text += " "
@@ -282,6 +298,12 @@ func renderDialogue(part contextir.DialoguePart, state bindingState, mode contex
 	}
 	if line.Voiceover {
 		prefix += " says in an off-screen voiceover: "
+	} else if line.Kind == contextir.VocalSinging {
+		if len(ids) > 1 {
+			prefix += " sing together: "
+		} else {
+			prefix += " sings: "
+		}
 	} else if len(ids) > 1 {
 		prefix += " say together: "
 	} else {

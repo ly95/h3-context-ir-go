@@ -15,9 +15,9 @@ import (
 )
 
 // PromptVersion identifies the interpretation contract embedded in this package.
-const PromptVersion = "contextir/planner/v1"
+const PromptVersion = "contextir/planner/v4"
 
-//go:embed prompts/plan_v1.txt
+//go:embed prompts/plan_v4.txt
 var systemPrompt string
 
 // Model must honor context cancellation and must not silently select another
@@ -39,6 +39,13 @@ type Options struct {
 	// MaxRetries is the number of extra interpretation calls, from 0 through 3.
 	// The default, zero, makes exactly one model call after perception succeeds.
 	MaxRetries int
+	// AllowPartialPerception explicitly admits observations declared partial.
+	// Their coverage and limitations remain in the model input and Document;
+	// admitting them does not establish complete media understanding.
+	AllowPartialPerception bool
+	// AllowUnspecifiedCoverage explicitly admits legacy observations that do not
+	// declare coverage. The default rejects such observations before planning.
+	AllowUnspecifiedCoverage bool
 }
 
 // CallUsage records every planner Model invocation, including failed attempts.
@@ -122,6 +129,10 @@ func (p *Planner) PlanWithEvidence(ctx context.Context, request contextir.Reques
 	if err != nil {
 		return result, err
 	}
+	schema, err := responseSchema(request)
+	if err != nil {
+		return result, issueError(contextir.CodeInvalid, "request", "response_schema", "The explicit request cannot be represented by the planning schema.", err)
+	}
 	var diagnostics []contextir.Issue
 	for attempt := 1; attempt <= p.options.MaxRetries+1; attempt++ {
 		if err := canceled(ctx, "plan"); err != nil {
@@ -143,9 +154,9 @@ func (p *Planner) PlanWithEvidence(ctx context.Context, request contextir.Reques
 			Stage:          "plan",
 			System:         systemPrompt,
 			Input:          input,
-			ResponseSchema: contextir.DocumentSchema(),
+			ResponseSchema: append(json.RawMessage(nil), schema...),
 		})
-		validUsage := response.Usage.InputTokens >= 0 && response.Usage.OutputTokens >= 0
+		validUsage := !response.UsageInvalid && response.Usage.InputTokens >= 0 && response.Usage.OutputTokens >= 0
 		result.Calls = append(result.Calls, CallUsage{
 			Stage: "plan", Attempt: attempt, Model: response.Model,
 			Usage: response.Usage, Valid: validUsage,
@@ -157,7 +168,7 @@ func (p *Planner) PlanWithEvidence(ctx context.Context, request contextir.Reques
 			return result, issueError(contextir.CodeCanceled, "plan", "model", "The model call was canceled.", callErr)
 		}
 		if !validUsage {
-			return result, issueError(contextir.CodeModelOutput, "plan", "usage", "Reported token counts must be nonnegative.", callErr)
+			return result, issueError(contextir.CodeModelOutput, "plan", "usage", "Reported usage must be valid and token counts must be nonnegative.", callErr)
 		}
 		if callErr != nil {
 			return result, issueError(contextir.CodeModel, "plan", "model", "The model call failed.", callErr)
@@ -200,7 +211,7 @@ func issueError(code contextir.Code, stage, path, message string, cause error) *
 
 func modelOutputError(cause error) *contextir.Error {
 	var typed *contextir.Error
-	if errors.As(cause, &typed) && len(typed.Issues) > 0 {
+	if errors.As(cause, &typed) && typed != nil && len(typed.Issues) > 0 {
 		issues := append([]contextir.Issue(nil), typed.Issues...)
 		return &contextir.Error{Code: contextir.CodeModelOutput, Stage: "plan", Issues: issues, Cause: cause}
 	}

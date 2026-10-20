@@ -82,6 +82,26 @@
       ],
       "type": "object"
     },
+    "AudioCue": {
+      "additionalProperties": false,
+      "properties": {
+        "language": {
+          "type": "string"
+        },
+        "reference_id": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "reference_id",
+        "language",
+        "text"
+      ],
+      "type": "object"
+    },
     "Claim": {
       "additionalProperties": false,
       "properties": {
@@ -150,6 +170,14 @@
           "type": "string"
         },
         "id": {
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "",
+            "speech",
+            "singing"
+          ],
           "type": "string"
         },
         "language": {
@@ -342,6 +370,9 @@
           "minimum": -9223372036854775808,
           "type": "integer"
         },
+        "audio_cue": {
+          "$ref": "#/$defs/AudioCue"
+        },
         "description": {
           "items": {
             "$ref": "#/$defs/Span"
@@ -361,7 +392,8 @@
             "camera",
             "sound",
             "dialogue",
-            "visible_text"
+            "visible_text",
+            "audio_cue"
           ],
           "type": "string"
         },
@@ -382,6 +414,9 @@
         },
         "asset_id": {
           "type": "string"
+        },
+        "coverage": {
+          "$ref": "#/$defs/PerceptionCoverage"
         },
         "facts": {
           "items": {
@@ -475,6 +510,69 @@
         }
       },
       "required": [],
+      "type": "object"
+    },
+    "PerceptionCoverage": {
+      "additionalProperties": false,
+      "properties": {
+        "absent_tracks": {
+          "items": {
+            "enum": [
+              "visual",
+              "audio"
+            ],
+            "type": "string"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "intervals": {
+          "items": {
+            "$ref": "#/$defs/Interval"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "sample_times_ms": {
+          "items": {
+            "maximum": 9223372036854775807,
+            "minimum": -9223372036854775808,
+            "type": "integer"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "status": {
+          "enum": [
+            "complete",
+            "partial"
+          ],
+          "type": "string"
+        },
+        "tracks": {
+          "items": {
+            "enum": [
+              "visual",
+              "audio"
+            ],
+            "type": "string"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "status",
+        "tracks"
+      ],
       "type": "object"
     },
     "Rational": {

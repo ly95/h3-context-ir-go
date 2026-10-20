@@ -76,17 +76,18 @@ func renderDefinitions(doc contextir.Document, state bindingState) (string, stri
 				description = append(description, "Its selected source segment runs from "+timestamp(item.Source.Interval.Start)+" to "+timestamp(item.Source.Interval.End)+".")
 			}
 			reasons = append(reasons, retentionDetails(item.Retention, item.RetentionDetails))
-			if item.Kind != contextir.ReferenceAudio {
-				shots := referenceShots(doc, item)
-				context := strings.Join(shots, ", ")
-				if len(roles) > 0 {
-					if context != "" {
-						context += "; "
-					}
-					context += strings.Join(roles, " and ")
-				}
-				contexts = append(contexts, context)
+			shots := referenceShots(doc, item)
+			if item.Kind == contextir.ReferenceAudio {
+				shots = audioShots(doc, item)
 			}
+			context := strings.Join(shots, ", ")
+			if len(roles) > 0 {
+				if context != "" {
+					context += "; "
+				}
+				context += strings.Join(roles, " and ")
+			}
+			contexts = append(contexts, context)
 		}
 		definitions = append(definitions, label+" is "+strings.Join(description, " "))
 		context := ""
@@ -206,4 +207,80 @@ func usesSubject(text contextir.RichText, id string) bool {
 		}
 	}
 	return false
+}
+
+// audioShots resolves explicit semantic scope without reading or guessing prose.
+// Explicit ShotIDs and structural appearances are additive, as for visual uses.
+// A reference with no target scope is a whole-video relationship.
+func audioShots(doc contextir.Document, ref contextir.Reference) []string {
+	shots := orderedShots(doc, ref.ShotIDs, func(shot contextir.Shot) bool {
+		for _, span := range shot.Description {
+			if span.ReferenceID == ref.ID {
+				return true
+			}
+		}
+		for _, event := range shot.Events {
+			for _, span := range event.Description {
+				if span.ReferenceID == ref.ID {
+					return true
+				}
+			}
+			if event.AudioCue != nil && event.AudioCue.ReferenceID == ref.ID {
+				return true
+			}
+			if event.Dialogue != nil {
+				for _, line := range doc.Dialogue {
+					if line.ID != event.Dialogue.LineID {
+						continue
+					}
+					for _, id := range line.SpeakerIDs {
+						for _, speaker := range doc.Speakers {
+							if speaker.ID == id && speaker.VoiceReferenceID == ref.ID {
+								return true
+							}
+						}
+					}
+				}
+			}
+		}
+		return false
+	})
+	if len(shots) == 0 {
+		for i := range doc.Shots {
+			shots = append(shots, fmt.Sprintf("[Shot %d]", i+1))
+		}
+	}
+	return shots
+}
+
+func audioAppliesToShot(doc contextir.Document, ref contextir.Reference, id string) bool {
+	for i, shot := range doc.Shots {
+		if shot.ID == id {
+			label := fmt.Sprintf("[Shot %d]", i+1)
+			for _, applied := range audioShots(doc, ref) {
+				if applied == label {
+					return true
+				}
+			}
+			return false
+		}
+	}
+	return false
+}
+
+func audioApplication(ref contextir.Reference, label string) string {
+	roles := make([]string, 0, len(ref.Roles))
+	for _, role := range ref.Roles {
+		roles = append(roles, roleName(role))
+	}
+	relation := "Its broad audible characteristics are followed without copying the source signal."
+	switch ref.Retention {
+	case contextir.FullyCopy:
+		relation = "Its complete source signal is reused as the target video's complete final audio track."
+	case contextir.PartiallyCopy:
+		relation = "Its source signal is copied in part or combined with other audio."
+	case contextir.AudioReference:
+		relation = "Its defined audible characteristics are referenced without copying the source signal."
+	}
+	return label + " applies in this shot as " + strings.Join(roles, " and ") + ". " + relation
 }

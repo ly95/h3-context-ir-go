@@ -11,7 +11,7 @@ import (
 
 const (
 	FormatVersion   = "minimax-h3/prompt-v1"
-	CompilerVersion = "contextir-h3/v1"
+	CompilerVersion = "contextir-h3/v1.1"
 	ArtifactVersion = "contextir-h3/artifact-v1"
 )
 
@@ -41,6 +41,9 @@ type Profile struct {
 	FPS                           contextir.Rational `json:"fps"`
 	Modes                         []contextir.Mode   `json:"modes"`
 	Grid                          *FrameGrid         `json:"frame_grid,omitempty"`
+	MinFrames                     int64              `json:"min_frames,omitempty"`
+	MaxFrames                     int64              `json:"max_frames,omitempty"`
+	CanvasMultiple                int                `json:"canvas_multiple,omitempty"`
 	Limits                        Limits             `json:"limits"`
 	SupportsReferenceFrameAnchors bool               `json:"supports_reference_frame_anchors"`
 	SupportsSourceIntervals       bool               `json:"supports_source_intervals"`
@@ -67,6 +70,7 @@ func ComfyUIProfile() Profile {
 	p := OfficialProfile()
 	p.Name = "h3-comfyui-17k5-v1"
 	p.Grid = &FrameGrid{Modulus: 17, Remainder: 5}
+	p.MinFrames, p.MaxFrames, p.CanvasMultiple = 5, 3600, 32
 	p.Limits = Limits{Pictures: 9, Videos: 3, VideoAudio: 3, StandaloneAudio: 3}
 	p.SupportsReferenceFrameAnchors = false
 	p.SupportsSourceIntervals = false
@@ -102,6 +106,12 @@ func checkProfile(doc contextir.Document, p Profile) (int64, contextir.Rational,
 	if p.Limits.Pictures < 0 || p.Limits.Videos < 0 || p.Limits.VideoAudio < 0 || p.Limits.StandaloneAudio < 0 {
 		return 0, contextir.Rational{}, profileIssue(contextir.CodeInvalid, "profile.limits", "profile limits must be nonnegative")
 	}
+	if p.MinFrames < 0 || p.MaxFrames < 0 || (p.MaxFrames > 0 && p.MinFrames > p.MaxFrames) || p.CanvasMultiple < 0 {
+		return 0, contextir.Rational{}, profileIssue(contextir.CodeInvalid, "profile", "invalid target frame or canvas limits")
+	}
+	if p.CanvasMultiple > 0 && (doc.Target.Width%p.CanvasMultiple != 0 || doc.Target.Height%p.CanvasMultiple != 0) {
+		return 0, contextir.Rational{}, profileIssue(contextir.CodeUnsupported, "target", "explicit canvas dimensions must match the runtime pixel grid")
+	}
 	frames := doc.Target.FrameCount
 	if frames == 0 {
 		// Multiplication uses integers of arbitrary precision so a malformed huge
@@ -113,6 +123,9 @@ func checkProfile(doc contextir.Document, p Profile) (int64, contextir.Rational,
 			return 0, contextir.Rational{}, profileIssue(contextir.CodeUnsupported, "target.duration_ms", "duration does not represent an exact 24 fps frame count; provide an explicit frame_count and its nearest-millisecond duration")
 		}
 		frames = q.Int64()
+	}
+	if frames < p.MinFrames || (p.MaxFrames > 0 && frames > p.MaxFrames) {
+		return 0, contextir.Rational{}, profileIssue(contextir.CodeLimit, "target.frame_count", "target frame count is outside the explicit runtime limits")
 	}
 	if p.Grid != nil {
 		if p.Grid.Modulus <= 0 || p.Grid.Remainder < 0 || p.Grid.Remainder >= p.Grid.Modulus {

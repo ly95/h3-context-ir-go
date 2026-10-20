@@ -181,17 +181,35 @@ const (
 	EventSound       EventKind = "sound"
 	EventDialogue    EventKind = "dialogue"
 	EventVisibleText EventKind = "visible_text"
+	EventAudioCue    EventKind = "audio_cue"
+)
+
+type VocalKind string
+
+const (
+	VocalSpeech  VocalKind = "speech"
+	VocalSinging VocalKind = "singing"
 )
 
 // DialogueLine is the complete immutable utterance. Parts across events must
 // concatenate to Text byte-for-byte; language, punctuation, and spacing survive.
 type DialogueLine struct {
-	ID         string   `json:"id"`
-	SpeakerIDs []string `json:"speaker_ids"`
-	Language   string   `json:"language"`
-	Text       string   `json:"text"`
-	Delivery   string   `json:"delivery,omitempty"`
-	Voiceover  bool     `json:"voiceover,omitempty"`
+	ID string `json:"id"`
+	// An omitted kind is speech in the original v1 contract. Singing is explicit.
+	Kind       VocalKind `json:"kind,omitempty"`
+	SpeakerIDs []string  `json:"speaker_ids"`
+	Language   string    `json:"language"`
+	Text       string    `json:"text"`
+	Delivery   string    `json:"delivery,omitempty"`
+	Voiceover  bool      `json:"voiceover,omitempty"`
+}
+
+// AudioCue identifies a phrase in an existing audio signal. It does not create
+// an independent target speaker and must never receive a generated (Sx) label.
+type AudioCue struct {
+	ReferenceID string `json:"reference_id"`
+	Language    string `json:"language"`
+	Text        string `json:"text"`
 }
 
 type DialoguePart struct {
@@ -207,6 +225,7 @@ type Event struct {
 	At          *Time         `json:"at_ms,omitempty"`
 	Description RichText      `json:"description,omitempty"`
 	Dialogue    *DialoguePart `json:"dialogue,omitempty"`
+	AudioCue    *AudioCue     `json:"audio_cue,omitempty"`
 	// VisibleText is emitted verbatim inside English double quotes.
 	VisibleText string `json:"visible_text,omitempty"`
 }
@@ -277,9 +296,22 @@ type Request struct {
 	Mode                   Mode           `json:"mode"`
 	Target                 Target         `json:"target"`
 	Assets                 []Asset        `json:"assets,omitempty"`
+	Bindings               []AssetBinding `json:"bindings,omitempty"`
 	Dialogue               []DialogueLine `json:"dialogue,omitempty"`
 	Constraints            []Constraint   `json:"constraints,omitempty"`
 	AllowCreativeAdditions bool           `json:"allow_creative_additions"`
+	// Newly generated vocal lines require separate permission. Caller-supplied
+	// Dialogue remains authoritative regardless of this flag.
+	AllowGeneratedDialogue bool `json:"allow_generated_dialogue"`
+}
+
+// AssetBinding locks an explicitly chosen source responsibility before model
+// interpretation. If bindings are supplied they form the complete allowed set
+// of source/role pairs, rather than suggestions to the planner.
+type AssetBinding struct {
+	Source SourceRef `json:"source"`
+	Role   Role      `json:"role"`
+	Anchor *Time     `json:"anchor_ms,omitempty"`
 }
 
 type Fact struct {
@@ -289,11 +321,30 @@ type Fact struct {
 }
 
 type Evidence struct {
-	AssetID         string   `json:"asset_id"`
-	Facts           []Fact   `json:"facts"`
-	Model           string   `json:"model,omitempty"`
-	AnalyzerVersion string   `json:"analyzer_version"`
-	Limitations     []string `json:"limitations,omitempty"`
+	AssetID         string              `json:"asset_id"`
+	Facts           []Fact              `json:"facts"`
+	Model           string              `json:"model,omitempty"`
+	AnalyzerVersion string              `json:"analyzer_version"`
+	Limitations     []string            `json:"limitations,omitempty"`
+	Coverage        *PerceptionCoverage `json:"coverage,omitempty"`
+}
+
+type CoverageStatus string
+
+const (
+	CoverageComplete CoverageStatus = "complete"
+	CoveragePartial  CoverageStatus = "partial"
+)
+
+// PerceptionCoverage records the adapter's declared inspection, not proof of
+// semantic accuracy. SampleTimes are source milliseconds; AbsentTracks records
+// tracks that were probed and found absent, not tracks silently ignored.
+type PerceptionCoverage struct {
+	Status       CoverageStatus `json:"status"`
+	Tracks       []Track        `json:"tracks"`
+	AbsentTracks []Track        `json:"absent_tracks,omitempty"`
+	SampleTimes  []Time         `json:"sample_times_ms,omitempty"`
+	Intervals    []Interval     `json:"intervals,omitempty"`
 }
 
 // ModelRequest is provider-neutral. ResponseSchema is a JSON Schema document,
@@ -315,4 +366,8 @@ type ModelResponse struct {
 	JSON  json.RawMessage `json:"json"`
 	Model string          `json:"model"`
 	Usage Usage           `json:"usage"`
+	// UsageInvalid marks evidence the adapter knows is invalid, such as usage
+	// beyond an explicitly requested hard limit. Preserve the reported amounts
+	// for diagnostics, but callers must not charge from that evidence.
+	UsageInvalid bool `json:"usage_invalid,omitempty"`
 }

@@ -26,19 +26,41 @@ func Decode(r io.Reader) (Document, error) {
 // values, invalid UTF-8, and unpaired JSON surrogate escapes. It decodes syntax;
 // call Validate to check the semantic contract before using a document.
 func DecodeWithOptions(r io.Reader, options DecodeOptions) (Document, error) {
-	var doc Document
-	invalid := func() (Document, error) {
-		return Document{}, &Error{Code: CodeModelOutput, Stage: "decode", Issues: []Issue{{Code: CodeModelOutput, Path: "$", Message: "invalid document JSON"}}}
+	return decodeStrictJSON[Document](r, options, "document")
+}
+
+// DecodeEvidence decodes a perception adapter's Evidence response using the
+// same strict wire contract and default byte limit as Decode. Call
+// ValidateEvidence with the original assets to check source provenance.
+func DecodeEvidence(r io.Reader) (Evidence, error) {
+	return DecodeEvidenceWithOptions(r, DecodeOptions{MaxBytes: MaxDocumentBytes})
+}
+
+// DecodeEvidenceWithOptions checks Evidence wire syntax without interpreting
+// facts or assuming that declared perception coverage has actually occurred.
+func DecodeEvidenceWithOptions(r io.Reader, options DecodeOptions) (Evidence, error) {
+	return decodeStrictJSON[Evidence](r, options, "evidence")
+}
+
+func decodeStrictJSON[T any](r io.Reader, options DecodeOptions, kind string) (T, error) {
+	var result T
+	invalid := func() (T, error) {
+		var empty T
+		return empty, &Error{Code: CodeModelOutput, Stage: "decode", Issues: []Issue{{Code: CodeModelOutput, Path: "$", Message: "invalid " + kind + " JSON"}}}
 	}
 	if r == nil || options.MaxBytes <= 0 || options.MaxBytes == math.MaxInt64 {
 		return invalid()
 	}
+	readerValue := reflect.ValueOf(r)
+	if (readerValue.Kind() == reflect.Pointer || readerValue.Kind() == reflect.Interface) && readerValue.IsNil() {
+		return invalid()
+	}
 	data, err := io.ReadAll(io.LimitReader(r, options.MaxBytes+1))
 	if err != nil {
-		return Document{}, &Error{Code: CodeModelOutput, Stage: "decode", Cause: err}
+		return result, &Error{Code: CodeModelOutput, Stage: "decode", Cause: err}
 	}
 	if int64(len(data)) > options.MaxBytes {
-		return Document{}, &Error{Code: CodeLimit, Stage: "decode", Issues: []Issue{{Code: CodeLimit, Path: "$", Message: "document exceeds configured byte limit"}}}
+		return result, &Error{Code: CodeLimit, Stage: "decode", Issues: []Issue{{Code: CodeLimit, Path: "$", Message: kind + " exceeds configured byte limit"}}}
 	}
 	if !utf8.Valid(data) || !validSurrogates(data) {
 		return invalid()
@@ -54,7 +76,7 @@ func DecodeWithOptions(r io.Reader, options DecodeOptions) (Document, error) {
 	var shape any
 	decoder = json.NewDecoder(bytes.NewReader(data))
 	decoder.UseNumber()
-	if err := decoder.Decode(&shape); err != nil || !strictShape(shape, reflect.TypeFor[Document]()) {
+	if err := decoder.Decode(&shape); err != nil || !strictShape(shape, reflect.TypeFor[T]()) {
 		return invalid()
 	}
 	// JSON Schema integers may be written as 5000.0 or 5e3. Normalize their
@@ -65,7 +87,7 @@ func DecodeWithOptions(r io.Reader, options DecodeOptions) (Document, error) {
 	}
 	decoder = json.NewDecoder(bytes.NewReader(normalized))
 	decoder.DisallowUnknownFields()
-	if err := decoder.Decode(&doc); err != nil {
+	if err := decoder.Decode(&result); err != nil {
 		return invalid()
 	}
 	if err := decoder.Decode(new(any)); err != io.EOF {
@@ -74,7 +96,7 @@ func DecodeWithOptions(r io.Reader, options DecodeOptions) (Document, error) {
 	if len(bytes.TrimSpace(data)) == 0 || bytes.Equal(bytes.TrimSpace(data), []byte("null")) {
 		return invalid()
 	}
-	return doc, nil
+	return result, nil
 }
 
 // Go's decoder matches keys case-insensitively and accepts null for scalars.

@@ -7,22 +7,36 @@ import (
 	"sync"
 )
 
-var schemaCache struct {
+type cachedWireSchema struct {
 	sync.Once
 	data json.RawMessage
 }
+
+var schemaCache cachedWireSchema
+var evidenceSchemaCache cachedWireSchema
 
 // DocumentSchema returns a fresh copy of the JSON Schema 2020-12 contract.
 // Providers must support it or return an explicit capability error. Structural
 // schema conformance is followed by Validate's cross-reference/timeline checks.
 func DocumentSchema() json.RawMessage {
-	schemaCache.Do(func() {
+	return wireSchema(&schemaCache, reflect.TypeFor[Document](), "https://github.com/ly95/contextir/schema/contextir-v1.json")
+}
+
+// EvidenceSchema returns an independent JSON Schema 2020-12 perception-wire
+// contract. Callers own the returned copy; semantic provenance and coverage
+// validation still requires ValidateEvidence with the original asset list.
+func EvidenceSchema() json.RawMessage {
+	return wireSchema(&evidenceSchemaCache, reflect.TypeFor[Evidence](), "https://github.com/ly95/contextir/schema/evidence-v1.json")
+}
+
+func wireSchema(cache *cachedWireSchema, root reflect.Type, id string) json.RawMessage {
+	cache.Do(func() {
 		defs := map[string]any{}
-		ref := schemaType(reflect.TypeFor[Document](), defs)
-		s := map[string]any{"$schema": "https://json-schema.org/draft/2020-12/schema", "$id": "https://github.com/ly95/contextir/schema/contextir-v1.json", "$ref": ref["$ref"], "$defs": defs}
-		schemaCache.data, _ = json.MarshalIndent(s, "", "  ")
+		ref := schemaType(root, defs)
+		s := map[string]any{"$schema": "https://json-schema.org/draft/2020-12/schema", "$id": id, "$ref": ref["$ref"], "$defs": defs}
+		cache.data, _ = json.MarshalIndent(s, "", "  ")
 	})
-	return append(json.RawMessage(nil), schemaCache.data...)
+	return append(json.RawMessage(nil), cache.data...)
 }
 
 func schemaType(t reflect.Type, defs map[string]any) map[string]any {
@@ -96,7 +110,9 @@ var enumValues = map[reflect.Type][]string{
 	reflect.TypeFor[Role]():           {string(RoleIdentity), string(RoleAppearance), string(RoleClothing), string(RoleScene), string(RoleStyle), string(RoleAction), string(RolePose), string(RoleCamera), string(RoleStoryboard), string(RoleFirstFrame), string(RoleLastFrame), string(RoleKeyframe), string(RoleEditSource), string(RoleContinuation), string(RoleVoice), string(RoleMusic), string(RoleRhythm), string(RoleSoundtrack), string(RoleSoundEffect)},
 	reflect.TypeFor[Retention]():      {string(FullyPreserved), string(PartiallyPreserved), string(AttributeTransfer), string(WeakReference), string(FullyCopy), string(PartiallyCopy), string(AudioReference)},
 	reflect.TypeFor[ReferenceKind]():  {string(ReferencePicture), string(ReferenceVideo), string(ReferenceAudio)},
-	reflect.TypeFor[EventKind]():      {string(EventVisual), string(EventAction), string(EventCamera), string(EventSound), string(EventDialogue), string(EventVisibleText)},
+	reflect.TypeFor[EventKind]():      {string(EventVisual), string(EventAction), string(EventCamera), string(EventSound), string(EventDialogue), string(EventVisibleText), string(EventAudioCue)},
+	reflect.TypeFor[VocalKind]():      {"", string(VocalSpeech), string(VocalSinging)},
+	reflect.TypeFor[CoverageStatus](): {string(CoverageComplete), string(CoveragePartial)},
 	reflect.TypeFor[ConstraintKind](): {string(ConstraintRequirement), string(ConstraintProhibition), string(ConstraintSilence), string(ConstraintNoMusic), string(ConstraintNoDialogue)},
 	reflect.TypeFor[Origin]():         {string(OriginUser), string(OriginObserved), string(OriginCreative)},
 }

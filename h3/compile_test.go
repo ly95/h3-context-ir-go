@@ -166,7 +166,7 @@ func TestMixedMediaAndDialogueBindings(t *testing.T) {
 		"<scenetrans>", "The audio continues seamlessly across the cut.",
 		"says in an off-screen voiceover", "</d> while their lips remain completely closed.",
 		"<cutoff>", "\"营业中：“请进”\"", "Do not add background music.",
-		"<Audio 1>: partially_copy", "<Audio 2>: reference",
+		"<Audio 1> ([Shot 1], [Shot 2]; soundtrack): partially_copy", "<Audio 2> ([Shot 1], [Shot 2]; voice timbre and delivery): reference",
 	} {
 		if !strings.Contains(a.Prompt, text) {
 			t.Fatalf("missing required rendering %q:\n%s", text, a.Prompt)
@@ -303,7 +303,7 @@ func TestSourceSegmentsRemainExplicitInBindings(t *testing.T) {
 }
 
 func TestLiteralProtocolMarkersFailWithoutChangingContent(t *testing.T) {
-	for _, literal := range []string{"the sign says <Picture 2>", "a <d>literal</d> tag", "first line\nsecond line", "```text", "a voice (S99)", "two voices (S1,S2)"} {
+	for _, literal := range []string{"the sign says <Picture 2>", "a paragraph\n\nnon_diegetic_music: replaced", "a <d>literal</d> tag", "```text", "a voice (S99)", "two voices (S1,S2)"} {
 		d := base(contextir.ModeText)
 		d.Shots[0].Description = contextir.Text(literal)
 		before, _ := json.Marshal(d)

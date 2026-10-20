@@ -1,0 +1,274 @@
+{
+  "version": "contextir/v1",
+  "mode": "i2va",
+  "target": {
+    "duration_ms": 8000,
+    "aspect_ratio": "16:9",
+    "fps": {
+      "numerator": 24,
+      "denominator": 1
+    }
+  },
+  "assets": [
+    {
+      "id": "synthetic-red-circle",
+      "kind": "image",
+      "uri": "synthetic:red-circle",
+      "description": "A blue square on a black background (deliberately incorrect fixture metadata).",
+      "metadata": {
+        "width": 320,
+        "height": 180,
+        "fps": {
+          "numerator": 0,
+          "denominator": 0
+        }
+      }
+    }
+  ],
+  "evidence": [
+    {
+      "asset_id": "synthetic-red-circle",
+      "facts": [
+        {
+          "id": "synthetic-red-circle.fact1",
+          "text": "A solid red circle sits on a plain white background.",
+          "source": {
+            "asset_id": "synthetic-red-circle",
+            "track": "visual"
+          }
+        },
+        {
+          "id": "synthetic-red-circle.fact2",
+          "text": "The circle is positioned in the left-center portion of the frame, with its center roughly one-quarter of the image width from the left edge and vertically centered.",
+          "source": {
+            "asset_id": "synthetic-red-circle",
+            "track": "visual"
+          }
+        },
+        {
+          "id": "synthetic-red-circle.fact3",
+          "text": "The circle's edge is slightly jagged or pixelated, and the image is a simple flat graphic with no shading or gradient.",
+          "source": {
+            "asset_id": "synthetic-red-circle",
+            "track": "visual"
+          }
+        },
+        {
+          "id": "synthetic-red-circle.fact4",
+          "text": "The right side of the frame is entirely empty white space, with no other objects present.",
+          "source": {
+            "asset_id": "synthetic-red-circle",
+            "track": "visual"
+          }
+        }
+      ],
+      "model": "deepseek-flash",
+      "analyzer_version": "contextir-image-perception/v1/deepseek-flash",
+      "limitations": [
+        "No text, depth cues, or additional objects are visible; image is a minimal synthetic graphic."
+      ],
+      "coverage": {
+        "status": "complete",
+        "tracks": [
+          "visual"
+        ]
+      }
+    }
+  ],
+  "subjects": [
+    {
+      "id": "red-circle",
+      "description": "The solid red flat-graphic circle with a slightly pixelated edge, taken from the supplied starting image with its true red color.",
+      "shot_ids": [
+        "shot1"
+      ]
+    }
+  ],
+  "references": [
+    {
+      "id": "start-frame",
+      "kind": "picture",
+      "source": {
+        "asset_id": "synthetic-red-circle",
+        "track": "visual"
+      },
+      "roles": [
+        "first_frame"
+      ],
+      "description": "The supplied image used as the complete fixed first frame: a solid red circle on a plain white background, circle centered roughly one-quarter of the image width from the left and vertically centered.",
+      "retention": "fully_preserved",
+      "retention_details": "The entire image serves as the starting frame, preserving the red circle's color, shape, and the plain white background exactly.",
+      "shot_ids": [
+        "shot1"
+      ],
+      "anchor_ms": 0
+    }
+  ],
+  "summary": [
+    {
+      "text": "A solid red circle on a plain white background, framed as the fixed first frame, glides steadily from its left-center starting position toward the right side of the frame while everything else stays unchanged and silent."
+    }
+  ],
+  "shots": [
+    {
+      "id": "shot1",
+      "start_ms": 0,
+      "end_ms": 8000,
+      "transition": "none",
+      "description": [
+        {
+          "reference_id": "start-frame"
+        },
+        {
+          "text": ": a fixed camera holds a plain white field in which "
+        },
+        {
+          "subject_id": "red-circle"
+        },
+        {
+          "text": " begins at left-center and translates steadily to the right across the empty white space, keeping its true red color and size; no other objects enter the frame."
+        }
+      ],
+      "events": [
+        {
+          "kind": "visual",
+          "at_ms": 0,
+          "description": [
+            {
+              "reference_id": "start-frame"
+            },
+            {
+              "text": " appears as the opening frame with "
+            },
+            {
+              "subject_id": "red-circle"
+            },
+            {
+              "text": " at left-center on white."
+            }
+          ]
+        },
+        {
+          "kind": "camera",
+          "at_ms": 0,
+          "description": [
+            {
+              "text": "The camera remains completely fixed for the entire shot, with no pan, tilt, zoom, or shake."
+            }
+          ]
+        },
+        {
+          "kind": "action",
+          "at_ms": 0,
+          "description": [
+            {
+              "subject_id": "red-circle"
+            },
+            {
+              "text": " starts moving."
+            }
+          ]
+        },
+        {
+          "kind": "action",
+          "at_ms": 4000,
+          "description": [
+            {
+              "subject_id": "red-circle"
+            },
+            {
+              "text": " passes through the horizontal center of the frame."
+            }
+          ]
+        },
+        {
+          "kind": "action",
+          "at_ms": 7900,
+          "description": [
+            {
+              "subject_id": "red-circle"
+            },
+            {
+              "text": " arrives at the right side of the frame, still fully visible against the white background, with no other objects present."
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "soundscape": "N/A",
+  "music": "N/A",
+  "constraints": [
+    {
+      "id": "silent",
+      "kind": "silence",
+      "text": "全片静音。"
+    }
+  ],
+  "claims": [
+    {
+      "id": "claim-user-1",
+      "origin": "user",
+      "text": "Use the actual content of the given image as the complete starting frame."
+    },
+    {
+      "id": "claim-user-2",
+      "origin": "user",
+      "text": "The camera stays fixed and the circle in the image translates to the right."
+    },
+    {
+      "id": "claim-user-3",
+      "origin": "user",
+      "text": "Keep the circle's true color and the white background; do not add other objects; the whole clip is silent."
+    },
+    {
+      "id": "claim-user-4",
+      "origin": "user",
+      "text": "The asset description is deliberately incorrect; rely on the actual image observation evidence."
+    },
+    {
+      "id": "claim-obs-1",
+      "origin": "observed",
+      "text": "A solid red circle sits on a plain white background.",
+      "sources": [
+        {
+          "asset_id": "synthetic-red-circle",
+          "track": "visual"
+        }
+      ]
+    },
+    {
+      "id": "claim-obs-2",
+      "origin": "observed",
+      "text": "The circle is positioned in the left-center portion of the frame, roughly one-quarter of the image width from the left edge and vertically centered.",
+      "sources": [
+        {
+          "asset_id": "synthetic-red-circle",
+          "track": "visual"
+        }
+      ]
+    },
+    {
+      "id": "claim-obs-3",
+      "origin": "observed",
+      "text": "The circle's edge is slightly jagged or pixelated; the image is a simple flat graphic with no shading or gradient.",
+      "sources": [
+        {
+          "asset_id": "synthetic-red-circle",
+          "track": "visual"
+        }
+      ]
+    },
+    {
+      "id": "claim-obs-4",
+      "origin": "observed",
+      "text": "The right side of the frame is entirely empty white space, with no other objects present.",
+      "sources": [
+        {
+          "asset_id": "synthetic-red-circle",
+          "track": "visual"
+        }
+      ]
+    }
+  ]
+}

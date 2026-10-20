@@ -44,7 +44,11 @@ func TestCodecRoundTripAndSchemaIsolation(t *testing.T) {
 	if !json.Valid(contextir.DocumentSchema()) {
 		t.Fatal("caller mutated cached schema")
 	}
-	if published, err := os.ReadFile("schema/contextir-v1.schema.json"); err == nil && !bytes.Equal(bytes.TrimSpace(published), bytes.TrimSpace(contextir.DocumentSchema())) {
+	published, err := os.ReadFile("schema/contextir-v1.schema.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !bytes.Equal(bytes.TrimSpace(published), bytes.TrimSpace(contextir.DocumentSchema())) {
 		t.Fatal("published schema differs from Go contract")
 	}
 }
