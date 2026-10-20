@@ -1,0 +1,467 @@
+{
+  "stage": "structure",
+  "system": "You are the structural stage of a MiniMax H3 Context-IR compiler. Return only the JSON matching the supplied schema. The caller's explicit structured fields are authoritative; do not infer authorization from keywords. Interpret the complete user's intent semantically.\nDecide the image-anchor versus content-reference distinction, each asset's actual requested responsibility, the edit, exact dialogue and visible lettering requested in prose, and explicit prohibitions. Video/audio attachments require ref2va. Explicit roles and mode cannot be overridden. Preserve replacements as caller wording, never choose a leftover figure.\nAn attached frame anchor IS a frame of the result; a subject/style/environment/storyboard reference is redrawn. A reference sheet's panels, labels and studio backdrop are presentation, not the requested scene. Attribute priority: explicit user request, then observed reference facts, then director notes for the unresolved space. Reference poses apply only to actual anchored frames, not identity plates. Asset.Description is caller commentary, never observed evidence; a stale or incorrect upload note does not override actual observations. Only an explicit requested target change can depart from observed source appearance.\nrequested and forbidden describe the user's request only, independent of creativity. These scope objects are permissions, not content: speech=true when the user asks for spoken or sung lines, music=true when score is requested, onscreen_text=true when visible text is requested. Explicit prohibitions win over creative additions. Preserve supplied dialogue and on-screen text exactly. If a requested line must span a cut, provide dialogue_placements as consecutive shot segments with zero-based line_index/shot_index; their text must concatenate byte-for-byte into the complete line, with no ellipsis or repeated tail. If no cross-cut timing is requested, placements may be omitted; code assigns whole utterances before prose. The prose writer never authors these fixed words. Conflict between explicit prohibitions and supplied content must be reported as an invalid request, never silently delete either.\nChoose 1..max_auto_shots shots unless the caller pins a count (1..10). A single continuous take is legitimate. Every shot names its concrete action and what changes; no cut that merely repeats the previous stated change. Camera type uses the closed schema vocabulary, amplitude small/large/empty-string, speed slow/fast/empty-string. Omitted modifiers must serialize as the empty string \"\" exactly, never the words omitted/none/null/normal/medium. Static Shot uses empty amplitude and speed. requested.magnitude and forbidden.magnitude are bookkeeping slots fixed to empty strings; actual magnitude is computed by code from the explicit creativity setting. First start is 0; each shot must fit at least 1200ms. Caller cuts and shot count bind all later stages. For replacement_targets use incoming \u003cPicture N\u003e labels as keys and source \u003cSubject N\u003e candidate labels as values. Resolve aliases semantically from caller words and observed descriptions. Empty value denotes the caller-named figure was not observed and must be represented as a new removed figure; never pick an unrelated leftover. Keep this map empty when no replacement is requested. Shot count is never increased merely by creativity.\nDirector notes are lower priority than request and references and cannot change explicit shot pins or cuts. Style is already resolved in reference_licence.style: OMIT the host-owned style field from your response; the host inserts its canonical style after your strict structural response is accepted. Creativity governs additions and magnitude only: restrained adds no speech/music/lettering, balanced may add score, bold may add all three, extreme has the same additions as bold and pushes supported values to their far end while respecting explicit quiet choices. No invented facts about the attached media.\nThe target is already computed. Use its effective duration and never change target fields. Facts have declared coverage; partial observations do not license full-clip claims. Do not invent missing modalities.",
+  "input": {
+    "brief": {
+      "effort": "standard",
+      "seconds_explicit": true,
+      "aspect_explicit": true,
+      "intent": "the car pulls forward out of the dark",
+      "assets": [
+        {
+          "preparation_computed": true,
+          "id": "asset-1",
+          "kind": "audio",
+          "description": "a low engine rumble",
+          "metadata": {
+            "duration_ms": 3000,
+            "fps": {
+              "numerator": 0,
+              "denominator": 0
+            }
+          },
+          "preparation": {},
+          "role": "bgm",
+          "composition": "unknown",
+          "sizing": "match"
+        }
+      ],
+      "seconds": 5,
+      "aspect": "16:9",
+      "creativity": "balanced",
+      "cards": [
+        {
+          "asset_id": "asset-1",
+          "summary": "an audio reference.",
+          "characterisation": "a low engine rumble",
+          "composition": "unknown",
+          "analyzer_version": "1",
+          "coverage": {
+            "status": "partial",
+            "tracks": [
+              "audio"
+            ]
+          }
+        }
+      ]
+    },
+    "content_scope": {
+      "conflict_policy": "supplied_content_wins",
+      "requested": {
+        "speech": false,
+        "music": false,
+        "onscreen_text": false,
+        "magnitude": ""
+      },
+      "forbidden": {
+        "speech": false,
+        "music": false,
+        "onscreen_text": false,
+        "magnitude": ""
+      },
+      "allowed": {
+        "speech": false,
+        "music": true,
+        "onscreen_text": false,
+        "magnitude": "measured"
+      },
+      "dialogue": [],
+      "onscreen_text": [],
+      "reasoning": "The intent only describes a car pulling forward out of darkness. It requests no spoken/sung words, no visible lettering, and no added non-diegetic music score. The supplied audio asset is described as an engine rumble, which is diegetic sound rather than score. No prohibitions are stated.",
+      "calls": [
+        {
+          "stage": "scope",
+          "attempt": 1,
+          "model": "deepseek-flash",
+          "usage": {
+            "input_tokens": 1021,
+            "output_tokens": 351
+          },
+          "valid": true
+        }
+      ]
+    },
+    "diagnostics": null,
+    "director_notes": "",
+    "evidence": [
+      {
+        "card": {
+          "asset_id": "asset-1",
+          "summary": "an audio reference.",
+          "characterisation": "a low engine rumble",
+          "composition": "unknown",
+          "analyzer_version": "1",
+          "coverage": {
+            "status": "partial",
+            "tracks": [
+              "audio"
+            ]
+          }
+        },
+        "asset_id": "asset-1",
+        "facts": [
+          {
+            "id": "card-asset-1-1",
+            "text": "an audio reference.",
+            "source": {
+              "asset_id": "asset-1",
+              "track": "audio"
+            }
+          },
+          {
+            "id": "card-asset-1-2",
+            "text": "a low engine rumble",
+            "source": {
+              "asset_id": "asset-1",
+              "track": "audio"
+            }
+          }
+        ],
+        "analyzer_version": "1",
+        "coverage": {
+          "status": "partial",
+          "tracks": [
+            "audio"
+          ]
+        }
+      }
+    ],
+    "max_auto_shots": 4,
+    "mode": "ref2va",
+    "reference_licence": {
+      "medium_decision": {
+        "disposition": "no_reference",
+        "operation_quote": "",
+        "target": "",
+        "requested_style": "",
+        "reference_medium": "",
+        "requested_medium": "",
+        "treatments": [],
+        "reasoning": "No visual reference is attached, so no medium-preservation or conversion question arises. The intent simply describes motion (a car pulling forward out of darkness) and mentions no rendering medium or target rendition. The word 'dark' describes the lighting/setting of the action, not an enumerated treatment, so no treatments are recorded.",
+        "calls": [
+          {
+            "stage": "medium",
+            "attempt": 1,
+            "model": "deepseek-flash",
+            "usage": {
+              "input_tokens": 1008,
+              "output_tokens": 158
+            },
+            "valid": true
+          }
+        ]
+      },
+      "identity": [],
+      "governs": {
+        "action": "request",
+        "framing": "request",
+        "lighting": "request",
+        "medium": "request",
+        "palette": "request",
+        "wardrobe": "request"
+      },
+      "reasons": {
+        "action": "No visual reference is attached, so the requested motion — the car pulling forward out of the dark — fully governs the action.",
+        "framing": "No visual reference is attached, so no observed camera composition exists; the request governs framing for the described forward motion.",
+        "lighting": "No visual reference is attached, so no observed lighting exists to preserve; the request governs the lighting of the dark scene.",
+        "medium": "No visual reference is attached, so rendering medium is resolved solely by the request/medium decision; nothing observed can govern it.",
+        "palette": "No visual reference is attached, so no observed palette exists to retain; the request governs the scene's color palette.",
+        "wardrobe": "No visual reference and no observed subjects are supplied, so there are no observed clothes or accessories to retain; the request governs wardrobe space entirely."
+      },
+      "transform_phrase": null,
+      "transform_target": "",
+      "medium_transferred": false,
+      "style": {
+        "observed_phrase": "",
+        "phrase": "Live-action, cinematic",
+        "source": "default",
+        "reference_medium": "",
+        "requested_medium": "",
+        "discrepancy": false,
+        "note": ""
+      },
+      "calls": [
+        {
+          "stage": "medium",
+          "attempt": 1,
+          "model": "deepseek-flash",
+          "usage": {
+            "input_tokens": 1008,
+            "output_tokens": 158
+          },
+          "valid": true
+        },
+        {
+          "stage": "licence",
+          "attempt": 1,
+          "model": "deepseek-flash",
+          "usage": {
+            "input_tokens": 1335,
+            "output_tokens": 350
+          },
+          "valid": true
+        }
+      ]
+    },
+    "reference_manifest": [
+      {
+        "slot": 0,
+        "label": "\u003cAudio 1\u003e",
+        "kind": "audio",
+        "sha256": "asset-1",
+        "wiring": "ref_audio_1",
+        "role": "bgm",
+        "px": null,
+        "seconds": 3,
+        "frames": null,
+        "sizing": "match",
+        "rows": 0,
+        "paired_with": null,
+        "characterisation": "a low engine rumble",
+        "composition": "unknown",
+        "replaces": ""
+      }
+    ],
+    "replacement_candidates": [],
+    "scope_instruction": "Creativity: BALANCED. Render what the request describes, and shape how it is seen and heard — the framing, the camera, where a cut serves it, the performance, the ambience. Do not invent events the request does not contain.\nBeyond the request you may add: music for the audience.",
+    "scope_instruction_policy": "The typed content_scope already includes the caller's explicit conflict resolution. Its allowed additions are permissions, never obligations. Extreme magnitude permits a quiet contrast beat when the requested escalation is expressed elsewhere, without changing shot pins.",
+    "scope_note": "creativity: balanced; may add: music",
+    "target": {
+      "duration_ms": 5167,
+      "frame_count": 124,
+      "aspect_ratio": "16:9",
+      "fps": {
+        "numerator": 24,
+        "denominator": 1
+      },
+      "width": 1344,
+      "height": 768
+    },
+    "version": "contextir/compiler/v1"
+  },
+  "response_schema": {
+    "additionalProperties": false,
+    "properties": {
+      "assets": {
+        "items": false,
+        "maxItems": 1,
+        "minItems": 1,
+        "prefixItems": [
+          {
+            "additionalProperties": false,
+            "properties": {
+              "asset_id": {
+                "const": "asset-1"
+              },
+              "replaces": {
+                "const": ""
+              },
+              "role": {
+                "const": "bgm"
+              }
+            },
+            "required": [
+              "asset_id",
+              "replaces",
+              "role"
+            ],
+            "type": "object"
+          }
+        ],
+        "type": "array"
+      },
+      "dialogue": {
+        "const": []
+      },
+      "dialogue_placements": {
+        "items": {
+          "additionalProperties": false,
+          "properties": {
+            "line_index": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "shot_index": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "text": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "line_index",
+            "shot_index",
+            "text"
+          ],
+          "type": "object"
+        },
+        "type": "array"
+      },
+      "forbidden": {
+        "const": {
+          "speech": false,
+          "music": false,
+          "onscreen_text": false,
+          "magnitude": ""
+        }
+      },
+      "mode": {
+        "const": "ref2va"
+      },
+      "onscreen_text": {
+        "const": []
+      },
+      "reasoning": {
+        "type": "string"
+      },
+      "replacement_targets": {
+        "const": {}
+      },
+      "requested": {
+        "const": {
+          "speech": false,
+          "music": false,
+          "onscreen_text": false,
+          "magnitude": ""
+        }
+      },
+      "shots": {
+        "items": {
+          "additionalProperties": false,
+          "properties": {
+            "action": {
+              "type": "string"
+            },
+            "camera": {
+              "additionalProperties": false,
+              "properties": {
+                "amplitude": {
+                  "enum": [
+                    "",
+                    "small",
+                    "large"
+                  ],
+                  "type": "string"
+                },
+                "speed": {
+                  "enum": [
+                    "",
+                    "slow",
+                    "fast"
+                  ],
+                  "type": "string"
+                },
+                "type": {
+                  "enum": [
+                    "Zoom In",
+                    "Zoom Out",
+                    "Push In",
+                    "Pull Out",
+                    "Pan Left",
+                    "Pan Right",
+                    "Truck Left",
+                    "Truck Right",
+                    "Tilt Up",
+                    "Tilt Down",
+                    "Pedestal Up",
+                    "Pedestal Down",
+                    "Arc Shot",
+                    "Tracking Shot",
+                    "Static Shot",
+                    "Shake Slightly",
+                    "Shake Strongly",
+                    "POV",
+                    "Roll Clockwise",
+                    "Roll Counterclockwise"
+                  ],
+                  "type": "string"
+                }
+              },
+              "required": [
+                "amplitude",
+                "speed",
+                "type"
+              ],
+              "type": "object"
+            },
+            "framing": {
+              "enum": [
+                "extreme wide",
+                "wide",
+                "medium wide",
+                "medium",
+                "medium close",
+                "close",
+                "extreme close",
+                "over the shoulder",
+                "low angle",
+                "high angle",
+                "overhead",
+                "pov"
+              ],
+              "type": "string"
+            },
+            "purpose": {
+              "enum": [
+                "establish",
+                "develop",
+                "reveal",
+                "react",
+                "close",
+                "resolve",
+                "transition"
+              ],
+              "type": "string"
+            },
+            "start_ms": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "subjects": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            "sync_sound": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            "what_changes": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "action",
+            "camera",
+            "framing",
+            "purpose",
+            "start_ms",
+            "subjects",
+            "sync_sound",
+            "what_changes"
+          ],
+          "type": "object"
+        },
+        "maxItems": 4,
+        "minItems": 1,
+        "type": "array"
+      }
+    },
+    "required": [
+      "assets",
+      "dialogue",
+      "forbidden",
+      "mode",
+      "onscreen_text",
+      "reasoning",
+      "replacement_targets",
+      "requested",
+      "shots"
+    ],
+    "type": "object"
+  }
+}

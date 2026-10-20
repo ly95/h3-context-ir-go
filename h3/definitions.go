@@ -12,6 +12,9 @@ func renderDefinitions(doc contextir.Document, state bindingState) (string, stri
 	for i, subject := range doc.Subjects {
 		label := state.subjects[subject.ID]
 		definition := sentence(label + " is " + subject.Description)
+		if subject.TakenOverBy != "" {
+			definition = label + " is the source figure " + subject.Description + " in the edited clip, whose position in frame, actions and timing are transferred to " + state.subjects[subject.TakenOverBy] + ". Its source appearance is not retained."
+		}
 		for _, attribution := range subject.Sources {
 			definition += " " + sentence("Its "+roleName(attribution.Role)+" is referenced from "+sourceDescription(attribution.Source, state))
 			if attribution.Details != "" {
@@ -30,6 +33,9 @@ func renderDefinitions(doc contextir.Document, state bindingState) (string, stri
 			return "", "", profileIssue(contextir.CodeInvalid, fmt.Sprintf("subjects[%d].retention", i), "reference mode requires an explicit subject retention relationship")
 		}
 		retentions = append(retentions, label+" (appears in "+strings.Join(shots, ", ")+"): "+string(subject.Retention)+" - "+retentionDetails(subject.Retention, subject.RetentionDetails))
+		if subject.TakenOverBy != "" {
+			retentions[len(retentions)-1] += " Its position in frame, actions and timing are transferred to " + state.subjects[subject.TakenOverBy] + "; its source appearance is not retained."
+		}
 	}
 	// Several semantic references may point to the same conditioning input.
 	// H3 defines that physical label once; all explicit roles and details survive.
@@ -58,6 +64,27 @@ func renderDefinitions(doc contextir.Document, state bindingState) (string, stri
 				roles = append(roles, roleName(role))
 			}
 			description = append(description, sentence("Its role is "+strings.Join(roles, " and ")))
+			if containsRole(item.Roles, contextir.RoleStructure) {
+				description = append(description, "Only camera movement and cutting structure are referenced; its people, objects, setting and visible content never appear in the target video.")
+			}
+			if containsRole(item.Roles, contextir.RolePlacedSubject) || containsRole(item.Roles, contextir.RoleReplacementSubject) {
+				for _, video := range doc.References {
+					if containsRole(video.Roles, contextir.RoleEditSource) {
+						if containsRole(item.Roles, contextir.RolePlacedSubject) {
+							description = append(description, label+" is placed into "+state.refs[video.ID]+"; the picture contributes its subject only, never its background, pose, or photographic lighting.")
+						} else {
+							target := item.Replaces
+							if target == "" {
+								target = "the structurally identified source figure"
+							}
+							description = append(description, label+" takes the place of "+target+" in "+state.refs[video.ID]+", inheriting that figure's position in frame, actions and timing. The picture contributes its replacement identity, never its background, pose, or lighting.")
+						}
+					}
+				}
+			}
+			if containsRole(item.Roles, contextir.RoleMusicStyle) || containsRole(item.Roles, contextir.RoleBeatReference) || containsRole(item.Roles, contextir.RoleSoundTexture) {
+				description = append(description, "Only the declared audio property is referenced; the recorded audio signal itself is not copied into the target.")
+			}
 			if item.SpeakerID != "" {
 				speaker := state.voices[item.SpeakerID]
 				identity := speaker.Description
@@ -134,7 +161,13 @@ func roleName(role contextir.Role) string {
 		contextir.RoleContinuation: "source video for continuation",
 		contextir.RoleVoice:        "voice timbre and delivery", contextir.RoleMusic: "music",
 		contextir.RoleRhythm: "rhythm", contextir.RoleSoundtrack: "soundtrack",
-		contextir.RoleSoundEffect: "sound texture",
+		contextir.RoleSoundEffect:        "sound texture",
+		contextir.RoleSoundTexture:       "sound texture",
+		contextir.RoleStructure:          "camera movement and cutting structure only",
+		contextir.RolePlacedSubject:      "a subject placed into the edited scene",
+		contextir.RoleReplacementSubject: "replacement of a source figure in the edited video",
+		contextir.RoleMusicStyle:         "background-music style without copying the recording",
+		contextir.RoleBeatReference:      "beat and cutting rhythm without copying the recording",
 	}[role]
 }
 

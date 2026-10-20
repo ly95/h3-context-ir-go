@@ -1,0 +1,89 @@
+........................................................................ [  7%]
+........................................................................ [ 14%]
+........................................................................ [ 21%]
+........................................................................ [ 29%]
+........................................................................ [ 36%]
+........................................................................ [ 43%]
+.............................................................F.......... [ 50%]
+........................................................................ [ 58%]
+........................................................................ [ 65%]
+........................................................................ [ 72%]
+............................F........................................... [ 79%]
+........................................................................ [ 87%]
+........................................................................ [ 94%]
+.......................................................                  [100%]
+=================================== FAILURES ===================================
+_____________ test_an_uncharacterised_voice_reference_is_reported ______________
+
+    def test_an_uncharacterised_voice_reference_is_reported():
+        """A role that claims a sonic property with nothing describing it is a reference carrying no
+        information. Reported rather than guessed at, and it names what to supply."""
+        from h3ir.analyse import analyse_audio
+        from h3ir.compile import _assess
+        from h3ir.plan import ProfileOptions as PO
+    
+        ref = AssetRef(kind=AssetKind.AUDIO, role=Role.VOICE_TIMBRE, sha256="a" * 64,
+                       path="/tmp/v.wav", seconds=6.0)          # no note
+        brief = Brief(intent="the man speaks", seconds=8.0, assets=[ref],
+                      dialogue=[DialogueLine(text="a line.")])
+        plan = deterministic_draft(brief, Mode.REF2VA, {ref.sha256: analyse_audio(ref, "")})
+        _, findings, _ = _assess(plan, brief, Mode.REF2VA, PO(name="standard"), [])
+        rules = {f.rule for f in findings}
+        assert "X15-audio-uncharacterised" in rules, sorted(rules)
+    
+        with_note = AssetRef(kind=AssetKind.AUDIO, role=Role.VOICE_TIMBRE, sha256="a" * 64,
+                             path="/tmp/v.wav", note="calm and low", seconds=6.0)
+        brief2 = Brief(intent="the man speaks", seconds=8.0, assets=[with_note],
+                       dialogue=[DialogueLine(text="a line.")])
+>       plan2 = deterministic_draft(brief2, Mode.REF2VA, {with_note.sha256: analyse_audio(with_note, "")})
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_hardening.py:528: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+h3ir/draft.py:204: in deterministic_draft
+    licence = resolve_licence(brief, cards)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+args = (Brief(intent='the man speaks', assets=[AssetRef(kind=<AssetKind.AUDIO: 'audio'>, role=<Role.VOICE_TIMBRE: 'voice_timb...', timbre='', music='', analyzer_version='contextir-media/v1/caller-metadata', model_id='none (typed metadata only)')})
+kwargs = {}
+
+    @functools.wraps(original)
+    def invoke(*args,**kwargs):
+        bound=signature.bind(*args,**kwargs);bound.apply_defaults();arguments={k:plain(bound.arguments[k]) for k in ('brief','cards')}
+        match=inputs.get(key(arguments))
+        if match is None:
+            MISSING_INPUTS.append({'nodeid':cap.CURRENT,'function':'h3ir.'+('licence' if name=='resolve_licence' else 'style')+'.'+name,'arguments':copy.deepcopy(arguments)})
+>           raise RuntimeError('No actual licence transcript exists for this exact original input')
+E           RuntimeError: No actual licence transcript exists for this exact original input
+
+/Users/linyang/Code/contextir/conformance/licence_bridge.py:48: RuntimeError
+____ test_the_rule_is_NOT_armed_when_the_requested_medium_is_unclassifiable ____
+
+    def test_the_rule_is_NOT_armed_when_the_requested_medium_is_unclassifiable():
+        """The false positive that this rule produced on real output before it shipped, and the reason.
+    
+        `classify_medium("1990s cel animation")` is `None` -- outside the closed vocabulary, which is the
+        whole reason `transform_target` reads targets from the request instead. The first version of the
+        arming condition read `observed != requested` and `None != "2d-animation"` is True, so it armed;
+        the plate and the target are in fact BOTH 2D, the correct opening landed in the reference's own
+        bucket, and the rule flagged output that was right.
+    
+        §35's line, one layer down and made by the author who had just written it into §42: absence of a
+        statement is not a statement of absence. `None` means the classifier could not place it.
+        """
+        from h3ir.compile import _transformed_from
+        lic, style = _real_brief_style()
+        assert lic.medium_transferred, "the transformation IS detected"
+>       assert style.requested_medium is None, "and its target is outside the closed vocabulary"
+E       AssertionError: and its target is outside the closed vocabulary
+E       assert '2d-animation' is None
+E        +  where '2d-animation' = install.<locals>.NativeStyle(phrase='1990s cel animation', source='request', requested_medium='2d-animation', observed_medium='2d-animation', observed_phrase='Digital illustration, semi-realistic character design').requested_medium
+
+tests/test_reference_licence.py:1077: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_hardening.py::test_an_uncharacterised_voice_reference_is_reported
+FAILED tests/test_reference_licence.py::test_the_rule_is_NOT_armed_when_the_requested_medium_is_unclassifiable
+2 failed, 989 passed in 7.97s
+/Users/linyang/Code/contextir/conformance/service_bridge.py:18: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+  from starlette.testclient import TestClient

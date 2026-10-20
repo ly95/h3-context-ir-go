@@ -52,10 +52,7 @@ type Config struct {
 // Image is a caller-supplied image locator. URI supports HTTPS, loopback HTTP,
 // and base64 data URLs for JPEG, PNG, GIF, or WebP. The adapter never fetches it.
 // Detail may be empty, auto, low, high, or original. File uploads are out of scope.
-type Image struct {
-	URI    string
-	Detail string
-}
+type Image = contextir.ImageInput
 
 type Client struct {
 	endpoint        string
@@ -279,7 +276,10 @@ func (c *Client) GenerateWithImages(ctx context.Context, request contextir.Model
 		}
 	}
 	text := output.String()
+	// Preserve the untrusted candidate for an explicitly recording caller even
+	// when strict JSON validation rejects it. Callers must still honor err.
 	if messages != 1 || strings.TrimSpace(text) == "" || !validJSON([]byte(text)) {
+		result.RejectedOutput = text
 		return result, failure(contextir.CodeModelOutput, "response", "output", "The output must contain exactly one complete JSON value.", nil)
 	}
 	result.JSON = json.RawMessage(text)

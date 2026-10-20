@@ -1,0 +1,75 @@
+/Users/linyang/Code/contextir/conformance/service_bridge.py:18: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+  from starlette.testclient import TestClient
+........................................................................ [  7%]
+........................................................................ [ 14%]
+........................................................................ [ 21%]
+........................................................................ [ 29%]
+........................................................................ [ 36%]
+........................................................................ [ 43%]
+........................................................................ [ 50%]
+........................................................................ [ 58%]
+........................................................................ [ 65%]
+........................................................................ [ 72%]
+........................................................................ [ 79%]
+........................................................................ [ 87%]
+...........................................F............................ [ 94%]
+.......................................................                  [100%]
+=================================== FAILURES ===================================
+________ test_a_silent_picture_is_refused_when_another_one_replaces_too ________
+
+    def test_a_silent_picture_is_refused_when_another_one_replaces_too():
+        """Two replacements and one of them silent, and the refusal does not rest on a head count.
+    
+        The compiler refuses because the clip it CAN see holds more than one figure of that kind, so
+        the leftover is not a fact. Binding the figure nobody named would be answering the question by
+        picking what was left.
+    
+        The node pack refuses the same tray earlier and for a different reason -- two pictures replace
+        and one says nothing, which is decidable without seeing the clip at all -- and that half was
+        asserted here until the pack became its own repository. It is
+        `tests/test_tray.py::test_two_pictures_replacing_and_one_silent_stops_the_job` over there.
+        """
+        brief, cards = _two_swaps("the man in the plaid shirt", "")
+>       plan = build_plan(brief, Mode.REF2VA, cards)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_swap_roles.py:747: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/Users/linyang/Code/contextir/conformance/plan_bridge.py:40: in build
+    raw=copy.deepcopy(native_operation('h3ir.plan.build_plan',arguments))
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+qualified = 'h3ir.plan.build_plan'
+arguments = {'brief': Brief(intent='swap them both', assets=[AssetRef(kind=<AssetKind.IMAGE: 'image'>, role=<Role.REPLACEMENT_SUBJ...eet=False, transcript='', language='', timbre='', music='', analyzer_version='1', model_id='')}, 'proposal': None, ...}
+
+    def native_operation(qualified,arguments):
+        request={'operation':qualified,'arguments':cap.plain(arguments)}
+        observed_callbacks=[]
+        p=validator.PROCESS
+        p.stdin.write(json.dumps(request,ensure_ascii=False)+'\n');p.stdin.flush()
+        while True:
+            line=p.stdout.readline()
+            if not line:raise RuntimeError('Go core bridge stopped before responding')
+            result=json.loads(line)
+            if 'callback' not in result:break
+            import callbacks
+            reply=callbacks.dispatch(result['callback'],result.get('payload'))
+            observed_callbacks.append({'name':result['callback'],'payload':result.get('payload'),'reply':reply})
+            p.stdin.write(json.dumps(reply,ensure_ascii=False)+'\n');p.stdin.flush()
+        def redacted(value):
+            if isinstance(value,dict):return {k:('[redacted]' if k in ('api_key','llm_key','authorization','Authorization','access_token','refresh_token','password','bearer_token') else redacted(v)) for k,v in value.items()}
+            if isinstance(value,list):return [redacted(v) for v in value]
+            return value
+        record={'nodeid':cap.CURRENT,'function':qualified,'arguments':redacted(request['arguments'])}
+        if observed_callbacks:record['injected_test_callbacks']=redacted(observed_callbacks)
+        CORE_CALLS.append(record)
+        if result.get('error'):
+            record.update(raised='ValueError',error=result['error'])
+>           raise GoOperationError(result['error'],result.get('error_code'))
+E           pytest_go_core.GoOperationError: replacement requires an explicit target subject binding: <Picture 1>
+
+/Users/linyang/Code/contextir/conformance/pytest_go_core.py:46: GoOperationError
+=========================== short test summary info ============================
+FAILED tests/test_swap_roles.py::test_a_silent_picture_is_refused_when_another_one_replaces_too
+1 failed, 990 passed in 7.11s

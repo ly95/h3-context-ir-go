@@ -1,0 +1,1241 @@
+{
+  "case_id": "compiler-00557",
+  "input_sha256": "dcc36da44e1f853f649565aaefa89a58c6987e491671db9037da040dbd2d7bcd",
+  "status": "compiled",
+  "calls": [
+    {
+      "stage": "scope",
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 1037,
+        "output_tokens": 165
+      },
+      "usage_valid": true,
+      "images": 0
+    },
+    {
+      "stage": "medium",
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 1051,
+        "output_tokens": 246
+      },
+      "usage_valid": true,
+      "images": 0
+    },
+    {
+      "stage": "licence",
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 1400,
+        "output_tokens": 788
+      },
+      "usage_valid": true,
+      "images": 0
+    },
+    {
+      "stage": "structure",
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 3011,
+        "output_tokens": 1247
+      },
+      "usage_valid": true,
+      "images": 0
+    },
+    {
+      "stage": "plan",
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 8607,
+        "output_tokens": 5308
+      },
+      "usage_valid": true,
+      "images": 0
+    }
+  ],
+  "elapsed_ms": 40536,
+  "result": {
+    "usage_complete": true,
+    "clarification_policy": "continue_with_recorded_choice",
+    "mode_decision": {
+      "clarification_policy": "continue_with_recorded_choice",
+      "confidence_kind": "routing_policy",
+      "aspect_mismatch": false,
+      "needs_clarification": false,
+      "mode": "ref2va",
+      "confidence": 1,
+      "rule": "12.2#1",
+      "signals": [
+        "Mode follows explicit structured choices and media socket requirements."
+      ]
+    },
+    "scope_decision": {
+      "conflict_policy": "supplied_content_wins",
+      "requested": {
+        "speech": false,
+        "music": false,
+        "onscreen_text": false,
+        "magnitude": ""
+      },
+      "forbidden": {
+        "speech": false,
+        "music": false,
+        "onscreen_text": false,
+        "magnitude": ""
+      },
+      "allowed": {
+        "speech": false,
+        "music": true,
+        "onscreen_text": false,
+        "magnitude": "measured"
+      },
+      "dialogue": [],
+      "onscreen_text": [],
+      "reasoning": "The intent describes only a car pulling forward out of the dark. It does not request or forbid speech, music, or onscreen text, and no exact dialogue or visible wording is supplied.",
+      "calls": [
+        {
+          "stage": "scope",
+          "attempt": 1,
+          "model": "deepseek-flash",
+          "usage": {
+            "input_tokens": 1037,
+            "output_tokens": 165
+          },
+          "valid": true
+        }
+      ]
+    },
+    "licence": {
+      "medium_decision": {
+        "disposition": "preserve",
+        "operation_quote": "",
+        "target": "",
+        "requested_style": "",
+        "reference_medium": "",
+        "requested_medium": "",
+        "treatments": [],
+        "reasoning": "The intent only asks for motion—the car pulling forward out of the dark—and does not expressly request a change of rendering medium. With a visual reference present and no authorized departure, the reference medium should be preserved. No reference medium can be identified from the supplied metadata.",
+        "calls": [
+          {
+            "stage": "medium",
+            "attempt": 1,
+            "model": "deepseek-flash",
+            "usage": {
+              "input_tokens": 1051,
+              "output_tokens": 246
+            },
+            "valid": true
+          }
+        ]
+      },
+      "identity": [],
+      "governs": {
+        "action": "request",
+        "framing": "reference",
+        "lighting": "reference",
+        "medium": "reference",
+        "palette": "reference",
+        "wardrobe": "reference"
+      },
+      "reasons": {
+        "action": "The clip shows an established motion (car crossing left to right), but the brief asks for a different temporal motion — the car pulling forward out of the dark — so the requested action replaces the source's motion.",
+        "framing": "No shot scale, viewpoint, camera movement or composition is requested — duration and 16:9 canvas alone do not constitute framing instructions — so the reference framing governs.",
+        "lighting": "\"Out of the dark\" describes the car's emergence and the surrounding gloom rather than directing a light, its source, direction or visible quality; the tunnel's observed lighting therefore stands.",
+        "medium": "The medium decision preserves the reference's rendering; the brief asks only for motion and never requests a restyle, so the reference medium governs.",
+        "palette": "No scene color palette is requested; darkness as a mood does not recolor the scene, so the reference palette is kept.",
+        "wardrobe": "No clothing or accessory change is named; the reference's observed wardrobe (none specified for the vehicle scene) is retained."
+      },
+      "transform_phrase": null,
+      "transform_target": "",
+      "medium_transferred": false,
+      "style": {
+        "observed_phrase": "",
+        "phrase": "Live-action, cinematic",
+        "source": "default",
+        "reference_medium": "",
+        "requested_medium": "",
+        "discrepancy": false,
+        "note": ""
+      },
+      "calls": [
+        {
+          "stage": "medium",
+          "attempt": 1,
+          "model": "deepseek-flash",
+          "usage": {
+            "input_tokens": 1051,
+            "output_tokens": 246
+          },
+          "valid": true
+        },
+        {
+          "stage": "licence",
+          "attempt": 1,
+          "model": "deepseek-flash",
+          "usage": {
+            "input_tokens": 1400,
+            "output_tokens": 788
+          },
+          "valid": true
+        }
+      ]
+    },
+    "budget": {
+      "prompt_tokens": 1305,
+      "target_video_rows": 37296,
+      "target_audio_rows": 414,
+      "known_reference_rows": 32256,
+      "in_trained_band": true
+    },
+    "findings": [
+      {
+        "rule": "A2-sound-duplicated",
+        "severity": "WARN",
+        "msg": "overall_soundscape repeats content already in the description rather than a separate layer"
+      }
+    ],
+    "status": "compiled",
+    "version": "contextir/compiler/v1",
+    "brief": {
+      "effort": "standard",
+      "seconds_explicit": true,
+      "aspect_explicit": true,
+      "intent": "the car pulls forward out of the dark",
+      "assets": [
+        {
+          "preparation_computed": true,
+          "id": "asset-1",
+          "kind": "video",
+          "description": "a car rolling through a tunnel",
+          "metadata": {
+            "duration_ms": 5000,
+            "fps": {
+              "numerator": 0,
+              "denominator": 0
+            }
+          },
+          "preparation": {
+            "width": 1344,
+            "height": 768,
+            "frames": 120
+          },
+          "role": "structure",
+          "composition": "unknown",
+          "sizing": "match",
+          "frames": 120
+        }
+      ],
+      "seconds": 5,
+      "aspect": "16:9",
+      "creativity": "balanced",
+      "evidence": [
+        {
+          "card": {
+            "asset_id": "asset-1",
+            "summary": "a car rolling through a tunnel",
+            "motion": "the car crosses frame left to right",
+            "frames_seen": 3,
+            "composition": "unknown",
+            "analyzer_version": "1",
+            "coverage": {
+              "status": "partial",
+              "tracks": [
+                "visual"
+              ]
+            }
+          },
+          "asset_id": "asset-1",
+          "facts": [
+            {
+              "id": "card-asset-1-1",
+              "text": "a car rolling through a tunnel",
+              "source": {
+                "asset_id": "asset-1",
+                "track": "visual"
+              }
+            },
+            {
+              "id": "card-asset-1-2",
+              "text": "the car crosses frame left to right",
+              "source": {
+                "asset_id": "asset-1",
+                "track": "visual"
+              }
+            }
+          ],
+          "analyzer_version": "1",
+          "limitations": [
+            "The video card was constructed from 3 sampled frames, not the entire clip."
+          ],
+          "coverage": {
+            "status": "partial",
+            "tracks": [
+              "visual"
+            ]
+          }
+        }
+      ],
+      "cards": [
+        {
+          "asset_id": "asset-1",
+          "summary": "a car rolling through a tunnel",
+          "motion": "the car crosses frame left to right",
+          "frames_seen": 3,
+          "composition": "unknown",
+          "analyzer_version": "1",
+          "coverage": {
+            "status": "partial",
+            "tracks": [
+              "visual"
+            ]
+          }
+        }
+      ]
+    },
+    "request": {
+      "instruction": "the car pulls forward out of the dark",
+      "mode": "ref2va",
+      "target": {
+        "duration_ms": 5167,
+        "frame_count": 124,
+        "aspect_ratio": "16:9",
+        "fps": {
+          "numerator": 24,
+          "denominator": 1
+        },
+        "width": 1344,
+        "height": 768
+      },
+      "assets": [
+        {
+          "id": "asset-1",
+          "kind": "video",
+          "description": "a car rolling through a tunnel",
+          "metadata": {
+            "duration_ms": 5000,
+            "fps": {
+              "numerator": 0,
+              "denominator": 0
+            }
+          },
+          "preparation": {
+            "width": 1344,
+            "height": 768,
+            "frames": 120
+          }
+        }
+      ],
+      "bindings": [
+        {
+          "source": {
+            "asset_id": "asset-1",
+            "track": "visual"
+          },
+          "role": "structure"
+        }
+      ],
+      "constraints": [
+        {
+          "id": "compiler-no-dialogue",
+          "kind": "no_dialogue",
+          "text": "Do not add spoken or sung lines."
+        }
+      ],
+      "allow_creative_additions": true,
+      "allow_generated_dialogue": false,
+      "pinned_shots": [
+        {
+          "id": "shot-1",
+          "start_ms": 0,
+          "end_ms": 1700
+        },
+        {
+          "id": "shot-2",
+          "start_ms": 1700,
+          "end_ms": 3300
+        },
+        {
+          "id": "shot-3",
+          "start_ms": 3300,
+          "end_ms": 5167
+        }
+      ],
+      "addition_scope": {
+        "dialogue": false,
+        "music": true,
+        "visible_text": false
+      }
+    },
+    "structure": {
+      "replacement_targets": {},
+      "style": "Live-action, cinematic",
+      "mode": "ref2va",
+      "assets": [
+        {
+          "asset_id": "asset-1",
+          "role": "structure",
+          "replaces": ""
+        }
+      ],
+      "shots": [
+        {
+          "subjects": [
+            "the car",
+            "the tunnel"
+          ],
+          "sync_sound": [
+            "low hollow tunnel ambience"
+          ],
+          "start_ms": 0,
+          "purpose": "establish",
+          "framing": "wide",
+          "action": "Deep inside the tunnel, the car rests as a faint silhouette swallowed by darkness, its edges barely separated from the surrounding gloom.",
+          "what_changes": "The scene opens in stillness and near-total darkness, placing the car deep within the tunnel.",
+          "camera": {
+            "type": "Static Shot",
+            "amplitude": "",
+            "speed": ""
+          }
+        },
+        {
+          "subjects": [
+            "the car"
+          ],
+          "sync_sound": [
+            "soft engine hum",
+            "tire roll on concrete"
+          ],
+          "start_ms": 1700,
+          "purpose": "develop",
+          "framing": "medium",
+          "action": "The car eases forward, its nose lifting out of the blackness as a dim wash of light grows ahead; the tires roll slowly over the tunnel floor while the body stays mostly in shadow.",
+          "what_changes": "The car shifts from a stationary silhouette into slow forward motion, drawing closer to the tunnel mouth.",
+          "camera": {
+            "type": "Push In",
+            "amplitude": "small",
+            "speed": "slow"
+          }
+        },
+        {
+          "subjects": [
+            "the car"
+          ],
+          "sync_sound": [
+            "engine hum rising slightly",
+            "air moving through the tunnel"
+          ],
+          "start_ms": 3300,
+          "purpose": "resolve",
+          "framing": "medium close",
+          "action": "The car pulls fully forward out of the dark into the tunnel mouth's pale edge of light, its body gradually resolving as it rolls clear of the shadow.",
+          "what_changes": "The car leaves the darkness behind and emerges into the light at the tunnel mouth.",
+          "camera": {
+            "type": "Tracking Shot",
+            "amplitude": "small",
+            "speed": "slow"
+          }
+        }
+      ],
+      "dialogue": [],
+      "onscreen_text": [],
+      "requested": {
+        "speech": false,
+        "music": false,
+        "onscreen_text": false,
+        "magnitude": ""
+      },
+      "forbidden": {
+        "speech": false,
+        "music": false,
+        "onscreen_text": false,
+        "magnitude": ""
+      },
+      "reasoning": "The brief asks only for the car's motion to change: it pulls forward out of the dark rather than crossing the tunnel frame left to right. The attached video is a structure reference whose observed motion is replaced by the requested forward pull, while framing, lighting, palette and medium stay with the reference because no shot scale, viewpoint, restyle or lighting direction is requested. Video card coverage is partial (3 sampled frames), so only the established tunnel setting, the car's presence and the prior left-to-right motion are treated as observed. Three shots are chosen within the 4-shot cap and the 5167ms target: an establishing beat in darkness, the car easing forward, and a resolve beat as it clears the dark. Balanced creativity permits added music but does not require it, and no speech, singing or visible lettering is requested."
+    },
+    "scope": {
+      "speech": false,
+      "music": true,
+      "onscreen_text": false,
+      "magnitude": "measured"
+    },
+    "document": {
+      "version": "contextir/v1",
+      "mode": "ref2va",
+      "target": {
+        "duration_ms": 5167,
+        "frame_count": 124,
+        "aspect_ratio": "16:9",
+        "fps": {
+          "numerator": 24,
+          "denominator": 1
+        },
+        "width": 1344,
+        "height": 768
+      },
+      "assets": [
+        {
+          "id": "asset-1",
+          "kind": "video",
+          "description": "a car rolling through a tunnel",
+          "metadata": {
+            "duration_ms": 5000,
+            "fps": {
+              "numerator": 0,
+              "denominator": 0
+            }
+          },
+          "preparation": {
+            "width": 1344,
+            "height": 768,
+            "frames": 120
+          }
+        }
+      ],
+      "evidence": [
+        {
+          "card": {
+            "asset_id": "asset-1",
+            "summary": "a car rolling through a tunnel",
+            "motion": "the car crosses frame left to right",
+            "frames_seen": 3,
+            "composition": "unknown",
+            "analyzer_version": "1",
+            "coverage": {
+              "status": "partial",
+              "tracks": [
+                "visual"
+              ]
+            }
+          },
+          "asset_id": "asset-1",
+          "facts": [
+            {
+              "id": "card-asset-1-1",
+              "text": "a car rolling through a tunnel",
+              "source": {
+                "asset_id": "asset-1",
+                "track": "visual"
+              }
+            },
+            {
+              "id": "card-asset-1-2",
+              "text": "the car crosses frame left to right",
+              "source": {
+                "asset_id": "asset-1",
+                "track": "visual"
+              }
+            }
+          ],
+          "analyzer_version": "1",
+          "limitations": [
+            "The video card was constructed from 3 sampled frames, not the entire clip."
+          ],
+          "coverage": {
+            "status": "partial",
+            "tracks": [
+              "visual"
+            ]
+          }
+        }
+      ],
+      "references": [
+        {
+          "id": "ref-tunnel-structure",
+          "kind": "video",
+          "source": {
+            "asset_id": "asset-1",
+            "track": "visual"
+          },
+          "roles": [
+            "structure"
+          ],
+          "description": "Structure reference for the tunnel interior, the car's presence, the surrounding darkness, and the established lighting and palette.",
+          "retention": "partially_preserved",
+          "retention_details": "The tunnel setting, framing, lighting quality, palette and medium are retained from the reference; the source car's left-to-right motion is replaced by the requested forward pull out of the dark.",
+          "shot_ids": [
+            "shot-1",
+            "shot-2",
+            "shot-3"
+          ]
+        }
+      ],
+      "style": "Live-action, cinematic",
+      "shots": [
+        {
+          "id": "shot-1",
+          "start_ms": 0,
+          "end_ms": 1700,
+          "description": [
+            {
+              "text": "In near-darkness inside "
+            },
+            {
+              "reference_id": "ref-tunnel-structure"
+            },
+            {
+              "text": ", a parked car sits low and heavy, its body a faint silhouette against damp concrete. The tunnel walls curve away on both sides, their wet surfaces catching only a thin sheen from distant lamps, while the road floor recedes into a black throat ahead. The vehicle's edges are barely separable from the surrounding gloom; its glass and paint hold dull highlights, and a faint haze of exhaust hangs around the rear. Nothing yet moves except the settling air. The car sits small within the broad tunnel interior, and the darkness presses in from every side before the forward shift begins."
+            }
+          ],
+          "events": [
+            {
+              "kind": "sound",
+              "at_ms": 0,
+              "description": [
+                {
+                  "text": "Low hollow tunnel ambience surrounds the stationary car."
+                }
+              ]
+            },
+            {
+              "kind": "visual",
+              "at_ms": 0,
+              "description": [
+                {
+                  "text": "The car rests as a faint silhouette swallowed by darkness, its edges barely separated from the surrounding gloom."
+                }
+              ]
+            },
+            {
+              "kind": "action",
+              "at_ms": 900,
+              "description": [
+                {
+                  "text": "A thin haze of exhaust drifts and settles around the rear of the car."
+                }
+              ]
+            },
+            {
+              "kind": "camera",
+              "description": [
+                {
+                  "text": "The camera holds a static shot."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "shot-2",
+          "start_ms": 1700,
+          "end_ms": 3300,
+          "description": [
+            {
+              "text": "The car eases forward from its resting position, nose lifting out of the blackness. A dim wash of light grows ahead at the tunnel mouth, stretching a pale reflection along the damp road and picking out the leading edge of the hood. The tires roll slowly over the concrete, and the body remains mostly in shadow, with only intermittent highlights along the roofline and side panels. The gap between the car and the tunnel opening shortens gradually; dust motes drift through the faint beam, and the surrounding walls stay close and heavy. The motion is deliberate, a slow pull rather than a burst, and the car's silhouette begins to separate from the dark."
+            }
+          ],
+          "events": [
+            {
+              "kind": "sound",
+              "at_ms": 1700,
+              "description": [
+                {
+                  "text": "A soft engine hum and slow tire roll on concrete begin."
+                }
+              ]
+            },
+            {
+              "kind": "action",
+              "at_ms": 2100,
+              "description": [
+                {
+                  "text": "The car eases forward, drawing closer to the tunnel mouth while remaining mostly in shadow."
+                }
+              ]
+            },
+            {
+              "kind": "visual",
+              "at_ms": 2800,
+              "description": [
+                {
+                  "text": "A dim wash of light grows ahead and catches the leading edge of the hood."
+                }
+              ]
+            },
+            {
+              "kind": "camera",
+              "description": [
+                {
+                  "text": "The camera pushes in with small amplitude at slow speed."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "shot-3",
+          "start_ms": 3300,
+          "end_ms": 5167,
+          "description": [
+            {
+              "text": "The car pulls fully forward out of the dark into the tunnel mouth's pale edge of light. Its body gradually resolves as it rolls clear of the shadow: the hood, windshield, and flanks take on a soft sheen, while the rear of the vehicle still trails a dim smear of darkness. The tunnel opening widens around it, with the car set against a lighter exterior haze; the road surface brightens under the tires, and the last pockets of blackness fall behind. The car's motion carries it forward with slow momentum, and the scene settles as the vehicle emerges, its shape now readable against the light."
+            }
+          ],
+          "events": [
+            {
+              "kind": "sound",
+              "at_ms": 3300,
+              "description": [
+                {
+                  "text": "The engine hum rises slightly and air moves through the tunnel."
+                }
+              ]
+            },
+            {
+              "kind": "action",
+              "at_ms": 3700,
+              "description": [
+                {
+                  "text": "The car rolls clear of the shadow and emerges into the pale edge of light."
+                }
+              ]
+            },
+            {
+              "kind": "visual",
+              "at_ms": 4500,
+              "description": [
+                {
+                  "text": "The hood, windshield, and flanks take on a soft sheen as the last darkness falls behind."
+                }
+              ]
+            },
+            {
+              "kind": "camera",
+              "description": [
+                {
+                  "text": "The camera tracks with the subject with small amplitude at slow speed."
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "soundscape": "Low hollow tunnel ambience with a soft engine hum, slow tire roll on concrete, and air moving through the tunnel.",
+      "music": "N/A",
+      "constraints": [
+        {
+          "id": "compiler-no-dialogue",
+          "kind": "no_dialogue",
+          "text": "Do not add spoken or sung lines."
+        }
+      ],
+      "claims": [
+        {
+          "id": "user-intent",
+          "origin": "user",
+          "text": "The car pulls forward out of the dark."
+        },
+        {
+          "id": "observed-car-tunnel",
+          "origin": "observed",
+          "text": "a car rolling through a tunnel",
+          "sources": [
+            {
+              "asset_id": "asset-1",
+              "track": "visual"
+            }
+          ]
+        },
+        {
+          "id": "observed-car-motion",
+          "origin": "observed",
+          "text": "the car crosses frame left to right",
+          "sources": [
+            {
+              "asset_id": "asset-1",
+              "track": "visual"
+            }
+          ]
+        },
+        {
+          "id": "creative-light-wash",
+          "origin": "creative",
+          "text": "A dim wash of light grows ahead at the tunnel mouth and catches the road and the car's leading edge."
+        },
+        {
+          "id": "creative-tunnel-sound",
+          "origin": "creative",
+          "text": "Soft engine hum, tire roll, air movement, and low hollow tunnel ambience accompany the emergence."
+        }
+      ]
+    },
+    "artifact": {
+      "version": "contextir-h3/artifact-v1",
+      "compiler_version": "contextir-h3/v1.2",
+      "format_version": "minimax-h3/prompt-v1",
+      "mode": "ref2va",
+      "target": {
+        "duration_ms": 5167,
+        "frame_count": 124,
+        "aspect_ratio": "16:9",
+        "fps": {
+          "numerator": 24,
+          "denominator": 1
+        },
+        "width": 1344,
+        "height": 768
+      },
+      "profile": {
+        "name": "h3-comfyui-17k5-v1",
+        "format": "minimax-h3/prompt-v1",
+        "fps": {
+          "numerator": 24,
+          "denominator": 1
+        },
+        "modes": [
+          "t2va",
+          "i2va",
+          "l2va",
+          "fl2va",
+          "ref2va"
+        ],
+        "frame_grid": {
+          "modulus": 17,
+          "remainder": 5
+        },
+        "min_frames": 5,
+        "max_frames": 3600,
+        "canvas_multiple": 32,
+        "limits": {
+          "pictures": 9,
+          "videos": 3,
+          "video_audio": 3,
+          "standalone_audio": 3
+        },
+        "supports_reference_frame_anchors": false,
+        "supports_source_intervals": false
+      },
+      "prompt": "subject_definitions:\n\u003cVideo 1\u003e is Structure reference for the tunnel interior, the car's presence, the surrounding darkness, and the established lighting and palette. Its role is camera movement and cutting structure only. Only camera movement and cutting structure are referenced; its people, objects, setting and visible content never appear in the target video.\n\nsummary:\n[reference generation] In near-darkness inside \u003cVideo 1\u003e, a parked car sits low and heavy, its body a faint silhouette against damp concrete. The tunnel walls curve away on both sides, their wet surfaces catching only a thin sheen from distant lamps, while the road floor recedes into a black throat ahead. The vehicle's edges are barely separable from the surrounding gloom; its glass and paint hold dull highlights, and a faint haze of exhaust hangs around the rear. Nothing yet moves except the settling air. The car sits small within the broad tunnel interior, and the darkness presses in from every side before the forward shift begins. The car eases forward from its resting position, nose lifting out of the blackness. A dim wash of light grows ahead at the tunnel mouth, stretching a pale reflection along the damp road and picking out the leading edge of the hood. The tires roll slowly over the concrete, and the body remains mostly in shadow, with only intermittent highlights along the roofline and side panels. The gap between the car and the tunnel opening shortens gradually; dust motes drift through the faint beam, and the surrounding walls stay close and heavy. The motion is deliberate, a slow pull rather than a burst, and the car's silhouette begins to separate from the dark. The car pulls fully forward out of the dark into the tunnel mouth's pale edge of light. Its body gradually resolves as it rolls clear of the shadow: the hood, windshield, and flanks take on a soft sheen, while the rear of the vehicle still trails a dim smear of darkness. The tunnel opening widens around it, with the car set against a lighter exterior haze; the road surface brightens under the tires, and the last pockets of blackness fall behind. The car's motion carries it forward with slow momentum, and the scene settles as the vehicle emerges, its shape now readable against the light.\n\nretention_analysis:\n\u003cVideo 1\u003e ([Shot 1], [Shot 2], [Shot 3]; camera movement and cutting structure only): partially_preserved - The tunnel setting, framing, lighting quality, palette and medium are retained from the reference; the source car's left-to-right motion is replaced by the requested forward pull out of the dark.\n\ndetailed_description:\nThe target video is in live-action style, cinematic.\n[Shot 1] In near-darkness inside \u003cVideo 1\u003e, a parked car sits low and heavy, its body a faint silhouette against damp concrete. The tunnel walls curve away on both sides, their wet surfaces catching only a thin sheen from distant lamps, while the road floor recedes into a black throat ahead. The vehicle's edges are barely separable from the surrounding gloom; its glass and paint hold dull highlights, and a faint haze of exhaust hangs around the rear. Nothing yet moves except the settling air. The car sits small within the broad tunnel interior, and the darkness presses in from every side before the forward shift begins. At 00:00.000, Low hollow tunnel ambience surrounds the stationary car. At 00:00.000, The car rests as a faint silhouette swallowed by darkness, its edges barely separated from the surrounding gloom. At 00:00.900, A thin haze of exhaust drifts and settles around the rear of the car. The camera holds a static shot. Throughout the target video: Do not add spoken or sung lines.\n[Shot 2] At 00:01.700, the shot cuts to The car eases forward from its resting position, nose lifting out of the blackness. A dim wash of light grows ahead at the tunnel mouth, stretching a pale reflection along the damp road and picking out the leading edge of the hood. The tires roll slowly over the concrete, and the body remains mostly in shadow, with only intermittent highlights along the roofline and side panels. The gap between the car and the tunnel opening shortens gradually; dust motes drift through the faint beam, and the surrounding walls stay close and heavy. The motion is deliberate, a slow pull rather than a burst, and the car's silhouette begins to separate from the dark. At 00:01.700, A soft engine hum and slow tire roll on concrete begin. At 00:02.100, The car eases forward, drawing closer to the tunnel mouth while remaining mostly in shadow. At 00:02.800, A dim wash of light grows ahead and catches the leading edge of the hood. The camera pushes in with small amplitude at slow speed.\n[Shot 3] At 00:03.300, the shot cuts to The car pulls fully forward out of the dark into the tunnel mouth's pale edge of light. Its body gradually resolves as it rolls clear of the shadow: the hood, windshield, and flanks take on a soft sheen, while the rear of the vehicle still trails a dim smear of darkness. The tunnel opening widens around it, with the car set against a lighter exterior haze; the road surface brightens under the tires, and the last pockets of blackness fall behind. The car's motion carries it forward with slow momentum, and the scene settles as the vehicle emerges, its shape now readable against the light. At 00:03.300, The engine hum rises slightly and air moves through the tunnel. At 00:03.700, The car rolls clear of the shadow and emerges into the pale edge of light. At 00:04.500, The hood, windshield, and flanks take on a soft sheen as the last darkness falls behind. The camera tracks with the subject with small amplitude at slow speed.\n\noverall_soundscape:\nLow hollow tunnel ambience with a soft engine hum, slow tire roll on concrete, and air moving through the tunnel.\n\nnon_diegetic_music:\nN/A\n",
+      "manifest": {
+        "media": [
+          {
+            "preparation": {
+              "width": 1344,
+              "height": 768,
+              "frames": 120
+            },
+            "source_metadata": {
+              "duration_ms": 5000,
+              "fps": {
+                "numerator": 0,
+                "denominator": 0
+              }
+            },
+            "label": "\u003cVideo 1\u003e",
+            "kind": "video",
+            "source": {
+              "asset_id": "asset-1",
+              "track": "visual"
+            },
+            "socket": "ref_video_1",
+            "target_uses": [
+              {
+                "reference_id": "ref-tunnel-structure",
+                "roles": [
+                  "structure"
+                ],
+                "retention": "partially_preserved",
+                "shots": [
+                  {
+                    "id": "shot-1",
+                    "index": 1,
+                    "interval": {
+                      "start_ms": 0,
+                      "end_ms": 1700
+                    }
+                  },
+                  {
+                    "id": "shot-2",
+                    "index": 2,
+                    "interval": {
+                      "start_ms": 1700,
+                      "end_ms": 3300
+                    }
+                  },
+                  {
+                    "id": "shot-3",
+                    "index": 3,
+                    "interval": {
+                      "start_ms": 3300,
+                      "end_ms": 5167
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "subjects": [],
+        "references": [
+          {
+            "id": "ref-tunnel-structure",
+            "label": "\u003cVideo 1\u003e"
+          }
+        ],
+        "speakers": []
+      },
+      "frames": 124,
+      "effective_duration_seconds": {
+        "numerator": 31,
+        "denominator": 6
+      },
+      "document_sha256": "7c4a11a271b17e5866bc9c2b0f43cfc84be1a4a1ecc255b7df934a0e15a11438",
+      "profile_sha256": "234d423c54663839ad8ef0aab7924d4da6d8bb212ced940e0b240639c3dcbed4",
+      "prompt_sha256": "8b8f5f73e1f4f426cb568d3ab9891d75748386373c560ebbcb790eee9f987ca9",
+      "manifest_sha256": "3fd664313f8bb8fed2df20a67c5b54d3dc26637079796eee2e99c28cf95e6593",
+      "sha256": "4ec28d4e33ff368e864facc979418b3fef41ae23b804b1847c226649ad246ab3"
+    },
+    "evidence": [
+      {
+        "card": {
+          "asset_id": "asset-1",
+          "summary": "a car rolling through a tunnel",
+          "motion": "the car crosses frame left to right",
+          "frames_seen": 3,
+          "composition": "unknown",
+          "analyzer_version": "1",
+          "coverage": {
+            "status": "partial",
+            "tracks": [
+              "visual"
+            ]
+          }
+        },
+        "asset_id": "asset-1",
+        "facts": [
+          {
+            "id": "card-asset-1-1",
+            "text": "a car rolling through a tunnel",
+            "source": {
+              "asset_id": "asset-1",
+              "track": "visual"
+            }
+          },
+          {
+            "id": "card-asset-1-2",
+            "text": "the car crosses frame left to right",
+            "source": {
+              "asset_id": "asset-1",
+              "track": "visual"
+            }
+          }
+        ],
+        "analyzer_version": "1",
+        "limitations": [
+          "The video card was constructed from 3 sampled frames, not the entire clip."
+        ],
+        "coverage": {
+          "status": "partial",
+          "tracks": [
+            "visual"
+          ]
+        }
+      }
+    ],
+    "decisions": [
+      {
+        "field": "target",
+        "source": "computed",
+        "value": {
+          "effective_seconds": 5.166666666666667,
+          "frame_count": 124,
+          "nominal_seconds": 5,
+          "policy": "snap_up"
+        },
+        "explanation": "Effective timing and nominal duration are recorded separately; generated cuts use effective timing."
+      },
+      {
+        "field": "canvas",
+        "source": "computed",
+        "value": [
+          1344,
+          768
+        ],
+        "explanation": "Native short-edge canvas is aligned to 32 pixels; explicit megapixels replaces the native area budget."
+      },
+      {
+        "field": "assets.asset-1.preparation",
+        "source": "required_adapter_instruction",
+        "value": {
+          "width": 1344,
+          "height": 768,
+          "frames": 120
+        },
+        "explanation": "These required input transforms are recorded separately from the original source metadata; the compiler has not executed media IO."
+      },
+      {
+        "field": "execution",
+        "source": "explicit_adapter_policy",
+        "value": {
+          "effort": "standard"
+        },
+        "explanation": "The injected adapters and explicit compiler repair configuration implement standard effort."
+      },
+      {
+        "field": "mode",
+        "source": "12.2#1",
+        "value": {
+          "clarification_policy": "continue_with_recorded_choice",
+          "confidence_kind": "routing_policy",
+          "aspect_mismatch": false,
+          "needs_clarification": false,
+          "mode": "ref2va",
+          "confidence": 1,
+          "rule": "12.2#1",
+          "signals": [
+            "Mode follows explicit structured choices and media socket requirements."
+          ]
+        },
+        "explanation": "Mode follows the production typed routing contract; publication capabilities are checked separately."
+      },
+      {
+        "field": "content_scope",
+        "source": "typed_request_interpretation",
+        "value": {
+          "conflict_policy": "supplied_content_wins",
+          "requested": {
+            "speech": false,
+            "music": false,
+            "onscreen_text": false,
+            "magnitude": ""
+          },
+          "forbidden": {
+            "speech": false,
+            "music": false,
+            "onscreen_text": false,
+            "magnitude": ""
+          },
+          "allowed": {
+            "speech": false,
+            "music": true,
+            "onscreen_text": false,
+            "magnitude": "measured"
+          },
+          "dialogue": [],
+          "onscreen_text": [],
+          "reasoning": "The intent describes only a car pulling forward out of the dark. It does not request or forbid speech, music, or onscreen text, and no exact dialogue or visible wording is supplied.",
+          "calls": [
+            {
+              "stage": "scope",
+              "attempt": 1,
+              "model": "deepseek-flash",
+              "usage": {
+                "input_tokens": 1037,
+                "output_tokens": 165
+              },
+              "valid": true
+            }
+          ]
+        },
+        "explanation": "Caller requests and prohibitions are interpreted before code applies the explicit creativity level."
+      },
+      {
+        "field": "reference_licence",
+        "source": "typed_attribute_precedence",
+        "value": {
+          "medium_decision": {
+            "disposition": "preserve",
+            "operation_quote": "",
+            "target": "",
+            "requested_style": "",
+            "reference_medium": "",
+            "requested_medium": "",
+            "treatments": [],
+            "reasoning": "The intent only asks for motion—the car pulling forward out of the dark—and does not expressly request a change of rendering medium. With a visual reference present and no authorized departure, the reference medium should be preserved. No reference medium can be identified from the supplied metadata.",
+            "calls": [
+              {
+                "stage": "medium",
+                "attempt": 1,
+                "model": "deepseek-flash",
+                "usage": {
+                  "input_tokens": 1051,
+                  "output_tokens": 246
+                },
+                "valid": true
+              }
+            ]
+          },
+          "identity": [],
+          "governs": {
+            "action": "request",
+            "framing": "reference",
+            "lighting": "reference",
+            "medium": "reference",
+            "palette": "reference",
+            "wardrobe": "reference"
+          },
+          "reasons": {
+            "action": "The clip shows an established motion (car crossing left to right), but the brief asks for a different temporal motion — the car pulling forward out of the dark — so the requested action replaces the source's motion.",
+            "framing": "No shot scale, viewpoint, camera movement or composition is requested — duration and 16:9 canvas alone do not constitute framing instructions — so the reference framing governs.",
+            "lighting": "\"Out of the dark\" describes the car's emergence and the surrounding gloom rather than directing a light, its source, direction or visible quality; the tunnel's observed lighting therefore stands.",
+            "medium": "The medium decision preserves the reference's rendering; the brief asks only for motion and never requests a restyle, so the reference medium governs.",
+            "palette": "No scene color palette is requested; darkness as a mood does not recolor the scene, so the reference palette is kept.",
+            "wardrobe": "No clothing or accessory change is named; the reference's observed wardrobe (none specified for the vehicle scene) is retained."
+          },
+          "transform_phrase": null,
+          "transform_target": "",
+          "medium_transferred": false,
+          "style": {
+            "observed_phrase": "",
+            "phrase": "Live-action, cinematic",
+            "source": "default",
+            "reference_medium": "",
+            "requested_medium": "",
+            "discrepancy": false,
+            "note": ""
+          },
+          "calls": [
+            {
+              "stage": "medium",
+              "attempt": 1,
+              "model": "deepseek-flash",
+              "usage": {
+                "input_tokens": 1051,
+                "output_tokens": 246
+              },
+              "valid": true
+            },
+            {
+              "stage": "licence",
+              "attempt": 1,
+              "model": "deepseek-flash",
+              "usage": {
+                "input_tokens": 1400,
+                "output_tokens": 788
+              },
+              "valid": true
+            }
+          ]
+        },
+        "explanation": "Each attribute follows explicit request or observed reference; poses and reference-sheet presentation are not subject identity."
+      },
+      {
+        "field": "shots.camera",
+        "source": "host_template",
+        "value": [
+          {
+            "subjects": [
+              "the car",
+              "the tunnel"
+            ],
+            "sync_sound": [
+              "low hollow tunnel ambience"
+            ],
+            "start_ms": 0,
+            "purpose": "establish",
+            "framing": "wide",
+            "action": "Deep inside the tunnel, the car rests as a faint silhouette swallowed by darkness, its edges barely separated from the surrounding gloom.",
+            "what_changes": "The scene opens in stillness and near-total darkness, placing the car deep within the tunnel.",
+            "camera": {
+              "type": "Static Shot",
+              "amplitude": "",
+              "speed": ""
+            }
+          },
+          {
+            "subjects": [
+              "the car"
+            ],
+            "sync_sound": [
+              "soft engine hum",
+              "tire roll on concrete"
+            ],
+            "start_ms": 1700,
+            "purpose": "develop",
+            "framing": "medium",
+            "action": "The car eases forward, its nose lifting out of the blackness as a dim wash of light grows ahead; the tires roll slowly over the tunnel floor while the body stays mostly in shadow.",
+            "what_changes": "The car shifts from a stationary silhouette into slow forward motion, drawing closer to the tunnel mouth.",
+            "camera": {
+              "type": "Push In",
+              "amplitude": "small",
+              "speed": "slow"
+            }
+          },
+          {
+            "subjects": [
+              "the car"
+            ],
+            "sync_sound": [
+              "engine hum rising slightly",
+              "air moving through the tunnel"
+            ],
+            "start_ms": 3300,
+            "purpose": "resolve",
+            "framing": "medium close",
+            "action": "The car pulls fully forward out of the dark into the tunnel mouth's pale edge of light, its body gradually resolving as it rolls clear of the shadow.",
+            "what_changes": "The car leaves the darkness behind and emerges into the light at the tunnel mouth.",
+            "camera": {
+              "type": "Tracking Shot",
+              "amplitude": "small",
+              "speed": "slow"
+            }
+          }
+        ],
+        "explanation": "Canonical camera events are assembled from the typed structural plan after prose."
+      },
+      {
+        "field": "creativity",
+        "source": "caller_or_default",
+        "value": {
+          "speech": false,
+          "music": true,
+          "onscreen_text": false,
+          "magnitude": "measured"
+        },
+        "explanation": "Scope reflects requested elements, explicit prohibitions, and the selected four-position creativity control."
+      }
+    ],
+    "calls": [
+      {
+        "stage": "scope",
+        "attempt": 1,
+        "model": "deepseek-flash",
+        "usage": {
+          "input_tokens": 1037,
+          "output_tokens": 165
+        },
+        "valid": true
+      },
+      {
+        "stage": "medium",
+        "attempt": 1,
+        "model": "deepseek-flash",
+        "usage": {
+          "input_tokens": 1051,
+          "output_tokens": 246
+        },
+        "valid": true
+      },
+      {
+        "stage": "licence",
+        "attempt": 1,
+        "model": "deepseek-flash",
+        "usage": {
+          "input_tokens": 1400,
+          "output_tokens": 788
+        },
+        "valid": true
+      },
+      {
+        "stage": "structure",
+        "attempt": 1,
+        "model": "deepseek-flash",
+        "usage": {
+          "input_tokens": 3011,
+          "output_tokens": 1247
+        },
+        "valid": true
+      },
+      {
+        "stage": "plan",
+        "attempt": 1,
+        "model": "deepseek-flash",
+        "usage": {
+          "input_tokens": 8607,
+          "output_tokens": 5308
+        },
+        "valid": true
+      }
+    ]
+  }
+}

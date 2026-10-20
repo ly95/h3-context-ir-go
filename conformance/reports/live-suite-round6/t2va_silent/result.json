@@ -1,0 +1,882 @@
+{
+  "case_id": "t2va_silent",
+  "input_sha256": "",
+  "status": "compiled",
+  "calls": [
+    {
+      "stage": "scope",
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 961,
+        "output_tokens": 206
+      },
+      "usage_valid": true,
+      "images": 0
+    },
+    {
+      "stage": "medium",
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 985,
+        "output_tokens": 221
+      },
+      "usage_valid": true,
+      "images": 0
+    },
+    {
+      "stage": "licence",
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 1233,
+        "output_tokens": 392
+      },
+      "usage_valid": true,
+      "images": 0
+    },
+    {
+      "stage": "structure",
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 2612,
+        "output_tokens": 820
+      },
+      "usage_valid": true,
+      "images": 0
+    },
+    {
+      "stage": "plan",
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 8172,
+        "output_tokens": 3900
+      },
+      "usage_valid": true,
+      "images": 0
+    }
+  ],
+  "elapsed_ms": 31833,
+  "result": {
+    "usage_complete": true,
+    "clarification_policy": "continue_with_recorded_choice",
+    "mode_decision": {
+      "clarification_policy": "continue_with_recorded_choice",
+      "confidence_kind": "routing_policy",
+      "aspect_mismatch": false,
+      "needs_clarification": false,
+      "mode": "t2va",
+      "confidence": 1,
+      "rule": "12.2#3",
+      "signals": [
+        "Mode follows explicit structured choices and media socket requirements."
+      ]
+    },
+    "scope_decision": {
+      "music_constraint": "no_added_music",
+      "conflict_policy": "supplied_content_wins",
+      "requested": {
+        "speech": false,
+        "music": false,
+        "onscreen_text": false,
+        "magnitude": ""
+      },
+      "forbidden": {
+        "speech": false,
+        "music": true,
+        "onscreen_text": false,
+        "magnitude": ""
+      },
+      "allowed": {
+        "speech": false,
+        "music": false,
+        "onscreen_text": false,
+        "magnitude": "measured"
+      },
+      "dialogue": [],
+      "onscreen_text": [],
+      "reasoning": "The intent depicts rain on a bus window at night with the city passing outside. It does not request speech, music, or visible lettering, and the free-text intent contains no explicit prohibitions for those classes. The structured silent flag is not treated as a free-text prohibition for this interpretation.",
+      "calls": [
+        {
+          "stage": "scope",
+          "attempt": 1,
+          "model": "deepseek-flash",
+          "usage": {
+            "input_tokens": 961,
+            "output_tokens": 206
+          },
+          "valid": true
+        }
+      ]
+    },
+    "licence": {
+      "medium_decision": {
+        "rendering_permission": {
+          "kind": "no_reference",
+          "disposition": "no_reference",
+          "operation_quote": "",
+          "target": "",
+          "reasoning": "No supplied reference has authority over the rendering medium."
+        },
+        "disposition": "no_reference",
+        "operation_quote": "",
+        "target": "",
+        "requested_style": "",
+        "reference_medium": "",
+        "requested_medium": "",
+        "treatments": [],
+        "reasoning": "No visual reference governs the rendering medium, and the intent describes only a scene and motion without naming a rendering family or compatible treatment. The rendering permission is host-owned as no_reference.",
+        "calls": [
+          {
+            "stage": "medium",
+            "attempt": 1,
+            "model": "deepseek-flash",
+            "usage": {
+              "input_tokens": 985,
+              "output_tokens": 221
+            },
+            "valid": true
+          }
+        ]
+      },
+      "identity": [],
+      "governs": {
+        "action": "request",
+        "framing": "request",
+        "lighting": "request",
+        "medium": "request",
+        "palette": "request",
+        "wardrobe": "request"
+      },
+      "reasons": {
+        "action": "The request specifies the scene's motion: rain running down the bus window while the city slides past outside.",
+        "framing": "No visual reference is supplied; the requested bus-window view and 9:16 presentation are request-governed.",
+        "lighting": "No visual reference is supplied; the requested night scene governs the lighting treatment.",
+        "medium": "No visual reference is supplied, so the rendering medium is request-governed.",
+        "palette": "No visual reference is supplied; the requested night city and rain-on-glass scene governs palette.",
+        "wardrobe": "No visual reference or wardrobe source is supplied, so wardrobe remains request-governed."
+      },
+      "transform_phrase": null,
+      "transform_target": "",
+      "medium_transferred": false,
+      "style": {
+        "observed_phrase": "",
+        "phrase": "Live-action, cinematic",
+        "source": "default",
+        "reference_medium": "",
+        "requested_medium": "",
+        "discrepancy": false,
+        "note": ""
+      },
+      "calls": [
+        {
+          "stage": "medium",
+          "attempt": 1,
+          "model": "deepseek-flash",
+          "usage": {
+            "input_tokens": 985,
+            "output_tokens": 221
+          },
+          "valid": true
+        },
+        {
+          "stage": "licence",
+          "attempt": 1,
+          "model": "deepseek-flash",
+          "usage": {
+            "input_tokens": 1233,
+            "output_tokens": 392
+          },
+          "valid": true
+        }
+      ]
+    },
+    "budget": {
+      "prompt_tokens": 781,
+      "target_video_rows": 37296,
+      "target_audio_rows": 414,
+      "known_reference_rows": 0,
+      "in_trained_band": true
+    },
+    "findings": [
+      {
+        "rule": "A2-sound-duplicated",
+        "severity": "WARN",
+        "msg": "overall_soundscape repeats content already in the description rather than a separate layer"
+      }
+    ],
+    "status": "compiled",
+    "version": "contextir/compiler/v1",
+    "brief": {
+      "effort": "standard",
+      "seconds_explicit": true,
+      "aspect_explicit": true,
+      "intent": "rain runs down a bus window at night while the city slides past outside",
+      "seconds": 5,
+      "aspect": "9:16",
+      "silent": true,
+      "creativity": "balanced"
+    },
+    "request": {
+      "instruction": "rain runs down a bus window at night while the city slides past outside",
+      "mode": "t2va",
+      "target": {
+        "duration_ms": 5167,
+        "frame_count": 124,
+        "aspect_ratio": "9:16",
+        "fps": {
+          "numerator": 24,
+          "denominator": 1
+        },
+        "width": 768,
+        "height": 1344
+      },
+      "constraints": [
+        {
+          "id": "compiler-no-music",
+          "kind": "no_added_music",
+          "text": "Do not add a new score. Explicitly bound BGM copying remains permitted."
+        },
+        {
+          "id": "compiler-no-dialogue",
+          "kind": "no_dialogue",
+          "text": "Do not add spoken or sung lines."
+        }
+      ],
+      "allow_creative_additions": true,
+      "allow_generated_dialogue": false,
+      "pinned_shots": [
+        {
+          "id": "shot-1",
+          "start_ms": 0,
+          "end_ms": 2700
+        },
+        {
+          "id": "shot-2",
+          "start_ms": 2700,
+          "end_ms": 5167
+        }
+      ],
+      "addition_scope": {
+        "dialogue": false,
+        "music": false,
+        "visible_text": false
+      }
+    },
+    "structure": {
+      "music_constraint": "no_added_music",
+      "replacement_targets": {},
+      "style": "Live-action, cinematic",
+      "mode": "t2va",
+      "assets": [],
+      "shots": [
+        {
+          "subjects": [
+            "rain-streaked bus window glass",
+            "night city lights beyond the glass"
+          ],
+          "sync_sound": [
+            "rain ticking and dragging on glass",
+            "low muffled bus interior hum",
+            "distant tyre hiss on wet road"
+          ],
+          "start_ms": 0,
+          "purpose": "establish",
+          "framing": "medium close",
+          "action": "A rain-streaked bus window fills the frame at night, interior reflections faint on the glass; droplets gather, merge and drag slow crooked tracks downward while smeared city lights glide laterally behind the pane.",
+          "what_changes": "Droplets bead, merge and begin to slide, and the outside lights shift laterally as the bus moves.",
+          "camera": {
+            "type": "Static Shot",
+            "amplitude": "",
+            "speed": ""
+          }
+        },
+        {
+          "subjects": [
+            "clinging raindrops on the pane",
+            "blurred passing streetlights and shopfront colour"
+          ],
+          "sync_sound": [
+            "rain ticking on glass",
+            "soft continuous interior hum"
+          ],
+          "start_ms": 2700,
+          "purpose": "develop",
+          "framing": "close",
+          "action": "The view tightens toward the glass so individual rivulets and their clinging beads become distinct, with out-of-focus streetlights and shopfront colour sliding past behind them.",
+          "what_changes": "Scale draws in so the water tracks resolve into clear detail as the blurred exterior colour continues to travel past.",
+          "camera": {
+            "type": "Push In",
+            "amplitude": "small",
+            "speed": "slow"
+          }
+        }
+      ],
+      "dialogue": [],
+      "onscreen_text": [],
+      "requested": {
+        "speech": false,
+        "music": false,
+        "onscreen_text": false,
+        "magnitude": ""
+      },
+      "forbidden": {
+        "speech": false,
+        "music": true,
+        "onscreen_text": false,
+        "magnitude": ""
+      },
+      "reasoning": "No reference assets are supplied, so this is a pure text-and-voice-absent generation. The request is a single continuous observation: rain sliding down a bus window at night while the city passes outside. With a 5167 ms target and up to four shots allowed, two shots are enough to establish the window-and-rain texture and then move closer as the outside lights smear and shift, without inventing events the request does not contain. The caller explicitly forbids added music and requests no speech or visible lettering, so dialogue and onscreen_text remain empty and forbidden.music stays true. Balanced creativity permits shaping framing, camera and diegetic ambience only, so sync sound is limited to rain on glass, the muffled interior hum of the bus and passing traffic hiss. No voice, score or in-frame text is introduced. Camera modifiers that are not used serialize as empty strings, and the opening shot is a static observation to let the rain read as the sole motion source before a slow push-in reveals the city's blur more closely."
+    },
+    "scope": {
+      "speech": false,
+      "music": false,
+      "onscreen_text": false,
+      "magnitude": "measured"
+    },
+    "document": {
+      "version": "contextir/v1",
+      "mode": "t2va",
+      "target": {
+        "duration_ms": 5167,
+        "frame_count": 124,
+        "aspect_ratio": "9:16",
+        "fps": {
+          "numerator": 24,
+          "denominator": 1
+        },
+        "width": 768,
+        "height": 1344
+      },
+      "summary": [
+        {
+          "text": "A rain-streaked bus window at night, with droplets gathering and sliding as blurred city lights travel past outside."
+        }
+      ],
+      "style": "Live-action, cinematic",
+      "shots": [
+        {
+          "id": "shot-1",
+          "start_ms": 0,
+          "end_ms": 2700,
+          "transition": "cut",
+          "description": [
+            {
+              "text": "A medium close view holds steady on a rain-streaked bus window at night, the glass filling most of the vertical frame. Cold city light from outside presses through the wet pane while faint interior reflections ghost across its surface. Droplets bead along the upper glass and gather into heavier drops; each one trembles, merges with a neighbour, then drags a slow crooked track downward. Beyond the window, smeared headlights, shopfront colour and passing streetlamps slide laterally in soft bands, their shapes stretched by the water. The bus interior stays dark and muffled around the glass, keeping the rain and the moving city as the only visible motion."
+            }
+          ],
+          "events": [
+            {
+              "kind": "sound",
+              "at_ms": 0,
+              "description": [
+                {
+                  "text": "Rain ticks and drags against the glass while a low, muffled bus-interior hum sits underneath and distant tyres hiss on the wet road."
+                }
+              ]
+            },
+            {
+              "kind": "visual",
+              "at_ms": 0,
+              "description": [
+                {
+                  "text": "At the centre of the pane, droplets bead and cling; beyond them, city lights smear into soft lateral streaks."
+                }
+              ]
+            },
+            {
+              "kind": "action",
+              "at_ms": 700,
+              "description": [
+                {
+                  "text": "A larger drop trembles, merges with a smaller bead and begins a slow crooked descent, clearing a thin trail through the condensation."
+                }
+              ]
+            },
+            {
+              "kind": "visual",
+              "at_ms": 1500,
+              "description": [
+                {
+                  "text": "Reflections of the dim bus interior ghost across the wet glass as headlights and shopfront colour slide past outside."
+                }
+              ]
+            },
+            {
+              "kind": "action",
+              "at_ms": 2400,
+              "description": [
+                {
+                  "text": "More droplets join the running track, gathering into beads that hesitate and then slide faster down the lower pane."
+                }
+              ]
+            },
+            {
+              "kind": "camera",
+              "description": [
+                {
+                  "text": "The camera holds a static shot."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "shot-2",
+          "start_ms": 2700,
+          "end_ms": 5167,
+          "description": [
+            {
+              "text": "The view tightens toward the glass so individual rivulets and their clinging beads become distinct, revealing clear lenses of water and thin branching trails. Out-of-focus streetlights and shopfront colour continue travelling behind them, sliding from one edge to the other as the bus moves. New drops land, wobble and release, feeding the tracks already running down the pane; small beads cling in place until they are heavy enough to break away. Reflections of the bus interior thin at the edges of the frame, leaving the rain, the glass and the blurred nocturnal city in close detail. The push-in is slow and small in amplitude, gradually resolving the water texture without losing the window's surface."
+            }
+          ],
+          "events": [
+            {
+              "kind": "visual",
+              "at_ms": 2700,
+              "description": [
+                {
+                  "text": "Individual rivulets resolve as the glass fills the close view, their clinging beads distinct against blurred passing light."
+                }
+              ]
+            },
+            {
+              "kind": "sound",
+              "at_ms": 2700,
+              "description": [
+                {
+                  "text": "Rain continues tapping and dragging on the pane, the interior hum steady beneath it, with wet-road tyre hiss passing in and out."
+                }
+              ]
+            },
+            {
+              "kind": "action",
+              "at_ms": 3200,
+              "description": [
+                {
+                  "text": "A fresh drop lands near the top of the frame, wobbles, merges and releases a thin rivulet that cuts across the older trails."
+                }
+              ]
+            },
+            {
+              "kind": "visual",
+              "at_ms": 4200,
+              "description": [
+                {
+                  "text": "Streetlights flare into soft elongated bands beyond the water, while tiny beads at the pane's edge catch points of cold colour."
+                }
+              ]
+            },
+            {
+              "kind": "action",
+              "at_ms": 4900,
+              "description": [
+                {
+                  "text": "The nearest droplets lose their grip and drag downward in quick, irregular strokes as the blurred city colour keeps sliding past."
+                }
+              ]
+            },
+            {
+              "kind": "camera",
+              "description": [
+                {
+                  "text": "The camera pushes in with small amplitude at slow speed."
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "soundscape": "Rain ticks and drags on the glass, underlaid by a low muffled bus-interior hum and distant tyre hiss on the wet road.",
+      "music": "N/A",
+      "constraints": [
+        {
+          "id": "compiler-no-music",
+          "kind": "no_added_music",
+          "text": "Do not add a new score. Explicitly bound BGM copying remains permitted."
+        },
+        {
+          "id": "compiler-no-dialogue",
+          "kind": "no_dialogue",
+          "text": "Do not add spoken or sung lines."
+        }
+      ],
+      "claims": [
+        {
+          "id": "user-request",
+          "origin": "user",
+          "text": "Rain runs down a bus window at night while the city slides past outside."
+        },
+        {
+          "id": "creative-interior-hum",
+          "origin": "creative",
+          "text": "A low, muffled bus-interior hum is present beneath the rain."
+        },
+        {
+          "id": "creative-droplet-behaviour",
+          "origin": "creative",
+          "text": "Droplets bead, tremble, merge and drag slow crooked tracks down the glass."
+        },
+        {
+          "id": "creative-reflections",
+          "origin": "creative",
+          "text": "Faint interior reflections ghost across the wet window surface."
+        },
+        {
+          "id": "creative-road-hiss",
+          "origin": "creative",
+          "text": "Distant tyres hiss on the wet road outside the bus."
+        }
+      ]
+    },
+    "artifact": {
+      "version": "contextir-h3/artifact-v1",
+      "compiler_version": "contextir-h3/v1.2",
+      "format_version": "minimax-h3/prompt-v1",
+      "mode": "t2va",
+      "target": {
+        "duration_ms": 5167,
+        "frame_count": 124,
+        "aspect_ratio": "9:16",
+        "fps": {
+          "numerator": 24,
+          "denominator": 1
+        },
+        "width": 768,
+        "height": 1344
+      },
+      "profile": {
+        "name": "h3-comfyui-17k5-v1",
+        "format": "minimax-h3/prompt-v1",
+        "fps": {
+          "numerator": 24,
+          "denominator": 1
+        },
+        "modes": [
+          "t2va",
+          "i2va",
+          "l2va",
+          "fl2va",
+          "ref2va"
+        ],
+        "frame_grid": {
+          "modulus": 17,
+          "remainder": 5
+        },
+        "min_frames": 5,
+        "max_frames": 3600,
+        "canvas_multiple": 32,
+        "limits": {
+          "pictures": 9,
+          "videos": 3,
+          "video_audio": 3,
+          "standalone_audio": 3
+        },
+        "supports_reference_frame_anchors": false,
+        "supports_source_intervals": false
+      },
+      "prompt": "integrated_multimodal_description: [Shot 1] Live-action, cinematic, A medium close view holds steady on a rain-streaked bus window at night, the glass filling most of the vertical frame. Cold city light from outside presses through the wet pane while faint interior reflections ghost across its surface. Droplets bead along the upper glass and gather into heavier drops; each one trembles, merges with a neighbour, then drags a slow crooked track downward. Beyond the window, smeared headlights, shopfront colour and passing streetlamps slide laterally in soft bands, their shapes stretched by the water. The bus interior stays dark and muffled around the glass, keeping the rain and the moving city as the only visible motion. At 00:00.000, Rain ticks and drags against the glass while a low, muffled bus-interior hum sits underneath and distant tyres hiss on the wet road. At 00:00.000, At the centre of the pane, droplets bead and cling; beyond them, city lights smear into soft lateral streaks. At 00:00.700, A larger drop trembles, merges with a smaller bead and begins a slow crooked descent, clearing a thin trail through the condensation. At 00:01.500, Reflections of the dim bus interior ghost across the wet glass as headlights and shopfront colour slide past outside. At 00:02.400, More droplets join the running track, gathering into beads that hesitate and then slide faster down the lower pane. The camera holds a static shot. Throughout the target video: Do not add a new score. Explicitly bound BGM copying remains permitted. Throughout the target video: Do not add spoken or sung lines. [Shot 2] At 00:02.700, the shot cuts to The view tightens toward the glass so individual rivulets and their clinging beads become distinct, revealing clear lenses of water and thin branching trails. Out-of-focus streetlights and shopfront colour continue travelling behind them, sliding from one edge to the other as the bus moves. New drops land, wobble and release, feeding the tracks already running down the pane; small beads cling in place until they are heavy enough to break away. Reflections of the bus interior thin at the edges of the frame, leaving the rain, the glass and the blurred nocturnal city in close detail. The push-in is slow and small in amplitude, gradually resolving the water texture without losing the window's surface. At 00:02.700, Individual rivulets resolve as the glass fills the close view, their clinging beads distinct against blurred passing light. At 00:02.700, Rain continues tapping and dragging on the pane, the interior hum steady beneath it, with wet-road tyre hiss passing in and out. At 00:03.200, A fresh drop lands near the top of the frame, wobbles, merges and releases a thin rivulet that cuts across the older trails. At 00:04.200, Streetlights flare into soft elongated bands beyond the water, while tiny beads at the pane's edge catch points of cold colour. At 00:04.900, The nearest droplets lose their grip and drag downward in quick, irregular strokes as the blurred city colour keeps sliding past. The camera pushes in with small amplitude at slow speed.\n\noverall_soundscape: Rain ticks and drags on the glass, underlaid by a low muffled bus-interior hum and distant tyre hiss on the wet road.\n\nnon_diegetic_music: N/A\n",
+      "manifest": {
+        "media": [],
+        "subjects": [],
+        "references": [],
+        "speakers": []
+      },
+      "frames": 124,
+      "effective_duration_seconds": {
+        "numerator": 31,
+        "denominator": 6
+      },
+      "document_sha256": "dfd4765f6cef83e605f837d9c305038066a76c604662d7dd8b8ca7ee963955fb",
+      "profile_sha256": "234d423c54663839ad8ef0aab7924d4da6d8bb212ced940e0b240639c3dcbed4",
+      "prompt_sha256": "f72f7c6201de920b763446c8e675d5f523c3cbe472cd3bb250baf31efcac3612",
+      "manifest_sha256": "1cf2ed81ae9543b3d49ccca1678fef12fd20a7720f32a700bb5d2f4d04af1f39",
+      "sha256": "08fbcd1c70d63a3a100087e07157414f24379830edc8f78d6175e48463c963f2"
+    },
+    "decisions": [
+      {
+        "field": "target",
+        "source": "computed",
+        "value": {
+          "effective_seconds": 5.166666666666667,
+          "frame_count": 124,
+          "nominal_seconds": 5,
+          "policy": "snap_up"
+        },
+        "explanation": "Effective timing and nominal duration are recorded separately; generated cuts use effective timing."
+      },
+      {
+        "field": "canvas",
+        "source": "computed",
+        "value": [
+          768,
+          1344
+        ],
+        "explanation": "Native short-edge canvas is aligned to 32 pixels; explicit megapixels replaces the native area budget."
+      },
+      {
+        "field": "execution",
+        "source": "explicit_adapter_policy",
+        "value": {
+          "effort": "standard"
+        },
+        "explanation": "The injected adapters and explicit compiler repair configuration implement standard effort."
+      },
+      {
+        "field": "mode",
+        "source": "12.2#3",
+        "value": {
+          "clarification_policy": "continue_with_recorded_choice",
+          "confidence_kind": "routing_policy",
+          "aspect_mismatch": false,
+          "needs_clarification": false,
+          "mode": "t2va",
+          "confidence": 1,
+          "rule": "12.2#3",
+          "signals": [
+            "Mode follows explicit structured choices and media socket requirements."
+          ]
+        },
+        "explanation": "Mode follows the production typed routing contract; publication capabilities are checked separately."
+      },
+      {
+        "field": "content_scope",
+        "source": "typed_request_interpretation",
+        "value": {
+          "music_constraint": "no_added_music",
+          "conflict_policy": "supplied_content_wins",
+          "requested": {
+            "speech": false,
+            "music": false,
+            "onscreen_text": false,
+            "magnitude": ""
+          },
+          "forbidden": {
+            "speech": false,
+            "music": true,
+            "onscreen_text": false,
+            "magnitude": ""
+          },
+          "allowed": {
+            "speech": false,
+            "music": false,
+            "onscreen_text": false,
+            "magnitude": "measured"
+          },
+          "dialogue": [],
+          "onscreen_text": [],
+          "reasoning": "The intent depicts rain on a bus window at night with the city passing outside. It does not request speech, music, or visible lettering, and the free-text intent contains no explicit prohibitions for those classes. The structured silent flag is not treated as a free-text prohibition for this interpretation.",
+          "calls": [
+            {
+              "stage": "scope",
+              "attempt": 1,
+              "model": "deepseek-flash",
+              "usage": {
+                "input_tokens": 961,
+                "output_tokens": 206
+              },
+              "valid": true
+            }
+          ]
+        },
+        "explanation": "Caller requests and prohibitions are interpreted before code applies the explicit creativity level."
+      },
+      {
+        "field": "reference_licence",
+        "source": "typed_attribute_precedence",
+        "value": {
+          "medium_decision": {
+            "rendering_permission": {
+              "kind": "no_reference",
+              "disposition": "no_reference",
+              "operation_quote": "",
+              "target": "",
+              "reasoning": "No supplied reference has authority over the rendering medium."
+            },
+            "disposition": "no_reference",
+            "operation_quote": "",
+            "target": "",
+            "requested_style": "",
+            "reference_medium": "",
+            "requested_medium": "",
+            "treatments": [],
+            "reasoning": "No visual reference governs the rendering medium, and the intent describes only a scene and motion without naming a rendering family or compatible treatment. The rendering permission is host-owned as no_reference.",
+            "calls": [
+              {
+                "stage": "medium",
+                "attempt": 1,
+                "model": "deepseek-flash",
+                "usage": {
+                  "input_tokens": 985,
+                  "output_tokens": 221
+                },
+                "valid": true
+              }
+            ]
+          },
+          "identity": [],
+          "governs": {
+            "action": "request",
+            "framing": "request",
+            "lighting": "request",
+            "medium": "request",
+            "palette": "request",
+            "wardrobe": "request"
+          },
+          "reasons": {
+            "action": "The request specifies the scene's motion: rain running down the bus window while the city slides past outside.",
+            "framing": "No visual reference is supplied; the requested bus-window view and 9:16 presentation are request-governed.",
+            "lighting": "No visual reference is supplied; the requested night scene governs the lighting treatment.",
+            "medium": "No visual reference is supplied, so the rendering medium is request-governed.",
+            "palette": "No visual reference is supplied; the requested night city and rain-on-glass scene governs palette.",
+            "wardrobe": "No visual reference or wardrobe source is supplied, so wardrobe remains request-governed."
+          },
+          "transform_phrase": null,
+          "transform_target": "",
+          "medium_transferred": false,
+          "style": {
+            "observed_phrase": "",
+            "phrase": "Live-action, cinematic",
+            "source": "default",
+            "reference_medium": "",
+            "requested_medium": "",
+            "discrepancy": false,
+            "note": ""
+          },
+          "calls": [
+            {
+              "stage": "medium",
+              "attempt": 1,
+              "model": "deepseek-flash",
+              "usage": {
+                "input_tokens": 985,
+                "output_tokens": 221
+              },
+              "valid": true
+            },
+            {
+              "stage": "licence",
+              "attempt": 1,
+              "model": "deepseek-flash",
+              "usage": {
+                "input_tokens": 1233,
+                "output_tokens": 392
+              },
+              "valid": true
+            }
+          ]
+        },
+        "explanation": "Each attribute follows explicit request or observed reference; poses and reference-sheet presentation are not subject identity."
+      },
+      {
+        "field": "shots.camera",
+        "source": "host_template",
+        "value": [
+          {
+            "subjects": [
+              "rain-streaked bus window glass",
+              "night city lights beyond the glass"
+            ],
+            "sync_sound": [
+              "rain ticking and dragging on glass",
+              "low muffled bus interior hum",
+              "distant tyre hiss on wet road"
+            ],
+            "start_ms": 0,
+            "purpose": "establish",
+            "framing": "medium close",
+            "action": "A rain-streaked bus window fills the frame at night, interior reflections faint on the glass; droplets gather, merge and drag slow crooked tracks downward while smeared city lights glide laterally behind the pane.",
+            "what_changes": "Droplets bead, merge and begin to slide, and the outside lights shift laterally as the bus moves.",
+            "camera": {
+              "type": "Static Shot",
+              "amplitude": "",
+              "speed": ""
+            }
+          },
+          {
+            "subjects": [
+              "clinging raindrops on the pane",
+              "blurred passing streetlights and shopfront colour"
+            ],
+            "sync_sound": [
+              "rain ticking on glass",
+              "soft continuous interior hum"
+            ],
+            "start_ms": 2700,
+            "purpose": "develop",
+            "framing": "close",
+            "action": "The view tightens toward the glass so individual rivulets and their clinging beads become distinct, with out-of-focus streetlights and shopfront colour sliding past behind them.",
+            "what_changes": "Scale draws in so the water tracks resolve into clear detail as the blurred exterior colour continues to travel past.",
+            "camera": {
+              "type": "Push In",
+              "amplitude": "small",
+              "speed": "slow"
+            }
+          }
+        ],
+        "explanation": "Canonical camera events are assembled from the typed structural plan after prose."
+      },
+      {
+        "field": "creativity",
+        "source": "caller_or_default",
+        "value": {
+          "speech": false,
+          "music": false,
+          "onscreen_text": false,
+          "magnitude": "measured"
+        },
+        "explanation": "Scope reflects requested elements, explicit prohibitions, and the selected four-position creativity control."
+      }
+    ],
+    "calls": [
+      {
+        "stage": "scope",
+        "attempt": 1,
+        "model": "deepseek-flash",
+        "usage": {
+          "input_tokens": 961,
+          "output_tokens": 206
+        },
+        "valid": true
+      },
+      {
+        "stage": "medium",
+        "attempt": 1,
+        "model": "deepseek-flash",
+        "usage": {
+          "input_tokens": 985,
+          "output_tokens": 221
+        },
+        "valid": true
+      },
+      {
+        "stage": "licence",
+        "attempt": 1,
+        "model": "deepseek-flash",
+        "usage": {
+          "input_tokens": 1233,
+          "output_tokens": 392
+        },
+        "valid": true
+      },
+      {
+        "stage": "structure",
+        "attempt": 1,
+        "model": "deepseek-flash",
+        "usage": {
+          "input_tokens": 2612,
+          "output_tokens": 820
+        },
+        "valid": true
+      },
+      {
+        "stage": "plan",
+        "attempt": 1,
+        "model": "deepseek-flash",
+        "usage": {
+          "input_tokens": 8172,
+          "output_tokens": 3900
+        },
+        "valid": true
+      }
+    ]
+  }
+}

@@ -1,0 +1,64 @@
+{
+  "stage": "mode",
+  "system": "Decide one routing question for an H3 video request: are the attached still images actual first/last frames of the generated video, or content references redrawn into a new scene? Interpret the whole request semantically. Do not route from a keyword list. An actual opening frame selects i2va; an actual closing frame selects l2va; two opening/closing frames select fl2va. Identity, environment, style and storyboard references select ref2va. A character appearing in a requested scene is not an anchored frame. Caller-declared roles/provenance outrank ambiguous prose. A generic unstated subject role is not a declaration. For genuine ambiguity, make an explicit ref2va decision with low confidence and explain that soft reference conditioning does not guarantee an exact frame. Never invent observations about unread media. Return exactly the supplied JSON contract.",
+  "input": {
+    "brief": {
+      "effort": "standard",
+      "seconds_explicit": true,
+      "aspect_explicit": true,
+      "intent": "animate this photo",
+      "assets": [
+        {
+          "id": "asset-1",
+          "kind": "image",
+          "metadata": {
+            "width": 1024,
+            "height": 1024,
+            "fps": {
+              "numerator": 0,
+              "denominator": 0
+            }
+          },
+          "composition": "unknown",
+          "sizing": "match"
+        }
+      ],
+      "seconds": 5,
+      "aspect": "16:9",
+      "creativity": "balanced"
+    },
+    "diagnostics": null,
+    "version": "contextir/compiler/v1"
+  },
+  "response_schema": {
+    "additionalProperties": false,
+    "properties": {
+      "confidence": {
+        "maximum": 1,
+        "minimum": 0,
+        "type": "number"
+      },
+      "mode": {
+        "enum": [
+          "i2va",
+          "l2va",
+          "ref2va"
+        ],
+        "type": "string"
+      },
+      "signals": {
+        "items": {
+          "type": "string"
+        },
+        "minItems": 1,
+        "type": "array"
+      }
+    },
+    "required": [
+      "mode",
+      "confidence",
+      "signals"
+    ],
+    "type": "object"
+  }
+}

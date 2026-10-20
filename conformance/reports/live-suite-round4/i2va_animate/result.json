@@ -1,0 +1,1697 @@
+{
+  "case_id": "i2va_animate",
+  "input_sha256": "",
+  "status": "compiled",
+  "calls": [
+    {
+      "stage": "image_perception",
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 2364,
+        "output_tokens": 5431
+      },
+      "usage_valid": true,
+      "images": 1
+    },
+    {
+      "stage": "image_perception",
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 2399,
+        "output_tokens": 4016
+      },
+      "usage_valid": true,
+      "images": 1
+    },
+    {
+      "stage": "mode",
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 1171,
+        "output_tokens": 281
+      },
+      "usage_valid": true,
+      "images": 0
+    },
+    {
+      "stage": "scope",
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 1098,
+        "output_tokens": 173
+      },
+      "usage_valid": true,
+      "images": 0
+    },
+    {
+      "stage": "medium",
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 982,
+        "output_tokens": 625
+      },
+      "usage_valid": true,
+      "images": 0
+    },
+    {
+      "stage": "licence",
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 3431,
+        "output_tokens": 1346
+      },
+      "usage_valid": true,
+      "images": 0
+    },
+    {
+      "stage": "structure",
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 5053,
+        "output_tokens": 1687
+      },
+      "usage_valid": true,
+      "images": 0
+    },
+    {
+      "stage": "plan",
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 9572,
+        "output_tokens": 8220
+      },
+      "usage_valid": true,
+      "images": 0
+    },
+    {
+      "stage": "plan",
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 9598,
+        "output_tokens": 8196
+      },
+      "usage_valid": true,
+      "images": 0
+    }
+  ],
+  "elapsed_ms": 156677,
+  "result": {
+    "usage_complete": true,
+    "clarification_policy": "continue_with_recorded_choice",
+    "mode_decision": {
+      "clarification_policy": "continue_with_recorded_choice",
+      "model_signals": [
+        "prose says 'animate this photo'",
+        "'bring it to life with slow drifting motion' treats the attached image as the frame to be animated",
+        "no mention of using the figure or scene as a reference for a new shot",
+        "single attached asset drives the motion directly"
+      ],
+      "confidence_kind": "routing_policy",
+      "model_confidence": 0.76,
+      "interpretation": "anchor_instruction",
+      "questions": [
+        {
+          "id": "anchor_or_reference",
+          "ask": "Should the image be an exact opening/closing frame (with an explicit crop/resize/canvas decision if its aspect differs), or should what it shows appear redrawn in a new scene?",
+          "options": [
+            {
+              "id": "opening_frame",
+              "label": "Use it as the opening frame"
+            },
+            {
+              "id": "appears_in",
+              "label": "Put what it shows into a new scene"
+            }
+          ],
+          "recommended": "appears_in",
+          "default_if_unanswered": "appears_in"
+        }
+      ],
+      "aspect_mismatch": true,
+      "needs_clarification": true,
+      "mode": "i2va",
+      "confidence": 0.6,
+      "rule": "12.3-anchor-language",
+      "signals": [
+        "prose says 'animate this photo'",
+        "'bring it to life with slow drifting motion' treats the attached image as the frame to be animated",
+        "no mention of using the figure or scene as a reference for a new shot",
+        "single attached asset drives the motion directly",
+        "anchor phrase: animate this photo: bring it to life with slow drifting motion",
+        "Confidence records the original routing-policy value; model_confidence separately preserves the provider's interpretation confidence.",
+        "aspect mismatch: Image asset-1 aspect 0.666364 differs from requested 16:9 by more than 20%. The anchor choice is preserved; exact-frame conditioning requires an explicit crop/resize/canvas decision."
+      ],
+      "alternatives": [
+        "l2va",
+        "ref2va"
+      ],
+      "calls": [
+        {
+          "stage": "mode",
+          "attempt": 1,
+          "model": "deepseek-flash",
+          "usage": {
+            "input_tokens": 1171,
+            "output_tokens": 281
+          },
+          "valid": true
+        }
+      ]
+    },
+    "scope_decision": {
+      "conflict_policy": "supplied_content_wins",
+      "requested": {
+        "speech": false,
+        "music": false,
+        "onscreen_text": false,
+        "magnitude": ""
+      },
+      "forbidden": {
+        "speech": false,
+        "music": false,
+        "onscreen_text": false,
+        "magnitude": ""
+      },
+      "allowed": {
+        "speech": false,
+        "music": true,
+        "onscreen_text": false,
+        "magnitude": "measured"
+      },
+      "dialogue": [],
+      "onscreen_text": [],
+      "reasoning": "The intent requests only animating the supplied photo with slow drifting motion. It does not request speech, music, or visible lettering, and it contains no prohibitions on those content classes.",
+      "calls": [
+        {
+          "stage": "scope",
+          "attempt": 1,
+          "model": "deepseek-flash",
+          "usage": {
+            "input_tokens": 1098,
+            "output_tokens": 173
+          },
+          "valid": true
+        }
+      ]
+    },
+    "licence": {
+      "medium_decision": {
+        "disposition": "preserve",
+        "operation_quote": "",
+        "target": "",
+        "requested_style": "",
+        "reference_medium": "2d-animation",
+        "requested_medium": "",
+        "treatments": [],
+        "reasoning": "The request only asks to animate the existing photo with slow drifting motion. It does not explicitly request a change of rendering medium, and motion/animation alone does not convert the reference's depicted medium. The reference is a photorealistic character concept/reference sheet, consistent with a digitally drawn 2D illustration rather than an authorized medium conversion.",
+        "calls": [
+          {
+            "stage": "medium",
+            "attempt": 1,
+            "model": "deepseek-flash",
+            "usage": {
+              "input_tokens": 982,
+              "output_tokens": 625
+            },
+            "valid": true
+          }
+        ]
+      },
+      "identity": [
+        {
+          "label": "\u003cSubject 1\u003e",
+          "descriptor": "Adult character",
+          "retained_attributes": [
+            "lean build",
+            "shaved-side short dark hair with a small tied bun at the back",
+            "visible scar through one eyebrow",
+            "black high-collared tactical jacket with strap and buckle details",
+            "dark crew-neck shirt",
+            "black cargo trousers",
+            "black lace-up combat boots"
+          ],
+          "requested_attributes": [],
+          "request_quote": "",
+          "wardrobe_attributes": [
+            "black high-collared tactical jacket with strap and buckle details",
+            "dark crew-neck shirt",
+            "black cargo trousers",
+            "black lace-up combat boots"
+          ]
+        }
+      ],
+      "governs": {
+        "action": "request",
+        "framing": "reference",
+        "lighting": "reference",
+        "medium": "reference",
+        "palette": "reference",
+        "wardrobe": "reference"
+      },
+      "reasons": {
+        "action": "The user explicitly asks to animate the photo with slow drifting motion, so the action is request-governed; the reference’s static pose remains recorded separately and is not retained as identity.",
+        "framing": "The requested 16:9 aspect and 5-second duration are canvas/timing configuration, not camera framing or composition instructions; framing remains reference-governed.",
+        "lighting": "There is no explicit instruction about a light source, direction, or visible light quality; the reference lighting is retained.",
+        "medium": "The request only asks to animate the existing image and does not explicitly request a reimagining, restyle, redraw, or medium conversion; motion alone does not change the reference medium.",
+        "palette": "No explicit palette instruction is given, so the observed desaturated palette with warm accents is retained.",
+        "wardrobe": "No wardrobe or clothing change is requested, so the observed tactical outfit is retained."
+      },
+      "transform_phrase": null,
+      "transform_target": "",
+      "medium_transferred": false,
+      "style": {
+        "observed_phrase": "Photorealistic dark cinematic character concept and reference sheet, desaturated with warm accent lights",
+        "phrase": "Photorealistic dark cinematic character concept and reference sheet, desaturated with warm accent lights",
+        "source": "reference",
+        "reference_medium": "2d-animation",
+        "requested_medium": "",
+        "discrepancy": false,
+        "note": ""
+      },
+      "subjects": [
+        {
+          "label": "\u003cSubject 1\u003e",
+          "kind": "person",
+          "sources": [
+            "\u003cPicture 1\u003e"
+          ],
+          "descriptor": "Adult character shown in multiple reference views",
+          "attributes": [
+            "lean build",
+            "shaved-side short dark hair with a small tied bun at the back",
+            "visible scar through one eyebrow",
+            "black high-collared tactical jacket with strap and buckle details",
+            "dark crew-neck shirt",
+            "black cargo trousers",
+            "black lace-up combat boots"
+          ],
+          "pose": [
+            "in the hero panel, stands upright with arms at sides and head turned to the viewer's left",
+            "in the turnaround panels, stands facing the camera, in profile, and with the back to the camera",
+            "in the face close-up, looks toward the camera with a neutral expression"
+          ],
+          "pose_licensed": true,
+          "retention": "fully_preserved",
+          "retention_note": "",
+          "appears_in": [],
+          "taken_over_by": ""
+        }
+      ],
+      "calls": [
+        {
+          "stage": "medium",
+          "attempt": 1,
+          "model": "deepseek-flash",
+          "usage": {
+            "input_tokens": 982,
+            "output_tokens": 625
+          },
+          "valid": true
+        },
+        {
+          "stage": "licence",
+          "attempt": 1,
+          "model": "deepseek-flash",
+          "usage": {
+            "input_tokens": 3431,
+            "output_tokens": 1346
+          },
+          "valid": true
+        }
+      ]
+    },
+    "budget": {
+      "prompt_tokens": 654,
+      "target_video_rows": 37296,
+      "target_audio_rows": 414,
+      "known_reference_rows": 782,
+      "in_trained_band": true
+    },
+    "findings": [
+      {
+        "rule": "compiler-clarification-continued",
+        "severity": "WARN",
+        "msg": "The caller explicitly selected continue_with_recorded_choice; unresolved frame/reference questions and any aspect mismatch remain in ModeDecision."
+      },
+      {
+        "rule": "R13-sheet-artefact",
+        "severity": "WARN",
+        "msg": "the brief describes a reference sheet artefact that does not belong to the character"
+      }
+    ],
+    "status": "compiled",
+    "version": "contextir/compiler/v1",
+    "brief": {
+      "effort": "standard",
+      "seconds_explicit": true,
+      "aspect_explicit": true,
+      "intent": "animate this photo: bring it to life with slow drifting motion",
+      "assets": [
+        {
+          "id": "asset-1",
+          "kind": "image",
+          "uri": "third_party/open-h3-ir/testdata/golden/assets/ref1.png",
+          "sha256": "e23d00458c9c493d6a8bd2f539a58e180e8caaeabf31d288e7c0d1ee4d648237",
+          "description": "the subject",
+          "metadata": {
+            "width": 733,
+            "height": 1100,
+            "fps": {
+              "numerator": 0,
+              "denominator": 0
+            }
+          },
+          "preparation": {
+            "sizing": "match",
+            "width": 736,
+            "height": 1088
+          },
+          "role": "frame_anchor_first",
+          "composition": "unknown",
+          "sizing": "match"
+        }
+      ],
+      "seconds": 5,
+      "aspect": "16:9",
+      "creativity": "balanced",
+      "cards": [
+        {
+          "asset_id": "asset-1",
+          "summary": "A dark, cinematic multi-panel character reference sheet for a lone adult figure in black tactical clothing, featuring a rainy night hero image plus turnaround and detail views.",
+          "subjects": [
+            {
+              "kind": "person",
+              "descriptor": "Adult character shown in multiple reference views",
+              "attributes": [
+                "lean build",
+                "shaved-side short dark hair with a small tied bun at the back",
+                "visible scar through one eyebrow",
+                "black high-collared tactical jacket with strap and buckle details",
+                "dark crew-neck shirt",
+                "black cargo trousers",
+                "black lace-up combat boots"
+              ],
+              "pose": [
+                "in the hero panel, stands upright with arms at sides and head turned to the viewer's left",
+                "in the turnaround panels, stands facing the camera, in profile, and with the back to the camera",
+                "in the face close-up, looks toward the camera with a neutral expression"
+              ]
+            }
+          ],
+          "environment": "Top panel: a rainy night urban walkway with metal railings and blurred city lights; reference panels: a dark charcoal studio backdrop.",
+          "lighting": "Low-key cinematic lighting; the hero panel combines a cool key light with warm background practicals, while the studio panels use soft directional lighting.",
+          "palette": [
+            "black",
+            "charcoal gray",
+            "cool blue-gray",
+            "warm amber"
+          ],
+          "framing": "Vertical multi-panel reference sheet: a wide full-body hero image at top, three full-body turnaround views in the middle row, and four close-up detail crops at the bottom.",
+          "style": "Photorealistic dark cinematic character concept and reference sheet, desaturated with warm accent lights.",
+          "visible_text": [
+            "HERO",
+            "FRONT",
+            "SIDE PROFILE",
+            "BACK",
+            "FACE",
+            "JACKET COLLAR",
+            "HANDS",
+            "BOOTS"
+          ],
+          "characterisation": "A lean adult with East Asian features, shaved-side dark hair tied at the back, a scar through one eyebrow, and an all-black tactical outfit.",
+          "composition": "composed_scene",
+          "is_reference_sheet": true,
+          "language": "en",
+          "analyzer_version": "contextir-image-card/v2/deepseek-flash",
+          "model": "deepseek-flash",
+          "coverage": {
+            "status": "complete",
+            "tracks": [
+              "visual"
+            ]
+          }
+        }
+      ]
+    },
+    "request": {
+      "instruction": "animate this photo: bring it to life with slow drifting motion",
+      "mode": "i2va",
+      "target": {
+        "duration_ms": 5167,
+        "frame_count": 124,
+        "aspect_ratio": "16:9",
+        "fps": {
+          "numerator": 24,
+          "denominator": 1
+        },
+        "width": 1344,
+        "height": 768
+      },
+      "assets": [
+        {
+          "id": "asset-1",
+          "kind": "image",
+          "uri": "third_party/open-h3-ir/testdata/golden/assets/ref1.png",
+          "sha256": "e23d00458c9c493d6a8bd2f539a58e180e8caaeabf31d288e7c0d1ee4d648237",
+          "description": "the subject",
+          "metadata": {
+            "width": 733,
+            "height": 1100,
+            "fps": {
+              "numerator": 0,
+              "denominator": 0
+            }
+          },
+          "preparation": {
+            "sizing": "match",
+            "width": 736,
+            "height": 1088
+          }
+        }
+      ],
+      "bindings": [
+        {
+          "source": {
+            "asset_id": "asset-1",
+            "track": "visual"
+          },
+          "role": "first_frame",
+          "anchor_ms": 0
+        }
+      ],
+      "constraints": [
+        {
+          "id": "compiler-no-dialogue",
+          "kind": "no_dialogue",
+          "text": "Do not add spoken or sung lines."
+        }
+      ],
+      "allow_creative_additions": true,
+      "allow_generated_dialogue": false,
+      "pinned_shots": [
+        {
+          "id": "shot-1",
+          "start_ms": 0,
+          "end_ms": 5167
+        }
+      ],
+      "addition_scope": {
+        "dialogue": false,
+        "music": true,
+        "visible_text": false
+      }
+    },
+    "structure": {
+      "replacement_targets": {},
+      "style": "Photorealistic dark cinematic character concept and reference sheet, desaturated with warm accent lights",
+      "mode": "i2va",
+      "assets": [
+        {
+          "asset_id": "asset-1",
+          "role": "frame_anchor_first",
+          "replaces": ""
+        }
+      ],
+      "shots": [
+        {
+          "subjects": [
+            "\u003cSubject 1\u003e"
+          ],
+          "sync_sound": [],
+          "start_ms": 0,
+          "purpose": "establish",
+          "framing": "wide",
+          "action": "The anchored character reference sheet remains in frame as the top nocturnal hero panel comes subtly alive: rain streaks drift downward, the blurred warm and cool city lights shimmer, and the figure’s dark hair and jacket edges stir in a faint breeze. The turnaround and detail panels stay still, and the camera drifts slowly closer.",
+          "what_changes": "Rain and reflected city lights begin to drift and shimmer, the figure’s hair and jacket subtly move, and the camera slowly pushes in.",
+          "camera": {
+            "type": "Push In",
+            "amplitude": "small",
+            "speed": "slow"
+          }
+        }
+      ],
+      "dialogue": [],
+      "onscreen_text": [],
+      "requested": {
+        "speech": false,
+        "music": false,
+        "onscreen_text": false,
+        "magnitude": ""
+      },
+      "forbidden": {
+        "speech": false,
+        "music": false,
+        "onscreen_text": false,
+        "magnitude": ""
+      },
+      "reasoning": "The user asks only to animate the supplied photo with slow drifting motion, so the image stays as the anchored first frame. A single continuous take preserves the reference-sheet layout while adding subtle life: drifting rain, shimmering city lights, and faint movement in the figure’s hair and jacket. No speech, music, or new visible lettering is requested; existing panel presentation remains unchanged."
+    },
+    "scope": {
+      "speech": false,
+      "music": true,
+      "onscreen_text": false,
+      "magnitude": "measured"
+    },
+    "document": {
+      "version": "contextir/v1",
+      "mode": "i2va",
+      "target": {
+        "duration_ms": 5167,
+        "frame_count": 124,
+        "aspect_ratio": "16:9",
+        "fps": {
+          "numerator": 24,
+          "denominator": 1
+        },
+        "width": 1344,
+        "height": 768
+      },
+      "assets": [
+        {
+          "id": "asset-1",
+          "kind": "image",
+          "uri": "third_party/open-h3-ir/testdata/golden/assets/ref1.png",
+          "sha256": "e23d00458c9c493d6a8bd2f539a58e180e8caaeabf31d288e7c0d1ee4d648237",
+          "description": "the subject",
+          "metadata": {
+            "width": 733,
+            "height": 1100,
+            "fps": {
+              "numerator": 0,
+              "denominator": 0
+            }
+          },
+          "preparation": {
+            "sizing": "match",
+            "width": 736,
+            "height": 1088
+          }
+        }
+      ],
+      "evidence": [
+        {
+          "card": {
+            "asset_id": "asset-1",
+            "summary": "A dark, cinematic multi-panel character reference sheet for a lone adult figure in black tactical clothing, featuring a rainy night hero image plus turnaround and detail views.",
+            "subjects": [
+              {
+                "kind": "person",
+                "descriptor": "Adult character shown in multiple reference views",
+                "attributes": [
+                  "lean build",
+                  "shaved-side short dark hair with a small tied bun at the back",
+                  "visible scar through one eyebrow",
+                  "black high-collared tactical jacket with strap and buckle details",
+                  "dark crew-neck shirt",
+                  "black cargo trousers",
+                  "black lace-up combat boots"
+                ],
+                "pose": [
+                  "in the hero panel, stands upright with arms at sides and head turned to the viewer's left",
+                  "in the turnaround panels, stands facing the camera, in profile, and with the back to the camera",
+                  "in the face close-up, looks toward the camera with a neutral expression"
+                ]
+              }
+            ],
+            "environment": "Top panel: a rainy night urban walkway with metal railings and blurred city lights; reference panels: a dark charcoal studio backdrop.",
+            "lighting": "Low-key cinematic lighting; the hero panel combines a cool key light with warm background practicals, while the studio panels use soft directional lighting.",
+            "palette": [
+              "black",
+              "charcoal gray",
+              "cool blue-gray",
+              "warm amber"
+            ],
+            "framing": "Vertical multi-panel reference sheet: a wide full-body hero image at top, three full-body turnaround views in the middle row, and four close-up detail crops at the bottom.",
+            "style": "Photorealistic dark cinematic character concept and reference sheet, desaturated with warm accent lights.",
+            "visible_text": [
+              "HERO",
+              "FRONT",
+              "SIDE PROFILE",
+              "BACK",
+              "FACE",
+              "JACKET COLLAR",
+              "HANDS",
+              "BOOTS"
+            ],
+            "characterisation": "A lean adult with East Asian features, shaved-side dark hair tied at the back, a scar through one eyebrow, and an all-black tactical outfit.",
+            "composition": "composed_scene",
+            "is_reference_sheet": true,
+            "language": "en",
+            "analyzer_version": "contextir-image-card/v2/deepseek-flash",
+            "model": "deepseek-flash",
+            "coverage": {
+              "status": "complete",
+              "tracks": [
+                "visual"
+              ]
+            }
+          },
+          "asset_id": "asset-1",
+          "facts": [
+            {
+              "analyzer_version": "contextir-image-perception/v1/deepseek-flash",
+              "id": "asset-1.fact1",
+              "text": "The image is a vertical multi-panel character reference sheet on a dark background, with the label \"HERO\" above the top panel.",
+              "source": {
+                "asset_id": "asset-1",
+                "track": "visual"
+              }
+            },
+            {
+              "analyzer_version": "contextir-image-perception/v1/deepseek-flash",
+              "id": "asset-1.fact2",
+              "text": "The top panel shows a full-body figure standing on a wet urban walkway at night, with metal railings on both sides, visible rain streaks, reflective pavement, and blurred warm and cool city lights behind.",
+              "source": {
+                "asset_id": "asset-1",
+                "track": "visual"
+              }
+            },
+            {
+              "analyzer_version": "contextir-image-perception/v1/deepseek-flash",
+              "id": "asset-1.fact3",
+              "text": "The middle row contains three full-body studio views labeled \"FRONT\", \"SIDE PROFILE\", and \"BACK\".",
+              "source": {
+                "asset_id": "asset-1",
+                "track": "visual"
+              }
+            },
+            {
+              "analyzer_version": "contextir-image-perception/v1/deepseek-flash",
+              "id": "asset-1.fact4",
+              "text": "The bottom row contains four cropped detail views labeled \"FACE\", \"JACKET COLLAR\", \"HANDS\", and \"BOOTS\".",
+              "source": {
+                "asset_id": "asset-1",
+                "track": "visual"
+              }
+            },
+            {
+              "analyzer_version": "contextir-image-perception/v1/deepseek-flash",
+              "id": "asset-1.fact5",
+              "text": "The person wears a black high-collared jacket with strap and buckle details, a dark crew-neck shirt, black cargo trousers, and black lace-up combat boots.",
+              "source": {
+                "asset_id": "asset-1",
+                "track": "visual"
+              }
+            },
+            {
+              "analyzer_version": "contextir-image-perception/v1/deepseek-flash",
+              "id": "asset-1.fact6",
+              "text": "The person has short dark hair with shaved sides and a small tied section at the back, and a visible scar through one eyebrow.",
+              "source": {
+                "asset_id": "asset-1",
+                "track": "visual"
+              }
+            },
+            {
+              "analyzer_version": "contextir-image-perception/v1/deepseek-flash",
+              "id": "asset-1.fact7",
+              "text": "In the \"FACE\" detail crop, the person faces the camera with a neutral expression and a closely cropped view of the head and collar.",
+              "source": {
+                "asset_id": "asset-1",
+                "track": "visual"
+              }
+            },
+            {
+              "analyzer_version": "contextir-image-perception/v1/deepseek-flash",
+              "id": "asset-1.fact8",
+              "text": "The studio panels use a dark charcoal backdrop with soft, low-key directional lighting.",
+              "source": {
+                "asset_id": "asset-1",
+                "track": "visual"
+              }
+            },
+            {
+              "analyzer_version": "contextir-image-perception/v1/deepseek-flash",
+              "id": "asset-1.fact9",
+              "text": "The \"JACKET COLLAR\" detail shows dark fabric and a prominent buckle or strap fastening.",
+              "source": {
+                "asset_id": "asset-1",
+                "track": "visual"
+              }
+            },
+            {
+              "analyzer_version": "contextir-image-perception/v1/deepseek-flash",
+              "id": "asset-1.fact10",
+              "text": "The \"BOOTS\" detail shows a close view of black leather lace-up boots with visible laces and eyelets.",
+              "source": {
+                "asset_id": "asset-1",
+                "track": "visual"
+              }
+            }
+          ],
+          "model": "deepseek-flash",
+          "analyzer_version": "contextir-image-perception/v1/deepseek-flash",
+          "limitations": [
+            "Background signage and some distant details in the top panel are blurred or too dark to read reliably."
+          ],
+          "coverage": {
+            "status": "complete",
+            "tracks": [
+              "visual"
+            ]
+          }
+        }
+      ],
+      "references": [
+        {
+          "id": "ref-1",
+          "kind": "picture",
+          "source": {
+            "asset_id": "asset-1",
+            "track": "visual"
+          },
+          "roles": [
+            "first_frame"
+          ],
+          "description": "Anchored first-frame character reference sheet showing a rainy nighttime hero panel above turnaround and detail views.",
+          "retention": "partially_preserved",
+          "retention_details": "The locked sheet layout, character design, wardrobe, palette, and panel structure are preserved; only rain drift, reflected-light shimmer, and faint hair and jacket movement animate within the hero panel.",
+          "shot_ids": [
+            "shot-1"
+          ],
+          "anchor_ms": 0
+        }
+      ],
+      "style": "Photorealistic dark cinematic character concept and reference sheet, desaturated with warm accent lights",
+      "shots": [
+        {
+          "id": "shot-1",
+          "start_ms": 0,
+          "end_ms": 5167,
+          "description": [
+            {
+              "reference_id": "ref-1"
+            },
+            {
+              "text": " remains the locked anchor: a vertical multi-panel character reference sheet presented within the requested 16:9 frame. The top hero panel shows a lean adult figure standing on a wet nighttime urban walkway, framed by metal railings that recede on both sides. Rain streaks hang in the air, the pavement holds broken reflections, and blurred city lights glow in warm amber and cool blue-gray behind the figure. The figure wears a black high-collared tactical jacket with strap and buckle details, a dark crew-neck shirt, black cargo trousers, and black lace-up combat boots. Short dark hair is shaved at the sides, with a small tied section at the back, and a scar cuts through one eyebrow. Beneath the hero panel, the turnaround row and the four detail crops remain in their dark charcoal studio layout, with soft low-key directional lighting and restrained contrast. The palette stays desaturated black, charcoal, cool blue-gray, and warm amber, with photorealistic dark cinematic character-concept styling. Within this held sheet, the hero panel alone gains restrained life: rain drifts downward in fine streaks, reflected city lights shimmer in the wet ground, and the figure's hair and jacket edges stir under a faint breeze while the surrounding reference views stay still."
+            }
+          ],
+          "events": [
+            {
+              "kind": "visual",
+              "at_ms": 0,
+              "description": [
+                {
+                  "reference_id": "ref-1"
+                },
+                {
+                  "text": " is fully established as the opening frame, with the hero panel above the turnaround and detail rows."
+                }
+              ]
+            },
+            {
+              "kind": "action",
+              "at_ms": 400,
+              "description": [
+                {
+                  "text": "Rain streaks begin to drift downward through the hero panel, thin against the blurred city lights and reflective walkway."
+                }
+              ]
+            },
+            {
+              "kind": "visual",
+              "at_ms": 1200,
+              "description": [
+                {
+                  "text": "Reflections on the wet pavement shimmer as warm amber and cool blue-gray highlights shift subtly across the ground."
+                }
+              ]
+            },
+            {
+              "kind": "action",
+              "at_ms": 1800,
+              "description": [
+                {
+                  "text": "The figure's short dark hair and the edges of the black tactical jacket stir in a faint breeze while the anchored pose stays steady."
+                }
+              ]
+            },
+            {
+              "kind": "visual",
+              "at_ms": 2600,
+              "description": [
+                {
+                  "text": "The turnaround views and the four close-up detail crops remain unchanged, preserving the reference sheet layout and labels."
+                }
+              ]
+            },
+            {
+              "kind": "action",
+              "at_ms": 3400,
+              "description": [
+                {
+                  "text": "Fine rain continues to fall; droplets catch the low light and break the city glow into soft, shifting points along the railings."
+                }
+              ]
+            },
+            {
+              "kind": "visual",
+              "at_ms": 4200,
+              "description": [
+                {
+                  "text": "The composition holds its dark, desaturated palette with the figure centered in the rainy night hero panel and the studio panels held still."
+                }
+              ]
+            },
+            {
+              "kind": "visual",
+              "at_ms": 4900,
+              "description": [
+                {
+                  "text": "The motion settles into a steady drift, leaving the hero panel alive with rain and light while the overall reference sheet remains compositionally stable."
+                }
+              ]
+            },
+            {
+              "kind": "camera",
+              "description": [
+                {
+                  "text": "The camera pushes in with small amplitude at slow speed."
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "soundscape": "N/A",
+      "music": "N/A",
+      "constraints": [
+        {
+          "id": "compiler-no-dialogue",
+          "kind": "no_dialogue",
+          "text": "Do not add spoken or sung lines."
+        }
+      ],
+      "claims": [
+        {
+          "id": "user-1",
+          "origin": "user",
+          "text": "Animate the supplied photo with slow drifting motion, preserving the requested i2va target and first-frame anchor."
+        },
+        {
+          "id": "obs-1",
+          "origin": "observed",
+          "text": "The image is a vertical multi-panel character reference sheet on a dark background with a top hero panel, three turnaround views, and four detail crops.",
+          "sources": [
+            {
+              "asset_id": "asset-1",
+              "track": "visual"
+            }
+          ]
+        },
+        {
+          "id": "obs-2",
+          "origin": "observed",
+          "text": "The hero panel shows a full-body figure standing on a wet nighttime urban walkway with metal railings, rain streaks, reflective pavement, and blurred warm and cool city lights.",
+          "sources": [
+            {
+              "asset_id": "asset-1",
+              "track": "visual"
+            }
+          ]
+        },
+        {
+          "id": "obs-3",
+          "origin": "observed",
+          "text": "The figure wears a black high-collared tactical jacket with strap and buckle details, a dark crew-neck shirt, black cargo trousers, and black lace-up combat boots.",
+          "sources": [
+            {
+              "asset_id": "asset-1",
+              "track": "visual"
+            }
+          ]
+        },
+        {
+          "id": "obs-4",
+          "origin": "observed",
+          "text": "The figure has short dark hair with shaved sides and a small tied section at the back, plus a visible scar through one eyebrow.",
+          "sources": [
+            {
+              "asset_id": "asset-1",
+              "track": "visual"
+            }
+          ]
+        },
+        {
+          "id": "creative-1",
+          "origin": "creative",
+          "text": "Subtle rain drift, shimmering reflected city lights, and a faint breeze stirring the figure's hair and jacket edges are permitted creative motion additions within the held hero panel."
+        }
+      ]
+    },
+    "artifact": {
+      "version": "contextir-h3/artifact-v1",
+      "compiler_version": "contextir-h3/v1.2",
+      "format_version": "minimax-h3/prompt-v1",
+      "mode": "i2va",
+      "target": {
+        "duration_ms": 5167,
+        "frame_count": 124,
+        "aspect_ratio": "16:9",
+        "fps": {
+          "numerator": 24,
+          "denominator": 1
+        },
+        "width": 1344,
+        "height": 768
+      },
+      "profile": {
+        "name": "h3-comfyui-17k5-v1",
+        "format": "minimax-h3/prompt-v1",
+        "fps": {
+          "numerator": 24,
+          "denominator": 1
+        },
+        "modes": [
+          "t2va",
+          "i2va",
+          "l2va",
+          "fl2va",
+          "ref2va"
+        ],
+        "frame_grid": {
+          "modulus": 17,
+          "remainder": 5
+        },
+        "min_frames": 5,
+        "max_frames": 3600,
+        "canvas_multiple": 32,
+        "limits": {
+          "pictures": 9,
+          "videos": 3,
+          "video_audio": 3,
+          "standalone_audio": 3
+        },
+        "supports_reference_frame_anchors": false,
+        "supports_source_intervals": false
+      },
+      "prompt": "For the target video, at 0.00 seconds into the target video, \u003cPicture 1\u003e (from [Shot 1]) is fully referenced.\n\nintegrated_multimodal_description: [Shot 1] Photorealistic dark cinematic character concept and reference sheet, desaturated with warm accent lights, \u003cPicture 1\u003e remains the locked anchor: a vertical multi-panel character reference sheet presented within the requested 16:9 frame. The top hero panel shows a lean adult figure standing on a wet nighttime urban walkway, framed by metal railings that recede on both sides. Rain streaks hang in the air, the pavement holds broken reflections, and blurred city lights glow in warm amber and cool blue-gray behind the figure. The figure wears a black high-collared tactical jacket with strap and buckle details, a dark crew-neck shirt, black cargo trousers, and black lace-up combat boots. Short dark hair is shaved at the sides, with a small tied section at the back, and a scar cuts through one eyebrow. Beneath the hero panel, the turnaround row and the four detail crops remain in their dark charcoal studio layout, with soft low-key directional lighting and restrained contrast. The palette stays desaturated black, charcoal, cool blue-gray, and warm amber, with photorealistic dark cinematic character-concept styling. Within this held sheet, the hero panel alone gains restrained life: rain drifts downward in fine streaks, reflected city lights shimmer in the wet ground, and the figure's hair and jacket edges stir under a faint breeze while the surrounding reference views stay still. At 00:00.000, \u003cPicture 1\u003e is fully established as the opening frame, with the hero panel above the turnaround and detail rows. At 00:00.400, Rain streaks begin to drift downward through the hero panel, thin against the blurred city lights and reflective walkway. At 00:01.200, Reflections on the wet pavement shimmer as warm amber and cool blue-gray highlights shift subtly across the ground. At 00:01.800, The figure's short dark hair and the edges of the black tactical jacket stir in a faint breeze while the anchored pose stays steady. At 00:02.600, The turnaround views and the four close-up detail crops remain unchanged, preserving the reference sheet layout and labels. At 00:03.400, Fine rain continues to fall; droplets catch the low light and break the city glow into soft, shifting points along the railings. At 00:04.200, The composition holds its dark, desaturated palette with the figure centered in the rainy night hero panel and the studio panels held still. At 00:04.900, The motion settles into a steady drift, leaving the hero panel alive with rain and light while the overall reference sheet remains compositionally stable. The camera pushes in with small amplitude at slow speed. Throughout the target video: Do not add spoken or sung lines.\n\noverall_soundscape: N/A\n\nnon_diegetic_music: N/A\n",
+      "manifest": {
+        "media": [
+          {
+            "preparation": {
+              "sizing": "match",
+              "width": 736,
+              "height": 1088
+            },
+            "source_metadata": {
+              "width": 733,
+              "height": 1100,
+              "fps": {
+                "numerator": 0,
+                "denominator": 0
+              }
+            },
+            "label": "\u003cPicture 1\u003e",
+            "kind": "picture",
+            "source": {
+              "asset_id": "asset-1",
+              "track": "visual"
+            },
+            "uri": "third_party/open-h3-ir/testdata/golden/assets/ref1.png",
+            "sha256": "e23d00458c9c493d6a8bd2f539a58e180e8caaeabf31d288e7c0d1ee4d648237",
+            "socket": "first_frame",
+            "target_uses": [
+              {
+                "reference_id": "ref-1",
+                "roles": [
+                  "first_frame"
+                ],
+                "retention": "partially_preserved",
+                "anchor_ms": 0,
+                "shots": [
+                  {
+                    "id": "shot-1",
+                    "index": 1,
+                    "interval": {
+                      "start_ms": 0,
+                      "end_ms": 5167
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "subjects": [],
+        "references": [
+          {
+            "id": "ref-1",
+            "label": "\u003cPicture 1\u003e"
+          }
+        ],
+        "speakers": []
+      },
+      "frames": 124,
+      "effective_duration_seconds": {
+        "numerator": 31,
+        "denominator": 6
+      },
+      "document_sha256": "4e54ca3094739f4407053cee813dbe53eef42c152a04837fdfce5df5e7659445",
+      "profile_sha256": "234d423c54663839ad8ef0aab7924d4da6d8bb212ced940e0b240639c3dcbed4",
+      "prompt_sha256": "1364c6a879904c6f38bba0322f75e0a59cea8517e1c47990638f5d521829c8ed",
+      "manifest_sha256": "f0748e7af4df3e0395a17759d5e2a0e84723da13dcb45b2b2bda630f6eda37a3",
+      "sha256": "e3eacdf9ce88ebebc3b43989124ed1cb9f5cbf0c188520575cb68d225caba349"
+    },
+    "evidence": [
+      {
+        "card": {
+          "asset_id": "asset-1",
+          "summary": "A dark, cinematic multi-panel character reference sheet for a lone adult figure in black tactical clothing, featuring a rainy night hero image plus turnaround and detail views.",
+          "subjects": [
+            {
+              "kind": "person",
+              "descriptor": "Adult character shown in multiple reference views",
+              "attributes": [
+                "lean build",
+                "shaved-side short dark hair with a small tied bun at the back",
+                "visible scar through one eyebrow",
+                "black high-collared tactical jacket with strap and buckle details",
+                "dark crew-neck shirt",
+                "black cargo trousers",
+                "black lace-up combat boots"
+              ],
+              "pose": [
+                "in the hero panel, stands upright with arms at sides and head turned to the viewer's left",
+                "in the turnaround panels, stands facing the camera, in profile, and with the back to the camera",
+                "in the face close-up, looks toward the camera with a neutral expression"
+              ]
+            }
+          ],
+          "environment": "Top panel: a rainy night urban walkway with metal railings and blurred city lights; reference panels: a dark charcoal studio backdrop.",
+          "lighting": "Low-key cinematic lighting; the hero panel combines a cool key light with warm background practicals, while the studio panels use soft directional lighting.",
+          "palette": [
+            "black",
+            "charcoal gray",
+            "cool blue-gray",
+            "warm amber"
+          ],
+          "framing": "Vertical multi-panel reference sheet: a wide full-body hero image at top, three full-body turnaround views in the middle row, and four close-up detail crops at the bottom.",
+          "style": "Photorealistic dark cinematic character concept and reference sheet, desaturated with warm accent lights.",
+          "visible_text": [
+            "HERO",
+            "FRONT",
+            "SIDE PROFILE",
+            "BACK",
+            "FACE",
+            "JACKET COLLAR",
+            "HANDS",
+            "BOOTS"
+          ],
+          "characterisation": "A lean adult with East Asian features, shaved-side dark hair tied at the back, a scar through one eyebrow, and an all-black tactical outfit.",
+          "composition": "composed_scene",
+          "is_reference_sheet": true,
+          "language": "en",
+          "analyzer_version": "contextir-image-card/v2/deepseek-flash",
+          "model": "deepseek-flash",
+          "coverage": {
+            "status": "complete",
+            "tracks": [
+              "visual"
+            ]
+          }
+        },
+        "asset_id": "asset-1",
+        "facts": [
+          {
+            "analyzer_version": "contextir-image-perception/v1/deepseek-flash",
+            "id": "asset-1.fact1",
+            "text": "The image is a vertical multi-panel character reference sheet on a dark background, with the label \"HERO\" above the top panel.",
+            "source": {
+              "asset_id": "asset-1",
+              "track": "visual"
+            }
+          },
+          {
+            "analyzer_version": "contextir-image-perception/v1/deepseek-flash",
+            "id": "asset-1.fact2",
+            "text": "The top panel shows a full-body figure standing on a wet urban walkway at night, with metal railings on both sides, visible rain streaks, reflective pavement, and blurred warm and cool city lights behind.",
+            "source": {
+              "asset_id": "asset-1",
+              "track": "visual"
+            }
+          },
+          {
+            "analyzer_version": "contextir-image-perception/v1/deepseek-flash",
+            "id": "asset-1.fact3",
+            "text": "The middle row contains three full-body studio views labeled \"FRONT\", \"SIDE PROFILE\", and \"BACK\".",
+            "source": {
+              "asset_id": "asset-1",
+              "track": "visual"
+            }
+          },
+          {
+            "analyzer_version": "contextir-image-perception/v1/deepseek-flash",
+            "id": "asset-1.fact4",
+            "text": "The bottom row contains four cropped detail views labeled \"FACE\", \"JACKET COLLAR\", \"HANDS\", and \"BOOTS\".",
+            "source": {
+              "asset_id": "asset-1",
+              "track": "visual"
+            }
+          },
+          {
+            "analyzer_version": "contextir-image-perception/v1/deepseek-flash",
+            "id": "asset-1.fact5",
+            "text": "The person wears a black high-collared jacket with strap and buckle details, a dark crew-neck shirt, black cargo trousers, and black lace-up combat boots.",
+            "source": {
+              "asset_id": "asset-1",
+              "track": "visual"
+            }
+          },
+          {
+            "analyzer_version": "contextir-image-perception/v1/deepseek-flash",
+            "id": "asset-1.fact6",
+            "text": "The person has short dark hair with shaved sides and a small tied section at the back, and a visible scar through one eyebrow.",
+            "source": {
+              "asset_id": "asset-1",
+              "track": "visual"
+            }
+          },
+          {
+            "analyzer_version": "contextir-image-perception/v1/deepseek-flash",
+            "id": "asset-1.fact7",
+            "text": "In the \"FACE\" detail crop, the person faces the camera with a neutral expression and a closely cropped view of the head and collar.",
+            "source": {
+              "asset_id": "asset-1",
+              "track": "visual"
+            }
+          },
+          {
+            "analyzer_version": "contextir-image-perception/v1/deepseek-flash",
+            "id": "asset-1.fact8",
+            "text": "The studio panels use a dark charcoal backdrop with soft, low-key directional lighting.",
+            "source": {
+              "asset_id": "asset-1",
+              "track": "visual"
+            }
+          },
+          {
+            "analyzer_version": "contextir-image-perception/v1/deepseek-flash",
+            "id": "asset-1.fact9",
+            "text": "The \"JACKET COLLAR\" detail shows dark fabric and a prominent buckle or strap fastening.",
+            "source": {
+              "asset_id": "asset-1",
+              "track": "visual"
+            }
+          },
+          {
+            "analyzer_version": "contextir-image-perception/v1/deepseek-flash",
+            "id": "asset-1.fact10",
+            "text": "The \"BOOTS\" detail shows a close view of black leather lace-up boots with visible laces and eyelets.",
+            "source": {
+              "asset_id": "asset-1",
+              "track": "visual"
+            }
+          }
+        ],
+        "model": "deepseek-flash",
+        "analyzer_version": "contextir-image-perception/v1/deepseek-flash",
+        "limitations": [
+          "Background signage and some distant details in the top panel are blurred or too dark to read reliably."
+        ],
+        "coverage": {
+          "status": "complete",
+          "tracks": [
+            "visual"
+          ]
+        }
+      }
+    ],
+    "decisions": [
+      {
+        "field": "target",
+        "source": "computed",
+        "value": {
+          "effective_seconds": 5.166666666666667,
+          "frame_count": 124,
+          "nominal_seconds": 5,
+          "policy": "snap_up"
+        },
+        "explanation": "Effective timing and nominal duration are recorded separately; generated cuts use effective timing."
+      },
+      {
+        "field": "canvas",
+        "source": "computed",
+        "value": [
+          1344,
+          768
+        ],
+        "explanation": "Native short-edge canvas is aligned to 32 pixels; explicit megapixels replaces the native area budget."
+      },
+      {
+        "field": "assets.asset-1.preparation",
+        "source": "required_adapter_instruction",
+        "value": {
+          "sizing": "match",
+          "width": 736,
+          "height": 1088
+        },
+        "explanation": "These required input transforms are recorded separately from the original source metadata; the compiler has not executed media IO."
+      },
+      {
+        "field": "execution",
+        "source": "explicit_adapter_policy",
+        "value": {
+          "effort": "standard"
+        },
+        "explanation": "The injected adapters and explicit compiler repair configuration implement standard effort."
+      },
+      {
+        "field": "clarification_policy",
+        "source": "explicit_continue_policy",
+        "value": {
+          "clarification_policy": "continue_with_recorded_choice",
+          "model_signals": [
+            "prose says 'animate this photo'",
+            "'bring it to life with slow drifting motion' treats the attached image as the frame to be animated",
+            "no mention of using the figure or scene as a reference for a new shot",
+            "single attached asset drives the motion directly"
+          ],
+          "confidence_kind": "routing_policy",
+          "model_confidence": 0.76,
+          "interpretation": "anchor_instruction",
+          "questions": [
+            {
+              "id": "anchor_or_reference",
+              "ask": "Should the image be an exact opening/closing frame (with an explicit crop/resize/canvas decision if its aspect differs), or should what it shows appear redrawn in a new scene?",
+              "options": [
+                {
+                  "id": "opening_frame",
+                  "label": "Use it as the opening frame"
+                },
+                {
+                  "id": "appears_in",
+                  "label": "Put what it shows into a new scene"
+                }
+              ],
+              "recommended": "appears_in",
+              "default_if_unanswered": "appears_in"
+            }
+          ],
+          "aspect_mismatch": true,
+          "needs_clarification": true,
+          "mode": "i2va",
+          "confidence": 0.6,
+          "rule": "12.3-anchor-language",
+          "signals": [
+            "prose says 'animate this photo'",
+            "'bring it to life with slow drifting motion' treats the attached image as the frame to be animated",
+            "no mention of using the figure or scene as a reference for a new shot",
+            "single attached asset drives the motion directly",
+            "anchor phrase: animate this photo: bring it to life with slow drifting motion",
+            "Confidence records the original routing-policy value; model_confidence separately preserves the provider's interpretation confidence.",
+            "aspect mismatch: Image asset-1 aspect 0.666364 differs from requested 16:9 by more than 20%. The anchor choice is preserved; exact-frame conditioning requires an explicit crop/resize/canvas decision."
+          ],
+          "alternatives": [
+            "l2va",
+            "ref2va"
+          ],
+          "calls": [
+            {
+              "stage": "mode",
+              "attempt": 1,
+              "model": "deepseek-flash",
+              "usage": {
+                "input_tokens": 1171,
+                "output_tokens": 281
+              },
+              "valid": true
+            }
+          ]
+        },
+        "explanation": "The caller explicitly permits publication using the recorded mode despite the unresolved geometry/question; no mode or aspect was changed."
+      },
+      {
+        "field": "mode",
+        "source": "12.3-anchor-language",
+        "value": {
+          "clarification_policy": "continue_with_recorded_choice",
+          "model_signals": [
+            "prose says 'animate this photo'",
+            "'bring it to life with slow drifting motion' treats the attached image as the frame to be animated",
+            "no mention of using the figure or scene as a reference for a new shot",
+            "single attached asset drives the motion directly"
+          ],
+          "confidence_kind": "routing_policy",
+          "model_confidence": 0.76,
+          "interpretation": "anchor_instruction",
+          "questions": [
+            {
+              "id": "anchor_or_reference",
+              "ask": "Should the image be an exact opening/closing frame (with an explicit crop/resize/canvas decision if its aspect differs), or should what it shows appear redrawn in a new scene?",
+              "options": [
+                {
+                  "id": "opening_frame",
+                  "label": "Use it as the opening frame"
+                },
+                {
+                  "id": "appears_in",
+                  "label": "Put what it shows into a new scene"
+                }
+              ],
+              "recommended": "appears_in",
+              "default_if_unanswered": "appears_in"
+            }
+          ],
+          "aspect_mismatch": true,
+          "needs_clarification": true,
+          "mode": "i2va",
+          "confidence": 0.6,
+          "rule": "12.3-anchor-language",
+          "signals": [
+            "prose says 'animate this photo'",
+            "'bring it to life with slow drifting motion' treats the attached image as the frame to be animated",
+            "no mention of using the figure or scene as a reference for a new shot",
+            "single attached asset drives the motion directly",
+            "anchor phrase: animate this photo: bring it to life with slow drifting motion",
+            "Confidence records the original routing-policy value; model_confidence separately preserves the provider's interpretation confidence.",
+            "aspect mismatch: Image asset-1 aspect 0.666364 differs from requested 16:9 by more than 20%. The anchor choice is preserved; exact-frame conditioning requires an explicit crop/resize/canvas decision."
+          ],
+          "alternatives": [
+            "l2va",
+            "ref2va"
+          ],
+          "calls": [
+            {
+              "stage": "mode",
+              "attempt": 1,
+              "model": "deepseek-flash",
+              "usage": {
+                "input_tokens": 1171,
+                "output_tokens": 281
+              },
+              "valid": true
+            }
+          ]
+        },
+        "explanation": "Mode follows the production typed routing contract; publication capabilities are checked separately."
+      },
+      {
+        "field": "assets.role",
+        "source": "typed_mode_requirement",
+        "value": "frame_anchor_first",
+        "explanation": "A one-image base checkpoint has exactly one frame responsibility."
+      },
+      {
+        "field": "content_scope",
+        "source": "typed_request_interpretation",
+        "value": {
+          "conflict_policy": "supplied_content_wins",
+          "requested": {
+            "speech": false,
+            "music": false,
+            "onscreen_text": false,
+            "magnitude": ""
+          },
+          "forbidden": {
+            "speech": false,
+            "music": false,
+            "onscreen_text": false,
+            "magnitude": ""
+          },
+          "allowed": {
+            "speech": false,
+            "music": true,
+            "onscreen_text": false,
+            "magnitude": "measured"
+          },
+          "dialogue": [],
+          "onscreen_text": [],
+          "reasoning": "The intent requests only animating the supplied photo with slow drifting motion. It does not request speech, music, or visible lettering, and it contains no prohibitions on those content classes.",
+          "calls": [
+            {
+              "stage": "scope",
+              "attempt": 1,
+              "model": "deepseek-flash",
+              "usage": {
+                "input_tokens": 1098,
+                "output_tokens": 173
+              },
+              "valid": true
+            }
+          ]
+        },
+        "explanation": "Caller requests and prohibitions are interpreted before code applies the explicit creativity level."
+      },
+      {
+        "field": "reference_licence",
+        "source": "typed_attribute_precedence",
+        "value": {
+          "medium_decision": {
+            "disposition": "preserve",
+            "operation_quote": "",
+            "target": "",
+            "requested_style": "",
+            "reference_medium": "2d-animation",
+            "requested_medium": "",
+            "treatments": [],
+            "reasoning": "The request only asks to animate the existing photo with slow drifting motion. It does not explicitly request a change of rendering medium, and motion/animation alone does not convert the reference's depicted medium. The reference is a photorealistic character concept/reference sheet, consistent with a digitally drawn 2D illustration rather than an authorized medium conversion.",
+            "calls": [
+              {
+                "stage": "medium",
+                "attempt": 1,
+                "model": "deepseek-flash",
+                "usage": {
+                  "input_tokens": 982,
+                  "output_tokens": 625
+                },
+                "valid": true
+              }
+            ]
+          },
+          "identity": [
+            {
+              "label": "\u003cSubject 1\u003e",
+              "descriptor": "Adult character",
+              "retained_attributes": [
+                "lean build",
+                "shaved-side short dark hair with a small tied bun at the back",
+                "visible scar through one eyebrow",
+                "black high-collared tactical jacket with strap and buckle details",
+                "dark crew-neck shirt",
+                "black cargo trousers",
+                "black lace-up combat boots"
+              ],
+              "requested_attributes": [],
+              "request_quote": "",
+              "wardrobe_attributes": [
+                "black high-collared tactical jacket with strap and buckle details",
+                "dark crew-neck shirt",
+                "black cargo trousers",
+                "black lace-up combat boots"
+              ]
+            }
+          ],
+          "governs": {
+            "action": "request",
+            "framing": "reference",
+            "lighting": "reference",
+            "medium": "reference",
+            "palette": "reference",
+            "wardrobe": "reference"
+          },
+          "reasons": {
+            "action": "The user explicitly asks to animate the photo with slow drifting motion, so the action is request-governed; the reference’s static pose remains recorded separately and is not retained as identity.",
+            "framing": "The requested 16:9 aspect and 5-second duration are canvas/timing configuration, not camera framing or composition instructions; framing remains reference-governed.",
+            "lighting": "There is no explicit instruction about a light source, direction, or visible light quality; the reference lighting is retained.",
+            "medium": "The request only asks to animate the existing image and does not explicitly request a reimagining, restyle, redraw, or medium conversion; motion alone does not change the reference medium.",
+            "palette": "No explicit palette instruction is given, so the observed desaturated palette with warm accents is retained.",
+            "wardrobe": "No wardrobe or clothing change is requested, so the observed tactical outfit is retained."
+          },
+          "transform_phrase": null,
+          "transform_target": "",
+          "medium_transferred": false,
+          "style": {
+            "observed_phrase": "Photorealistic dark cinematic character concept and reference sheet, desaturated with warm accent lights",
+            "phrase": "Photorealistic dark cinematic character concept and reference sheet, desaturated with warm accent lights",
+            "source": "reference",
+            "reference_medium": "2d-animation",
+            "requested_medium": "",
+            "discrepancy": false,
+            "note": ""
+          },
+          "subjects": [
+            {
+              "label": "\u003cSubject 1\u003e",
+              "kind": "person",
+              "sources": [
+                "\u003cPicture 1\u003e"
+              ],
+              "descriptor": "Adult character shown in multiple reference views",
+              "attributes": [
+                "lean build",
+                "shaved-side short dark hair with a small tied bun at the back",
+                "visible scar through one eyebrow",
+                "black high-collared tactical jacket with strap and buckle details",
+                "dark crew-neck shirt",
+                "black cargo trousers",
+                "black lace-up combat boots"
+              ],
+              "pose": [
+                "in the hero panel, stands upright with arms at sides and head turned to the viewer's left",
+                "in the turnaround panels, stands facing the camera, in profile, and with the back to the camera",
+                "in the face close-up, looks toward the camera with a neutral expression"
+              ],
+              "pose_licensed": true,
+              "retention": "fully_preserved",
+              "retention_note": "",
+              "appears_in": [],
+              "taken_over_by": ""
+            }
+          ],
+          "calls": [
+            {
+              "stage": "medium",
+              "attempt": 1,
+              "model": "deepseek-flash",
+              "usage": {
+                "input_tokens": 982,
+                "output_tokens": 625
+              },
+              "valid": true
+            },
+            {
+              "stage": "licence",
+              "attempt": 1,
+              "model": "deepseek-flash",
+              "usage": {
+                "input_tokens": 3431,
+                "output_tokens": 1346
+              },
+              "valid": true
+            }
+          ]
+        },
+        "explanation": "Each attribute follows explicit request or observed reference; poses and reference-sheet presentation are not subject identity."
+      },
+      {
+        "field": "shots.camera",
+        "source": "host_template",
+        "value": [
+          {
+            "subjects": [
+              "\u003cSubject 1\u003e"
+            ],
+            "sync_sound": [],
+            "start_ms": 0,
+            "purpose": "establish",
+            "framing": "wide",
+            "action": "The anchored character reference sheet remains in frame as the top nocturnal hero panel comes subtly alive: rain streaks drift downward, the blurred warm and cool city lights shimmer, and the figure’s dark hair and jacket edges stir in a faint breeze. The turnaround and detail panels stay still, and the camera drifts slowly closer.",
+            "what_changes": "Rain and reflected city lights begin to drift and shimmer, the figure’s hair and jacket subtly move, and the camera slowly pushes in.",
+            "camera": {
+              "type": "Push In",
+              "amplitude": "small",
+              "speed": "slow"
+            }
+          }
+        ],
+        "explanation": "Canonical camera events are assembled from the typed structural plan after prose."
+      },
+      {
+        "field": "creativity",
+        "source": "caller_or_default",
+        "value": {
+          "speech": false,
+          "music": true,
+          "onscreen_text": false,
+          "magnitude": "measured"
+        },
+        "explanation": "Scope reflects requested elements, explicit prohibitions, and the selected four-position creativity control."
+      }
+    ],
+    "calls": [
+      {
+        "asset_id": "asset-1",
+        "stage": "image_perception",
+        "attempt": 1,
+        "model": "deepseek-flash",
+        "usage": {
+          "input_tokens": 2364,
+          "output_tokens": 5431
+        },
+        "valid": true
+      },
+      {
+        "asset_id": "asset-1",
+        "stage": "image_perception",
+        "attempt": 2,
+        "model": "deepseek-flash",
+        "usage": {
+          "input_tokens": 2399,
+          "output_tokens": 4016
+        },
+        "valid": true
+      },
+      {
+        "stage": "mode",
+        "attempt": 1,
+        "model": "deepseek-flash",
+        "usage": {
+          "input_tokens": 1171,
+          "output_tokens": 281
+        },
+        "valid": true
+      },
+      {
+        "stage": "scope",
+        "attempt": 1,
+        "model": "deepseek-flash",
+        "usage": {
+          "input_tokens": 1098,
+          "output_tokens": 173
+        },
+        "valid": true
+      },
+      {
+        "stage": "medium",
+        "attempt": 1,
+        "model": "deepseek-flash",
+        "usage": {
+          "input_tokens": 982,
+          "output_tokens": 625
+        },
+        "valid": true
+      },
+      {
+        "stage": "licence",
+        "attempt": 1,
+        "model": "deepseek-flash",
+        "usage": {
+          "input_tokens": 3431,
+          "output_tokens": 1346
+        },
+        "valid": true
+      },
+      {
+        "stage": "structure",
+        "attempt": 1,
+        "model": "deepseek-flash",
+        "usage": {
+          "input_tokens": 5053,
+          "output_tokens": 1687
+        },
+        "valid": true
+      },
+      {
+        "stage": "plan",
+        "attempt": 1,
+        "model": "deepseek-flash",
+        "usage": {
+          "input_tokens": 9572,
+          "output_tokens": 8220
+        },
+        "valid": true
+      },
+      {
+        "stage": "plan",
+        "attempt": 2,
+        "model": "deepseek-flash",
+        "usage": {
+          "input_tokens": 9598,
+          "output_tokens": 8196
+        },
+        "valid": true
+      }
+    ]
+  }
+}

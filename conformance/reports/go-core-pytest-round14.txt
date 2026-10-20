@@ -1,0 +1,365 @@
+........................................................................ [  7%]
+........................................................................ [ 14%]
+....FFFFFF...F.......................................................... [ 21%]
+........................................................................ [ 29%]
+........................................................................ [ 36%]
+........................................................................ [ 43%]
+........................................................................ [ 50%]
+........................................................................ [ 58%]
+........................................................................ [ 65%]
+........................................................................ [ 72%]
+........................................................................ [ 79%]
+........................................................................ [ 87%]
+........................................................................ [ 94%]
+.......................................................                  [100%]
+=================================== FAILURES ===================================
+___ test_a_declared_reference_role_is_not_promoted_to_a_keyframe[storyboard] ___
+
+role = <Role.STORYBOARD: 'storyboard'>
+
+    @pytest.mark.parametrize("role", [Role.STORYBOARD, Role.STYLE, Role.ENVIRONMENT, Role.SUBJECT])
+    def test_a_declared_reference_role_is_not_promoted_to_a_keyframe(role):
+        """All four routed to i2va before, on the strength of the request's wording alone."""
+        brief = Brief(intent=ANCHOR_WORDING, assets=[_image(role, stated=True)])
+>       d = infer_mode(brief, _cards(), backend=None)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_declared_roles.py:49: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/Users/linyang/Code/contextir/conformance/semantic_bridge.py:72: in infer
+    result=native_operation('h3ir.mode.infer_mode',{'brief':arguments['brief'],'cards':arguments.get('cards'),
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+qualified = 'h3ir.mode.infer_mode'
+arguments = {'brief': Brief(intent='Animate this photo so the car pulls forward out of the dark.', assets=[AssetRef(kind=<AssetKin...sage': {'input_tokens': 697, 'output_tokens': 551}, 'usage_invalid': False}}], 'actual_case_id': 'compiler-00252', ...}
+
+    def native_operation(qualified,arguments):
+        request={'operation':qualified,'arguments':cap.plain(arguments)}
+        observed_callbacks=[]
+        p=validator.PROCESS
+        p.stdin.write(json.dumps(request,ensure_ascii=False)+'\n');p.stdin.flush()
+        while True:
+            line=p.stdout.readline()
+            if not line:raise RuntimeError('Go core bridge stopped before responding')
+            result=json.loads(line)
+            if 'callback' not in result:break
+            import callbacks
+            reply=callbacks.dispatch(result['callback'],result.get('payload'))
+            observed_callbacks.append({'name':result['callback'],'payload':result.get('payload'),'reply':reply})
+            p.stdin.write(json.dumps(reply,ensure_ascii=False)+'\n');p.stdin.flush()
+        def redacted(value):
+            if isinstance(value,dict):return {k:('[redacted]' if k in ('api_key','llm_key','authorization','Authorization','access_token','refresh_token','password','bearer_token') else redacted(v)) for k,v in value.items()}
+            if isinstance(value,list):return [redacted(v) for v in value]
+            return value
+        record={'nodeid':cap.CURRENT,'function':qualified,'arguments':redacted(request['arguments'])}
+        if observed_callbacks:record['injected_test_callbacks']=redacted(observed_callbacks)
+        CORE_CALLS.append(record)
+        if result.get('error'):
+            record.update(raised='ValueError',error=result['error'])
+>           raise GoOperationError(result['error'],result.get('error_code'))
+E           pytest_go_core.GoOperationError: contextir: model_failed at mode_conflict (1 issues)
+
+/Users/linyang/Code/contextir/conformance/pytest_go_core.py:46: GoOperationError
+_____ test_a_declared_reference_role_is_not_promoted_to_a_keyframe[style] ______
+
+role = <Role.STYLE: 'style'>
+
+    @pytest.mark.parametrize("role", [Role.STORYBOARD, Role.STYLE, Role.ENVIRONMENT, Role.SUBJECT])
+    def test_a_declared_reference_role_is_not_promoted_to_a_keyframe(role):
+        """All four routed to i2va before, on the strength of the request's wording alone."""
+        brief = Brief(intent=ANCHOR_WORDING, assets=[_image(role, stated=True)])
+>       d = infer_mode(brief, _cards(), backend=None)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_declared_roles.py:49: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/Users/linyang/Code/contextir/conformance/semantic_bridge.py:72: in infer
+    result=native_operation('h3ir.mode.infer_mode',{'brief':arguments['brief'],'cards':arguments.get('cards'),
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+qualified = 'h3ir.mode.infer_mode'
+arguments = {'brief': Brief(intent='Animate this photo so the car pulls forward out of the dark.', assets=[AssetRef(kind=<AssetKin...sage': {'input_tokens': 696, 'output_tokens': 358}, 'usage_invalid': False}}], 'actual_case_id': 'compiler-00245', ...}
+
+    def native_operation(qualified,arguments):
+        request={'operation':qualified,'arguments':cap.plain(arguments)}
+        observed_callbacks=[]
+        p=validator.PROCESS
+        p.stdin.write(json.dumps(request,ensure_ascii=False)+'\n');p.stdin.flush()
+        while True:
+            line=p.stdout.readline()
+            if not line:raise RuntimeError('Go core bridge stopped before responding')
+            result=json.loads(line)
+            if 'callback' not in result:break
+            import callbacks
+            reply=callbacks.dispatch(result['callback'],result.get('payload'))
+            observed_callbacks.append({'name':result['callback'],'payload':result.get('payload'),'reply':reply})
+            p.stdin.write(json.dumps(reply,ensure_ascii=False)+'\n');p.stdin.flush()
+        def redacted(value):
+            if isinstance(value,dict):return {k:('[redacted]' if k in ('api_key','llm_key','authorization','Authorization','access_token','refresh_token','password','bearer_token') else redacted(v)) for k,v in value.items()}
+            if isinstance(value,list):return [redacted(v) for v in value]
+            return value
+        record={'nodeid':cap.CURRENT,'function':qualified,'arguments':redacted(request['arguments'])}
+        if observed_callbacks:record['injected_test_callbacks']=redacted(observed_callbacks)
+        CORE_CALLS.append(record)
+        if result.get('error'):
+            record.update(raised='ValueError',error=result['error'])
+>           raise GoOperationError(result['error'],result.get('error_code'))
+E           pytest_go_core.GoOperationError: contextir: model_failed at mode_conflict (1 issues)
+
+/Users/linyang/Code/contextir/conformance/pytest_go_core.py:46: GoOperationError
+__ test_a_declared_reference_role_is_not_promoted_to_a_keyframe[environment] ___
+
+role = <Role.ENVIRONMENT: 'environment'>
+
+    @pytest.mark.parametrize("role", [Role.STORYBOARD, Role.STYLE, Role.ENVIRONMENT, Role.SUBJECT])
+    def test_a_declared_reference_role_is_not_promoted_to_a_keyframe(role):
+        """All four routed to i2va before, on the strength of the request's wording alone."""
+        brief = Brief(intent=ANCHOR_WORDING, assets=[_image(role, stated=True)])
+>       d = infer_mode(brief, _cards(), backend=None)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_declared_roles.py:49: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/Users/linyang/Code/contextir/conformance/semantic_bridge.py:72: in infer
+    result=native_operation('h3ir.mode.infer_mode',{'brief':arguments['brief'],'cards':arguments.get('cards'),
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+qualified = 'h3ir.mode.infer_mode'
+arguments = {'brief': Brief(intent='Animate this photo so the car pulls forward out of the dark.', assets=[AssetRef(kind=<AssetKin...sage': {'input_tokens': 696, 'output_tokens': 862}, 'usage_invalid': False}}], 'actual_case_id': 'compiler-00246', ...}
+
+    def native_operation(qualified,arguments):
+        request={'operation':qualified,'arguments':cap.plain(arguments)}
+        observed_callbacks=[]
+        p=validator.PROCESS
+        p.stdin.write(json.dumps(request,ensure_ascii=False)+'\n');p.stdin.flush()
+        while True:
+            line=p.stdout.readline()
+            if not line:raise RuntimeError('Go core bridge stopped before responding')
+            result=json.loads(line)
+            if 'callback' not in result:break
+            import callbacks
+            reply=callbacks.dispatch(result['callback'],result.get('payload'))
+            observed_callbacks.append({'name':result['callback'],'payload':result.get('payload'),'reply':reply})
+            p.stdin.write(json.dumps(reply,ensure_ascii=False)+'\n');p.stdin.flush()
+        def redacted(value):
+            if isinstance(value,dict):return {k:('[redacted]' if k in ('api_key','llm_key','authorization','Authorization','access_token','refresh_token','password','bearer_token') else redacted(v)) for k,v in value.items()}
+            if isinstance(value,list):return [redacted(v) for v in value]
+            return value
+        record={'nodeid':cap.CURRENT,'function':qualified,'arguments':redacted(request['arguments'])}
+        if observed_callbacks:record['injected_test_callbacks']=redacted(observed_callbacks)
+        CORE_CALLS.append(record)
+        if result.get('error'):
+            record.update(raised='ValueError',error=result['error'])
+>           raise GoOperationError(result['error'],result.get('error_code'))
+E           pytest_go_core.GoOperationError: contextir: model_failed at mode_conflict (1 issues)
+
+/Users/linyang/Code/contextir/conformance/pytest_go_core.py:46: GoOperationError
+____ test_a_declared_reference_role_is_not_promoted_to_a_keyframe[subject] _____
+
+role = <Role.SUBJECT: 'subject'>
+
+    @pytest.mark.parametrize("role", [Role.STORYBOARD, Role.STYLE, Role.ENVIRONMENT, Role.SUBJECT])
+    def test_a_declared_reference_role_is_not_promoted_to_a_keyframe(role):
+        """All four routed to i2va before, on the strength of the request's wording alone."""
+        brief = Brief(intent=ANCHOR_WORDING, assets=[_image(role, stated=True)])
+>       d = infer_mode(brief, _cards(), backend=None)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_declared_roles.py:49: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/Users/linyang/Code/contextir/conformance/semantic_bridge.py:72: in infer
+    result=native_operation('h3ir.mode.infer_mode',{'brief':arguments['brief'],'cards':arguments.get('cards'),
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+qualified = 'h3ir.mode.infer_mode'
+arguments = {'brief': Brief(intent='Animate this photo so the car pulls forward out of the dark.', assets=[AssetRef(kind=<AssetKin...age': {'input_tokens': 696, 'output_tokens': 1124}, 'usage_invalid': False}}], 'actual_case_id': 'compiler-00247', ...}
+
+    def native_operation(qualified,arguments):
+        request={'operation':qualified,'arguments':cap.plain(arguments)}
+        observed_callbacks=[]
+        p=validator.PROCESS
+        p.stdin.write(json.dumps(request,ensure_ascii=False)+'\n');p.stdin.flush()
+        while True:
+            line=p.stdout.readline()
+            if not line:raise RuntimeError('Go core bridge stopped before responding')
+            result=json.loads(line)
+            if 'callback' not in result:break
+            import callbacks
+            reply=callbacks.dispatch(result['callback'],result.get('payload'))
+            observed_callbacks.append({'name':result['callback'],'payload':result.get('payload'),'reply':reply})
+            p.stdin.write(json.dumps(reply,ensure_ascii=False)+'\n');p.stdin.flush()
+        def redacted(value):
+            if isinstance(value,dict):return {k:('[redacted]' if k in ('api_key','llm_key','authorization','Authorization','access_token','refresh_token','password','bearer_token') else redacted(v)) for k,v in value.items()}
+            if isinstance(value,list):return [redacted(v) for v in value]
+            return value
+        record={'nodeid':cap.CURRENT,'function':qualified,'arguments':redacted(request['arguments'])}
+        if observed_callbacks:record['injected_test_callbacks']=redacted(observed_callbacks)
+        CORE_CALLS.append(record)
+        if result.get('error'):
+            record.update(raised='ValueError',error=result['error'])
+>           raise GoOperationError(result['error'],result.get('error_code'))
+E           pytest_go_core.GoOperationError: contextir: model_failed at mode_conflict (1 issues)
+
+/Users/linyang/Code/contextir/conformance/pytest_go_core.py:46: GoOperationError
+__________ test_the_decision_records_that_the_wording_was_overridden ___________
+
+    def test_the_decision_records_that_the_wording_was_overridden():
+        """Reported, never silently resolved: the request said "animate this photo" and the role said
+        storyboard, and the caller has to be able to see which one won."""
+        brief = Brief(intent=ANCHOR_WORDING, assets=[_image(Role.STORYBOARD, stated=True)])
+>       d = infer_mode(brief, _cards(), backend=None)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_declared_roles.py:59: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/Users/linyang/Code/contextir/conformance/semantic_bridge.py:72: in infer
+    result=native_operation('h3ir.mode.infer_mode',{'brief':arguments['brief'],'cards':arguments.get('cards'),
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+qualified = 'h3ir.mode.infer_mode'
+arguments = {'brief': Brief(intent='Animate this photo so the car pulls forward out of the dark.', assets=[AssetRef(kind=<AssetKin...sage': {'input_tokens': 697, 'output_tokens': 551}, 'usage_invalid': False}}], 'actual_case_id': 'compiler-00252', ...}
+
+    def native_operation(qualified,arguments):
+        request={'operation':qualified,'arguments':cap.plain(arguments)}
+        observed_callbacks=[]
+        p=validator.PROCESS
+        p.stdin.write(json.dumps(request,ensure_ascii=False)+'\n');p.stdin.flush()
+        while True:
+            line=p.stdout.readline()
+            if not line:raise RuntimeError('Go core bridge stopped before responding')
+            result=json.loads(line)
+            if 'callback' not in result:break
+            import callbacks
+            reply=callbacks.dispatch(result['callback'],result.get('payload'))
+            observed_callbacks.append({'name':result['callback'],'payload':result.get('payload'),'reply':reply})
+            p.stdin.write(json.dumps(reply,ensure_ascii=False)+'\n');p.stdin.flush()
+        def redacted(value):
+            if isinstance(value,dict):return {k:('[redacted]' if k in ('api_key','llm_key','authorization','Authorization','access_token','refresh_token','password','bearer_token') else redacted(v)) for k,v in value.items()}
+            if isinstance(value,list):return [redacted(v) for v in value]
+            return value
+        record={'nodeid':cap.CURRENT,'function':qualified,'arguments':redacted(request['arguments'])}
+        if observed_callbacks:record['injected_test_callbacks']=redacted(observed_callbacks)
+        CORE_CALLS.append(record)
+        if result.get('error'):
+            record.update(raised='ValueError',error=result['error'])
+>           raise GoOperationError(result['error'],result.get('error_code'))
+E           pytest_go_core.GoOperationError: contextir: model_failed at mode_conflict (1 issues)
+
+/Users/linyang/Code/contextir/conformance/pytest_go_core.py:46: GoOperationError
+__ test_a_declared_role_with_no_anchor_wording_says_nothing_about_an_override __
+
+    def test_a_declared_role_with_no_anchor_wording_says_nothing_about_an_override():
+        """No contradiction, no note. A finding that fires when nothing disagreed is noise."""
+        brief = Brief(intent="Put this car in a night race through a tunnel.",
+                      assets=[_image(Role.SUBJECT, stated=True)])
+>       d = infer_mode(brief, _cards(), backend=None)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_declared_roles.py:68: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/Users/linyang/Code/contextir/conformance/semantic_bridge.py:72: in infer
+    result=native_operation('h3ir.mode.infer_mode',{'brief':arguments['brief'],'cards':arguments.get('cards'),
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+qualified = 'h3ir.mode.infer_mode'
+arguments = {'brief': Brief(intent='Put this car in a night race through a tunnel.', assets=[AssetRef(kind=<AssetKind.IMAGE: 'imag...sage': {'input_tokens': 693, 'output_tokens': 133}, 'usage_invalid': False}}], 'actual_case_id': 'compiler-00249', ...}
+
+    def native_operation(qualified,arguments):
+        request={'operation':qualified,'arguments':cap.plain(arguments)}
+        observed_callbacks=[]
+        p=validator.PROCESS
+        p.stdin.write(json.dumps(request,ensure_ascii=False)+'\n');p.stdin.flush()
+        while True:
+            line=p.stdout.readline()
+            if not line:raise RuntimeError('Go core bridge stopped before responding')
+            result=json.loads(line)
+            if 'callback' not in result:break
+            import callbacks
+            reply=callbacks.dispatch(result['callback'],result.get('payload'))
+            observed_callbacks.append({'name':result['callback'],'payload':result.get('payload'),'reply':reply})
+            p.stdin.write(json.dumps(reply,ensure_ascii=False)+'\n');p.stdin.flush()
+        def redacted(value):
+            if isinstance(value,dict):return {k:('[redacted]' if k in ('api_key','llm_key','authorization','Authorization','access_token','refresh_token','password','bearer_token') else redacted(v)) for k,v in value.items()}
+            if isinstance(value,list):return [redacted(v) for v in value]
+            return value
+        record={'nodeid':cap.CURRENT,'function':qualified,'arguments':redacted(request['arguments'])}
+        if observed_callbacks:record['injected_test_callbacks']=redacted(observed_callbacks)
+        CORE_CALLS.append(record)
+        if result.get('error'):
+            record.update(raised='ValueError',error=result['error'])
+>           raise GoOperationError(result['error'],result.get('error_code'))
+E           pytest_go_core.GoOperationError: contextir: model_failed at mode_conflict (1 issues)
+
+/Users/linyang/Code/contextir/conformance/pytest_go_core.py:46: GoOperationError
+_____________ test_the_compiler_reports_the_override_as_a_finding ______________
+
+    def test_the_compiler_reports_the_override_as_a_finding():
+        """X18, the counterpart to X10. Compiled for real with the model switched off, so this is the
+        finding list a caller receives rather than a hand-built one."""
+        from h3ir import compile as C
+    
+        class _Backend:
+            class cfg:
+                model = "test-model"
+            def require_available(self): pass
+            def server_version(self): return "test"
+            def close(self): pass
+    
+        cards = _cards()
+        brief = Brief(intent=ANCHOR_WORDING, assets=[_image(Role.STORYBOARD, stated=True)])
+        real_analyse = C.analyse_all
+        C.analyse_all = lambda *a, **k: cards
+        try:
+>           doc = C.compile_brief(brief, backend=_Backend(), llm=False)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_declared_roles.py:127: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+h3ir/compile.py:286: in compile_brief
+    decision = infer_mode(brief, cards, backend)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/Users/linyang/Code/contextir/conformance/semantic_bridge.py:72: in infer
+    result=native_operation('h3ir.mode.infer_mode',{'brief':arguments['brief'],'cards':arguments.get('cards'),
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+qualified = 'h3ir.mode.infer_mode'
+arguments = {'brief': Brief(intent='Animate this photo so the car pulls forward out of the dark.', assets=[AssetRef(kind=<AssetKin...sage': {'input_tokens': 697, 'output_tokens': 551}, 'usage_invalid': False}}], 'actual_case_id': 'compiler-00252', ...}
+
+    def native_operation(qualified,arguments):
+        request={'operation':qualified,'arguments':cap.plain(arguments)}
+        observed_callbacks=[]
+        p=validator.PROCESS
+        p.stdin.write(json.dumps(request,ensure_ascii=False)+'\n');p.stdin.flush()
+        while True:
+            line=p.stdout.readline()
+            if not line:raise RuntimeError('Go core bridge stopped before responding')
+            result=json.loads(line)
+            if 'callback' not in result:break
+            import callbacks
+            reply=callbacks.dispatch(result['callback'],result.get('payload'))
+            observed_callbacks.append({'name':result['callback'],'payload':result.get('payload'),'reply':reply})
+            p.stdin.write(json.dumps(reply,ensure_ascii=False)+'\n');p.stdin.flush()
+        def redacted(value):
+            if isinstance(value,dict):return {k:('[redacted]' if k in ('api_key','llm_key','authorization','Authorization','access_token','refresh_token','password','bearer_token') else redacted(v)) for k,v in value.items()}
+            if isinstance(value,list):return [redacted(v) for v in value]
+            return value
+        record={'nodeid':cap.CURRENT,'function':qualified,'arguments':redacted(request['arguments'])}
+        if observed_callbacks:record['injected_test_callbacks']=redacted(observed_callbacks)
+        CORE_CALLS.append(record)
+        if result.get('error'):
+            record.update(raised='ValueError',error=result['error'])
+>           raise GoOperationError(result['error'],result.get('error_code'))
+E           pytest_go_core.GoOperationError: contextir: model_failed at mode_conflict (1 issues)
+
+/Users/linyang/Code/contextir/conformance/pytest_go_core.py:46: GoOperationError
+=========================== short test summary info ============================
+FAILED tests/test_declared_roles.py::test_a_declared_reference_role_is_not_promoted_to_a_keyframe[storyboard]
+FAILED tests/test_declared_roles.py::test_a_declared_reference_role_is_not_promoted_to_a_keyframe[style]
+FAILED tests/test_declared_roles.py::test_a_declared_reference_role_is_not_promoted_to_a_keyframe[environment]
+FAILED tests/test_declared_roles.py::test_a_declared_reference_role_is_not_promoted_to_a_keyframe[subject]
+FAILED tests/test_declared_roles.py::test_the_decision_records_that_the_wording_was_overridden
+FAILED tests/test_declared_roles.py::test_a_declared_role_with_no_anchor_wording_says_nothing_about_an_override
+FAILED tests/test_declared_roles.py::test_the_compiler_reports_the_override_as_a_finding
+7 failed, 984 passed in 7.85s
+/Users/linyang/Code/contextir/conformance/service_bridge.py:18: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+  from starlette.testclient import TestClient

@@ -53,6 +53,8 @@ func schemaType(t reflect.Type, defs map[string]any) map[string]any {
 		return map[string]any{"type": "boolean"}
 	case reflect.Int, reflect.Int64:
 		return map[string]any{"type": "integer", "minimum": int64(-9223372036854775808), "maximum": int64(9223372036854775807)}
+	case reflect.Float64:
+		return map[string]any{"type": "number"}
 	case reflect.Slice:
 		return map[string]any{"type": []string{"array", "null"}, "items": schemaType(t.Elem(), defs)}
 	case reflect.Struct:
@@ -89,6 +91,23 @@ func schemaType(t reflect.Type, defs map[string]any) map[string]any {
 		if name == "Document" {
 			properties["version"] = map[string]any{"const": Version, "type": "string"}
 		}
+		if name == "Subject" || name == "SubjectCard" {
+			kinds := []string{"subject", "person", "animal", "object", "environment", "style", "action"}
+			if name == "Subject" {
+				kinds = append([]string{""}, kinds...)
+				properties["origin"] = map[string]any{"type": "string", "enum": []string{"", "observed", "user", "creative", "user_symbolic"}}
+			}
+			properties["kind"] = map[string]any{"type": "string", "enum": kinds}
+		}
+		if name == "AssetCard" {
+			properties["composition"] = map[string]any{"type": "string", "enum": []string{"", "unknown", "bare_plate", "composed_scene"}}
+		}
+		if name == "LoRATrigger" {
+			properties["count"] = map[string]any{"type": "integer", "minimum": 1, "maximum": 100}
+		}
+		if name == "MediaPreparation" {
+			properties["sizing"] = map[string]any{"type": "string", "enum": []string{"", "match", "max"}}
+		}
 		if name == "Span" {
 			choices := []any{}
 			for _, key := range []string{"text", "subject_id", "reference_id"} {
@@ -107,12 +126,12 @@ var enumValues = map[reflect.Type][]string{
 	reflect.TypeFor[Mode]():           {string(ModeText), string(ModeFirstFrame), string(ModeLastFrame), string(ModeFirstLastFrame), string(ModeReference)},
 	reflect.TypeFor[MediaKind]():      {string(MediaImage), string(MediaVideo), string(MediaAudio)},
 	reflect.TypeFor[Track]():          {string(TrackVisual), string(TrackAudio)},
-	reflect.TypeFor[Role]():           {string(RoleIdentity), string(RoleAppearance), string(RoleClothing), string(RoleScene), string(RoleStyle), string(RoleAction), string(RolePose), string(RoleCamera), string(RoleStoryboard), string(RoleFirstFrame), string(RoleLastFrame), string(RoleKeyframe), string(RoleEditSource), string(RoleContinuation), string(RoleVoice), string(RoleMusic), string(RoleRhythm), string(RoleSoundtrack), string(RoleSoundEffect)},
+	reflect.TypeFor[Role]():           {string(RoleIdentity), string(RoleAppearance), string(RoleClothing), string(RoleScene), string(RoleStyle), string(RoleAction), string(RolePose), string(RoleCamera), string(RoleStoryboard), string(RoleFirstFrame), string(RoleLastFrame), string(RoleKeyframe), string(RoleEditSource), string(RoleContinuation), string(RoleVoice), string(RoleMusic), string(RoleRhythm), string(RoleSoundtrack), string(RoleSoundEffect), string(RoleStructure), string(RolePlacedSubject), string(RoleReplacementSubject), string(RoleMusicStyle), string(RoleBeatReference), string(RoleSoundTexture)},
 	reflect.TypeFor[Retention]():      {string(FullyPreserved), string(PartiallyPreserved), string(AttributeTransfer), string(WeakReference), string(FullyCopy), string(PartiallyCopy), string(AudioReference)},
 	reflect.TypeFor[ReferenceKind]():  {string(ReferencePicture), string(ReferenceVideo), string(ReferenceAudio)},
 	reflect.TypeFor[EventKind]():      {string(EventVisual), string(EventAction), string(EventCamera), string(EventSound), string(EventDialogue), string(EventVisibleText), string(EventAudioCue)},
 	reflect.TypeFor[VocalKind]():      {"", string(VocalSpeech), string(VocalSinging)},
 	reflect.TypeFor[CoverageStatus](): {string(CoverageComplete), string(CoveragePartial)},
-	reflect.TypeFor[ConstraintKind](): {string(ConstraintRequirement), string(ConstraintProhibition), string(ConstraintSilence), string(ConstraintNoMusic), string(ConstraintNoDialogue)},
+	reflect.TypeFor[ConstraintKind](): {string(ConstraintRequirement), string(ConstraintProhibition), string(ConstraintSilence), string(ConstraintNoMusic), string(ConstraintNoAddedMusic), string(ConstraintNoDialogue)},
 	reflect.TypeFor[Origin]():         {string(OriginUser), string(OriginObserved), string(OriginCreative)},
 }

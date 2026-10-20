@@ -1,0 +1,1342 @@
+{
+  "review_version": "contextir/independent-text-review/v1",
+  "frozen_binary_sha256": "972a151f8d1678681754a662d87c84c7bf0e6d7d1f18183f8f01be80dac4e865",
+  "source_commit": "fd031e136ae3d89147324c0d1b2aa65e838c21f5",
+  "model": "deepseek-flash",
+  "reasoning": "low",
+  "scope": "Independent read-only review of complete final Documents, H3 text, typed responsibilities and semantic-review/repair evidence. No provider call, no credential access, no generated-video assessment. Role Cards are original synthetic caller inputs, not real media perception.",
+  "all_cases_complete": true,
+  "original_suite_input_identity_check": "intent, dialogue texts, seconds, aspect and asset SHA fields match original suite_briefs.json after native normalization; original suite runner input_sha256 fields are blank, not invented here.",
+  "role_input_identity_check": "All 16 exact original input SHA values equal the independent role expectations.",
+  "hashes": {
+    "conformance/fixtures/suite_briefs.json": "584c387738bed43e88f871d0819f82c68f10dd5d5b6a7857b0d407abe1766e4e",
+    "conformance/fixtures/role_briefs.json": "94d049867b3cf68d48694c3e897747341971228f929f29f7e8c67e381c58a701",
+    "conformance/fixtures/role_expectations.json": "fe85461926dc81618ce2fd45e3d3deb70b6cbf087728835ef0b8c0595727296a",
+    "conformance/reports/live-suite-round6/report.json": "5f5c39c91504b8ac3662b1a7d8d0f89fb9caa7d1e82c8edc2a75fee5af6840ee",
+    "conformance/reports/live-roles-round2/report.json": "1b39e3d54c4b71ccb592ce9cb4c0dedca89688823e4047ef403478a40b4e842d",
+    "conformance/reports/roles-heldout-roles-heldout-round2-v3-complete.json": "5904ccb0490fbc7d8984df620e6389c91201056f71b998d896284c65e19a8774"
+  },
+  "structural_report": "conformance/reports/roles-heldout-roles-heldout-round2-v3-complete.json",
+  "structural_counts": {
+    "heldout_field_difference": 3,
+    "contract_checks_passed_with_adapter_differences": 11,
+    "native_compile_failed": 2
+  },
+  "original_structural_gate_passed": false,
+  "native_structural_gate_passed": false,
+  "manual_counts": {
+    "suite": {
+      "text_requirements_met": 4,
+      "text_requirements_met_with_prose_issue": 1,
+      "text_requirements_met_with_recorded_limitations": 1
+    },
+    "roles": {
+      "text_responsibilities_met_or_source_limited": 11,
+      "original_canonical_responsibility_difference": 2,
+      "accepted_semantic_failure": 1,
+      "native_compile_failed": 2
+    }
+  },
+  "important_findings": [
+    "00701 accepted replacement loses explicit source driver left-to-right motion; reviewer misses it.",
+    "00689 insertion fails after repair; source driver crossing still absent, not merely a reviewer false positive.",
+    "00665 beat-reference compilation blocked by unsupported inference that generic engine rumble proves recording reuse.",
+    "i2va_animate review first flags host camera, then accepts unchanged host camera; not evidence of fixing that quoted finding.",
+    "00521 changes subject to actual-frame role/mode; 00533 rebinds original environment occurrence to car actor. Exact original contracts still differ."
+  ],
+  "suite": [
+    {
+      "case_id": "t2va_battle",
+      "lifecycle_status": "compiled",
+      "manual_text_verdict": "text_requirements_met",
+      "summary": "Battered-armour knight remains on a huge black dragon over a burning battlefield; the sole supplied line is unchanged and assigned to the knight in the middle shot.",
+      "evidence": [
+        {
+          "path": "document.dialogue[0]",
+          "quote": "Hold the line!",
+          "interpretation": "One canonical line, speaker-1 linked to knight; dialogue event in shot-2 (3400–6800 ms).",
+          "evidence_kind": "verified_verbatim_excerpt"
+        },
+        {
+          "path": "artifact.prompt",
+          "quote": "The knight in battered plate armour, shouting over the wind from dragonback. (S1) says: <d>[English] Hold the line!</d>",
+          "interpretation": "Rendered line and speaker description agree.",
+          "evidence_kind": "verified_verbatim_excerpt"
+        }
+      ],
+      "findings": [],
+      "limitations": [
+        "No within-shot start/end for the line was requested or measured; its shot interval is the available timing contract."
+      ],
+      "result_file": "conformance/reports/live-suite-round6/t2va_battle/result.json",
+      "result_file_sha256": "ad7e64c71c9adc441e9e09e6eaa17c3c87f7ba5af25b8c37ceacd49dec581a74",
+      "target": {
+        "duration_ms": 10125,
+        "frame_count": 243,
+        "aspect_ratio": "16:9",
+        "fps": {
+          "numerator": 24,
+          "denominator": 1
+        },
+        "width": 1344,
+        "height": 768
+      },
+      "mode": "t2va",
+      "final_prompt_sha256": "861956aa032fad214d3f0d73ccd8af576de68cf02db2efa90692f9a79c62d123",
+      "composition_review_ledger": [],
+      "generated_video_assessed": false,
+      "ledger_is_not_manual_proof": true
+    },
+    {
+      "case_id": "t2va_silent",
+      "lifecycle_status": "compiled",
+      "manual_text_verdict": "text_requirements_met",
+      "summary": "Portrait night-bus/rain action remains; no spoken lines or new music are authored. Natural bus/rain/tyre ambience remains allowed by the source silent contract.",
+      "evidence": [
+        {
+          "path": "document.music",
+          "quote": "N/A",
+          "interpretation": "No new score.",
+          "evidence_kind": "verified_verbatim_excerpt"
+        },
+        {
+          "path": "document.constraints",
+          "quote": "Do not add a new score. Explicitly bound BGM copying remains permitted.",
+          "interpretation": "This is no-added-music plus no-dialogue, not a promise of zero sound.",
+          "evidence_kind": "verified_verbatim_excerpt"
+        }
+      ],
+      "findings": [],
+      "limitations": [],
+      "result_file": "conformance/reports/live-suite-round6/t2va_silent/result.json",
+      "result_file_sha256": "6fefa0106022dc729f1386a8224c1e80a3778e16231741932f6c2c0c04b325a5",
+      "target": {
+        "duration_ms": 5167,
+        "frame_count": 124,
+        "aspect_ratio": "9:16",
+        "fps": {
+          "numerator": 24,
+          "denominator": 1
+        },
+        "width": 768,
+        "height": 1344
+      },
+      "mode": "t2va",
+      "final_prompt_sha256": "f72f7c6201de920b763446c8e675d5f523c3cbe472cd3bb250baf31efcac3612",
+      "composition_review_ledger": [],
+      "generated_video_assessed": false,
+      "ledger_is_not_manual_proof": true
+    },
+    {
+      "case_id": "t2va_dialogue_dense",
+      "lifecycle_status": "compiled",
+      "manual_text_verdict": "text_requirements_met",
+      "summary": "Both exact supplied lines and older/younger mechanic assignments survive without a split/rewrite or invented reply.",
+      "evidence": [
+        {
+          "path": "document.dialogue[0]",
+          "quote": "That belt is done.",
+          "interpretation": "speaker-1 older mechanic; dialogue event in shot-1 0–2600 ms.",
+          "evidence_kind": "verified_verbatim_excerpt"
+        },
+        {
+          "path": "document.dialogue[1]",
+          "quote": "It held all week.",
+          "interpretation": "speaker-2 younger mechanic; dialogue event in shot-2 2600–5167 ms.",
+          "evidence_kind": "verified_verbatim_excerpt"
+        }
+      ],
+      "findings": [],
+      "limitations": [
+        "The original request gives speaker hints but no exact within-shot speech timestamps."
+      ],
+      "result_file": "conformance/reports/live-suite-round6/t2va_dialogue_dense/result.json",
+      "result_file_sha256": "77ef2e6b8487f54179a100fa2d04bb18da5f9e372d5e10be2dc488c8e22f91c4",
+      "target": {
+        "duration_ms": 5167,
+        "frame_count": 124,
+        "aspect_ratio": "16:9",
+        "fps": {
+          "numerator": 24,
+          "denominator": 1
+        },
+        "width": 1344,
+        "height": 768
+      },
+      "mode": "t2va",
+      "final_prompt_sha256": "5f96a31d28a9ccf6b036e4d97876d8813ee37463710102b6226efc12cf254cb0",
+      "composition_review_ledger": [],
+      "generated_video_assessed": false,
+      "ledger_is_not_manual_proof": true
+    },
+    {
+      "case_id": "t2va_long",
+      "lifecycle_status": "compiled",
+      "manual_text_verdict": "text_requirements_met",
+      "summary": "The keeper enters the storm-struck lighthouse, climbs the tower stairs, lights the lamp and sends its beam out over the sea. Four consecutive shots cover the effective 15083 ms target.",
+      "evidence": [
+        {
+          "path": "document.shots",
+          "interpretation": "No gap or missing climax in the final action sequence.",
+          "observed_value": "0–3800–8200–12000–15083 ms",
+          "evidence_kind": "structured_or_derived_observation"
+        }
+      ],
+      "findings": [],
+      "limitations": [
+        "One plan retry occurred; no media semantic-review stage is required for this text-only case."
+      ],
+      "result_file": "conformance/reports/live-suite-round6/t2va_long/result.json",
+      "result_file_sha256": "b6044e67348604661967d637f1f3dd1cf9a83ee66253ac057c3d163e46284c25",
+      "target": {
+        "duration_ms": 15083,
+        "frame_count": 362,
+        "aspect_ratio": "16:9",
+        "fps": {
+          "numerator": 24,
+          "denominator": 1
+        },
+        "width": 1344,
+        "height": 768
+      },
+      "mode": "t2va",
+      "final_prompt_sha256": "3385d7beec2a0df59b839465b9a56b888473cf9984ba83c42a7b7c879922b482",
+      "composition_review_ledger": [],
+      "generated_video_assessed": false,
+      "ledger_is_not_manual_proof": true
+    },
+    {
+      "case_id": "ref2va_two_subjects",
+      "lifecycle_status": "compiled",
+      "manual_text_verdict": "text_requirements_met_with_prose_issue",
+      "summary": "The caller-specified woman rides the referenced dragon into the battleground, with her/she pronouns, tactical wardrobe, dragon horns/scales/wings, dramatic expression and movement retained. Source sheet poses, panel labels and source rooftop are not target scene instructions.",
+      "evidence": [
+        {
+          "path": "artifact.prompt",
+          "quote": "<Subject 1> leans low into the descent, her technical jacket snapping in the rush of air",
+          "interpretation": "Caller identity and requested action agree.",
+          "evidence_kind": "verified_verbatim_excerpt"
+        },
+        {
+          "path": "artifact.prompt",
+          "quote": "<Subject 2> snaps its wings wide",
+          "interpretation": "Referenced dragon performs the new action rather than remaining in a static sheet pose.",
+          "evidence_kind": "verified_verbatim_excerpt"
+        }
+      ],
+      "findings": [
+        {
+          "code": "definition_repeats_attributes",
+          "impact": "Minor final-prompt readability defect; identity is still clear.",
+          "evidence": [
+            {
+              "path": "document.subjects[0].description",
+              "quote": "boots.; short dark hair",
+              "interpretation": "The complete descriptor already lists the stable attributes, then host description appends the same attributes again with awkward punctuation.",
+              "evidence_kind": "verified_verbatim_excerpt"
+            }
+          ]
+        }
+      ],
+      "limitations": [
+        "Original golden images were visually inspected; no generated video exists.",
+        "Style wording still includes character concept/reference photography; body does not request reference-sheet layout."
+      ],
+      "result_file": "conformance/reports/live-suite-round6/ref2va_two_subjects/result.json",
+      "result_file_sha256": "ad1615bc6c5d68978ea241aa9d2d7700cd033b487fc18fc10d8a7ebf865c00ee",
+      "target": {
+        "duration_ms": 5167,
+        "frame_count": 124,
+        "aspect_ratio": "16:9",
+        "fps": {
+          "numerator": 24,
+          "denominator": 1
+        },
+        "width": 1344,
+        "height": 768
+      },
+      "mode": "ref2va",
+      "final_prompt_sha256": "56060eee7d7dfc2239016b3e581756fa5000ef45e8cf69259437652a24e70d75",
+      "composition_review_ledger": [
+        {
+          "version": "contextir/composition-review/v1",
+          "required": true,
+          "passed": true,
+          "calls": [
+            {
+              "stage": "semantic_review",
+              "attempt": 1,
+              "model": "deepseek-flash",
+              "usage": {
+                "input_tokens": 5124,
+                "output_tokens": 3306
+              },
+              "valid": true
+            }
+          ]
+        }
+      ],
+      "generated_video_assessed": false,
+      "ledger_is_not_manual_proof": true
+    },
+    {
+      "case_id": "i2va_animate",
+      "lifecycle_status": "compiled",
+      "manual_text_verdict": "text_requirements_met_with_recorded_limitations",
+      "summary": "The final body explicitly preserves the complete original character sheet: top hero image, three turnaround views, four detail panels, headings, labels, backgrounds and arrangement. It animates the whole supplied image rather than extracting a hero panel.",
+      "evidence": [
+        {
+          "path": "artifact.prompt",
+          "quote": "no panel is isolated, no label is removed, no background is replaced",
+          "interpretation": "Final prose preserves the actual whole first frame.",
+          "evidence_kind": "verified_verbatim_excerpt"
+        },
+        {
+          "path": "document.references[0].retention",
+          "quote": "fully_preserved",
+          "interpretation": "Actual frame anchor is 0 ms; manifest socket first_frame.",
+          "evidence_kind": "verified_verbatim_excerpt"
+        }
+      ],
+      "findings": [
+        {
+          "code": "review_verdict_changed_without_fixing_quoted_camera",
+          "impact": "The ledger does not establish that its original finding was actually repaired.",
+          "evidence": [
+            {
+              "path": "composition_reviews[0].findings[0]",
+              "quote": "The camera pushes in with small amplitude at slow speed.",
+              "interpretation": "First review called this frame_content_changed; exact-frame-at-zero does not itself forbid later camera motion.",
+              "evidence_kind": "verified_verbatim_excerpt"
+            },
+            {
+              "path": "artifact.prompt",
+              "quote": "The camera pushes in with small amplitude at slow speed.",
+              "interpretation": "The same host-owned camera is present in the accepted final candidate; second review returned no findings.",
+              "evidence_kind": "verified_verbatim_excerpt"
+            }
+          ]
+        }
+      ],
+      "limitations": [
+        "Source 733×1100, proposed preparation 736×1088 and requested target 1344×768 remain different aspects. needs_clarification=true is preserved under explicit continue_with_recorded_choice.",
+        "No crop/resize/canvas IO or video generation was executed. The report does not assert that exact-frame aspect alignment is solved."
+      ],
+      "result_file": "conformance/reports/live-suite-round6/i2va_animate/result.json",
+      "result_file_sha256": "a6875c2786e1c2991523337d642f407b5570e28763c4069b4e773383ed363f19",
+      "target": {
+        "duration_ms": 5167,
+        "frame_count": 124,
+        "aspect_ratio": "16:9",
+        "fps": {
+          "numerator": 24,
+          "denominator": 1
+        },
+        "width": 1344,
+        "height": 768
+      },
+      "mode": "i2va",
+      "final_prompt_sha256": "4943c3a82ffe9d588e0f60c55c382fbcef3425fb83ce09aa86f977d46bcff8f7",
+      "composition_review_ledger": [
+        {
+          "version": "contextir/composition-review/v1",
+          "required": true,
+          "passed": false,
+          "findings": [
+            {
+              "code": "frame_content_changed",
+              "fragment_id": "shot:shot-1:event:5",
+              "quote": "The camera pushes in with small amplitude at slow speed.",
+              "subject_id": ""
+            }
+          ],
+          "calls": [
+            {
+              "stage": "semantic_review",
+              "attempt": 1,
+              "model": "deepseek-flash",
+              "usage": {
+                "input_tokens": 3005,
+                "output_tokens": 3060
+              },
+              "valid": true
+            }
+          ]
+        },
+        {
+          "version": "contextir/composition-review/v1",
+          "required": true,
+          "passed": true,
+          "calls": [
+            {
+              "stage": "semantic_review",
+              "attempt": 1,
+              "model": "deepseek-flash",
+              "usage": {
+                "input_tokens": 2597,
+                "output_tokens": 3398
+              },
+              "valid": true
+            }
+          ]
+        }
+      ],
+      "generated_video_assessed": false,
+      "ledger_is_not_manual_proof": true
+    }
+  ],
+  "roles": [
+    {
+      "case_id": "compiler-00521",
+      "lifecycle_status": "compiled",
+      "manual_text_verdict": "responsibility_differs_from_original",
+      "summary": "Final text plausibly animates the car, but the original subject reference became an actual opening frame via model routing. This is not a socket-only representation change.",
+      "evidence": [
+        {
+          "path": "mode_decision",
+          "quote": "i2va",
+          "interpretation": "Independent original expects ref2va.",
+          "evidence_kind": "verified_verbatim_excerpt"
+        },
+        {
+          "path": "document.references[0].roles",
+          "quote": "first_frame",
+          "interpretation": "Independent original expects identity from declared subject role.",
+          "evidence_kind": "verified_verbatim_excerpt"
+        }
+      ],
+      "findings": [
+        {
+          "code": "subject_role_reinterpreted_as_frame",
+          "impact": "Original role/mode/identity responsibility is not preserved.",
+          "evidence": [
+            {
+              "path": "original brief.assets[0]",
+              "interpretation": "The false flag permits native inference by current policy but does not make the original held-out expectation pass.",
+              "observed_value": "role=subject, role_stated=false",
+              "evidence_kind": "structured_or_derived_observation"
+            }
+          ]
+        }
+      ],
+      "limitations": [],
+      "result_file": "conformance/reports/live-roles-round2/compiler-00521/result.json",
+      "result_file_sha256": "9f792fd29c18ecf6e8b0333edf070aee9fb646fdfd019dac6f9b27f6079ff3ab",
+      "target": {
+        "duration_ms": 5167,
+        "frame_count": 124,
+        "aspect_ratio": "16:9",
+        "fps": {
+          "numerator": 24,
+          "denominator": 1
+        },
+        "width": 1344,
+        "height": 768
+      },
+      "mode": "i2va",
+      "final_prompt_sha256": "f833751f2c02e22c395ecadfbaf428e7548e023038246daf4baddc7de278ae9b",
+      "composition_review_ledger": [],
+      "generated_video_assessed": false,
+      "independent_structural_status": "heldout_field_difference",
+      "input_sha256": "cc915bb33dc70f502e19b7223e0c94d92bec7bf952ff15c8289752bdd23a8d48",
+      "synthetic_cards_only": true,
+      "ledger_is_not_manual_proof": true
+    },
+    {
+      "case_id": "compiler-00533",
+      "lifecycle_status": "compiled",
+      "manual_text_verdict": "canonical_contract_difference_text_plausible",
+      "summary": "The final car moves naturally on the referenced empty showroom floor, resolving the earlier visible floor-as-vehicle error. The canonical subject now changes from environment/floor to object/car, and retention changes; exact original typed semantics are still different.",
+      "evidence": [
+        {
+          "path": "document.subjects[0]",
+          "interpretation": "Original expects environment, an empty showroom floor, fully_preserved.",
+          "observed_value": "kind=object, descriptor=the car, retention=partially_preserved",
+          "evidence_kind": "structured_or_derived_observation"
+        },
+        {
+          "path": "artifact.prompt",
+          "quote": "the empty showroom floor",
+          "interpretation": "The environment is still present as scenery; a moving floor is not claimed in the final text.",
+          "evidence_kind": "verified_verbatim_excerpt"
+        }
+      ],
+      "findings": [
+        {
+          "code": "environment_identity_rebound_to_actor",
+          "impact": "Exact source contract difference, not a proven final visual contradiction.",
+          "evidence": [
+            {
+              "path": "independent structural oracle",
+              "quote": "an empty showroom floor",
+              "interpretation": "Source scene still binds through role scene, but original environment occurrence was replaced by an actor occurrence.",
+              "evidence_kind": "verified_verbatim_excerpt"
+            }
+          ]
+        }
+      ],
+      "limitations": [],
+      "result_file": "conformance/reports/live-roles-round2/compiler-00533/result.json",
+      "result_file_sha256": "f16a776f0bf9fa6f682636697063d45b9ca993bd44aa63f14e0b78ca8cfacd95",
+      "target": {
+        "duration_ms": 5167,
+        "frame_count": 124,
+        "aspect_ratio": "16:9",
+        "fps": {
+          "numerator": 24,
+          "denominator": 1
+        },
+        "width": 1344,
+        "height": 768
+      },
+      "mode": "ref2va",
+      "final_prompt_sha256": "abe8f93fbd3b5a4ac8b06f9e04053a69c24c735c1232dc9d283c0050246ab057",
+      "composition_review_ledger": [
+        {
+          "version": "contextir/composition-review/v1",
+          "required": true,
+          "passed": true,
+          "calls": [
+            {
+              "stage": "semantic_review",
+              "attempt": 1,
+              "model": "deepseek-flash",
+              "usage": {
+                "input_tokens": 1869,
+                "output_tokens": 2379
+              },
+              "valid": true
+            }
+          ]
+        }
+      ],
+      "generated_video_assessed": false,
+      "independent_structural_status": "heldout_field_difference",
+      "input_sha256": "3f867f7a4ce4a15e73ae4c8abb8fac8dbca3c1688386a2d41ee155485968ac8e",
+      "synthetic_cards_only": true,
+      "ledger_is_not_manual_proof": true
+    },
+    {
+      "case_id": "compiler-00545",
+      "lifecycle_status": "compiled",
+      "manual_text_verdict": "text_responsibilities_met",
+      "summary": "Style is weak-reference aesthetic only; the car and darkness originate from the request. The source showroom/car identity is not imported by the style role.",
+      "evidence": [
+        {
+          "path": "document.references[0].retention",
+          "quote": "weak_reference",
+          "interpretation": "Only aesthetic properties; source contents are not reproduced.",
+          "evidence_kind": "verified_verbatim_excerpt"
+        }
+      ],
+      "findings": [],
+      "limitations": [],
+      "result_file": "conformance/reports/live-roles-round2/compiler-00545/result.json",
+      "result_file_sha256": "d5bd7f616c4b5ed557aae7633ea9a2f0c32cffb6e50cbd728acc92896242640c",
+      "target": {
+        "duration_ms": 5167,
+        "frame_count": 124,
+        "aspect_ratio": "16:9",
+        "fps": {
+          "numerator": 24,
+          "denominator": 1
+        },
+        "width": 1344,
+        "height": 768
+      },
+      "mode": "ref2va",
+      "final_prompt_sha256": "338276a7139eaa3a25fd8536686adb773095f411fe7f6d3b3d47acf108e5df4c",
+      "composition_review_ledger": [],
+      "generated_video_assessed": false,
+      "independent_structural_status": "contract_checks_passed_with_adapter_differences",
+      "input_sha256": "7ac84565141bed39901fd02127fa21067142f8e2391c8ab6c97a3ed79587f7b2",
+      "synthetic_cards_only": true,
+      "ledger_is_not_manual_proof": true
+    },
+    {
+      "case_id": "compiler-00557",
+      "lifecycle_status": "compiled",
+      "manual_text_verdict": "text_responsibilities_met",
+      "summary": "Structure is a weak camera/cut reference. Final target car/darkness are request-origin subjects; no source video ID is used as a target scene actor or world.",
+      "evidence": [
+        {
+          "path": "document.references[0].retention_details",
+          "quote": "Only camera movement and cut timing are followed; source actors, objects, setting, lighting and palette are not copied.",
+          "interpretation": "Final prose does not import the source tunnel.",
+          "evidence_kind": "verified_verbatim_excerpt"
+        }
+      ],
+      "findings": [],
+      "limitations": [
+        "Synthetic Card contains no concrete camera/cut sequence, so fidelity to specific observed camerawork cannot be established."
+      ],
+      "result_file": "conformance/reports/live-roles-round2/compiler-00557/result.json",
+      "result_file_sha256": "753447479463a0170b764b2b796aa0e3b43a8ec2bd161b19337432cf474b56a7",
+      "target": {
+        "duration_ms": 5167,
+        "frame_count": 124,
+        "aspect_ratio": "16:9",
+        "fps": {
+          "numerator": 24,
+          "denominator": 1
+        },
+        "width": 1344,
+        "height": 768
+      },
+      "mode": "ref2va",
+      "final_prompt_sha256": "e26ac689af8cedbe90e33a6562fbe345a7a700969c42a7b3f491d0540023721c",
+      "composition_review_ledger": [
+        {
+          "version": "contextir/composition-review/v1",
+          "required": true,
+          "passed": true,
+          "calls": [
+            {
+              "stage": "semantic_review",
+              "attempt": 1,
+              "model": "deepseek-flash",
+              "usage": {
+                "input_tokens": 1980,
+                "output_tokens": 2178
+              },
+              "valid": true
+            }
+          ]
+        }
+      ],
+      "generated_video_assessed": false,
+      "independent_structural_status": "contract_checks_passed_with_adapter_differences",
+      "input_sha256": "dcc36da44e1f853f649565aaefa89a58c6987e491671db9037da040dbd2d7bcd",
+      "synthetic_cards_only": true,
+      "ledger_is_not_manual_proof": true
+    },
+    {
+      "case_id": "compiler-00569",
+      "lifecycle_status": "compiled",
+      "manual_text_verdict": "text_responsibilities_met",
+      "summary": "Storyboard is planning-only weak reference, with target car/darkness from the user rather than source pictured identity. No sheet labels or source actor is imported.",
+      "evidence": [
+        {
+          "path": "document.references[0].roles",
+          "quote": "storyboard",
+          "interpretation": "Storyboard reference remains independent of actor identity.",
+          "evidence_kind": "verified_verbatim_excerpt"
+        }
+      ],
+      "findings": [],
+      "limitations": [
+        "Synthetic Card supplies no detailed framing layout; exact storyboard shot fidelity is untested."
+      ],
+      "result_file": "conformance/reports/live-roles-round2/compiler-00569/result.json",
+      "result_file_sha256": "4f5ffe372dba22d0d8f943e684598fa83e6ab61c76680d85adbb3c47d4e0f84d",
+      "target": {
+        "duration_ms": 5167,
+        "frame_count": 124,
+        "aspect_ratio": "16:9",
+        "fps": {
+          "numerator": 24,
+          "denominator": 1
+        },
+        "width": 1344,
+        "height": 768
+      },
+      "mode": "ref2va",
+      "final_prompt_sha256": "c19321a99add56a4799de4d31c1c46b585a7b295370180155753bbd5a8615227",
+      "composition_review_ledger": [
+        {
+          "version": "contextir/composition-review/v1",
+          "required": true,
+          "passed": true,
+          "calls": [
+            {
+              "stage": "semantic_review",
+              "attempt": 1,
+              "model": "deepseek-flash",
+              "usage": {
+                "input_tokens": 1845,
+                "output_tokens": 1830
+              },
+              "valid": true
+            }
+          ]
+        }
+      ],
+      "generated_video_assessed": false,
+      "independent_structural_status": "contract_checks_passed_with_adapter_differences",
+      "input_sha256": "77af51a163667436e7c8b944045978440c60eea4137abeb92f19a7914bc398a1",
+      "synthetic_cards_only": true,
+      "ledger_is_not_manual_proof": true
+    },
+    {
+      "case_id": "compiler-00581",
+      "lifecycle_status": "compiled",
+      "manual_text_verdict": "text_responsibilities_met",
+      "summary": "Complete supplied showroom still is fully preserved at opening 0 ms, then the car pulls forward. Native first_frame socket is an explicit source-base correction.",
+      "evidence": [
+        {
+          "path": "artifact.prompt",
+          "quote": "the composition holds the entire anchored view rather than isolating the vehicle or cropping away the showroom floor.",
+          "interpretation": "Whole image, not hero extraction.",
+          "evidence_kind": "verified_verbatim_excerpt"
+        }
+      ],
+      "findings": [],
+      "limitations": [
+        "Synthetic Card is not a reference sheet or actual image observation."
+      ],
+      "result_file": "conformance/reports/live-roles-round2/compiler-00581/result.json",
+      "result_file_sha256": "7059dcc80b027d1d7765aff058cb742489adc32a935170f78fafbd455bd50aa6",
+      "target": {
+        "duration_ms": 5167,
+        "frame_count": 124,
+        "aspect_ratio": "16:9",
+        "fps": {
+          "numerator": 24,
+          "denominator": 1
+        },
+        "width": 1344,
+        "height": 768
+      },
+      "mode": "i2va",
+      "final_prompt_sha256": "f636405893208ad97399b7a05b59569b69bbe80f8469dd8bd78426a5ddd84155",
+      "composition_review_ledger": [],
+      "generated_video_assessed": false,
+      "independent_structural_status": "contract_checks_passed_with_adapter_differences",
+      "input_sha256": "9691fd3bc5464d76fdbbf1f02c818b08960d4809b929ec2c20a8ec627573c5b5",
+      "synthetic_cards_only": true,
+      "ledger_is_not_manual_proof": true
+    },
+    {
+      "case_id": "compiler-00593",
+      "lifecycle_status": "compiled",
+      "manual_text_verdict": "text_responsibilities_met",
+      "summary": "The car arrives at the supplied complete final showroom composition; last-frame ownership and exact native endpoint 5167 ms survive.",
+      "evidence": [
+        {
+          "path": "artifact.prompt",
+          "quote": "settling into the exact composition of the supplied final frame",
+          "interpretation": "Full setting, backdrop and placement retained at the final anchor.",
+          "evidence_kind": "verified_verbatim_excerpt"
+        }
+      ],
+      "findings": [],
+      "limitations": [
+        "Original floor endpoint 5166 versus nearest 5167 is explicitly recorded by the structural evaluator."
+      ],
+      "result_file": "conformance/reports/live-roles-round2/compiler-00593/result.json",
+      "result_file_sha256": "1542e64412c4858a35aee91ad3ae080c2c35db9ff2271f622345d40bfec6fb0d",
+      "target": {
+        "duration_ms": 5167,
+        "frame_count": 124,
+        "aspect_ratio": "16:9",
+        "fps": {
+          "numerator": 24,
+          "denominator": 1
+        },
+        "width": 1344,
+        "height": 768
+      },
+      "mode": "l2va",
+      "final_prompt_sha256": "9551cf93d8d552e2b9f93fcd7f692bd066a893fd7d460036134111f6ec326b52",
+      "composition_review_ledger": [],
+      "generated_video_assessed": false,
+      "independent_structural_status": "contract_checks_passed_with_adapter_differences",
+      "input_sha256": "f9cb833e5799c16bfd70ce3f4c7913ee053586a20086d58bbdedd56290c81dca",
+      "synthetic_cards_only": true,
+      "ledger_is_not_manual_proof": true
+    },
+    {
+      "case_id": "compiler-00605",
+      "lifecycle_status": "compiled",
+      "manual_text_verdict": "text_responsibilities_met",
+      "summary": "Video edit source is fully preserved except caller-authorized car motion; tunnel, car and no unrelated replacement survive. Prompt correctly identifies the target as an edit.",
+      "evidence": [
+        {
+          "path": "artifact.prompt",
+          "quote": "The target video is an edited version of <Video 1>.",
+          "interpretation": "One edit summary, no duplicate summary framing.",
+          "evidence_kind": "verified_verbatim_excerpt"
+        },
+        {
+          "path": "document.references[0].retention",
+          "quote": "fully_preserved",
+          "interpretation": "Host-owned source edit responsibility.",
+          "evidence_kind": "verified_verbatim_excerpt"
+        }
+      ],
+      "findings": [],
+      "limitations": [
+        "Synthetic partial Card cannot prove unseen source frames or exact pixel preservation."
+      ],
+      "result_file": "conformance/reports/live-roles-round2/compiler-00605/result.json",
+      "result_file_sha256": "753215a71f685c9496900f2665cc7602a46f04e0e347a77352ee5a1f003982af",
+      "target": {
+        "duration_ms": 5167,
+        "frame_count": 124,
+        "aspect_ratio": "16:9",
+        "fps": {
+          "numerator": 24,
+          "denominator": 1
+        },
+        "width": 1344,
+        "height": 768
+      },
+      "mode": "ref2va",
+      "final_prompt_sha256": "c5112fbb28eb03d2ed5517e8db53c0f0a15c43e06185ed498397e2a4fbdb0d29",
+      "composition_review_ledger": [],
+      "generated_video_assessed": false,
+      "independent_structural_status": "contract_checks_passed_with_adapter_differences",
+      "input_sha256": "d57024dd1133641d709362db2f0f6258523c631fe01005d5109e087e91b73470",
+      "synthetic_cards_only": true,
+      "ledger_is_not_manual_proof": true
+    },
+    {
+      "case_id": "compiler-00617",
+      "lifecycle_status": "compiled",
+      "manual_text_verdict": "text_responsibilities_met_with_source_limit",
+      "summary": "Continuation source remains partially preserved, with the car/tunnel continuing into the new forward action and then daylight. No original interval is claimed as fully observed.",
+      "evidence": [
+        {
+          "path": "document.references[0].retention_details",
+          "quote": "The source setting and subject continue; unseen source intervals are not established by partial observations.",
+          "interpretation": "Appropriately bounded source responsibility.",
+          "evidence_kind": "verified_verbatim_excerpt"
+        }
+      ],
+      "findings": [],
+      "limitations": [
+        "Synthetic Card has no source end-frame state; true temporal continuity from the actual final frame is not verifiable."
+      ],
+      "result_file": "conformance/reports/live-roles-round2/compiler-00617/result.json",
+      "result_file_sha256": "60b4e161e649fbd2c7ddda868c8bf6b02b401614dc585454224c906edcbe1475",
+      "target": {
+        "duration_ms": 5167,
+        "frame_count": 124,
+        "aspect_ratio": "16:9",
+        "fps": {
+          "numerator": 24,
+          "denominator": 1
+        },
+        "width": 1344,
+        "height": 768
+      },
+      "mode": "ref2va",
+      "final_prompt_sha256": "932be130e2b883401b6600cb006a3bb7b6f57da018b6964591c3ebb5e7c47b84",
+      "composition_review_ledger": [],
+      "generated_video_assessed": false,
+      "independent_structural_status": "contract_checks_passed_with_adapter_differences",
+      "input_sha256": "7f315acf3c4787098e9b3af7621ce1513aede3ebbb8f6335ff63a653242bd012",
+      "synthetic_cards_only": true,
+      "ledger_is_not_manual_proof": true
+    },
+    {
+      "case_id": "compiler-00629",
+      "lifecycle_status": "compiled",
+      "manual_text_verdict": "text_responsibilities_met_with_source_limit",
+      "summary": "A dormant generic voice reference is bound without inventing any spoken line or making the car a speaker. No waveform or words are copied.",
+      "evidence": [
+        {
+          "path": "document.speakers[0]",
+          "quote": "voice-asset-1",
+          "interpretation": "Generic target voice, no subject_id and no dialogue.",
+          "evidence_kind": "verified_verbatim_excerpt"
+        },
+        {
+          "path": "document.references[0].retention_details",
+          "quote": "Only timbre and delivery are referenced; the source recording and its words are not copied.",
+          "interpretation": "Property-only voice responsibility.",
+          "evidence_kind": "verified_verbatim_excerpt"
+        }
+      ],
+      "findings": [],
+      "limitations": [
+        "The original synthetic audio Card describes only engine rumble, not a real voice. This proves wiring/dormancy, not vocal timbre matching."
+      ],
+      "result_file": "conformance/reports/live-roles-round2/compiler-00629/result.json",
+      "result_file_sha256": "d87533c46dc21a2e00e1836cfde2022268085919e5e605df73f30e36c436a3a0",
+      "target": {
+        "duration_ms": 5167,
+        "frame_count": 124,
+        "aspect_ratio": "16:9",
+        "fps": {
+          "numerator": 24,
+          "denominator": 1
+        },
+        "width": 1344,
+        "height": 768
+      },
+      "mode": "ref2va",
+      "final_prompt_sha256": "226c1765f6c7f0e7adcc9fde4fc5b5301aa5d406c9df381f9fc808bfd56836a0",
+      "composition_review_ledger": [
+        {
+          "version": "contextir/composition-review/v1",
+          "required": true,
+          "passed": true,
+          "calls": [
+            {
+              "stage": "semantic_review",
+              "attempt": 1,
+              "model": "deepseek-flash",
+              "usage": {
+                "input_tokens": 1928,
+                "output_tokens": 1045
+              },
+              "valid": true
+            }
+          ]
+        }
+      ],
+      "generated_video_assessed": false,
+      "independent_structural_status": "contract_checks_passed_with_adapter_differences",
+      "input_sha256": "3b226222784f77b105b91123094f947a108ec139b1482db7efe51a57ab9a126c",
+      "synthetic_cards_only": true,
+      "ledger_is_not_manual_proof": true
+    },
+    {
+      "case_id": "compiler-00641",
+      "lifecycle_status": "compiled",
+      "manual_text_verdict": "text_responsibilities_met",
+      "summary": "BGM now explicitly reuses the supplied recorded signal under the new audio with partially_copy retention. Final sound/music prose no longer contradicts this as property-only or never-copy.",
+      "evidence": [
+        {
+          "path": "document.references[0].retention",
+          "quote": "partially_copy",
+          "interpretation": "Copy semantics are host-owned.",
+          "evidence_kind": "verified_verbatim_excerpt"
+        },
+        {
+          "path": "document.music",
+          "quote": "The supplied background-music reference is reused as a low, continuous bed beneath the scene.",
+          "interpretation": "Final audible instruction agrees.",
+          "evidence_kind": "verified_verbatim_excerpt"
+        }
+      ],
+      "findings": [],
+      "limitations": [],
+      "result_file": "conformance/reports/live-roles-round2/compiler-00641/result.json",
+      "result_file_sha256": "ce201d549ac66b6fd5b70c3497bf078cf940ab6ac79ff71f01ef82a8e5c41d81",
+      "target": {
+        "duration_ms": 5167,
+        "frame_count": 124,
+        "aspect_ratio": "16:9",
+        "fps": {
+          "numerator": 24,
+          "denominator": 1
+        },
+        "width": 1344,
+        "height": 768
+      },
+      "mode": "ref2va",
+      "final_prompt_sha256": "eb522c06f235f6bc08eb007937b4c526e2d7706e27b64c78f09279f3e0dd41c1",
+      "composition_review_ledger": [
+        {
+          "version": "contextir/composition-review/v1",
+          "required": true,
+          "passed": true,
+          "calls": [
+            {
+              "stage": "semantic_review",
+              "attempt": 1,
+              "model": "deepseek-flash",
+              "usage": {
+                "input_tokens": 2208,
+                "output_tokens": 999
+              },
+              "valid": true
+            }
+          ]
+        }
+      ],
+      "generated_video_assessed": false,
+      "independent_structural_status": "contract_checks_passed_with_adapter_differences",
+      "input_sha256": "a99053ba67a292877c483edb14b68d1148ff2d36f0dd10bfa530c4585074a97e",
+      "synthetic_cards_only": true,
+      "ledger_is_not_manual_proof": true
+    },
+    {
+      "case_id": "compiler-00653",
+      "lifecycle_status": "compiled",
+      "manual_text_verdict": "text_responsibilities_met",
+      "summary": "Music-style produces new score conditioned on the low-rumble character; source waveform copying is explicitly excluded.",
+      "evidence": [
+        {
+          "path": "document.music",
+          "quote": "A low, restrained industrial score built from a slow engine-like pulse and a thin metallic drone, matching the reference's low-rumble character without reusing its recording.",
+          "interpretation": "New score vs recording reuse is explicit.",
+          "evidence_kind": "verified_verbatim_excerpt"
+        }
+      ],
+      "findings": [],
+      "limitations": [
+        "Synthetic Card contains no actual musical analysis or measured beat."
+      ],
+      "result_file": "conformance/reports/live-roles-round2/compiler-00653/result.json",
+      "result_file_sha256": "3a5f15dd7b6cfa575802238a94e5455fbba061c2fbb9bc2bac32906197fc1a80",
+      "target": {
+        "duration_ms": 5167,
+        "frame_count": 124,
+        "aspect_ratio": "16:9",
+        "fps": {
+          "numerator": 24,
+          "denominator": 1
+        },
+        "width": 1344,
+        "height": 768
+      },
+      "mode": "ref2va",
+      "final_prompt_sha256": "f9ac9d1c71af6035d43b85d35d416fd9e276ccf6d8f6e3f2f3708ff16f3b6997",
+      "composition_review_ledger": [
+        {
+          "version": "contextir/composition-review/v1",
+          "required": true,
+          "passed": true,
+          "calls": [
+            {
+              "stage": "semantic_review",
+              "attempt": 1,
+              "model": "deepseek-flash",
+              "usage": {
+                "input_tokens": 1669,
+                "output_tokens": 804
+              },
+              "valid": true
+            }
+          ]
+        }
+      ],
+      "generated_video_assessed": false,
+      "independent_structural_status": "contract_checks_passed_with_adapter_differences",
+      "input_sha256": "300cf1d0e32ee7c7aed7986e3b98180afed94cbb110da17474f0c1eaab4f67af",
+      "synthetic_cards_only": true,
+      "ledger_is_not_manual_proof": true
+    },
+    {
+      "case_id": "compiler-00665",
+      "lifecycle_status": "failed",
+      "manual_text_verdict": "native_compile_failed_with_unsupported_review_finding",
+      "summary": "No publishable result. Reviewer rejects a generic new car engine sound as recorded-signal copying, although its cited quote contains no reuse/play/copy relation and the same review input explicitly prohibits copying.",
+      "evidence": [
+        {
+          "path": "call-07-output.json",
+          "quote": "A continuous low engine rumble, starting faint and growing fuller as the car advances.",
+          "interpretation": "The only quoted support for audio_signal_misuse.",
+          "evidence_kind": "verified_verbatim_excerpt"
+        },
+        {
+          "path": "call-07-request.json input.references[0].retention_details",
+          "quote": "Use the rhythm for cut and action timing; do not copy the recorded signal.",
+          "interpretation": "Host reference is property-only, retention reference.",
+          "evidence_kind": "verified_verbatim_excerpt"
+        }
+      ],
+      "findings": [
+        {
+          "code": "unsupported_audio_copy_inference",
+          "impact": "False-positive semantic gate blocks an otherwise non-copying sound description; lifecycle remains failure.",
+          "evidence": [
+            {
+              "path": "document candidate soundscape",
+              "quote": "A continuous low engine rumble",
+              "interpretation": "Generating an engine sound is not itself evidence of playing the original recording.",
+              "evidence_kind": "verified_verbatim_excerpt"
+            }
+          ]
+        }
+      ],
+      "limitations": [
+        "No reliable beat/cut timing is measured in the source synthetic Card."
+      ],
+      "result_file": "conformance/reports/live-roles-round2/compiler-00665/result.json",
+      "result_file_sha256": "eb0b3f92778bacd76c781c7fa1c84eea6d6dcb39d1b784d5430b552c94641467",
+      "target": {
+        "duration_ms": 0,
+        "aspect_ratio": "",
+        "fps": {
+          "numerator": 0,
+          "denominator": 0
+        }
+      },
+      "mode": "",
+      "final_prompt_sha256": null,
+      "composition_review_ledger": [
+        {
+          "version": "contextir/composition-review/v1",
+          "required": true,
+          "passed": false,
+          "findings": [
+            {
+              "code": "audio_signal_misuse",
+              "fragment_id": "soundscape",
+              "quote": "A continuous low engine rumble, starting faint and growing fuller as the car advances.",
+              "subject_id": ""
+            }
+          ],
+          "calls": [
+            {
+              "stage": "semantic_review",
+              "attempt": 1,
+              "model": "deepseek-flash",
+              "usage": {
+                "input_tokens": 1818,
+                "output_tokens": 3433
+              },
+              "valid": true
+            }
+          ]
+        }
+      ],
+      "generated_video_assessed": false,
+      "independent_structural_status": "native_compile_failed",
+      "input_sha256": "d174ae818a5d961cdc92d751ca2f6bf5ef3b2ad90e94f2601bded39a0928fdc0",
+      "synthetic_cards_only": true,
+      "error": "contextir: invalid_model_output at plan (1 issues)",
+      "publishable_document_present": false
+    },
+    {
+      "case_id": "compiler-00677",
+      "lifecycle_status": "compiled",
+      "manual_text_verdict": "text_responsibilities_met",
+      "summary": "SFX conditions a new low/heavy sound texture rather than replaying source signal; host scope and final prose are consistent.",
+      "evidence": [
+        {
+          "path": "document.references[0].retention_details",
+          "quote": "Generate a new sound matching the defined texture; do not play or copy the source recording.",
+          "interpretation": "Property-only sound effect responsibility.",
+          "evidence_kind": "verified_verbatim_excerpt"
+        }
+      ],
+      "findings": [],
+      "limitations": [
+        "No actual audio waveform was observed by this role fixture."
+      ],
+      "result_file": "conformance/reports/live-roles-round2/compiler-00677/result.json",
+      "result_file_sha256": "743d7d19f53aac03111d2bc0be3c07c90a0d8ce620d3cf9bb343bd2516aeb3b3",
+      "target": {
+        "duration_ms": 5167,
+        "frame_count": 124,
+        "aspect_ratio": "16:9",
+        "fps": {
+          "numerator": 24,
+          "denominator": 1
+        },
+        "width": 1344,
+        "height": 768
+      },
+      "mode": "ref2va",
+      "final_prompt_sha256": "be3af76563a9dabc1ac074b3a24865dd583361468267294301def5978ae98391",
+      "composition_review_ledger": [
+        {
+          "version": "contextir/composition-review/v1",
+          "required": true,
+          "passed": true,
+          "calls": [
+            {
+              "stage": "semantic_review",
+              "attempt": 1,
+              "model": "deepseek-flash",
+              "usage": {
+                "input_tokens": 2111,
+                "output_tokens": 1189
+              },
+              "valid": true
+            }
+          ]
+        }
+      ],
+      "generated_video_assessed": false,
+      "independent_structural_status": "contract_checks_passed_with_adapter_differences",
+      "input_sha256": "10e0b5f3891d2454c87beba25552950919b9842f0f2a077b268d45d06b1f262c",
+      "synthetic_cards_only": true,
+      "ledger_is_not_manual_proof": true
+    },
+    {
+      "case_id": "compiler-00689",
+      "lifecycle_status": "failed",
+      "manual_text_verdict": "native_compile_failed_with_unrepaired_source_action",
+      "summary": "The added red-jacket person is visible, but both attempted candidates replace the source gray driver crossing with standing/watching/turning. Original source actor movement is not preserved. Two reviews reject; no publishable Document/Artifact.",
+      "evidence": [
+        {
+          "path": "original input.cards[asset-swap-edit-source].motion",
+          "quote": "the driver crosses frame left to right",
+          "interpretation": "Caller only requested car forward motion and insertion, not cancellation of the original driver movement.",
+          "evidence_kind": "verified_verbatim_excerpt"
+        },
+        {
+          "path": "call-10 review candidate",
+          "quote": "<Subject:subject-2> stands clear beside the lane in a grey overall, weight settled, watching the car",
+          "interpretation": "Repair still does not preserve the crossing action.",
+          "evidence_kind": "verified_verbatim_excerpt"
+        }
+      ],
+      "findings": [
+        {
+          "code": "source_actor_motion_not_retained",
+          "impact": "Real source-preservation omission remains; do not reclassify the failure as purely reviewer noise.",
+          "evidence": [
+            {
+              "path": "composition_reviews",
+              "quote": "wrong_subject_action",
+              "interpretation": "The generic message/code is imprecise, but the original driver action is in fact absent from both candidates.",
+              "evidence_kind": "verified_verbatim_excerpt"
+            }
+          ]
+        }
+      ],
+      "limitations": [],
+      "result_file": "conformance/reports/live-roles-round2/compiler-00689/result.json",
+      "result_file_sha256": "b11b4e1eef4c8ec4dbec447b97816c909ba841d58e134283e36e8def193b1437",
+      "target": {
+        "duration_ms": 0,
+        "aspect_ratio": "",
+        "fps": {
+          "numerator": 0,
+          "denominator": 0
+        }
+      },
+      "mode": "",
+      "final_prompt_sha256": null,
+      "composition_review_ledger": [
+        {
+          "version": "contextir/composition-review/v1",
+          "required": true,
+          "passed": false,
+          "findings": [
+            {
+              "code": "wrong_subject_action",
+              "fragment_id": "shot:shot-1:event:4",
+              "quote": "<Subject:subject-2> shifts his stance and turns to track the car as it passes into the light",
+              "subject_id": "subject-2"
+            }
+          ],
+          "calls": [
+            {
+              "stage": "semantic_review",
+              "attempt": 1,
+              "model": "deepseek-flash",
+              "usage": {
+                "input_tokens": 2782,
+                "output_tokens": 9467
+              },
+              "valid": true
+            }
+          ]
+        },
+        {
+          "version": "contextir/composition-review/v1",
+          "required": true,
+          "passed": false,
+          "findings": [
+            {
+              "code": "wrong_subject_action",
+              "fragment_id": "shot:shot-1:description",
+              "quote": "<Subject:subject-2> stands clear beside the lane in a grey overall, weight settled, watching the car",
+              "subject_id": "subject-2"
+            }
+          ],
+          "calls": [
+            {
+              "stage": "semantic_review",
+              "attempt": 1,
+              "model": "deepseek-flash",
+              "usage": {
+                "input_tokens": 2968,
+                "output_tokens": 6228
+              },
+              "valid": true
+            }
+          ]
+        }
+      ],
+      "generated_video_assessed": false,
+      "independent_structural_status": "native_compile_failed",
+      "input_sha256": "ed4d572abace4e0c017da3f4607235e7cf7f6b3fa996f2d1fa3e0a5dd17b988d",
+      "synthetic_cards_only": true,
+      "error": "contextir: invalid_model_output at plan (1 issues)",
+      "publishable_document_present": false
+    },
+    {
+      "case_id": "compiler-00701",
+      "lifecycle_status": "compiled",
+      "manual_text_verdict": "semantic_requirement_not_met",
+      "summary": "Incoming red driver replaces the identified gray driver and is visible in both shots, but source position/actions/timing are promised and the observed left-to-right crossing is absent. The accepted prose leaves the replacement standing/watching/gesturing.",
+      "evidence": [
+        {
+          "path": "original input.cards[asset-swap-edit-source].motion",
+          "quote": "the driver crosses frame left to right",
+          "interpretation": "Observed source motion to transfer to incoming identity.",
+          "evidence_kind": "verified_verbatim_excerpt"
+        },
+        {
+          "path": "artifact.prompt",
+          "quote": "To one side near the tunnel wall, <Subject 1> stands watching the car",
+          "interpretation": "Final replacement begins stationary rather than crossing.",
+          "evidence_kind": "verified_verbatim_excerpt"
+        },
+        {
+          "path": "composition_reviews[0]",
+          "interpretation": "Reviewer had full source evidence but missed this preservation failure.",
+          "observed_value": "passed=true, findings=[]",
+          "evidence_kind": "structured_or_derived_observation"
+        }
+      ],
+      "findings": [
+        {
+          "code": "replacement_motion_not_inherited",
+          "impact": "Meaningful accepted final-output failure despite typed binding and reviewer pass.",
+          "evidence": [
+            {
+              "path": "document.subjects removed subject retention_details",
+              "quote": "Only the original figure's position, actions, and timing are transferred; its appearance is not retained.",
+              "interpretation": "Host target relation promises more than actual narrative supplies.",
+              "evidence_kind": "verified_verbatim_excerpt"
+            }
+          ]
+        }
+      ],
+      "limitations": [
+        "Exact original gray-wardrobe attribute difference remains a structural failure and is not silently waived, although dropping gray wardrobe from the replaced visible target is conceptually appropriate."
+      ],
+      "result_file": "conformance/reports/live-roles-round2/compiler-00701/result.json",
+      "result_file_sha256": "59626034b516cbb6142cef4652773ee1d8bba4445c18e17a15fe158d6481c728",
+      "target": {
+        "duration_ms": 5167,
+        "frame_count": 124,
+        "aspect_ratio": "16:9",
+        "fps": {
+          "numerator": 24,
+          "denominator": 1
+        },
+        "width": 1344,
+        "height": 768
+      },
+      "mode": "ref2va",
+      "final_prompt_sha256": "13d9ea0d075fc571b2b62f14ff2a28abd8de8e0d5361ca5c83a2d2b9f258a1e5",
+      "composition_review_ledger": [
+        {
+          "version": "contextir/composition-review/v1",
+          "required": true,
+          "passed": true,
+          "calls": [
+            {
+              "stage": "semantic_review",
+              "attempt": 1,
+              "model": "deepseek-flash",
+              "usage": {
+                "input_tokens": 2643,
+                "output_tokens": 3227
+              },
+              "valid": true
+            }
+          ]
+        }
+      ],
+      "generated_video_assessed": false,
+      "independent_structural_status": "heldout_field_difference",
+      "input_sha256": "11fccd9758a442a9f3628a8395263cf4c63b046d15159faa4a35412292ccc47e",
+      "synthetic_cards_only": true,
+      "ledger_is_not_manual_proof": true
+    }
+  ],
+  "conclusion": "This frozen run shows substantial repaired reference responsibilities but is not complete acceptance: two compilation failures, one accepted action-preservation failure and exact original role/identity differences remain. Text acceptance makes no claim about video generation or unexecuted preparation.",
+  "evidence_notation": "quote fields are verified as verbatim excerpts of the corresponding archived case/input corpus. Structured or derived observations use observed_value rather than claiming a verbatim quote."
+}

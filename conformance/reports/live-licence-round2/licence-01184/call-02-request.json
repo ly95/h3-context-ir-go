@@ -1,0 +1,348 @@
+{
+  "stage": "licence",
+  "system": "Resolve reference/request licences for each visual attribute. The separate medium_decision already settles medium authorization and taxonomy: copy its schema-owned medium, transform phrase/target and style constants exactly; do not reinterpret them. Return only the supplied JSON contract. Interpret the whole request semantically, without keyword lists.\nWith NO visual reference, every attribute is request-governed, transform_phrase/transform_target are empty (there is nothing to transfer from), and style follows the actual requested medium/treatments or the explicit default Live-action, cinematic. The visual reference governs every attribute that the user has not explicitly specified. The user's specified action overrides a subject plate's static pose. Introducing temporal motion into a still while preserving its depicted look is an action instruction, not by itself a request to change rendering medium. Requesting a wide target aspect or duration is canvas/timing configuration, not an instruction about camera framing/composition, lighting or visual medium. Explicit wardrobe, lighting, framing or palette instructions override the corresponding reference attribute only. A throwaway or descriptive style adjective (including a loose medium name) is NOT authorization to transform an attached reference. A clear request to restyle/reimagine/redraw/convert, including participles and irregular forms, or an explicit target rendering instruction authorizes a medium transformation. User supplied Brief.style is an explicit structured target style. Keep identity retention independent of rendering-medium transformation: do not choose attribute_transfer merely to change a medium.\nReturn transform_phrase as an exact quote of the user's transformation instruction, and transform_target as its complete target medium noun phrase; use empty strings if none. medium is request-governed only for a genuine transformation or explicit Brief.style. Do not cut off long target phrases. With a visual reference and no transformation, preserve its observed medium. Treatment words such as cinematic/moody may ride on top without replacing medium. A different style name in the same medium bucket is not a medium discrepancy. discrepancy is true only for an unapproved incompatible medium request versus reference; explain that the reference is retained and that an explicit reimagine/restyle instruction would change it. Unknown reference medium cannot establish a discrepancy.\nStyle phrase must be grammatical and concrete, with the winning medium and compatible requested treatments. Use actual observed Card styles, not stale Asset.Description. In an edit, the edit_source clip owns the scene's observed medium and lighting before incoming identity plates; a replacement/placement image supplies identity only and must not replace the clip's world with portrait/studio photography. A reference sheet's studio lighting, panel arrangement, labels, views and posing are presentation; never make them the scene. Scene reference lighting may inform style unless the user owns lighting. Explicit requests outrank references; references outrank director notes. Director notes only fill unspecified space, never override a retained reference medium. Reference facts must not be invented. Existing pose is recorded separately and licensed only when that input is an actual frame anchor, never in subject identity or retention. reference_medium and requested_medium are classification IDs, never free-form style prose: use exactly empty-string for unknown, 2d-animation, 3d-animation, archival, stop-motion, painted, or live-action. observed_phrase records the full winning observed look; phrase records the target look. Independent reference_readings are real supplied visual readings even when no media is being attached in this analysis-only operation. Return reasoning for every attribute.\nFor each observed subject, descriptor preserves the exact observed identifier except that reference-sheet descriptors must remove view/panel qualifiers (eight views of one person are one identity). This descriptor must not describe the sheet layout, mood inference or pose. For each observed subject, identity retains every stable observed attribute unless that exact attribute conflicts with an explicit user change. retained_attributes must be exact original strings, never pose, interpretation, scene lighting, or panel/view labels. If a wardrobe change is requested, drop only the replaced wardrobe attributes and keep hair/scars/other unchanged identity. requested_attributes are only explicit target identity/wardrobe changes, with request_quote quoting their authorizing words exactly; they must not be invented by creativity or director. Keep requested_attributes empty and request_quote empty when no such change was requested. wardrobe_attributes is the subset of retained_attributes describing garments/accessories only; do not put hair, scars, pose, scene or camera properties there. Descriptor, subject kind and original sources remain host-owned. The source reading remains recorded separately; these are target definition permissions.",
+  "input": {
+    "brief": {
+      "effort": "standard",
+      "seconds_explicit": true,
+      "aspect_explicit": true,
+      "intent": "he walks down the corridor wearing sunglasses",
+      "assets": [
+        {
+          "id": "asset-1",
+          "kind": "image",
+          "metadata": {
+            "width": 443,
+            "height": 768,
+            "fps": {
+              "numerator": 0,
+              "denominator": 0
+            }
+          },
+          "preparation": {},
+          "composition": "unknown",
+          "sizing": "match"
+        }
+      ],
+      "seconds": 8,
+      "aspect": "16:9",
+      "canvas": [
+        1056,
+        608
+      ],
+      "creativity": "balanced",
+      "cards": [
+        {
+          "asset_id": "asset-1",
+          "subjects": [
+            {
+              "kind": "person",
+              "descriptor": "the man",
+              "attributes": [
+                "black hair shaved at the sides",
+                "a thin pale scar through the left eyebrow",
+                "charcoal technical jacket",
+                "worn black boots"
+              ],
+              "pose": [
+                "fists clenched in a fighting stance",
+                "looking toward the camera"
+              ]
+            }
+          ],
+          "style": "live-action",
+          "composition": "unknown",
+          "analyzer_version": "1",
+          "coverage": {
+            "status": "complete",
+            "tracks": [
+              "visual"
+            ]
+          }
+        }
+      ]
+    },
+    "diagnostics": null,
+    "director_notes": "",
+    "medium_decision": {
+      "disposition": "preserve",
+      "operation_quote": "",
+      "target": "",
+      "requested_style": "",
+      "reference_medium": "live-action",
+      "requested_medium": "",
+      "treatments": [],
+      "reasoning": "The request only adds motion and an accessory (walking, sunglasses) to the existing subject; it does not expressly ask to change or reimagine the reference's rendering medium. Animation of a live-action depicted subject does not by itself authorize medium conversion.",
+      "calls": [
+        {
+          "stage": "medium",
+          "attempt": 1,
+          "model": "deepseek-flash",
+          "usage": {
+            "input_tokens": 795,
+            "output_tokens": 184
+          },
+          "valid": true
+        }
+      ]
+    },
+    "observed_subjects": [
+      {
+        "label": "\u003cSubject 1\u003e",
+        "kind": "person",
+        "sources": [
+          "\u003cPicture 1\u003e"
+        ],
+        "descriptor": "the man",
+        "attributes": [
+          "black hair shaved at the sides",
+          "a thin pale scar through the left eyebrow",
+          "charcoal technical jacket",
+          "worn black boots"
+        ],
+        "pose": [
+          "fists clenched in a fighting stance",
+          "looking toward the camera"
+        ],
+        "pose_licensed": false,
+        "retention": "fully_preserved",
+        "retention_note": "",
+        "appears_in": [],
+        "taken_over_by": ""
+      }
+    ],
+    "reference_manifest": [
+      {
+        "slot": 0,
+        "label": "\u003cPicture 1\u003e",
+        "kind": "image",
+        "sha256": "asset-1",
+        "wiring": "ref_image_1",
+        "role": "",
+        "px": [
+          443,
+          768
+        ],
+        "seconds": null,
+        "frames": null,
+        "sizing": "match",
+        "rows": 336,
+        "paired_with": null,
+        "characterisation": "",
+        "composition": "unknown",
+        "replaces": ""
+      }
+    ],
+    "reference_readings": [
+      {
+        "id": "asset-1",
+        "kind": "image",
+        "card": {
+          "asset_id": "asset-1",
+          "subjects": [
+            {
+              "kind": "person",
+              "descriptor": "the man",
+              "attributes": [
+                "black hair shaved at the sides",
+                "a thin pale scar through the left eyebrow",
+                "charcoal technical jacket",
+                "worn black boots"
+              ],
+              "pose": [
+                "fists clenched in a fighting stance",
+                "looking toward the camera"
+              ]
+            }
+          ],
+          "style": "live-action",
+          "composition": "unknown",
+          "analyzer_version": "1",
+          "coverage": {
+            "status": "complete",
+            "tracks": [
+              "visual"
+            ]
+          }
+        }
+      }
+    ],
+    "version": "contextir/compiler/v1"
+  },
+  "response_schema": {
+    "additionalProperties": false,
+    "properties": {
+      "governs": {
+        "additionalProperties": false,
+        "properties": {
+          "action": {
+            "enum": [
+              "request",
+              "reference"
+            ],
+            "type": "string"
+          },
+          "framing": {
+            "enum": [
+              "request",
+              "reference"
+            ],
+            "type": "string"
+          },
+          "lighting": {
+            "enum": [
+              "request",
+              "reference"
+            ],
+            "type": "string"
+          },
+          "medium": {
+            "const": "reference"
+          },
+          "palette": {
+            "enum": [
+              "request",
+              "reference"
+            ],
+            "type": "string"
+          },
+          "wardrobe": {
+            "enum": [
+              "request",
+              "reference"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "action",
+          "medium",
+          "wardrobe",
+          "lighting",
+          "framing",
+          "palette"
+        ],
+        "type": "object"
+      },
+      "identity": {
+        "items": false,
+        "maxItems": 1,
+        "minItems": 1,
+        "prefixItems": [
+          {
+            "additionalProperties": false,
+            "properties": {
+              "descriptor": {
+                "const": "the man"
+              },
+              "label": {
+                "const": "\u003cSubject 1\u003e"
+              },
+              "request_quote": {
+                "type": "string"
+              },
+              "requested_attributes": {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "retained_attributes": {
+                "items": {
+                  "enum": [
+                    "black hair shaved at the sides",
+                    "a thin pale scar through the left eyebrow",
+                    "charcoal technical jacket",
+                    "worn black boots"
+                  ],
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "wardrobe_attributes": {
+                "items": {
+                  "enum": [
+                    "black hair shaved at the sides",
+                    "a thin pale scar through the left eyebrow",
+                    "charcoal technical jacket",
+                    "worn black boots"
+                  ],
+                  "type": "string"
+                },
+                "type": "array"
+              }
+            },
+            "required": [
+              "descriptor",
+              "label",
+              "request_quote",
+              "requested_attributes",
+              "retained_attributes",
+              "wardrobe_attributes"
+            ],
+            "type": "object"
+          }
+        ],
+        "type": "array"
+      },
+      "reasons": {
+        "additionalProperties": false,
+        "properties": {
+          "action": {
+            "type": "string"
+          },
+          "framing": {
+            "type": "string"
+          },
+          "lighting": {
+            "type": "string"
+          },
+          "medium": {
+            "type": "string"
+          },
+          "palette": {
+            "type": "string"
+          },
+          "wardrobe": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "action",
+          "medium",
+          "wardrobe",
+          "lighting",
+          "framing",
+          "palette"
+        ],
+        "type": "object"
+      },
+      "style": {
+        "const": {
+          "observed_phrase": "live-action",
+          "phrase": "live-action",
+          "source": "reference",
+          "reference_medium": "live-action",
+          "requested_medium": "",
+          "discrepancy": false,
+          "note": ""
+        }
+      },
+      "transform_phrase": {
+        "const": ""
+      },
+      "transform_target": {
+        "const": ""
+      }
+    },
+    "required": [
+      "governs",
+      "identity",
+      "reasons",
+      "style",
+      "transform_phrase",
+      "transform_target"
+    ],
+    "type": "object"
+  }
+}

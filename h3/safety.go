@@ -60,6 +60,13 @@ func checkTextProtocol(doc contextir.Document) error {
 			return err
 		}
 	}
+	for i, choice := range doc.LoRAs {
+		for j, trigger := range choice.Triggers {
+			if err := check(fmt.Sprintf("loras[%d].triggers[%d].text", i, j), trigger.Text); err != nil {
+				return err
+			}
+		}
+	}
 	if err := checkRich("summary", doc.Summary); err != nil {
 		return err
 	}

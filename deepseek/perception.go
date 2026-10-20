@@ -43,6 +43,12 @@ type PerceptionCall struct {
 }
 
 type PerceptionOptions struct {
+	// MaxRetries explicitly enables bounded schema/observation repair. The
+	// default makes one call. Every actual attempt retains its usage and callback.
+	MaxRetries int
+	// IncludeCard requests a structured identity/pose/reference-sheet card in
+	// addition to facts, for the complete compiler's grounding stage.
+	IncludeCard bool
 	// OnCall is invoked once after every actual model invocation, including model
 	// failures and rejected evidence. It is synchronous and may be used for billing.
 	// Like the model and resolver, its concurrency safety belongs to the caller.
@@ -57,12 +63,15 @@ type PerceptionResult struct {
 	Evidence contextir.Evidence      `json:"evidence"`
 	Response contextir.ModelResponse `json:"response"`
 	Called   bool                    `json:"called"`
+	Attempts []PerceptionCall        `json:"attempts,omitempty"`
 }
 
 type ImagePerceiver struct {
-	model   ImageModel
-	resolve ImageResolver
-	onCall  func(PerceptionCall)
+	includeCard bool
+	maxRetries  int
+	model       ImageModel
+	resolve     ImageResolver
+	onCall      func(PerceptionCall)
 }
 
 func NewImagePerceiver(model ImageModel, resolve ImageResolver, options PerceptionOptions) (*ImagePerceiver, error) {
@@ -72,7 +81,10 @@ func NewImagePerceiver(model ImageModel, resolve ImageResolver, options Percepti
 	if resolve == nil {
 		return nil, perceptionFailure(contextir.CodeInvalid, "resolver", "an explicit image resolver is required", nil)
 	}
-	return &ImagePerceiver{model: model, resolve: resolve, onCall: options.OnCall}, nil
+	if options.MaxRetries < 0 || options.MaxRetries > 5 {
+		return nil, perceptionFailure(contextir.CodeInvalid, "max_retries", "image perception retries must be between zero and five", nil)
+	}
+	return &ImagePerceiver{model: model, resolve: resolve, onCall: options.OnCall, includeCard: options.IncludeCard, maxRetries: options.MaxRetries}, nil
 }
 
 // Perceive satisfies planner.Perceiver. Use OnCall or PerceiveWithUsage to retain
@@ -82,7 +94,47 @@ func (p *ImagePerceiver) Perceive(ctx context.Context, asset contextir.Asset) (c
 	return result.Evidence, err
 }
 
+// PerceiveWithCalls exposes the same actual attempts as OnCall, without another
+// perception invocation. It satisfies contextir.MeteredPerceiver.
+func (p *ImagePerceiver) PerceiveWithCalls(ctx context.Context, asset contextir.Asset) (contextir.Evidence, []contextir.CallUsage, error) {
+	r, err := p.PerceiveWithUsage(ctx, asset)
+	calls := make([]contextir.CallUsage, 0, len(r.Attempts))
+	for i, c := range r.Attempts {
+		calls = append(calls, contextir.CallUsage{AssetID: c.AssetID, Stage: c.Stage, Attempt: i + 1, Model: c.Model, Usage: c.Usage, Valid: c.UsageValid})
+	}
+	return r.Evidence, calls, err
+}
+
 func (p *ImagePerceiver) PerceiveWithUsage(ctx context.Context, asset contextir.Asset) (result PerceptionResult, err error) {
+	if p == nil {
+		return result, perceptionFailure(contextir.CodeInvalid, "configuration", "an initialized image perceiver is required", nil)
+	}
+	var diagnostics []contextir.Issue
+	var attempts []PerceptionCall
+	for attempt := 0; attempt <= p.maxRetries; attempt++ {
+		result, err = p.perceiveOnce(ctx, asset, diagnostics)
+		attempts = append(attempts, result.Attempts...)
+		result.Attempts = append([]PerceptionCall(nil), attempts...)
+		if err == nil || !result.Called || !repairableObservation(err) || ctx.Err() != nil {
+			return result, err
+		}
+		var typed *contextir.Error
+		if errors.As(err, &typed) && typed != nil {
+			diagnostics = append([]contextir.Issue(nil), typed.Issues...)
+		}
+	}
+	return result, err
+}
+
+func repairableObservation(err error) bool {
+	if contextir.HasCode(err, contextir.CodeModelOutput) {
+		return true
+	}
+	var typed *contextir.Error
+	return errors.As(err, &typed) && typed != nil && typed.Stage == "deepseek.image_perception" && len(typed.Issues) == 1 && typed.Issues[0].Path == "evidence.coverage"
+}
+
+func (p *ImagePerceiver) perceiveOnce(ctx context.Context, asset contextir.Asset, diagnostics []contextir.Issue) (result PerceptionResult, err error) {
 	if p == nil || perceptionNilModel(p.model) || p.resolve == nil {
 		return result, perceptionFailure(contextir.CodeInvalid, "configuration", "an initialized image perceiver is required", nil)
 	}
@@ -109,21 +161,23 @@ func (p *ImagePerceiver) PerceiveWithUsage(ctx context.Context, asset contextir.
 	if err := ctx.Err(); err != nil {
 		return result, perceptionFailure(contextir.CodeCanceled, "context", "image perception was canceled", err)
 	}
-	// Deliberately omit URI, Description and all user-authored asset notes. The
-	// actual pixels travel exclusively through the model's image input channel.
-	input, _ := json.Marshal(struct {
-		AssetID  string                  `json:"asset_id"`
-		Metadata contextir.MediaMetadata `json:"metadata"`
-	}{AssetID: asset.ID, Metadata: asset.Metadata})
-	request := contextir.ModelRequest{Stage: "image_perception", System: "Prompt version: " + ImagePerceptionPromptVersion + "\n\n" + imagePerceptionSystem, Input: input, ResponseSchema: contextir.EvidenceSchema()}
+	request, requestErr := ImagePerceptionRequest(asset, diagnostics, p.includeCard)
+	if requestErr != nil {
+		return result, requestErr
+	}
 	result.Called = true
 	defer func() {
+		version := ImagePerceptionPromptVersion
+		if p.includeCard {
+			version += "+contextir-image-card/v2"
+		}
+		call := PerceptionCall{AssetID: asset.ID, Stage: request.Stage, PromptVersion: version, Model: result.Response.Model, Usage: result.Response.Usage, UsageValid: !result.Response.UsageInvalid && result.Response.Usage.InputTokens >= 0 && result.Response.Usage.OutputTokens >= 0}
+		var typed *contextir.Error
+		if errors.As(err, &typed) && typed != nil {
+			call.ErrorCode = typed.Code
+		}
+		result.Attempts = []PerceptionCall{call}
 		if p.onCall != nil {
-			call := PerceptionCall{AssetID: asset.ID, Stage: request.Stage, PromptVersion: ImagePerceptionPromptVersion, Model: result.Response.Model, Usage: result.Response.Usage, UsageValid: !result.Response.UsageInvalid && result.Response.Usage.InputTokens >= 0 && result.Response.Usage.OutputTokens >= 0}
-			var typed *contextir.Error
-			if errors.As(err, &typed) && typed != nil {
-				call.ErrorCode = typed.Code
-			}
 			p.onCall(call)
 		}
 	}()
@@ -172,6 +226,22 @@ func (p *ImagePerceiver) PerceiveWithUsage(ctx context.Context, asset contextir.
 	}
 	evidence.Model = response.Model
 	evidence.AnalyzerVersion = ImagePerceptionPromptVersion + "/" + response.Model
+	for i := range evidence.Facts {
+		evidence.Facts[i].AnalyzerVersion = evidence.AnalyzerVersion
+	}
+	if p.includeCard && evidence.Card == nil {
+		return result, perceptionFailure(contextir.CodeModelOutput, "evidence.card", "structured image observation card is required", nil)
+	}
+	if evidence.Card != nil {
+		card := evidence.Card
+		if card.AssetID != asset.ID || card.FramesSeen != 0 || card.Transcript != "" || card.Timbre != "" || card.Music != "" || card.Motion != "" || card.Camera != "" {
+			return result, perceptionFailure(contextir.CodeModelOutput, "evidence.card", "still-image cards must identify this asset and cannot claim temporal or audio observations", nil)
+		}
+		card.AnalyzerVersion = "contextir-image-card/v2/" + response.Model
+		card.Model = response.Model
+		coverage := *evidence.Coverage
+		card.Coverage = &coverage
+	}
 	if validationErr := contextir.ValidateEvidence([]contextir.Asset{asset}, []contextir.Evidence{evidence}); validationErr != nil {
 		return result, perceptionFailure(contextir.CodeModelOutput, "evidence", "image model returned evidence that violates the observation contract", validationErr)
 	}

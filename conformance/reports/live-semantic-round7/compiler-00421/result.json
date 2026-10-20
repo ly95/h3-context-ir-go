@@ -1,0 +1,198 @@
+{
+  "case_id": "compiler-00421",
+  "input_sha256": "27d8142caa53ac2a26717af2622b53693f5e373b018171ffea47adf7ac95ba5c",
+  "status": "mode_decided",
+  "calls": [
+    {
+      "stage": "mode",
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 626,
+        "output_tokens": 183
+      },
+      "usage_valid": true,
+      "images": 0
+    }
+  ],
+  "elapsed_ms": 1530,
+  "result": {
+    "usage_complete": false,
+    "clarification_policy": "",
+    "budget": {
+      "prompt_tokens": 0,
+      "target_video_rows": 0,
+      "target_audio_rows": 0,
+      "known_reference_rows": 0,
+      "in_trained_band": false
+    },
+    "status": "",
+    "version": "",
+    "brief": {
+      "intent": ""
+    },
+    "request": {
+      "instruction": "",
+      "mode": "",
+      "target": {
+        "duration_ms": 0,
+        "aspect_ratio": "",
+        "fps": {
+          "numerator": 0,
+          "denominator": 0
+        }
+      },
+      "allow_creative_additions": false,
+      "allow_generated_dialogue": false
+    },
+    "structure": {
+      "replacement_targets": null,
+      "mode": "",
+      "assets": null,
+      "shots": null,
+      "dialogue": null,
+      "onscreen_text": null,
+      "requested": {
+        "speech": false,
+        "music": false,
+        "onscreen_text": false,
+        "magnitude": ""
+      },
+      "forbidden": {
+        "speech": false,
+        "music": false,
+        "onscreen_text": false,
+        "magnitude": ""
+      },
+      "reasoning": ""
+    },
+    "scope": {
+      "speech": false,
+      "music": false,
+      "onscreen_text": false,
+      "magnitude": ""
+    },
+    "document": {
+      "version": "",
+      "mode": "",
+      "target": {
+        "duration_ms": 0,
+        "aspect_ratio": "",
+        "fps": {
+          "numerator": 0,
+          "denominator": 0
+        }
+      },
+      "shots": null,
+      "soundscape": "",
+      "music": ""
+    },
+    "artifact": {
+      "version": "",
+      "compiler_version": "",
+      "format_version": "",
+      "mode": "",
+      "target": {
+        "duration_ms": 0,
+        "aspect_ratio": "",
+        "fps": {
+          "numerator": 0,
+          "denominator": 0
+        }
+      },
+      "profile": {
+        "name": "",
+        "format": "",
+        "fps": {
+          "numerator": 0,
+          "denominator": 0
+        },
+        "modes": null,
+        "limits": {
+          "pictures": 0,
+          "videos": 0,
+          "video_audio": 0,
+          "standalone_audio": 0
+        },
+        "supports_reference_frame_anchors": false,
+        "supports_source_intervals": false
+      },
+      "prompt": "",
+      "manifest": {
+        "media": null,
+        "subjects": null,
+        "references": null,
+        "speakers": null
+      },
+      "frames": 0,
+      "effective_duration_seconds": {
+        "numerator": 0,
+        "denominator": 0
+      },
+      "document_sha256": "",
+      "profile_sha256": "",
+      "prompt_sha256": "",
+      "manifest_sha256": "",
+      "sha256": ""
+    },
+    "decisions": null
+  },
+  "mode_decision": {
+    "clarification_policy": "continue_with_recorded_choice",
+    "model_signals": [
+      "user intent is only 'make something nice'",
+      "one image is attached without a described role",
+      "no explicit request to use the image as an actual first or last frame",
+      "no clear content-reference instruction either"
+    ],
+    "confidence_kind": "routing_policy",
+    "model_confidence": 0.55,
+    "interpretation": "ambiguous",
+    "questions": [
+      {
+        "id": "anchor_or_reference",
+        "ask": "Should the image be an exact opening/closing frame (with an explicit crop/resize/canvas decision if its aspect differs), or should what it shows appear redrawn in a new scene?",
+        "options": [
+          {
+            "id": "opening_frame",
+            "label": "Use it as the opening frame"
+          },
+          {
+            "id": "appears_in",
+            "label": "Put what it shows into a new scene"
+          }
+        ],
+        "recommended": "appears_in",
+        "default_if_unanswered": "appears_in"
+      }
+    ],
+    "aspect_mismatch": false,
+    "needs_clarification": true,
+    "mode": "ref2va",
+    "confidence": 0.5,
+    "rule": "12.4-failsafe",
+    "signals": [
+      "user intent is only 'make something nice'",
+      "one image is attached without a described role",
+      "no explicit request to use the image as an actual first or last frame",
+      "no clear content-reference instruction either",
+      "Confidence records the original routing-policy value; model_confidence separately preserves the provider's interpretation confidence.",
+      "Ambiguous image responsibility: Ref2VA is strictly more expressive for redrawing content, but it does not guarantee exact first/last-frame pixels. The selected mode remains recorded for an explicit caller decision."
+    ],
+    "alternatives": [
+      "i2va",
+      "l2va"
+    ],
+    "calls": [
+      {
+        "stage": "mode",
+        "attempt": 1,
+        "model": "deepseek-flash",
+        "usage": {
+          "input_tokens": 626,
+          "output_tokens": 183
+        },
+        "valid": true
+      }
+    ]
+  }
+}

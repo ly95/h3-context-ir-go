@@ -1,0 +1,1248 @@
+{
+  "case_id": "t2va_dialogue_dense",
+  "input_sha256": "",
+  "status": "compiled",
+  "calls": [
+    {
+      "stage": "scope",
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 991,
+        "output_tokens": 292
+      },
+      "usage_valid": true,
+      "images": 0
+    },
+    {
+      "stage": "medium",
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 921,
+        "output_tokens": 152
+      },
+      "usage_valid": true,
+      "images": 0
+    },
+    {
+      "stage": "licence",
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 1780,
+        "output_tokens": 471
+      },
+      "usage_valid": true,
+      "images": 0
+    },
+    {
+      "stage": "structure",
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 2694,
+        "output_tokens": 2159
+      },
+      "usage_valid": true,
+      "images": 0
+    },
+    {
+      "stage": "plan",
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 8081,
+        "output_tokens": 9663
+      },
+      "usage_valid": true,
+      "images": 0
+    }
+  ],
+  "elapsed_ms": 62742,
+  "result": {
+    "usage_complete": true,
+    "clarification_policy": "continue_with_recorded_choice",
+    "mode_decision": {
+      "clarification_policy": "continue_with_recorded_choice",
+      "confidence_kind": "routing_policy",
+      "aspect_mismatch": false,
+      "needs_clarification": false,
+      "mode": "t2va",
+      "confidence": 1,
+      "rule": "12.2#3",
+      "signals": [
+        "Mode follows explicit structured choices and media socket requirements."
+      ]
+    },
+    "scope_decision": {
+      "conflict_policy": "supplied_content_wins",
+      "requested": {
+        "speech": true,
+        "music": false,
+        "onscreen_text": false,
+        "magnitude": ""
+      },
+      "forbidden": {
+        "speech": false,
+        "music": false,
+        "onscreen_text": false,
+        "magnitude": ""
+      },
+      "allowed": {
+        "speech": true,
+        "music": true,
+        "onscreen_text": false,
+        "magnitude": "measured"
+      },
+      "dialogue": [
+        {
+          "text": "That belt is done.",
+          "language": "English",
+          "speaker_hint": "the older mechanic",
+          "voiceover": false,
+          "kind": "",
+          "delivery": ""
+        },
+        {
+          "text": "It held all week.",
+          "language": "English",
+          "speaker_hint": "the younger mechanic",
+          "voiceover": false,
+          "kind": "",
+          "delivery": ""
+        }
+      ],
+      "onscreen_text": [],
+      "reasoning": "The intent requests two mechanics arguing and supplies exact dialogue lines, so speech is requested. No music, onscreen text, or prohibitions are specified.",
+      "calls": [
+        {
+          "stage": "scope",
+          "attempt": 1,
+          "model": "deepseek-flash",
+          "usage": {
+            "input_tokens": 991,
+            "output_tokens": 292
+          },
+          "valid": true
+        }
+      ]
+    },
+    "licence": {
+      "medium_decision": {
+        "disposition": "no_reference",
+        "operation_quote": "",
+        "target": "",
+        "requested_style": "",
+        "reference_medium": "",
+        "requested_medium": "",
+        "treatments": [],
+        "reasoning": "There is no attached visual reference, so no medium-preservation question arises. The intent only describes a scene (two mechanics arguing over an engine in a cramped garage) with no stated visual style or medium, so requested_medium, requested_style, and target are all empty.",
+        "calls": [
+          {
+            "stage": "medium",
+            "attempt": 1,
+            "model": "deepseek-flash",
+            "usage": {
+              "input_tokens": 921,
+              "output_tokens": 152
+            },
+            "valid": true
+          }
+        ]
+      },
+      "identity": [],
+      "governs": {
+        "action": "request",
+        "framing": "request",
+        "lighting": "request",
+        "medium": "request",
+        "palette": "request",
+        "wardrobe": "request"
+      },
+      "reasons": {
+        "action": "The request explicitly specifies an action: two mechanics argue over an engine in a cramped garage. With no visual reference, action is request-governed.",
+        "framing": "There is no visual reference. The requested 16:9 aspect is canvas configuration, not a camera-framing instruction, but framing remains request-governed absent a reference.",
+        "lighting": "There is no visual reference and no explicit lighting instruction, so lighting is request-governed and no reference lighting is retained.",
+        "medium": "There is no visual reference and no genuine medium transformation or explicit Brief.style, so the medium follows the default Live-action, cinematic.",
+        "palette": "There is no visual reference and no explicit palette instruction, so palette is request-governed by the request's default live-action cinematic treatment.",
+        "wardrobe": "There is no visual reference, so wardrobe is request-governed; no explicit wardrobe change is supplied."
+      },
+      "transform_phrase": null,
+      "transform_target": "",
+      "medium_transferred": false,
+      "style": {
+        "observed_phrase": "",
+        "phrase": "Live-action, cinematic",
+        "source": "default",
+        "reference_medium": "",
+        "requested_medium": "",
+        "discrepancy": false,
+        "note": ""
+      },
+      "calls": [
+        {
+          "stage": "medium",
+          "attempt": 1,
+          "model": "deepseek-flash",
+          "usage": {
+            "input_tokens": 921,
+            "output_tokens": 152
+          },
+          "valid": true
+        },
+        {
+          "stage": "licence",
+          "attempt": 1,
+          "model": "deepseek-flash",
+          "usage": {
+            "input_tokens": 1780,
+            "output_tokens": 471
+          },
+          "valid": true
+        }
+      ]
+    },
+    "budget": {
+      "prompt_tokens": 1214,
+      "target_video_rows": 37296,
+      "target_audio_rows": 414,
+      "known_reference_rows": 0,
+      "in_trained_band": true
+    },
+    "findings": [
+      {
+        "rule": "P3-too-long",
+        "severity": "WARN",
+        "msg": "main description is 834 words; spec guidance 350-500"
+      },
+      {
+        "rule": "A2-sound-duplicated",
+        "severity": "WARN",
+        "msg": "overall_soundscape repeats content already in the description rather than a separate layer"
+      }
+    ],
+    "status": "compiled",
+    "version": "contextir/compiler/v1",
+    "brief": {
+      "effort": "standard",
+      "seconds_explicit": true,
+      "aspect_explicit": true,
+      "intent": "two mechanics argue over an engine in a cramped garage",
+      "seconds": 5,
+      "aspect": "16:9",
+      "dialogue": [
+        {
+          "text": "That belt is done.",
+          "language": "English",
+          "speaker_hint": "the older mechanic",
+          "voiceover": false,
+          "kind": "",
+          "delivery": ""
+        },
+        {
+          "text": "It held all week.",
+          "language": "English",
+          "speaker_hint": "the younger mechanic",
+          "voiceover": false,
+          "kind": "",
+          "delivery": ""
+        }
+      ],
+      "creativity": "balanced"
+    },
+    "request": {
+      "instruction": "two mechanics argue over an engine in a cramped garage",
+      "mode": "t2va",
+      "target": {
+        "duration_ms": 5167,
+        "frame_count": 124,
+        "aspect_ratio": "16:9",
+        "fps": {
+          "numerator": 24,
+          "denominator": 1
+        },
+        "width": 1344,
+        "height": 768
+      },
+      "dialogue": [
+        {
+          "id": "line-1",
+          "speaker_ids": [
+            "speaker-1"
+          ],
+          "language": "English",
+          "text": "That belt is done."
+        },
+        {
+          "id": "line-2",
+          "speaker_ids": [
+            "speaker-2"
+          ],
+          "language": "English",
+          "text": "It held all week."
+        }
+      ],
+      "allow_creative_additions": true,
+      "allow_generated_dialogue": false,
+      "pinned_shots": [
+        {
+          "id": "shot-1",
+          "start_ms": 0,
+          "end_ms": 1800
+        },
+        {
+          "id": "shot-2",
+          "start_ms": 1800,
+          "end_ms": 3500
+        },
+        {
+          "id": "shot-3",
+          "start_ms": 3500,
+          "end_ms": 5167
+        }
+      ],
+      "addition_scope": {
+        "dialogue": true,
+        "music": true,
+        "visible_text": false
+      }
+    },
+    "structure": {
+      "dialogue_placements": [
+        {
+          "line_index": 0,
+          "shot_index": 1,
+          "text": "That belt is done."
+        },
+        {
+          "line_index": 1,
+          "shot_index": 2,
+          "text": "It held all week."
+        }
+      ],
+      "replacement_targets": {},
+      "style": "Live-action, cinematic",
+      "mode": "t2va",
+      "assets": [],
+      "shots": [
+        {
+          "subjects": [
+            "the older mechanic",
+            "the younger mechanic",
+            "the engine"
+          ],
+          "sync_sound": [
+            "low garage hum",
+            "faint engine tick",
+            "metal tool clink"
+          ],
+          "start_ms": 0,
+          "purpose": "establish",
+          "framing": "medium wide",
+          "action": "In a cramped garage, the older mechanic gestures at a frayed belt on the exposed engine while the younger mechanic stands nearby with a wrench.",
+          "what_changes": "The space and the standoff over the engine are established.",
+          "camera": {
+            "type": "Static Shot",
+            "amplitude": "",
+            "speed": ""
+          }
+        },
+        {
+          "subjects": [
+            "the older mechanic",
+            "the engine"
+          ],
+          "sync_sound": [
+            "garage hum",
+            "tick of cooling metal"
+          ],
+          "start_ms": 1800,
+          "purpose": "develop",
+          "framing": "medium close",
+          "action": "The older mechanic taps the worn belt and states his verdict, jaw set, while the younger mechanic stiffens.",
+          "what_changes": "The older mechanic asserts the belt is finished and the tension sharpens.",
+          "camera": {
+            "type": "Push In",
+            "amplitude": "small",
+            "speed": "slow"
+          }
+        },
+        {
+          "subjects": [
+            "the younger mechanic",
+            "the older mechanic"
+          ],
+          "sync_sound": [
+            "cloth wipe",
+            "soft metallic settle"
+          ],
+          "start_ms": 3500,
+          "purpose": "react",
+          "framing": "medium close",
+          "action": "The younger mechanic wipes his hands on a rag and counters without looking away from the engine.",
+          "what_changes": "The younger mechanic pushes back, shifting the argument onto his defense of the belt.",
+          "camera": {
+            "type": "Static Shot",
+            "amplitude": "",
+            "speed": ""
+          }
+        }
+      ],
+      "dialogue": [
+        {
+          "text": "That belt is done.",
+          "language": "English",
+          "speaker_hint": "the older mechanic",
+          "voiceover": false,
+          "kind": "",
+          "delivery": ""
+        },
+        {
+          "text": "It held all week.",
+          "language": "English",
+          "speaker_hint": "the younger mechanic",
+          "voiceover": false,
+          "kind": "",
+          "delivery": ""
+        }
+      ],
+      "onscreen_text": [],
+      "requested": {
+        "speech": true,
+        "music": false,
+        "onscreen_text": false,
+        "magnitude": ""
+      },
+      "forbidden": {
+        "speech": false,
+        "music": false,
+        "onscreen_text": false,
+        "magnitude": ""
+      },
+      "reasoning": "No assets are attached, so the mode is text-to-video/audio. The brief supplies two exact spoken lines and requests speech but no on-screen text or music. Three shots establish the cramped garage, cut to the older mechanic delivering his verdict over the engine, then cut to the younger mechanic's retort."
+    },
+    "scope": {
+      "speech": true,
+      "music": true,
+      "onscreen_text": false,
+      "magnitude": "measured"
+    },
+    "document": {
+      "version": "contextir/v1",
+      "mode": "t2va",
+      "target": {
+        "duration_ms": 5167,
+        "frame_count": 124,
+        "aspect_ratio": "16:9",
+        "fps": {
+          "numerator": 24,
+          "denominator": 1
+        },
+        "width": 1344,
+        "height": 768
+      },
+      "subjects": [
+        {
+          "kind": "person",
+          "origin": "user",
+          "id": "older-mechanic",
+          "description": "An older mechanic with weathered features, gray stubble, oil-stained dark coveralls, and a set jaw."
+        },
+        {
+          "kind": "person",
+          "origin": "user",
+          "id": "younger-mechanic",
+          "description": "A younger mechanic with short hair, a faded blue work shirt, and a wrench held in one hand."
+        },
+        {
+          "kind": "object",
+          "origin": "user",
+          "id": "engine",
+          "description": "An exposed inline engine on a stand, its frayed drive belt visible against the dark block."
+        },
+        {
+          "kind": "environment",
+          "origin": "user",
+          "id": "cramped-garage",
+          "description": "A narrow garage bay crowded with a workbench, tool trays, coiled hoses, and oil-stained concrete."
+        }
+      ],
+      "speakers": [
+        {
+          "onscreen": true,
+          "id": "speaker-1",
+          "description": "The older mechanic, weathered and gray-stubbled, standing by the engine.",
+          "subject_id": "older-mechanic"
+        },
+        {
+          "onscreen": true,
+          "id": "speaker-2",
+          "description": "The younger mechanic, blue-shirted and holding a wrench.",
+          "subject_id": "younger-mechanic"
+        }
+      ],
+      "dialogue": [
+        {
+          "id": "line-1",
+          "speaker_ids": [
+            "speaker-1"
+          ],
+          "language": "English",
+          "text": "That belt is done."
+        },
+        {
+          "id": "line-2",
+          "speaker_ids": [
+            "speaker-2"
+          ],
+          "language": "English",
+          "text": "It held all week."
+        }
+      ],
+      "style": "Live-action, cinematic",
+      "shots": [
+        {
+          "id": "shot-1",
+          "start_ms": 0,
+          "end_ms": 1800,
+          "description": [
+            {
+              "text": "A medium-wide composition inside a "
+            },
+            {
+              "subject_id": "cramped-garage"
+            },
+            {
+              "text": ": "
+            },
+            {
+              "subject_id": "older-mechanic"
+            },
+            {
+              "text": " stands left of the exposed "
+            },
+            {
+              "subject_id": "engine"
+            },
+            {
+              "text": ", one hand raised toward a frayed belt, while "
+            },
+            {
+              "subject_id": "younger-mechanic"
+            },
+            {
+              "text": " faces him from the right with a wrench hanging at his side. A cluttered workbench, coiled hoses, and tool trays squeeze the men into a narrow aisle. Cool daylight leaks under the roll-up door and mixes with a warm hanging bulb; oil stains darken the concrete. The older mechanic's jaw is set, the younger one's shoulders squared. The engine sits between them like a boundary. A low hum and irregular metallic tick fill the pause before either man speaks."
+            }
+          ],
+          "events": [
+            {
+              "kind": "action",
+              "at_ms": 0,
+              "description": [
+                {
+                  "subject_id": "older-mechanic"
+                },
+                {
+                  "text": " raises a hand toward the frayed belt on the "
+                },
+                {
+                  "subject_id": "engine"
+                },
+                {
+                  "text": "."
+                }
+              ]
+            },
+            {
+              "kind": "sound",
+              "at_ms": 0,
+              "description": [
+                {
+                  "text": "Low garage hum and a faint irregular engine tick."
+                }
+              ]
+            },
+            {
+              "kind": "action",
+              "at_ms": 900,
+              "description": [
+                {
+                  "subject_id": "younger-mechanic"
+                },
+                {
+                  "text": " shifts his grip on the wrench and squares his stance."
+                }
+              ]
+            },
+            {
+              "kind": "sound",
+              "at_ms": 1400,
+              "description": [
+                {
+                  "text": "A loose tool shifts in a tray with a small metallic clink."
+                }
+              ]
+            },
+            {
+              "kind": "camera",
+              "description": [
+                {
+                  "text": "The camera holds a static shot."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "shot-2",
+          "start_ms": 1800,
+          "end_ms": 3500,
+          "description": [
+            {
+              "text": "In a tighter medium close, "
+            },
+            {
+              "subject_id": "older-mechanic"
+            },
+            {
+              "text": " leans over the "
+            },
+            {
+              "subject_id": "engine"
+            },
+            {
+              "text": ", taps the worn belt with two fingers, and speaks his verdict with hard, flat certainty. His weathered face is lit from below by the engine bay; grease darkens his knuckles. The "
+            },
+            {
+              "subject_id": "younger-mechanic"
+            },
+            {
+              "text": " remains at the edge of frame, his grip tightening on the wrench, his breath held. The frayed belt fibers stand out against the dark block. A faint tick from cooling metal continues beneath the older man's voice, and the garage hum drops as he waits for a response."
+            }
+          ],
+          "events": [
+            {
+              "kind": "action",
+              "at_ms": 1800,
+              "description": [
+                {
+                  "subject_id": "older-mechanic"
+                },
+                {
+                  "text": " taps the frayed belt and leans closer to the "
+                },
+                {
+                  "subject_id": "engine"
+                },
+                {
+                  "text": "."
+                }
+              ]
+            },
+            {
+              "kind": "sound",
+              "at_ms": 1800,
+              "description": [
+                {
+                  "text": "A faint metallic tick continues from the engine."
+                }
+              ]
+            },
+            {
+              "kind": "action",
+              "at_ms": 2600,
+              "description": [
+                {
+                  "text": "The "
+                },
+                {
+                  "subject_id": "younger-mechanic"
+                },
+                {
+                  "text": "'s grip tightens on the wrench; his shoulders stiffen."
+                }
+              ]
+            },
+            {
+              "kind": "visual",
+              "at_ms": 3200,
+              "description": [
+                {
+                  "text": "The frayed belt fibers and oil-dark engine block fill the close view."
+                }
+              ]
+            },
+            {
+              "kind": "camera",
+              "description": [
+                {
+                  "text": "The camera pushes in with small amplitude at slow speed."
+                }
+              ]
+            },
+            {
+              "kind": "dialogue",
+              "dialogue": {
+                "line_id": "line-1",
+                "text": "That belt is done."
+              }
+            }
+          ]
+        },
+        {
+          "id": "shot-3",
+          "start_ms": 3500,
+          "end_ms": 5167,
+          "description": [
+            {
+              "subject_id": "younger-mechanic"
+            },
+            {
+              "text": " wipes his palms down a rag, steps half a pace toward the "
+            },
+            {
+              "subject_id": "engine"
+            },
+            {
+              "text": ", and answers without looking away from the belt. His blue work shirt is smudged at the cuffs; the rag leaves a dark streak across his hand. "
+            },
+            {
+              "subject_id": "older-mechanic"
+            },
+            {
+              "text": " holds position across the block, listening, his raised hand lowering. A tight medium-close composition keeps both men and the engine in a close triangle. A tool settles somewhere off-screen with a small metallic clink, and the garage hum returns around their exchange. The argument ends on a held standoff, neither man stepping back."
+            }
+          ],
+          "events": [
+            {
+              "kind": "action",
+              "at_ms": 3500,
+              "description": [
+                {
+                  "subject_id": "younger-mechanic"
+                },
+                {
+                  "text": " wipes his hands on a rag and steps toward the "
+                },
+                {
+                  "subject_id": "engine"
+                },
+                {
+                  "text": "."
+                }
+              ]
+            },
+            {
+              "kind": "action",
+              "at_ms": 4300,
+              "description": [
+                {
+                  "subject_id": "older-mechanic"
+                },
+                {
+                  "text": " lowers his raised hand and holds his ground."
+                }
+              ]
+            },
+            {
+              "kind": "sound",
+              "at_ms": 4300,
+              "description": [
+                {
+                  "text": "A small metallic clink sounds off-screen as a tool settles."
+                }
+              ]
+            },
+            {
+              "kind": "visual",
+              "at_ms": 5000,
+              "description": [
+                {
+                  "text": "The tight composition holds the two men and the engine in a standoff."
+                }
+              ]
+            },
+            {
+              "kind": "camera",
+              "description": [
+                {
+                  "text": "The camera holds a static shot."
+                }
+              ]
+            },
+            {
+              "kind": "dialogue",
+              "dialogue": {
+                "line_id": "line-2",
+                "text": "It held all week."
+              }
+            }
+          ]
+        }
+      ],
+      "soundscape": "Low, close garage hum; a faint irregular tick from the cooling engine; small metallic clinks as tools settle; the soft drag of a rag over greasy hands.",
+      "music": "N/A",
+      "claims": [
+        {
+          "id": "claim-user-1",
+          "origin": "user",
+          "text": "Two mechanics argue over an engine in a cramped garage."
+        },
+        {
+          "id": "claim-creative-1",
+          "origin": "creative",
+          "text": "The older mechanic is weathered, gray-stubbled, and wears oil-stained dark coveralls."
+        },
+        {
+          "id": "claim-creative-2",
+          "origin": "creative",
+          "text": "The younger mechanic wears a faded blue work shirt and carries a wrench."
+        },
+        {
+          "id": "claim-creative-3",
+          "origin": "creative",
+          "text": "The engine is an exposed inline block with a frayed drive belt, set among tool trays, coiled hoses, and a cluttered workbench."
+        },
+        {
+          "id": "claim-creative-4",
+          "origin": "creative",
+          "text": "The soundtrack is a low garage hum with irregular metallic ticks and small tool clinks, with no music."
+        }
+      ]
+    },
+    "artifact": {
+      "version": "contextir-h3/artifact-v1",
+      "compiler_version": "contextir-h3/v1.2",
+      "format_version": "minimax-h3/prompt-v1",
+      "mode": "t2va",
+      "target": {
+        "duration_ms": 5167,
+        "frame_count": 124,
+        "aspect_ratio": "16:9",
+        "fps": {
+          "numerator": 24,
+          "denominator": 1
+        },
+        "width": 1344,
+        "height": 768
+      },
+      "profile": {
+        "name": "h3-comfyui-17k5-v1",
+        "format": "minimax-h3/prompt-v1",
+        "fps": {
+          "numerator": 24,
+          "denominator": 1
+        },
+        "modes": [
+          "t2va",
+          "i2va",
+          "l2va",
+          "fl2va",
+          "ref2va"
+        ],
+        "frame_grid": {
+          "modulus": 17,
+          "remainder": 5
+        },
+        "min_frames": 5,
+        "max_frames": 3600,
+        "canvas_multiple": 32,
+        "limits": {
+          "pictures": 9,
+          "videos": 3,
+          "video_audio": 3,
+          "standalone_audio": 3
+        },
+        "supports_reference_frame_anchors": false,
+        "supports_source_intervals": false
+      },
+      "prompt": "integrated_multimodal_description: [Shot 1] Live-action, cinematic, A medium-wide composition inside a A narrow garage bay crowded with a workbench, tool trays, coiled hoses, and oil-stained concrete.: An older mechanic with weathered features, gray stubble, oil-stained dark coveralls, and a set jaw. stands left of the exposed An exposed inline engine on a stand, its frayed drive belt visible against the dark block., one hand raised toward a frayed belt, while A younger mechanic with short hair, a faded blue work shirt, and a wrench held in one hand. faces him from the right with a wrench hanging at his side. A cluttered workbench, coiled hoses, and tool trays squeeze the men into a narrow aisle. Cool daylight leaks under the roll-up door and mixes with a warm hanging bulb; oil stains darken the concrete. The older mechanic's jaw is set, the younger one's shoulders squared. The engine sits between them like a boundary. A low hum and irregular metallic tick fill the pause before either man speaks. At 00:00.000, An older mechanic with weathered features, gray stubble, oil-stained dark coveralls, and a set jaw. raises a hand toward the frayed belt on the An exposed inline engine on a stand, its frayed drive belt visible against the dark block.. At 00:00.000, Low garage hum and a faint irregular engine tick. At 00:00.900, A younger mechanic with short hair, a faded blue work shirt, and a wrench held in one hand. shifts his grip on the wrench and squares his stance. At 00:01.400, A loose tool shifts in a tray with a small metallic clink. The camera holds a static shot. [Shot 2] At 00:01.800, the shot cuts to In a tighter medium close, An older mechanic with weathered features, gray stubble, oil-stained dark coveralls, and a set jaw. leans over the An exposed inline engine on a stand, its frayed drive belt visible against the dark block., taps the worn belt with two fingers, and speaks his verdict with hard, flat certainty. His weathered face is lit from below by the engine bay; grease darkens his knuckles. The A younger mechanic with short hair, a faded blue work shirt, and a wrench held in one hand. remains at the edge of frame, his grip tightening on the wrench, his breath held. The frayed belt fibers stand out against the dark block. A faint tick from cooling metal continues beneath the older man's voice, and the garage hum drops as he waits for a response. At 00:01.800, An older mechanic with weathered features, gray stubble, oil-stained dark coveralls, and a set jaw. taps the frayed belt and leans closer to the An exposed inline engine on a stand, its frayed drive belt visible against the dark block.. At 00:01.800, A faint metallic tick continues from the engine. At 00:02.600, The A younger mechanic with short hair, a faded blue work shirt, and a wrench held in one hand.'s grip tightens on the wrench; his shoulders stiffen. At 00:03.200, The frayed belt fibers and oil-dark engine block fill the close view. The camera pushes in with small amplitude at slow speed. The older mechanic, weathered and gray-stubbled, standing by the engine. (S1) says: \u003cd\u003e[English] That belt is done.\u003c/d\u003e [Shot 3] At 00:03.500, the shot cuts to A younger mechanic with short hair, a faded blue work shirt, and a wrench held in one hand. wipes his palms down a rag, steps half a pace toward the An exposed inline engine on a stand, its frayed drive belt visible against the dark block., and answers without looking away from the belt. His blue work shirt is smudged at the cuffs; the rag leaves a dark streak across his hand. An older mechanic with weathered features, gray stubble, oil-stained dark coveralls, and a set jaw. holds position across the block, listening, his raised hand lowering. A tight medium-close composition keeps both men and the engine in a close triangle. A tool settles somewhere off-screen with a small metallic clink, and the garage hum returns around their exchange. The argument ends on a held standoff, neither man stepping back. At 00:03.500, A younger mechanic with short hair, a faded blue work shirt, and a wrench held in one hand. wipes his hands on a rag and steps toward the An exposed inline engine on a stand, its frayed drive belt visible against the dark block.. At 00:04.300, An older mechanic with weathered features, gray stubble, oil-stained dark coveralls, and a set jaw. lowers his raised hand and holds his ground. At 00:04.300, A small metallic clink sounds off-screen as a tool settles. At 00:05.000, The tight composition holds the two men and the engine in a standoff. The camera holds a static shot. The younger mechanic, blue-shirted and holding a wrench. (S2) says: \u003cd\u003e[English] It held all week.\u003c/d\u003e\n\noverall_soundscape: Low, close garage hum; a faint irregular tick from the cooling engine; small metallic clinks as tools settle; the soft drag of a rag over greasy hands.\n\nnon_diegetic_music: N/A\n",
+      "manifest": {
+        "media": [],
+        "subjects": [
+          {
+            "id": "older-mechanic",
+            "label": "\u003cSubject 1\u003e"
+          },
+          {
+            "id": "younger-mechanic",
+            "label": "\u003cSubject 2\u003e"
+          },
+          {
+            "id": "engine",
+            "label": "\u003cSubject 3\u003e"
+          },
+          {
+            "id": "cramped-garage",
+            "label": "\u003cSubject 4\u003e"
+          }
+        ],
+        "references": [],
+        "speakers": [
+          {
+            "id": "speaker-1",
+            "label": "(S1)"
+          },
+          {
+            "id": "speaker-2",
+            "label": "(S2)"
+          }
+        ]
+      },
+      "frames": 124,
+      "effective_duration_seconds": {
+        "numerator": 31,
+        "denominator": 6
+      },
+      "document_sha256": "4d8099aa47869dd95a72ede9f66c049ffaeb1274e72ed12d719fb4a98dc5e643",
+      "profile_sha256": "234d423c54663839ad8ef0aab7924d4da6d8bb212ced940e0b240639c3dcbed4",
+      "prompt_sha256": "870d57d80b187e60b0235b8d9c47b95231f052bc2522b192f2070d7eaa518afe",
+      "manifest_sha256": "704052228d63851c56fb6edc6da55a9a083913908da6ea364a053bf4d1386adb",
+      "sha256": "1c01b35bc952d790032b94c50a71927dfa599c0bc079a3b53c93fea2ac37d3b9"
+    },
+    "decisions": [
+      {
+        "field": "target",
+        "source": "computed",
+        "value": {
+          "effective_seconds": 5.166666666666667,
+          "frame_count": 124,
+          "nominal_seconds": 5,
+          "policy": "snap_up"
+        },
+        "explanation": "Effective timing and nominal duration are recorded separately; generated cuts use effective timing."
+      },
+      {
+        "field": "canvas",
+        "source": "computed",
+        "value": [
+          1344,
+          768
+        ],
+        "explanation": "Native short-edge canvas is aligned to 32 pixels; explicit megapixels replaces the native area budget."
+      },
+      {
+        "field": "execution",
+        "source": "explicit_adapter_policy",
+        "value": {
+          "effort": "standard"
+        },
+        "explanation": "The injected adapters and explicit compiler repair configuration implement standard effort."
+      },
+      {
+        "field": "mode",
+        "source": "12.2#3",
+        "value": {
+          "clarification_policy": "continue_with_recorded_choice",
+          "confidence_kind": "routing_policy",
+          "aspect_mismatch": false,
+          "needs_clarification": false,
+          "mode": "t2va",
+          "confidence": 1,
+          "rule": "12.2#3",
+          "signals": [
+            "Mode follows explicit structured choices and media socket requirements."
+          ]
+        },
+        "explanation": "Mode follows the production typed routing contract; publication capabilities are checked separately."
+      },
+      {
+        "field": "content_scope",
+        "source": "typed_request_interpretation",
+        "value": {
+          "conflict_policy": "supplied_content_wins",
+          "requested": {
+            "speech": true,
+            "music": false,
+            "onscreen_text": false,
+            "magnitude": ""
+          },
+          "forbidden": {
+            "speech": false,
+            "music": false,
+            "onscreen_text": false,
+            "magnitude": ""
+          },
+          "allowed": {
+            "speech": true,
+            "music": true,
+            "onscreen_text": false,
+            "magnitude": "measured"
+          },
+          "dialogue": [
+            {
+              "text": "That belt is done.",
+              "language": "English",
+              "speaker_hint": "the older mechanic",
+              "voiceover": false,
+              "kind": "",
+              "delivery": ""
+            },
+            {
+              "text": "It held all week.",
+              "language": "English",
+              "speaker_hint": "the younger mechanic",
+              "voiceover": false,
+              "kind": "",
+              "delivery": ""
+            }
+          ],
+          "onscreen_text": [],
+          "reasoning": "The intent requests two mechanics arguing and supplies exact dialogue lines, so speech is requested. No music, onscreen text, or prohibitions are specified.",
+          "calls": [
+            {
+              "stage": "scope",
+              "attempt": 1,
+              "model": "deepseek-flash",
+              "usage": {
+                "input_tokens": 991,
+                "output_tokens": 292
+              },
+              "valid": true
+            }
+          ]
+        },
+        "explanation": "Caller requests and prohibitions are interpreted before code applies the explicit creativity level."
+      },
+      {
+        "field": "reference_licence",
+        "source": "typed_attribute_precedence",
+        "value": {
+          "medium_decision": {
+            "disposition": "no_reference",
+            "operation_quote": "",
+            "target": "",
+            "requested_style": "",
+            "reference_medium": "",
+            "requested_medium": "",
+            "treatments": [],
+            "reasoning": "There is no attached visual reference, so no medium-preservation question arises. The intent only describes a scene (two mechanics arguing over an engine in a cramped garage) with no stated visual style or medium, so requested_medium, requested_style, and target are all empty.",
+            "calls": [
+              {
+                "stage": "medium",
+                "attempt": 1,
+                "model": "deepseek-flash",
+                "usage": {
+                  "input_tokens": 921,
+                  "output_tokens": 152
+                },
+                "valid": true
+              }
+            ]
+          },
+          "identity": [],
+          "governs": {
+            "action": "request",
+            "framing": "request",
+            "lighting": "request",
+            "medium": "request",
+            "palette": "request",
+            "wardrobe": "request"
+          },
+          "reasons": {
+            "action": "The request explicitly specifies an action: two mechanics argue over an engine in a cramped garage. With no visual reference, action is request-governed.",
+            "framing": "There is no visual reference. The requested 16:9 aspect is canvas configuration, not a camera-framing instruction, but framing remains request-governed absent a reference.",
+            "lighting": "There is no visual reference and no explicit lighting instruction, so lighting is request-governed and no reference lighting is retained.",
+            "medium": "There is no visual reference and no genuine medium transformation or explicit Brief.style, so the medium follows the default Live-action, cinematic.",
+            "palette": "There is no visual reference and no explicit palette instruction, so palette is request-governed by the request's default live-action cinematic treatment.",
+            "wardrobe": "There is no visual reference, so wardrobe is request-governed; no explicit wardrobe change is supplied."
+          },
+          "transform_phrase": null,
+          "transform_target": "",
+          "medium_transferred": false,
+          "style": {
+            "observed_phrase": "",
+            "phrase": "Live-action, cinematic",
+            "source": "default",
+            "reference_medium": "",
+            "requested_medium": "",
+            "discrepancy": false,
+            "note": ""
+          },
+          "calls": [
+            {
+              "stage": "medium",
+              "attempt": 1,
+              "model": "deepseek-flash",
+              "usage": {
+                "input_tokens": 921,
+                "output_tokens": 152
+              },
+              "valid": true
+            },
+            {
+              "stage": "licence",
+              "attempt": 1,
+              "model": "deepseek-flash",
+              "usage": {
+                "input_tokens": 1780,
+                "output_tokens": 471
+              },
+              "valid": true
+            }
+          ]
+        },
+        "explanation": "Each attribute follows explicit request or observed reference; poses and reference-sheet presentation are not subject identity."
+      },
+      {
+        "field": "dialogue",
+        "source": "host_literal_slots",
+        "value": [
+          {
+            "placeholder": "{{D1}}",
+            "line_id": "line-1",
+            "shot_id": "shot-2",
+            "speaker_ids": [
+              "speaker-1"
+            ],
+            "speaker_hint": "the older mechanic",
+            "language": "English",
+            "voiceover": false,
+            "words": 4
+          },
+          {
+            "placeholder": "{{D2}}",
+            "line_id": "line-2",
+            "shot_id": "shot-3",
+            "speaker_ids": [
+              "speaker-2"
+            ],
+            "speaker_hint": "the younger mechanic",
+            "language": "English",
+            "voiceover": false,
+            "words": 4
+          }
+        ],
+        "explanation": "The structure stage fixes placement; the host restores exact dialogue after prose. The writer does not author the supplied words."
+      },
+      {
+        "field": "shots.camera",
+        "source": "host_template",
+        "value": [
+          {
+            "subjects": [
+              "the older mechanic",
+              "the younger mechanic",
+              "the engine"
+            ],
+            "sync_sound": [
+              "low garage hum",
+              "faint engine tick",
+              "metal tool clink"
+            ],
+            "start_ms": 0,
+            "purpose": "establish",
+            "framing": "medium wide",
+            "action": "In a cramped garage, the older mechanic gestures at a frayed belt on the exposed engine while the younger mechanic stands nearby with a wrench.",
+            "what_changes": "The space and the standoff over the engine are established.",
+            "camera": {
+              "type": "Static Shot",
+              "amplitude": "",
+              "speed": ""
+            }
+          },
+          {
+            "subjects": [
+              "the older mechanic",
+              "the engine"
+            ],
+            "sync_sound": [
+              "garage hum",
+              "tick of cooling metal"
+            ],
+            "start_ms": 1800,
+            "purpose": "develop",
+            "framing": "medium close",
+            "action": "The older mechanic taps the worn belt and states his verdict, jaw set, while the younger mechanic stiffens.",
+            "what_changes": "The older mechanic asserts the belt is finished and the tension sharpens.",
+            "camera": {
+              "type": "Push In",
+              "amplitude": "small",
+              "speed": "slow"
+            }
+          },
+          {
+            "subjects": [
+              "the younger mechanic",
+              "the older mechanic"
+            ],
+            "sync_sound": [
+              "cloth wipe",
+              "soft metallic settle"
+            ],
+            "start_ms": 3500,
+            "purpose": "react",
+            "framing": "medium close",
+            "action": "The younger mechanic wipes his hands on a rag and counters without looking away from the engine.",
+            "what_changes": "The younger mechanic pushes back, shifting the argument onto his defense of the belt.",
+            "camera": {
+              "type": "Static Shot",
+              "amplitude": "",
+              "speed": ""
+            }
+          }
+        ],
+        "explanation": "Canonical camera events are assembled from the typed structural plan after prose."
+      },
+      {
+        "field": "creativity",
+        "source": "caller_or_default",
+        "value": {
+          "speech": true,
+          "music": true,
+          "onscreen_text": false,
+          "magnitude": "measured"
+        },
+        "explanation": "Scope reflects requested elements, explicit prohibitions, and the selected four-position creativity control."
+      }
+    ],
+    "calls": [
+      {
+        "stage": "scope",
+        "attempt": 1,
+        "model": "deepseek-flash",
+        "usage": {
+          "input_tokens": 991,
+          "output_tokens": 292
+        },
+        "valid": true
+      },
+      {
+        "stage": "medium",
+        "attempt": 1,
+        "model": "deepseek-flash",
+        "usage": {
+          "input_tokens": 921,
+          "output_tokens": 152
+        },
+        "valid": true
+      },
+      {
+        "stage": "licence",
+        "attempt": 1,
+        "model": "deepseek-flash",
+        "usage": {
+          "input_tokens": 1780,
+          "output_tokens": 471
+        },
+        "valid": true
+      },
+      {
+        "stage": "structure",
+        "attempt": 1,
+        "model": "deepseek-flash",
+        "usage": {
+          "input_tokens": 2694,
+          "output_tokens": 2159
+        },
+        "valid": true
+      },
+      {
+        "stage": "plan",
+        "attempt": 1,
+        "model": "deepseek-flash",
+        "usage": {
+          "input_tokens": 8081,
+          "output_tokens": 9663
+        },
+        "valid": true
+      }
+    ]
+  }
+}

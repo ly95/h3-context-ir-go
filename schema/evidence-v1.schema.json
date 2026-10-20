@@ -1,5 +1,107 @@
 {
   "$defs": {
+    "AssetCard": {
+      "additionalProperties": false,
+      "properties": {
+        "analyzer_version": {
+          "type": "string"
+        },
+        "asset_id": {
+          "type": "string"
+        },
+        "camera": {
+          "type": "string"
+        },
+        "characterisation": {
+          "type": "string"
+        },
+        "composition": {
+          "enum": [
+            "",
+            "unknown",
+            "bare_plate",
+            "composed_scene"
+          ],
+          "type": "string"
+        },
+        "coverage": {
+          "$ref": "#/$defs/PerceptionCoverage"
+        },
+        "environment": {
+          "type": "string"
+        },
+        "frames_seen": {
+          "maximum": 9223372036854775807,
+          "minimum": -9223372036854775808,
+          "type": "integer"
+        },
+        "framing": {
+          "type": "string"
+        },
+        "is_reference_sheet": {
+          "type": "boolean"
+        },
+        "language": {
+          "type": "string"
+        },
+        "lighting": {
+          "type": "string"
+        },
+        "model": {
+          "type": "string"
+        },
+        "motion": {
+          "type": "string"
+        },
+        "music": {
+          "type": "string"
+        },
+        "palette": {
+          "items": {
+            "type": "string"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "style": {
+          "type": "string"
+        },
+        "subjects": {
+          "items": {
+            "$ref": "#/$defs/SubjectCard"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "summary": {
+          "type": "string"
+        },
+        "timbre": {
+          "type": "string"
+        },
+        "transcript": {
+          "type": "string"
+        },
+        "visible_text": {
+          "items": {
+            "type": "string"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "asset_id",
+        "analyzer_version"
+      ],
+      "type": "object"
+    },
     "Evidence": {
       "additionalProperties": false,
       "properties": {
@@ -8,6 +110,9 @@
         },
         "asset_id": {
           "type": "string"
+        },
+        "card": {
+          "$ref": "#/$defs/AssetCard"
         },
         "coverage": {
           "$ref": "#/$defs/PerceptionCoverage"
@@ -44,6 +149,9 @@
     "Fact": {
       "additionalProperties": false,
       "properties": {
+        "analyzer_version": {
+          "type": "string"
+        },
         "id": {
           "type": "string"
         },
@@ -164,6 +272,49 @@
       "required": [
         "asset_id",
         "track"
+      ],
+      "type": "object"
+    },
+    "SubjectCard": {
+      "additionalProperties": false,
+      "properties": {
+        "attributes": {
+          "items": {
+            "type": "string"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "descriptor": {
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "subject",
+            "person",
+            "animal",
+            "object",
+            "environment",
+            "style",
+            "action"
+          ],
+          "type": "string"
+        },
+        "pose": {
+          "items": {
+            "type": "string"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "kind",
+        "descriptor"
       ],
       "type": "object"
     }

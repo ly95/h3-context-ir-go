@@ -11,7 +11,7 @@ import (
 
 const (
 	FormatVersion   = "minimax-h3/prompt-v1"
-	CompilerVersion = "contextir-h3/v1.1"
+	CompilerVersion = "contextir-h3/v1.2"
 	ArtifactVersion = "contextir-h3/artifact-v1"
 )
 

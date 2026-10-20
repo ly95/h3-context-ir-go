@@ -1,5 +1,6 @@
-// Command contextir validates and compiles already structured IR documents.
-// It performs no model calls, media downloads, or video generation.
+// Command contextir exposes deterministic IR tools and an explicitly configured
+// Brief compiler. Only brief or media perception with a selected provider makes
+// model calls; no command downloads media or renders video.
 package main
 
 import (
@@ -18,10 +19,16 @@ func main() { os.Exit(run(os.Args[1:], os.Stdin, os.Stdout, os.Stderr)) }
 
 func run(args []string, in io.Reader, out, errOut io.Writer) int {
 	if len(args) == 0 {
-		fmt.Fprintln(errOut, "usage: contextir schema [-type document|evidence] | validate | compile [-profile official|comfyui] < document.json")
+		fmt.Fprintln(errOut, "usage: contextir schema | validate | compile | contract [-js] | directors | budget | tokens | check-h3 | draft | brief (use command -h for flags)")
 		return 2
 	}
 	command := args[0]
+	switch command {
+	case "contract", "directors", "budget", "tokens", "check-h3", "checkH3":
+		return runDeterministic(command, args[1:], in, out, errOut)
+	case "brief", "draft":
+		return runBrief(command, args[1:], in, out, errOut)
+	}
 	if command == "schema" {
 		flags := flag.NewFlagSet(command, flag.ContinueOnError)
 		flags.SetOutput(errOut)

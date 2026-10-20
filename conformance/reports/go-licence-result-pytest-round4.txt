@@ -1,0 +1,147 @@
+........................................................................ [  7%]
+........................................................................ [ 14%]
+........................................................................ [ 21%]
+........................................................................ [ 29%]
+........................................................................ [ 36%]
+........................................................................ [ 43%]
+........................................................................ [ 50%]
+........................................................................ [ 58%]
+............................................F........................... [ 65%]
+.............................................................F..F....... [ 72%]
+.......F....................F........................................... [ 79%]
+........................................................................ [ 87%]
+........................................................................ [ 94%]
+.......................................................                  [100%]
+=================================== FAILURES ===================================
+__________ test_the_kept_reference_is_reported_with_how_to_change_it ___________
+
+    def test_the_kept_reference_is_reported_with_how_to_change_it():
+        """Only a genuine MEDIUM conflict is worth reporting. 'anime' against a comic illustration is
+        the same bucket -- two 2D illustrated media -- so there is nothing to warn about; against 3D
+        it is a real divergence and the note must say how to ask for it properly."""
+        d = resolve_style(_brief(intent="the man walks. Anime style."),
+                          {"char": _card_with_style("3D computer animation")})
+        assert d.discrepancy is True
+        note = d.note()
+>       assert note and "keeps the reference" in note
+E       AssertionError: assert ('The request explicitly changes the rendering medium while retaining the referenced identity; this does not by itself select an attribute-transfer relationship.' and 'keeps the reference' in 'The request explicitly changes the rendering medium while retaining the referenced identity; this does not by itself select an attribute-transfer relationship.')
+
+tests/test_reference_licence.py:217: AssertionError
+_ test_a_request_that_names_an_attribute_is_not_silent_about_it[palette-a high contrast colour grade] _
+
+attr = 'palette', intent = 'a high contrast colour grade'
+
+    @pytest.mark.parametrize("attr,intent", ATTRIBUTE_PHRASINGS)
+    def test_a_request_that_names_an_attribute_is_not_silent_about_it(attr, intent):
+        """Lighting, framing and palette reach only the sentence in the ask -- there is no mechanism
+        behind them, which is why they rank below wardrobe. They still have to be right: naming an
+        attribute in the list of things the references govern is the wrong emphasis for an attribute the
+        caller just specified.
+    
+        Framing is anchored on a camera word on purpose. "from above" alone is how LIGHTING gets
+        described ("light from above"), and "shot" alone is how a treatment word rides ("a cinematic
+        shot of the man"), so the signal is `shot from` / `seen from` / an angle, never a bare direction.
+        """
+        lic = resolve_licence(_brief(intent=intent), {"char": _card_with_style("live-action")})
+>       assert lic.governs[attr] == "request", f"{intent!r}: {lic.reasons[attr]}"
+E       AssertionError: 'a high contrast colour grade': The intent asks for a high-contrast colour grade treatment rather than a specified scene colour palette; incidental reference colours are not a palette request, so the reference's observed palette governs.
+E       assert 'reference' == 'request'
+E         
+E         - request
+E         + reference
+
+tests/test_reference_licence.py:820: AssertionError
+_ test_a_request_that_states_what_the_body_does_takes_the_action[she leans against the wall] _
+
+intent = 'she leans against the wall'
+
+    @pytest.mark.parametrize("intent", ACTION_PHRASINGS)
+    def test_a_request_that_states_what_the_body_does_takes_the_action(intent):
+        """The verb space is genuinely open, unlike the transforming verbs -- English has thousands of
+        action verbs and a closed list of eight ways to say "restyle". So this list will never be
+        complete, and it does not have to be: `governs[ACTION]` reaches nothing but the sentence in the
+        ask. Ranked and treated accordingly -- the common verbs, correctly inflected, and no chase.
+        """
+        from h3ir.licence import ACTION
+>       lic = resolve_licence(_brief(intent=intent), {"char": _card_with_style("live-action")})
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_reference_licence.py:841: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+args = (Brief(intent='she leans against the wall', assets=[AssetRef(kind=<AssetKind.IMAGE: 'image'>, role=<Role.SUBJECT: 'sub...known', is_reference_sheet=False, transcript='', language='', timbre='', music='', analyzer_version='1', model_id='')})
+kwargs = {}
+
+    @functools.wraps(original)
+    def invoke(*args,**kwargs):
+        bound=signature.bind(*args,**kwargs);bound.apply_defaults()
+        arguments={k:cap.plain(bound.arguments[k]) for k in ('brief','cards')}
+        item=inputs.get(key(arguments))
+        record={'nodeid':cap.CURRENT,'function':'h3ir.'+('licence' if name=='resolve_licence' else 'style')+'.'+name,'arguments':arguments}
+        CALLS.append(record)
+        if item is None:record['status']='no_original_input';raise RuntimeError('No actual native licence run exists for this exact original Brief/cards input')
+        result=results[item['input_sha256']]
+        record.update(actual_case_id=result['case_id'],input_sha256=item['input_sha256'],run_report=result['run_report'],status=result['status'])
+>       if result['status']!='licence_decided':record['error']=result.get('error');raise RuntimeError('Actual native licence decision failed: '+str(result.get('error')))
+                                                                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       RuntimeError: Actual native licence decision failed: contextir: invalid_model_output at identity_requirements (1 issues)
+
+/Users/linyang/Code/contextir/conformance/pytest_go_licence_results.py:54: RuntimeError
+________ test_every_action_verb_is_detected_in_every_inflection[speak] _________
+
+base = 'speak'
+
+    @pytest.mark.parametrize("base", sorted(INDEPENDENT_VERB_FORMS))
+    def test_every_action_verb_is_detected_in_every_inflection(base):
+        """§41 again, one list over. `\\bswims\\b` matched "swims" and missed "swimming"; `stands? up`
+        needed the preposition; `crouch(?:es|ing)?` had no past tense. Half the entries were inflected by
+        hand and the halves disagreed, which is what a hand-written alternation always ends up doing.
+        """
+        from h3ir.licence import ACTION
+        cards = {"char": _card_with_style("live-action")}
+        for form in (base, *INDEPENDENT_VERB_FORMS[base]):
+            lic = resolve_licence(_brief(intent=f"the man {form} across the room"), cards)
+>           assert lic.governs[ACTION] == "request", form
+E           AssertionError: spoken
+E           assert 'reference' == 'request'
+E             
+E             - request
+E             + reference
+
+tests/test_reference_licence.py:882: AssertionError
+____ test_the_rule_is_NOT_armed_when_the_requested_medium_is_unclassifiable ____
+
+    def test_the_rule_is_NOT_armed_when_the_requested_medium_is_unclassifiable():
+        """The false positive that this rule produced on real output before it shipped, and the reason.
+    
+        `classify_medium("1990s cel animation")` is `None` -- outside the closed vocabulary, which is the
+        whole reason `transform_target` reads targets from the request instead. The first version of the
+        arming condition read `observed != requested` and `None != "2d-animation"` is True, so it armed;
+        the plate and the target are in fact BOTH 2D, the correct opening landed in the reference's own
+        bucket, and the rule flagged output that was right.
+    
+        §35's line, one layer down and made by the author who had just written it into §42: absence of a
+        statement is not a statement of absence. `None` means the classifier could not place it.
+        """
+        from h3ir.compile import _transformed_from
+        lic, style = _real_brief_style()
+        assert lic.medium_transferred, "the transformation IS detected"
+>       assert style.requested_medium is None, "and its target is outside the closed vocabulary"
+E       AssertionError: and its target is outside the closed vocabulary
+E       assert '2d-animation' is None
+E        +  where '2d-animation' = pytest_configure.<locals>.RecordedStyle(phrase='1990s cel animation', source='request', requested_medium='2d-animation', observed_medium='2d-animation', observed_phrase='Digital illustration, semi-realistic character design').requested_medium
+
+tests/test_reference_licence.py:1077: AssertionError
+=============================== warnings summary ===============================
+tests/test_capacity.py:17
+  /private/tmp/open-h3-ir-review-fd031e13/tests/test_capacity.py:17: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_reference_licence.py::test_the_kept_reference_is_reported_with_how_to_change_it
+FAILED tests/test_reference_licence.py::test_a_request_that_names_an_attribute_is_not_silent_about_it[palette-a high contrast colour grade]
+FAILED tests/test_reference_licence.py::test_a_request_that_states_what_the_body_does_takes_the_action[she leans against the wall]
+FAILED tests/test_reference_licence.py::test_every_action_verb_is_detected_in_every_inflection[speak]
+FAILED tests/test_reference_licence.py::test_the_rule_is_NOT_armed_when_the_requested_medium_is_unclassifiable
+5 failed, 986 passed, 1 warning in 7.35s

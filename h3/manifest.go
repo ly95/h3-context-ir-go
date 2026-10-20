@@ -13,26 +13,30 @@ import (
 // Label numbering follows H3's presentation order. Socket numbering follows
 // separate image, video, video-audio and standalone-audio input lists.
 type MediaBinding struct {
-	Label      string                  `json:"label"`
-	Kind       contextir.ReferenceKind `json:"kind"`
-	Source     contextir.SourceRef     `json:"source"`
-	URI        string                  `json:"uri,omitempty"`
-	SHA256     string                  `json:"sha256,omitempty"`
-	Socket     string                  `json:"socket"`
-	PairedWith string                  `json:"paired_with,omitempty"`
-	TargetUses []TargetUse             `json:"target_uses,omitempty"`
+	Preparation    contextir.MediaPreparation `json:"preparation,omitempty"`
+	SourceMetadata contextir.MediaMetadata    `json:"source_metadata,omitempty"`
+	Label          string                     `json:"label"`
+	Kind           contextir.ReferenceKind    `json:"kind"`
+	Source         contextir.SourceRef        `json:"source"`
+	URI            string                     `json:"uri,omitempty"`
+	SHA256         string                     `json:"sha256,omitempty"`
+	Socket         string                     `json:"socket"`
+	PairedWith     string                     `json:"paired_with,omitempty"`
+	TargetUses     []TargetUse                `json:"target_uses,omitempty"`
 }
 
 // TargetUse carries the semantic role and target timeline of one reference.
 // Empty audio ShotIDs in the document mean the entire target unless structural
 // use in a shot narrows the scope; each compiled use records concrete intervals.
 type TargetUse struct {
-	ReferenceID string              `json:"reference_id"`
-	Roles       []contextir.Role    `json:"roles"`
-	Retention   contextir.Retention `json:"retention"`
-	SpeakerID   string              `json:"speaker_id,omitempty"`
-	Anchor      *contextir.Time     `json:"anchor_ms,omitempty"`
-	Shots       []TargetShot        `json:"shots"`
+	ReferenceID   string              `json:"reference_id"`
+	Roles         []contextir.Role    `json:"roles"`
+	Retention     contextir.Retention `json:"retention"`
+	SpeakerID     string              `json:"speaker_id,omitempty"`
+	Anchor        *contextir.Time     `json:"anchor_ms,omitempty"`
+	Shots         []TargetShot        `json:"shots"`
+	Replaces      string              `json:"replaces,omitempty"`
+	PairedVideoID string              `json:"paired_video_id,omitempty"`
 }
 
 type TargetShot struct {
@@ -175,6 +179,7 @@ func bind(doc contextir.Document) bindingState {
 		label := fmt.Sprintf("<%s %d>", name, counts[kind])
 		asset := s.assets[source.AssetID]
 		s.manifest.Media = append(s.manifest.Media, MediaBinding{
+			Preparation: asset.Preparation, SourceMetadata: asset.Metadata,
 			Label: label, Kind: kind, Source: cloneSource(source), URI: asset.URI,
 			SHA256: asset.SHA256, Socket: socket, PairedWith: paired,
 		})
@@ -195,10 +200,17 @@ func bind(doc contextir.Document) bindingState {
 		}
 	}
 	paired := map[string]bool{}
+	explicitPairs := map[string]string{}
+	for _, ref := range doc.References {
+		if ref.PairedVideoID != "" {
+			explicitPairs[sourceKey(ref.Source)] = ref.PairedVideoID
+		}
+	}
 	for i, video := range videos {
 		videoLabel := fmt.Sprintf("<Video %d>", i+1)
 		for _, audio := range audios {
-			if sameSegment(video, audio) {
+			explicit := explicitPairs[sourceKey(audio)]
+			if explicit == "" && sameSegment(video, audio) || explicit != "" && explicit == video.AssetID {
 				add(audio, contextir.ReferenceAudio, fmt.Sprintf("ref_video_audio_%d", i+1), videoLabel)
 				paired[sourceKey(audio)] = true
 			}
@@ -293,7 +305,7 @@ func checkLimits(manifest Manifest, p Profile) error {
 }
 
 func targetUse(doc contextir.Document, ref contextir.Reference) TargetUse {
-	use := TargetUse{ReferenceID: ref.ID, Roles: append([]contextir.Role(nil), ref.Roles...), Retention: ref.Retention, SpeakerID: ref.SpeakerID, Shots: []TargetShot{}}
+	use := TargetUse{ReferenceID: ref.ID, Roles: append([]contextir.Role(nil), ref.Roles...), Retention: ref.Retention, SpeakerID: ref.SpeakerID, Shots: []TargetShot{}, Replaces: ref.Replaces, PairedVideoID: ref.PairedVideoID}
 	if ref.Anchor != nil {
 		anchor := *ref.Anchor
 		use.Anchor = &anchor

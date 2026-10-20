@@ -1,0 +1,66 @@
+........................................................................ [  7%]
+........................................................................ [ 14%]
+........................................................................ [ 21%]
+........................................................................ [ 29%]
+........................................................................ [ 36%]
+........................................................................ [ 43%]
+........................................................................ [ 50%]
+........................................................................ [ 58%]
+........................................................................ [ 65%]
+........................................................................ [ 72%]
+..................................F.FF.................................. [ 79%]
+........................................................................ [ 87%]
+........................................................................ [ 94%]
+.......................................................                  [100%]
+=================================== FAILURES ===================================
+_______________________ test_an_empty_intent_is_refused ________________________
+
+    def test_an_empty_intent_is_refused():
+        with pytest.raises(BriefRefused) as e:
+            check_request(Brief(intent="   "))
+        assert e.value.code == "intent-empty"
+>       assert "one field with no default" in str(e.value)
+E       AssertionError: assert 'one field with no default' in 'Intent is required.'
+E        +  where 'Intent is required.' = str(BriefRefused('Intent is required.'))
+E        +    where BriefRefused('Intent is required.') = <ExceptionInfo BriefRefused('Intent is required.') tblen=2>.value
+
+tests/test_request_validation.py:32: AssertionError
+_________________ test_a_non_positive_duration_is_refused[0.0] _________________
+
+seconds = 0.0
+
+    @pytest.mark.parametrize("seconds", [0.0, -1.0])
+    def test_a_non_positive_duration_is_refused(seconds):
+        with pytest.raises(BriefRefused) as e:
+            check_request(Brief(intent="a car pulls away", seconds=seconds))
+        assert e.value.code == "duration-invalid"
+>       assert "0.21s" in str(e.value), "say what the real floor is"
+E       AssertionError: say what the real floor is
+E       assert '0.21s' in 'An explicit duration must be positive; omit it to use the five-second default.'
+E        +  where 'An explicit duration must be positive; omit it to use the five-second default.' = str(BriefRefused('An explicit duration must be positive; omit it to use the five-second default.'))
+E        +    where BriefRefused('An explicit duration must be positive; omit it to use the five-second default.') = <ExceptionInfo BriefRefused('An explicit duration must be positive; omit it to use the five-second default.') tblen=2>.value
+
+tests/test_request_validation.py:48: AssertionError
+________________ test_a_non_positive_duration_is_refused[-1.0] _________________
+
+seconds = -1.0
+
+    @pytest.mark.parametrize("seconds", [0.0, -1.0])
+    def test_a_non_positive_duration_is_refused(seconds):
+        with pytest.raises(BriefRefused) as e:
+            check_request(Brief(intent="a car pulls away", seconds=seconds))
+        assert e.value.code == "duration-invalid"
+>       assert "0.21s" in str(e.value), "say what the real floor is"
+E       AssertionError: say what the real floor is
+E       assert '0.21s' in 'Duration must be finite, positive, and no more than 150 seconds.'
+E        +  where 'Duration must be finite, positive, and no more than 150 seconds.' = str(BriefRefused('Duration must be finite, positive, and no more than 150 seconds.'))
+E        +    where BriefRefused('Duration must be finite, positive, and no more than 150 seconds.') = <ExceptionInfo BriefRefused('Duration must be finite, positive, and no more than 150 seconds.') tblen=2>.value
+
+tests/test_request_validation.py:48: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_request_validation.py::test_an_empty_intent_is_refused - As...
+FAILED tests/test_request_validation.py::test_a_non_positive_duration_is_refused[0.0]
+FAILED tests/test_request_validation.py::test_a_non_positive_duration_is_refused[-1.0]
+3 failed, 988 passed in 7.32s
+/Users/linyang/Code/contextir/conformance/service_bridge.py:18: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+  from starlette.testclient import TestClient

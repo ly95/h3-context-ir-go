@@ -1,8 +1,9 @@
 # H3 compiler
 
 `Compile(contextir.Document, Profile) (Artifact, error)` validates and compiles one
-authoritative document. It performs no IO and never infers intent, rewrites text,
-selects a model, drops a reference, or substitutes a fallback document.
+authoritative document. It performs no IO and never infers intent, selects a model,
+drops a reference, or substitutes a fallback document. Exact dialogue and visible
+text remain unchanged while protocol headings and style grammar are templated.
 
 Use `OfficialProfile()` for the published H3 prompt format or `ComfyUIProfile()`
 for that format plus the native runtime's attachment limits, `17k+5` frame grid,
@@ -25,6 +26,15 @@ they are never escaped, normalized or truncated. RichText's typed subject/refere
 spans are the way to reference conditioned content. Literal
 English double quotes inside visible text are rejected because the published
 format does not specify an unambiguous escaping contract for nested quotes.
+
+`StyleSentence` and `StylePrefix` expose the source's pure style formatting.
+Reference mode turns `Anime style, cinematic` into
+`The target video is in anime style, cinematic.`; base modes use the same phrase
+as a comma-separated opening. `FormatSummary(SummarySpec)` consumes resolved task
+types and reference labels and avoids repeating an existing editing clause,
+including a clause that continues with a comma. Narrative sentences are not
+shortened. The optional `StripLeadingTaskPrefix` repair is explicit and disabled
+in the authoritative document path, so literal summary headings survive.
 
 `Artifact.Mode` and `Artifact.Target` carry the chosen execution mode and target
 geometry/timing alongside the prompt. `Artifact.Manifest` is part of the output
@@ -84,5 +94,7 @@ The independent `ruashots/open-h3-ir` project was inspected at commit
 OpenH3-IR identifies its code as Copyright 2026 Ruashots, Apache-2.0; its upstream
 [NOTICE](https://github.com/ruashots/open-h3-ir/blob/fd031e136ae3d89147324c0d1b2aa65e838c21f5/NOTICE)
 records further provenance. MiniMax owns the published protocol and trademarks;
-model weights and service terms are separate. The tests here use original small
-scenarios and assert protocol invariants; no third-party video media is bundled.
+model weights and service terms are separate. Formatting tests compare all 250
+captured original style/summary calls with their unchanged outputs. Additional
+tests assert protocol invariants and actual native artifact behavior; no
+third-party video media is bundled.

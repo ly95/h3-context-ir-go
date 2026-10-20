@@ -16,21 +16,22 @@ import (
 // serialization of that Document, preserving all caller-owned slice ordering.
 // It is not an RFC 8785 cross-language canonicalization claim.
 type Artifact struct {
-	Version                  string             `json:"version"`
-	CompilerVersion          string             `json:"compiler_version"`
-	FormatVersion            string             `json:"format_version"`
-	Mode                     contextir.Mode     `json:"mode"`
-	Target                   contextir.Target   `json:"target"`
-	Profile                  Profile            `json:"profile"`
-	Prompt                   string             `json:"prompt"`
-	Manifest                 Manifest           `json:"manifest"`
-	Frames                   int64              `json:"frames"`
-	EffectiveDurationSeconds contextir.Rational `json:"effective_duration_seconds"`
-	DocumentSHA256           string             `json:"document_sha256"`
-	ProfileSHA256            string             `json:"profile_sha256"`
-	PromptSHA256             string             `json:"prompt_sha256"`
-	ManifestSHA256           string             `json:"manifest_sha256"`
-	SHA256                   string             `json:"sha256"`
+	LoRAs                    []contextir.LoRAChoice `json:"loras,omitempty"`
+	Version                  string                 `json:"version"`
+	CompilerVersion          string                 `json:"compiler_version"`
+	FormatVersion            string                 `json:"format_version"`
+	Mode                     contextir.Mode         `json:"mode"`
+	Target                   contextir.Target       `json:"target"`
+	Profile                  Profile                `json:"profile"`
+	Prompt                   string                 `json:"prompt"`
+	Manifest                 Manifest               `json:"manifest"`
+	Frames                   int64                  `json:"frames"`
+	EffectiveDurationSeconds contextir.Rational     `json:"effective_duration_seconds"`
+	DocumentSHA256           string                 `json:"document_sha256"`
+	ProfileSHA256            string                 `json:"profile_sha256"`
+	PromptSHA256             string                 `json:"prompt_sha256"`
+	ManifestSHA256           string                 `json:"manifest_sha256"`
+	SHA256                   string                 `json:"sha256"`
 }
 
 // Compile performs no IO and never repairs, truncates, rounds a requested
@@ -45,6 +46,13 @@ func Compile(doc contextir.Document, profile Profile) (Artifact, error) {
 	}
 	if err := checkTextProtocol(doc); err != nil {
 		return Artifact{}, err
+	}
+	for _, choice := range doc.LoRAs {
+		for _, trigger := range choice.Triggers {
+			if trigger.Slot != "style" {
+				return Artifact{}, profileIssue(contextir.CodeUnsupported, "loras.triggers.slot", "this compiler supports explicit style-slot LoRA triggers only")
+			}
+		}
 	}
 	for _, field := range []struct{ path, value string }{{"soundscape", doc.Soundscape}, {"music", doc.Music}} {
 		if strings.TrimSpace(field.value) == "" {
@@ -73,6 +81,7 @@ func Compile(doc contextir.Document, profile Profile) (Artifact, error) {
 	profileJSON, _ := json.Marshal(profile)
 	manifestJSON, _ := json.Marshal(state.manifest)
 	a := Artifact{
+		LoRAs:   cloneLoRAs(doc.LoRAs),
 		Version: ArtifactVersion, CompilerVersion: CompilerVersion, FormatVersion: FormatVersion,
 		Mode: doc.Mode, Target: doc.Target,
 		Profile: profile, Prompt: prompt, Manifest: state.manifest,
@@ -178,13 +187,14 @@ func render(doc contextir.Document, state bindingState, duration contextir.Ratio
 	if len(tasks) == 0 {
 		return "", profileIssue(contextir.CodeInvalid, "references", "reference mode requires an explicit reference relationship")
 	}
+	editSource := ""
 	for _, ref := range doc.References {
 		if containsRole(ref.Roles, contextir.RoleEditSource) {
-			summary = "The target video is an edited version of " + state.refs[ref.ID] + ". " + summary
+			editSource = state.refs[ref.ID]
 			break
 		}
 	}
-	summary = "[" + strings.Join(tasks, " + ") + "] " + summary
+	summary = FormatSummary(SummarySpec{TaskTypes: tasks, Body: summary, EditSourceLabel: editSource})
 	return strings.Join([]string{
 		"subject_definitions:\n" + definitions,
 		"summary:\n" + summary,
@@ -219,8 +229,11 @@ func renderShots(doc contextir.Document, state bindingState) string {
 				}
 			}
 		}
-		if i == 0 && doc.Mode != contextir.ModeReference && doc.Style != "" {
-			body = sentence(doc.Style) + " " + body
+		if i == 0 && doc.Mode != contextir.ModeReference && StylePrefix(doc.Style) != "" {
+			body = StylePrefix(doc.Style) + ", " + body
+		}
+		if i == 0 && doc.Mode != contextir.ModeReference {
+			body = triggerPrefix(doc.LoRAs) + body
 		}
 		for _, event := range shot.Events {
 			text := sentence(rich(event.Description, doc, state))
@@ -268,8 +281,11 @@ func renderShots(doc contextir.Document, state bindingState) string {
 		shots = append(shots, prefix+body)
 	}
 	if doc.Mode == contextir.ModeReference {
-		if doc.Style != "" {
-			shots = append([]string{sentence("The target video is in " + doc.Style + " style")}, shots...)
+		if opening := StyleSentence(doc.Style); opening != "" {
+			shots = append([]string{opening}, shots...)
+		}
+		if prefix := triggerPrefix(doc.LoRAs); prefix != "" {
+			shots = append([]string{prefix}, shots...)
 		}
 		return strings.Join(shots, "\n")
 	}
@@ -314,7 +330,18 @@ func renderDialogue(part contextir.DialoguePart, state bindingState, mode contex
 	}
 	out := prefix + "<d>[" + line.Language + "] " + part.Text + "</d>"
 	if line.Voiceover {
-		out += " while their lips remain completely closed."
+		visible := false
+		for _, id := range line.SpeakerIDs {
+			speaker := state.voices[id]
+			if speaker.Onscreen != nil {
+				visible = visible || *speaker.Onscreen
+			} else {
+				visible = visible || speaker.SubjectID != ""
+			}
+		}
+		if visible {
+			out += " while their lips remain completely closed."
+		}
 	}
 	if part.ContinuesToNext {
 		out += " <scenetrans>"
@@ -352,6 +379,9 @@ func taskTypes(doc contextir.Document) []string {
 				set["video editing"] = true
 			case contextir.RoleContinuation:
 				set["video continuation"] = true
+			case contextir.RolePlacedSubject, contextir.RoleReplacementSubject:
+				set["reference generation"] = true
+				set["video editing"] = true
 			default:
 				set["reference generation"] = true
 			}

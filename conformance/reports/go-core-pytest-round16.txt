@@ -1,0 +1,129 @@
+........................................................................ [  7%]
+........................................................................ [ 14%]
+.............F.......................................................... [ 21%]
+....F................................................................... [ 29%]
+........................................................................ [ 36%]
+........................................................................ [ 43%]
+........................................................................ [ 50%]
+........................................................................ [ 58%]
+........................................................................ [ 65%]
+........................................................................ [ 72%]
+........................................................................ [ 79%]
+...................FF................................................... [ 87%]
+........................................................................ [ 94%]
+.......................................................                  [100%]
+=================================== FAILURES ===================================
+_____________ test_the_compiler_reports_the_override_as_a_finding ______________
+
+    def test_the_compiler_reports_the_override_as_a_finding():
+        """X18, the counterpart to X10. Compiled for real with the model switched off, so this is the
+        finding list a caller receives rather than a hand-built one."""
+        from h3ir import compile as C
+    
+        class _Backend:
+            class cfg:
+                model = "test-model"
+            def require_available(self): pass
+            def server_version(self): return "test"
+            def close(self): pass
+    
+        cards = _cards()
+        brief = Brief(intent=ANCHOR_WORDING, assets=[_image(Role.STORYBOARD, stated=True)])
+        real_analyse = C.analyse_all
+        C.analyse_all = lambda *a, **k: cards
+        try:
+            doc = C.compile_brief(brief, backend=_Backend(), llm=False)
+        finally:
+            C.analyse_all = real_analyse
+        hit = [f for f in doc.findings if f.rule == "X18-role-overrides-anchor-language"]
+>       assert hit, [str(f) for f in doc.findings]
+E       AssertionError: ['[WARN] P2-too-short: detailed_description is 65 words; spec guidance 350-500, official example 336', '[WARN] H3-token-band: prompt is 200 tokens, outside the 350-1400 band']
+E       assert []
+
+tests/test_declared_roles.py:131: AssertionError
+_________________ test_wiring_decides_the_mode_without_a_model _________________
+
+    def test_wiring_decides_the_mode_without_a_model():
+        from h3ir.mode import infer_mode
+        assert infer_mode(Brief(intent="x")).mode is Mode.T2VA
+        assert infer_mode(Brief(intent="x", assets=[_vid("v1")])).mode is Mode.REF2VA
+        assert infer_mode(Brief(intent="x", assets=[_img(f"i{i}") for i in range(3)])).mode \
+            is Mode.REF2VA
+        d = infer_mode(Brief(intent="animate this photo", assets=[_img("i1")]))
+>       assert d.mode is Mode.I2VA and d.confidence >= 0.6
+E       AssertionError: assert (<Mode.REF2VA: 'ref2va'> is <Mode.I2VA: 'i2va'>)
+E        +  where <Mode.REF2VA: 'ref2va'> = ModeDecision(mode=<Mode.REF2VA: 'ref2va'>, confidence=0.5, rule_fired='12.4-failsafe', signals=['single image asset', ...els. The selected mode remains recorded for an explicit caller decision.'], alternatives=['i2va', 'l2va'], asked=False).mode
+E        +  and   <Mode.I2VA: 'i2va'> = Mode.I2VA
+
+tests/test_deterministic.py:488: AssertionError
+_______ test_a_still_attached_as_a_video_says_which_file_and_which_kind ________
+
+    @pytest.mark.skipif(shutil.which("ffprobe") is None, reason="needs a real ffprobe")
+    def test_a_still_attached_as_a_video_says_which_file_and_which_kind():
+        """The most common way into this failure, and the one the bare message did not mention: the
+        file is fine and the declared `kind` is wrong. A brief may carry twelve attachments, so the
+        error has to name the one that failed rather than leave the caller to guess.
+    
+        Real ffmpeg on a real jpg. Nothing is stubbed, because the thing under test is what the
+        analyser does with a file it cannot sample.
+        """
+        ref = AssetRef(kind=AssetKind.VIDEO, role=Role.EDIT_SOURCE, sha256="s" * 64, path=str(STILL))
+        with pytest.raises(AssetAnalysisError) as e:
+>           analyse_all(_never_called_backend(), [ref], use_cache=False)
+
+tests/test_service_errors.py:51: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/Users/linyang/Code/contextir/conformance/card_cache_bridge.py:52: in invoke
+    data.update(items=[{'ref':ref,'key':identity(ref,a['backend'].cfg.model),'transcript':(a['transcripts']or{}).get(ref.sha256,'')} for ref in refs],use_cache=a['use_cache'],callback_id=id)
+                                                     ^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <test_service_errors._never_called_backend.<locals>._Boom object at 0x10cda3cb0>
+name = 'cfg'
+
+    def __getattr__(self, name):
+>       raise AssertionError(f"the backend was called ({name}) before analysis failed")
+E       AssertionError: the backend was called (cfg) before analysis failed
+
+tests/test_service_errors.py:80: AssertionError
+_ test_a_missing_binary_is_its_own_class_and_keeps_it_through_the_asset_annotation _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10d008290>
+
+    def test_a_missing_binary_is_its_own_class_and_keeps_it_through_the_asset_annotation(monkeypatch):
+        """`ToolMissing` must survive `analyse_all` adding the file name, or the annotation would
+        silently downgrade a 503 into a 422 and tell the caller to fix a file that is fine.
+        """
+        import subprocess
+    
+        def no_binary(argv, capture_output=True, text=True, timeout=None):
+            raise FileNotFoundError(2, "No such file or directory", argv[0])
+    
+        monkeypatch.setattr(subprocess, "run", no_binary)
+        ref = AssetRef(kind=AssetKind.VIDEO, role=Role.EDIT_SOURCE, sha256="t" * 64, path=str(STILL))
+        with pytest.raises(ToolMissing) as e:
+>           analyse_all(_never_called_backend(), [ref], use_cache=False)
+
+tests/test_service_errors.py:70: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/Users/linyang/Code/contextir/conformance/card_cache_bridge.py:52: in invoke
+    data.update(items=[{'ref':ref,'key':identity(ref,a['backend'].cfg.model),'transcript':(a['transcripts']or{}).get(ref.sha256,'')} for ref in refs],use_cache=a['use_cache'],callback_id=id)
+                                                     ^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <test_service_errors._never_called_backend.<locals>._Boom object at 0x10cda3380>
+name = 'cfg'
+
+    def __getattr__(self, name):
+>       raise AssertionError(f"the backend was called ({name}) before analysis failed")
+E       AssertionError: the backend was called (cfg) before analysis failed
+
+tests/test_service_errors.py:80: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_declared_roles.py::test_the_compiler_reports_the_override_as_a_finding
+FAILED tests/test_deterministic.py::test_wiring_decides_the_mode_without_a_model
+FAILED tests/test_service_errors.py::test_a_still_attached_as_a_video_says_which_file_and_which_kind
+FAILED tests/test_service_errors.py::test_a_missing_binary_is_its_own_class_and_keeps_it_through_the_asset_annotation
+4 failed, 987 passed in 7.65s
+/Users/linyang/Code/contextir/conformance/service_bridge.py:18: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+  from starlette.testclient import TestClient

@@ -1,0 +1,2269 @@
+{
+  "case_id": "compiler-00701",
+  "input_sha256": "11fccd9758a442a9f3628a8395263cf4c63b046d15159faa4a35412292ccc47e",
+  "status": "compiled",
+  "calls": [
+    {
+      "stage": "scope",
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 1121,
+        "output_tokens": 168
+      },
+      "usage_valid": true,
+      "images": 0
+    },
+    {
+      "stage": "medium",
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 1059,
+        "output_tokens": 210
+      },
+      "usage_valid": true,
+      "images": 0
+    },
+    {
+      "stage": "identity_requirements",
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 2323,
+        "output_tokens": 818
+      },
+      "usage_valid": true,
+      "images": 0
+    },
+    {
+      "stage": "licence",
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 2341,
+        "output_tokens": 2202
+      },
+      "usage_valid": true,
+      "images": 0
+    },
+    {
+      "stage": "structure",
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 4736,
+        "output_tokens": 1749
+      },
+      "usage_valid": true,
+      "images": 0
+    },
+    {
+      "stage": "plan",
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 10566,
+        "output_tokens": 8620
+      },
+      "usage_valid": true,
+      "images": 0
+    }
+  ],
+  "elapsed_ms": 65703,
+  "result": {
+    "usage_complete": true,
+    "clarification_policy": "continue_with_recorded_choice",
+    "mode_decision": {
+      "clarification_policy": "continue_with_recorded_choice",
+      "confidence_kind": "routing_policy",
+      "aspect_mismatch": false,
+      "needs_clarification": false,
+      "mode": "ref2va",
+      "confidence": 1,
+      "rule": "12.2#1",
+      "signals": [
+        "Mode follows explicit structured choices and media socket requirements."
+      ]
+    },
+    "scope_decision": {
+      "conflict_policy": "supplied_content_wins",
+      "requested": {
+        "speech": false,
+        "music": false,
+        "onscreen_text": false,
+        "magnitude": ""
+      },
+      "forbidden": {
+        "speech": false,
+        "music": false,
+        "onscreen_text": false,
+        "magnitude": ""
+      },
+      "allowed": {
+        "speech": false,
+        "music": true,
+        "onscreen_text": false,
+        "magnitude": "measured"
+      },
+      "dialogue": [],
+      "onscreen_text": [],
+      "reasoning": "The intent describes only a car moving out of the dark. It contains no request for speech, music, or visible lettering, and no explicit prohibition of those classes.",
+      "calls": [
+        {
+          "stage": "scope",
+          "attempt": 1,
+          "model": "deepseek-flash",
+          "usage": {
+            "input_tokens": 1121,
+            "output_tokens": 168
+          },
+          "valid": true
+        }
+      ]
+    },
+    "licence": {
+      "medium_decision": {
+        "disposition": "preserve",
+        "operation_quote": "",
+        "target": "",
+        "requested_style": "",
+        "reference_medium": "live-action",
+        "requested_medium": "",
+        "treatments": [],
+        "reasoning": "The intent only describes motion and lighting/action (a car pulling forward out of the dark); it does not expressly request a rendering-medium departure. The reference is live-action, so the result should preserve that medium.",
+        "calls": [
+          {
+            "stage": "medium",
+            "attempt": 1,
+            "model": "deepseek-flash",
+            "usage": {
+              "input_tokens": 1059,
+              "output_tokens": 210
+            },
+            "valid": true
+          }
+        ]
+      },
+      "identity": [
+        {
+          "descriptor_source": "reference",
+          "kind": "person",
+          "label": "\u003cSubject 1\u003e",
+          "descriptor": "the driver in red",
+          "retained_attributes": [
+            "a red jacket"
+          ],
+          "requested_attributes": [],
+          "request_quote": "",
+          "wardrobe_attributes": [
+            "a red jacket"
+          ]
+        },
+        {
+          "descriptor_source": "reference",
+          "kind": "person",
+          "label": "\u003cSubject 2\u003e",
+          "descriptor": "the driver",
+          "retained_attributes": [
+            "a grey overall"
+          ],
+          "requested_attributes": [],
+          "request_quote": "",
+          "wardrobe_attributes": [
+            "a grey overall"
+          ]
+        },
+        {
+          "descriptor_source": "reference",
+          "kind": "object",
+          "label": "\u003cSubject 3\u003e",
+          "descriptor": "the black sports car",
+          "retained_attributes": [
+            "carbon fibre body"
+          ],
+          "requested_attributes": [],
+          "request_quote": "",
+          "wardrobe_attributes": []
+        }
+      ],
+      "governs": {
+        "action": "request",
+        "framing": "reference",
+        "lighting": "request",
+        "medium": "reference",
+        "palette": "reference",
+        "wardrobe": "reference"
+      },
+      "reasons": {
+        "action": "The brief explicitly requests a new temporal action: the car pulls forward out of the dark. That requested motion overrides the source car's static or other action.",
+        "framing": "The brief only specifies movement/direction and a 16:9 canvas; it does not request a camera composition, shot scale, viewpoint, or camera movement, so the edit source's medium-wide framing governs.",
+        "lighting": "“Out of the dark” is an explicit lighting/visibility condition, so it governs lighting rather than the tunnel's observed sodium strip illumination.",
+        "medium": "The medium decision preserves the live-action reference medium; no rendering-medium departure was requested.",
+        "palette": "No scene color palette is requested; darkness is treated as lighting, not an explicit palette instruction, so the reference palette governs.",
+        "wardrobe": "No clothing or accessory change is requested, so the observed/target wardrobe from the references remains governed by reference."
+      },
+      "transform_phrase": null,
+      "transform_target": "",
+      "medium_transferred": false,
+      "style": {
+        "observed_phrase": "Live-action, cinematic",
+        "phrase": "Live-action, cinematic",
+        "source": "reference",
+        "reference_medium": "live-action",
+        "requested_medium": "",
+        "discrepancy": false,
+        "note": ""
+      },
+      "subjects": [
+        {
+          "label": "\u003cSubject 1\u003e",
+          "kind": "person",
+          "sources": [
+            "\u003cPicture 1\u003e"
+          ],
+          "descriptor": "the driver in red",
+          "attributes": [
+            "a red jacket"
+          ],
+          "pose": [],
+          "pose_licensed": false,
+          "retention": "fully_preserved",
+          "retention_note": "",
+          "appears_in": [],
+          "taken_over_by": ""
+        },
+        {
+          "label": "\u003cSubject 2\u003e",
+          "kind": "person",
+          "sources": [
+            "\u003cVideo 1\u003e"
+          ],
+          "descriptor": "the driver",
+          "attributes": [
+            "a grey overall"
+          ],
+          "pose": [],
+          "pose_licensed": false,
+          "retention": "fully_preserved",
+          "retention_note": "",
+          "appears_in": [],
+          "taken_over_by": ""
+        },
+        {
+          "label": "\u003cSubject 3\u003e",
+          "kind": "object",
+          "sources": [
+            "\u003cVideo 1\u003e"
+          ],
+          "descriptor": "the black sports car",
+          "attributes": [
+            "carbon fibre body"
+          ],
+          "pose": [],
+          "pose_licensed": false,
+          "retention": "fully_preserved",
+          "retention_note": "",
+          "appears_in": [],
+          "taken_over_by": ""
+        }
+      ],
+      "calls": [
+        {
+          "stage": "medium",
+          "attempt": 1,
+          "model": "deepseek-flash",
+          "usage": {
+            "input_tokens": 1059,
+            "output_tokens": 210
+          },
+          "valid": true
+        },
+        {
+          "stage": "identity_requirements",
+          "attempt": 1,
+          "model": "deepseek-flash",
+          "usage": {
+            "input_tokens": 2323,
+            "output_tokens": 818
+          },
+          "valid": true
+        },
+        {
+          "stage": "licence",
+          "attempt": 1,
+          "model": "deepseek-flash",
+          "usage": {
+            "input_tokens": 2341,
+            "output_tokens": 2202
+          },
+          "valid": true
+        }
+      ]
+    },
+    "budget": {
+      "prompt_tokens": 1175,
+      "target_video_rows": 37296,
+      "target_audio_rows": 414,
+      "known_reference_rows": 32832,
+      "in_trained_band": true
+    },
+    "findings": [
+      {
+        "rule": "R11-scope-not-cited",
+        "severity": "INFO",
+        "msg": "\u003cSubject 2\u003e is scoped to [Shot 1] but that shot never cites it (fine for a persistent setting)"
+      },
+      {
+        "rule": "R11-scope-not-cited",
+        "severity": "INFO",
+        "msg": "\u003cSubject 2\u003e is scoped to [Shot 2] but that shot never cites it (fine for a persistent setting)"
+      },
+      {
+        "rule": "A2-sound-duplicated",
+        "severity": "WARN",
+        "msg": "overall_soundscape repeats content already in the description rather than a separate layer"
+      }
+    ],
+    "status": "compiled",
+    "version": "contextir/compiler/v1",
+    "brief": {
+      "effort": "standard",
+      "seconds_explicit": true,
+      "aspect_explicit": true,
+      "intent": "the car pulls forward out of the dark",
+      "assets": [
+        {
+          "preparation_computed": true,
+          "id": "asset-1",
+          "kind": "image",
+          "description": "the black sports car",
+          "metadata": {
+            "width": 1024,
+            "height": 576,
+            "fps": {
+              "numerator": 0,
+              "denominator": 0
+            }
+          },
+          "preparation": {
+            "sizing": "match",
+            "width": 1024,
+            "height": 576
+          },
+          "role": "replacement_subject",
+          "composition": "unknown",
+          "sizing": "match"
+        },
+        {
+          "preparation_computed": true,
+          "id": "asset-2",
+          "kind": "video",
+          "description": "the clip to edit",
+          "metadata": {
+            "duration_ms": 5000,
+            "fps": {
+              "numerator": 0,
+              "denominator": 0
+            }
+          },
+          "preparation": {
+            "width": 1344,
+            "height": 768,
+            "frames": 120
+          },
+          "role": "edit_source",
+          "composition": "unknown",
+          "sizing": "match",
+          "frames": 120
+        }
+      ],
+      "seconds": 5,
+      "aspect": "16:9",
+      "creativity": "balanced",
+      "evidence": [
+        {
+          "card": {
+            "asset_id": "asset-1",
+            "summary": "a driver in a red jacket",
+            "subjects": [
+              {
+                "kind": "person",
+                "descriptor": "the driver in red",
+                "attributes": [
+                  "a red jacket"
+                ]
+              }
+            ],
+            "environment": "an empty showroom floor",
+            "style": "Live-action, cinematic",
+            "composition": "unknown",
+            "analyzer_version": "1",
+            "coverage": {
+              "status": "complete",
+              "tracks": [
+                "visual"
+              ]
+            }
+          },
+          "asset_id": "asset-1",
+          "facts": [
+            {
+              "id": "card-asset-1-1",
+              "text": "a driver in a red jacket",
+              "source": {
+                "asset_id": "asset-1",
+                "track": "visual"
+              }
+            },
+            {
+              "id": "card-asset-1-2",
+              "text": "an empty showroom floor",
+              "source": {
+                "asset_id": "asset-1",
+                "track": "visual"
+              }
+            },
+            {
+              "id": "card-asset-1-3",
+              "text": "Live-action, cinematic",
+              "source": {
+                "asset_id": "asset-1",
+                "track": "visual"
+              }
+            },
+            {
+              "id": "card-asset-1-4",
+              "text": "the driver in red",
+              "source": {
+                "asset_id": "asset-1",
+                "track": "visual"
+              }
+            },
+            {
+              "id": "card-asset-1-5",
+              "text": "a red jacket",
+              "source": {
+                "asset_id": "asset-1",
+                "track": "visual"
+              }
+            }
+          ],
+          "analyzer_version": "1",
+          "coverage": {
+            "status": "complete",
+            "tracks": [
+              "visual"
+            ]
+          }
+        },
+        {
+          "card": {
+            "asset_id": "asset-2",
+            "summary": "a driver walks around a car in a tunnel",
+            "subjects": [
+              {
+                "kind": "person",
+                "descriptor": "the driver",
+                "attributes": [
+                  "a grey overall"
+                ]
+              },
+              {
+                "kind": "object",
+                "descriptor": "the black sports car",
+                "attributes": [
+                  "carbon fibre body"
+                ]
+              }
+            ],
+            "environment": "a concrete road tunnel",
+            "lighting": "overhead sodium strip lights",
+            "framing": "a medium-wide shot",
+            "style": "Live-action, cinematic",
+            "motion": "the driver crosses frame left to right",
+            "frames_seen": 3,
+            "composition": "unknown",
+            "analyzer_version": "1",
+            "coverage": {
+              "status": "partial",
+              "tracks": [
+                "visual"
+              ]
+            }
+          },
+          "asset_id": "asset-2",
+          "facts": [
+            {
+              "id": "card-asset-2-1",
+              "text": "a driver walks around a car in a tunnel",
+              "source": {
+                "asset_id": "asset-2",
+                "track": "visual"
+              }
+            },
+            {
+              "id": "card-asset-2-2",
+              "text": "a concrete road tunnel",
+              "source": {
+                "asset_id": "asset-2",
+                "track": "visual"
+              }
+            },
+            {
+              "id": "card-asset-2-3",
+              "text": "overhead sodium strip lights",
+              "source": {
+                "asset_id": "asset-2",
+                "track": "visual"
+              }
+            },
+            {
+              "id": "card-asset-2-4",
+              "text": "a medium-wide shot",
+              "source": {
+                "asset_id": "asset-2",
+                "track": "visual"
+              }
+            },
+            {
+              "id": "card-asset-2-5",
+              "text": "Live-action, cinematic",
+              "source": {
+                "asset_id": "asset-2",
+                "track": "visual"
+              }
+            },
+            {
+              "id": "card-asset-2-6",
+              "text": "the driver crosses frame left to right",
+              "source": {
+                "asset_id": "asset-2",
+                "track": "visual"
+              }
+            },
+            {
+              "id": "card-asset-2-7",
+              "text": "the driver",
+              "source": {
+                "asset_id": "asset-2",
+                "track": "visual"
+              }
+            },
+            {
+              "id": "card-asset-2-8",
+              "text": "a grey overall",
+              "source": {
+                "asset_id": "asset-2",
+                "track": "visual"
+              }
+            },
+            {
+              "id": "card-asset-2-9",
+              "text": "the black sports car",
+              "source": {
+                "asset_id": "asset-2",
+                "track": "visual"
+              }
+            },
+            {
+              "id": "card-asset-2-10",
+              "text": "carbon fibre body",
+              "source": {
+                "asset_id": "asset-2",
+                "track": "visual"
+              }
+            }
+          ],
+          "analyzer_version": "1",
+          "limitations": [
+            "The video card was constructed from 3 sampled frames, not the entire clip."
+          ],
+          "coverage": {
+            "status": "partial",
+            "tracks": [
+              "visual"
+            ]
+          }
+        }
+      ],
+      "cards": [
+        {
+          "asset_id": "asset-1",
+          "summary": "a driver in a red jacket",
+          "subjects": [
+            {
+              "kind": "person",
+              "descriptor": "the driver in red",
+              "attributes": [
+                "a red jacket"
+              ]
+            }
+          ],
+          "environment": "an empty showroom floor",
+          "style": "Live-action, cinematic",
+          "composition": "unknown",
+          "analyzer_version": "1",
+          "coverage": {
+            "status": "complete",
+            "tracks": [
+              "visual"
+            ]
+          }
+        },
+        {
+          "asset_id": "asset-2",
+          "summary": "a driver walks around a car in a tunnel",
+          "subjects": [
+            {
+              "kind": "person",
+              "descriptor": "the driver",
+              "attributes": [
+                "a grey overall"
+              ]
+            },
+            {
+              "kind": "object",
+              "descriptor": "the black sports car",
+              "attributes": [
+                "carbon fibre body"
+              ]
+            }
+          ],
+          "environment": "a concrete road tunnel",
+          "lighting": "overhead sodium strip lights",
+          "framing": "a medium-wide shot",
+          "style": "Live-action, cinematic",
+          "motion": "the driver crosses frame left to right",
+          "frames_seen": 3,
+          "composition": "unknown",
+          "analyzer_version": "1",
+          "coverage": {
+            "status": "partial",
+            "tracks": [
+              "visual"
+            ]
+          }
+        }
+      ]
+    },
+    "request": {
+      "instruction": "the car pulls forward out of the dark",
+      "mode": "ref2va",
+      "target": {
+        "duration_ms": 5167,
+        "frame_count": 124,
+        "aspect_ratio": "16:9",
+        "fps": {
+          "numerator": 24,
+          "denominator": 1
+        },
+        "width": 1344,
+        "height": 768
+      },
+      "assets": [
+        {
+          "id": "asset-1",
+          "kind": "image",
+          "description": "the black sports car",
+          "metadata": {
+            "width": 1024,
+            "height": 576,
+            "fps": {
+              "numerator": 0,
+              "denominator": 0
+            }
+          },
+          "preparation": {
+            "sizing": "match",
+            "width": 1024,
+            "height": 576
+          }
+        },
+        {
+          "id": "asset-2",
+          "kind": "video",
+          "description": "the clip to edit",
+          "metadata": {
+            "duration_ms": 5000,
+            "fps": {
+              "numerator": 0,
+              "denominator": 0
+            }
+          },
+          "preparation": {
+            "width": 1344,
+            "height": 768,
+            "frames": 120
+          }
+        }
+      ],
+      "bindings": [
+        {
+          "source": {
+            "asset_id": "asset-1",
+            "track": "visual"
+          },
+          "role": "replacement_subject"
+        },
+        {
+          "source": {
+            "asset_id": "asset-2",
+            "track": "visual"
+          },
+          "role": "edit_source"
+        }
+      ],
+      "constraints": [
+        {
+          "id": "compiler-no-dialogue",
+          "kind": "no_dialogue",
+          "text": "Do not add spoken or sung lines."
+        }
+      ],
+      "allow_creative_additions": true,
+      "allow_generated_dialogue": false,
+      "pinned_shots": [
+        {
+          "id": "shot-1",
+          "start_ms": 0,
+          "end_ms": 2600
+        },
+        {
+          "id": "shot-2",
+          "start_ms": 2600,
+          "end_ms": 5167
+        }
+      ],
+      "addition_scope": {
+        "dialogue": false,
+        "music": true,
+        "visible_text": false
+      }
+    },
+    "structure": {
+      "replacement_targets": {
+        "\u003cPicture 1\u003e": "\u003cSubject 2\u003e"
+      },
+      "style": "Live-action, cinematic",
+      "mode": "ref2va",
+      "assets": [
+        {
+          "asset_id": "asset-1",
+          "role": "replacement_subject",
+          "replaces": ""
+        },
+        {
+          "asset_id": "asset-2",
+          "role": "edit_source",
+          "replaces": ""
+        }
+      ],
+      "shots": [
+        {
+          "subjects": [
+            "\u003cSubject 3\u003e",
+            "\u003cSubject 2\u003e"
+          ],
+          "sync_sound": [
+            "low engine idle swelling as the car takes up drive",
+            "tyre roll on concrete",
+            "sodium strip lights humming overhead"
+          ],
+          "start_ms": 0,
+          "purpose": "establish",
+          "framing": "medium wide",
+          "action": "Deep inside the concrete road tunnel, the sodium strip lights fade behind into blackness; at first only a faint gloss in the dark, then \u003cSubject 3\u003e the black sports car rolls forward out of the shadow, its carbon fibre body igniting in strips of amber overhead light, with \u003cSubject 2\u003e the driver in the red jacket moving alongside the front wing.",
+          "what_changes": "The car travels from invisible darkness into the lit span of the tunnel, its bodywork going from a faint gloss to fully lit.",
+          "camera": {
+            "type": "Push In",
+            "amplitude": "small",
+            "speed": "slow"
+          }
+        },
+        {
+          "subjects": [
+            "\u003cSubject 3\u003e",
+            "\u003cSubject 2\u003e"
+          ],
+          "sync_sound": [
+            "engine note rising as the car comes forward",
+            "tyres rolling over concrete joints",
+            "overhead strip lights buzzing"
+          ],
+          "start_ms": 2600,
+          "purpose": "develop",
+          "framing": "medium",
+          "action": "\u003cSubject 3\u003e the car keeps pulling forward along the tunnel lane, clearing the last patch of dark and swinging past the camera as it comes, headlight spill washing the concrete; \u003cSubject 2\u003e in the red jacket walks after it and is swallowed by the frame edge as the car takes the foreground.",
+          "what_changes": "The car moves from mid-tunnel to the immediate foreground, filling the frame and pushing the driver out of view.",
+          "camera": {
+            "type": "Tracking Shot",
+            "amplitude": "small",
+            "speed": "slow"
+          }
+        }
+      ],
+      "dialogue": [],
+      "onscreen_text": [],
+      "requested": {
+        "speech": false,
+        "music": false,
+        "onscreen_text": false,
+        "magnitude": ""
+      },
+      "forbidden": {
+        "speech": false,
+        "music": false,
+        "onscreen_text": false,
+        "magnitude": ""
+      },
+      "reasoning": "The brief asks for one thing only: the car pulls forward out of the dark. The edit source (\u003cVideo 1\u003e) supplies the concrete road tunnel, the sodium strip lighting, the medium-wide framing, the live-action cinematic medium and the black sports car with its carbon fibre body; darkness is treated as an explicit lighting condition, not a palette or medium change. \u003cPicture 1\u003e supplies the driver figure in the red jacket, which is wired as a replacement subject standing in for the driver observed in the clip, so the tunnel action is carried by the red-jacketed driver rather than the original grey-overall figure. No speech, music or visible lettering is requested and none is prohibited, so all content classes serialize false; balanced creativity is used only to shape camera, pacing and diegetic ambience (engine, tyres on concrete under the strip lights), not to invent new events. The 5167ms target is covered by two shots: a static-lit reveal of the car emerging from the tunnel black, then the car continuing past the lights toward camera as it clears the darkness."
+    },
+    "scope": {
+      "speech": false,
+      "music": true,
+      "onscreen_text": false,
+      "magnitude": "measured"
+    },
+    "document": {
+      "version": "contextir/v1",
+      "mode": "ref2va",
+      "target": {
+        "duration_ms": 5167,
+        "frame_count": 124,
+        "aspect_ratio": "16:9",
+        "fps": {
+          "numerator": 24,
+          "denominator": 1
+        },
+        "width": 1344,
+        "height": 768
+      },
+      "assets": [
+        {
+          "id": "asset-1",
+          "kind": "image",
+          "description": "the black sports car",
+          "metadata": {
+            "width": 1024,
+            "height": 576,
+            "fps": {
+              "numerator": 0,
+              "denominator": 0
+            }
+          },
+          "preparation": {
+            "sizing": "match",
+            "width": 1024,
+            "height": 576
+          }
+        },
+        {
+          "id": "asset-2",
+          "kind": "video",
+          "description": "the clip to edit",
+          "metadata": {
+            "duration_ms": 5000,
+            "fps": {
+              "numerator": 0,
+              "denominator": 0
+            }
+          },
+          "preparation": {
+            "width": 1344,
+            "height": 768,
+            "frames": 120
+          }
+        }
+      ],
+      "evidence": [
+        {
+          "card": {
+            "asset_id": "asset-1",
+            "summary": "a driver in a red jacket",
+            "subjects": [
+              {
+                "kind": "person",
+                "descriptor": "the driver in red",
+                "attributes": [
+                  "a red jacket"
+                ]
+              }
+            ],
+            "environment": "an empty showroom floor",
+            "style": "Live-action, cinematic",
+            "composition": "unknown",
+            "analyzer_version": "1",
+            "coverage": {
+              "status": "complete",
+              "tracks": [
+                "visual"
+              ]
+            }
+          },
+          "asset_id": "asset-1",
+          "facts": [
+            {
+              "id": "card-asset-1-1",
+              "text": "a driver in a red jacket",
+              "source": {
+                "asset_id": "asset-1",
+                "track": "visual"
+              }
+            },
+            {
+              "id": "card-asset-1-2",
+              "text": "an empty showroom floor",
+              "source": {
+                "asset_id": "asset-1",
+                "track": "visual"
+              }
+            },
+            {
+              "id": "card-asset-1-3",
+              "text": "Live-action, cinematic",
+              "source": {
+                "asset_id": "asset-1",
+                "track": "visual"
+              }
+            },
+            {
+              "id": "card-asset-1-4",
+              "text": "the driver in red",
+              "source": {
+                "asset_id": "asset-1",
+                "track": "visual"
+              }
+            },
+            {
+              "id": "card-asset-1-5",
+              "text": "a red jacket",
+              "source": {
+                "asset_id": "asset-1",
+                "track": "visual"
+              }
+            }
+          ],
+          "analyzer_version": "1",
+          "coverage": {
+            "status": "complete",
+            "tracks": [
+              "visual"
+            ]
+          }
+        },
+        {
+          "card": {
+            "asset_id": "asset-2",
+            "summary": "a driver walks around a car in a tunnel",
+            "subjects": [
+              {
+                "kind": "person",
+                "descriptor": "the driver",
+                "attributes": [
+                  "a grey overall"
+                ]
+              },
+              {
+                "kind": "object",
+                "descriptor": "the black sports car",
+                "attributes": [
+                  "carbon fibre body"
+                ]
+              }
+            ],
+            "environment": "a concrete road tunnel",
+            "lighting": "overhead sodium strip lights",
+            "framing": "a medium-wide shot",
+            "style": "Live-action, cinematic",
+            "motion": "the driver crosses frame left to right",
+            "frames_seen": 3,
+            "composition": "unknown",
+            "analyzer_version": "1",
+            "coverage": {
+              "status": "partial",
+              "tracks": [
+                "visual"
+              ]
+            }
+          },
+          "asset_id": "asset-2",
+          "facts": [
+            {
+              "id": "card-asset-2-1",
+              "text": "a driver walks around a car in a tunnel",
+              "source": {
+                "asset_id": "asset-2",
+                "track": "visual"
+              }
+            },
+            {
+              "id": "card-asset-2-2",
+              "text": "a concrete road tunnel",
+              "source": {
+                "asset_id": "asset-2",
+                "track": "visual"
+              }
+            },
+            {
+              "id": "card-asset-2-3",
+              "text": "overhead sodium strip lights",
+              "source": {
+                "asset_id": "asset-2",
+                "track": "visual"
+              }
+            },
+            {
+              "id": "card-asset-2-4",
+              "text": "a medium-wide shot",
+              "source": {
+                "asset_id": "asset-2",
+                "track": "visual"
+              }
+            },
+            {
+              "id": "card-asset-2-5",
+              "text": "Live-action, cinematic",
+              "source": {
+                "asset_id": "asset-2",
+                "track": "visual"
+              }
+            },
+            {
+              "id": "card-asset-2-6",
+              "text": "the driver crosses frame left to right",
+              "source": {
+                "asset_id": "asset-2",
+                "track": "visual"
+              }
+            },
+            {
+              "id": "card-asset-2-7",
+              "text": "the driver",
+              "source": {
+                "asset_id": "asset-2",
+                "track": "visual"
+              }
+            },
+            {
+              "id": "card-asset-2-8",
+              "text": "a grey overall",
+              "source": {
+                "asset_id": "asset-2",
+                "track": "visual"
+              }
+            },
+            {
+              "id": "card-asset-2-9",
+              "text": "the black sports car",
+              "source": {
+                "asset_id": "asset-2",
+                "track": "visual"
+              }
+            },
+            {
+              "id": "card-asset-2-10",
+              "text": "carbon fibre body",
+              "source": {
+                "asset_id": "asset-2",
+                "track": "visual"
+              }
+            }
+          ],
+          "analyzer_version": "1",
+          "limitations": [
+            "The video card was constructed from 3 sampled frames, not the entire clip."
+          ],
+          "coverage": {
+            "status": "partial",
+            "tracks": [
+              "visual"
+            ]
+          }
+        }
+      ],
+      "subjects": [
+        {
+          "kind": "person",
+          "descriptor": "the driver in red",
+          "attributes": [
+            "a red jacket"
+          ],
+          "origin": "observed",
+          "id": "subject-1",
+          "description": "the driver in red; a red jacket",
+          "sources": [
+            {
+              "source": {
+                "asset_id": "asset-1",
+                "track": "visual"
+              },
+              "role": "replacement_subject"
+            }
+          ],
+          "retention": "fully_preserved",
+          "retention_details": "a red jacket is retained",
+          "shot_ids": [
+            "shot-1",
+            "shot-2"
+          ]
+        },
+        {
+          "kind": "person",
+          "descriptor": "the driver",
+          "origin": "observed",
+          "id": "subject-2",
+          "description": "the driver",
+          "sources": [
+            {
+              "source": {
+                "asset_id": "asset-2",
+                "track": "visual"
+              },
+              "role": "edit_source"
+            }
+          ],
+          "retention": "attribute_transfer",
+          "retention_details": "Only the original figure's position, actions, and timing are transferred; its appearance is not retained.",
+          "shot_ids": [
+            "shot-1",
+            "shot-2"
+          ],
+          "taken_over_by": "subject-1"
+        },
+        {
+          "kind": "object",
+          "descriptor": "the black sports car",
+          "attributes": [
+            "carbon fibre body"
+          ],
+          "origin": "observed",
+          "id": "subject-3",
+          "description": "the black sports car; carbon fibre body",
+          "sources": [
+            {
+              "source": {
+                "asset_id": "asset-2",
+                "track": "visual"
+              },
+              "role": "edit_source"
+            }
+          ],
+          "retention": "fully_preserved",
+          "retention_details": "the carbon fibre body is retained",
+          "shot_ids": [
+            "shot-1",
+            "shot-2"
+          ]
+        }
+      ],
+      "references": [
+        {
+          "id": "ref-asset-1-driver",
+          "kind": "picture",
+          "source": {
+            "asset_id": "asset-1",
+            "track": "visual"
+          },
+          "roles": [
+            "replacement_subject"
+          ],
+          "description": "the driver in red wearing a red jacket",
+          "retention": "fully_preserved",
+          "retention_details": "The driver's red jacket and identity are retained as the replacement subject.",
+          "shot_ids": [
+            "shot-1",
+            "shot-2"
+          ]
+        },
+        {
+          "id": "ref-asset-2-edit",
+          "kind": "video",
+          "source": {
+            "asset_id": "asset-2",
+            "track": "visual"
+          },
+          "roles": [
+            "edit_source"
+          ],
+          "description": "the concrete tunnel edit source with sodium strip lighting and the black sports car",
+          "retention": "partially_preserved",
+          "retention_details": "The tunnel setting, sodium strip lighting, and black sports car are retained; the original driver is replaced by the red-jacketed driver.",
+          "shot_ids": [
+            "shot-1",
+            "shot-2"
+          ]
+        }
+      ],
+      "style": "Live-action, cinematic",
+      "shots": [
+        {
+          "id": "shot-1",
+          "start_ms": 0,
+          "end_ms": 2600,
+          "description": [
+            {
+              "text": "Deep inside the concrete tunnel, the sodium strip lights recede into blackness; at first only a faint gloss shows in the dark, then "
+            },
+            {
+              "subject_id": "subject-3"
+            },
+            {
+              "text": " rolls forward out of the shadow, its carbon fibre body igniting in bands of amber overhead light. "
+            },
+            {
+              "subject_id": "subject-1"
+            },
+            {
+              "text": " moves alongside the front wing, the red jacket catching the glow as the car clears the deepest dark."
+            }
+          ],
+          "events": [
+            {
+              "kind": "action",
+              "at_ms": 0,
+              "description": [
+                {
+                  "text": "The "
+                },
+                {
+                  "subject_id": "subject-3"
+                },
+                {
+                  "text": " begins to roll forward from the darkness, carbon fibre catching the first amber strips of overhead light."
+                }
+              ]
+            },
+            {
+              "kind": "sound",
+              "at_ms": 0,
+              "description": [
+                {
+                  "text": "A low engine idle swells into a steady growl."
+                }
+              ]
+            },
+            {
+              "kind": "visual",
+              "at_ms": 1200,
+              "description": [
+                {
+                  "text": "The "
+                },
+                {
+                  "subject_id": "subject-1"
+                },
+                {
+                  "text": " enters the sodium glow beside the car's front wing, red jacket bright against the concrete."
+                }
+              ]
+            },
+            {
+              "kind": "action",
+              "at_ms": 2200,
+              "description": [
+                {
+                  "text": "The "
+                },
+                {
+                  "subject_id": "subject-3"
+                },
+                {
+                  "text": " clears the deepest shadow, its bodywork becoming fully lit."
+                }
+              ]
+            },
+            {
+              "kind": "camera",
+              "description": [
+                {
+                  "text": "The camera pushes in with small amplitude at slow speed."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "shot-2",
+          "start_ms": 2600,
+          "end_ms": 5167,
+          "description": [
+            {
+              "text": "In the lit span of the tunnel, "
+            },
+            {
+              "subject_id": "subject-3"
+            },
+            {
+              "text": " keeps pulling forward along the lane, clearing the last patch of dark as headlight spill washes the concrete. "
+            },
+            {
+              "subject_id": "subject-1"
+            },
+            {
+              "text": " follows after the car and slips out of the frame edge while the black bodywork takes the foreground, its carbon fibre panels flaring under the sodium strips."
+            }
+          ],
+          "events": [
+            {
+              "kind": "action",
+              "at_ms": 2600,
+              "description": [
+                {
+                  "text": "The "
+                },
+                {
+                  "subject_id": "subject-3"
+                },
+                {
+                  "text": " keeps pulling forward along the tunnel lane, clearing the last patch of dark."
+                }
+              ]
+            },
+            {
+              "kind": "sound",
+              "at_ms": 2600,
+              "description": [
+                {
+                  "text": "The engine note rises as the car comes forward."
+                }
+              ]
+            },
+            {
+              "kind": "visual",
+              "at_ms": 3200,
+              "description": [
+                {
+                  "text": "Headlight spill washes across the concrete and the sodium strips flare along the car's carbon fibre body."
+                }
+              ]
+            },
+            {
+              "kind": "visual",
+              "at_ms": 4200,
+              "description": [
+                {
+                  "text": "The "
+                },
+                {
+                  "subject_id": "subject-1"
+                },
+                {
+                  "text": " walks after the car and slips out of the frame edge as the "
+                },
+                {
+                  "subject_id": "subject-3"
+                },
+                {
+                  "text": " takes the foreground."
+                }
+              ]
+            },
+            {
+              "kind": "sound",
+              "at_ms": 5000,
+              "description": [
+                {
+                  "text": "Tyres roll over concrete joints beneath a faint electrical hum."
+                }
+              ]
+            },
+            {
+              "kind": "camera",
+              "description": [
+                {
+                  "text": "The camera tracks with the subject with small amplitude at slow speed."
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "soundscape": "Low engine idle swelling into a steady growl, tyre roll on concrete, and a faint electrical hum from the overhead sodium strip lights.",
+      "music": "N/A",
+      "constraints": [
+        {
+          "id": "compiler-no-dialogue",
+          "kind": "no_dialogue",
+          "text": "Do not add spoken or sung lines."
+        }
+      ],
+      "claims": [
+        {
+          "id": "claim-user-car-forward",
+          "origin": "user",
+          "text": "The car pulls forward out of the dark."
+        },
+        {
+          "id": "claim-observed-driver-red",
+          "origin": "observed",
+          "text": "A driver in a red jacket is shown.",
+          "sources": [
+            {
+              "asset_id": "asset-1",
+              "track": "visual"
+            }
+          ]
+        },
+        {
+          "id": "claim-observed-tunnel",
+          "origin": "observed",
+          "text": "The clip shows a concrete road tunnel with overhead sodium strip lights and a black sports car.",
+          "sources": [
+            {
+              "asset_id": "asset-2",
+              "track": "visual"
+            }
+          ]
+        },
+        {
+          "id": "claim-observed-motion",
+          "origin": "observed",
+          "text": "The driver crosses frame left to right in the clip.",
+          "sources": [
+            {
+              "asset_id": "asset-2",
+              "track": "visual"
+            }
+          ]
+        },
+        {
+          "id": "claim-observed-car",
+          "origin": "observed",
+          "text": "The black sports car has a carbon fibre body.",
+          "sources": [
+            {
+              "asset_id": "asset-2",
+              "track": "visual"
+            }
+          ]
+        },
+        {
+          "id": "claim-creative-ambience",
+          "origin": "creative",
+          "text": "A low engine idle, tyre roll on concrete, and a faint hum from the overhead strip lights fill the tunnel."
+        }
+      ]
+    },
+    "artifact": {
+      "version": "contextir-h3/artifact-v1",
+      "compiler_version": "contextir-h3/v1.2",
+      "format_version": "minimax-h3/prompt-v1",
+      "mode": "ref2va",
+      "target": {
+        "duration_ms": 5167,
+        "frame_count": 124,
+        "aspect_ratio": "16:9",
+        "fps": {
+          "numerator": 24,
+          "denominator": 1
+        },
+        "width": 1344,
+        "height": 768
+      },
+      "profile": {
+        "name": "h3-comfyui-17k5-v1",
+        "format": "minimax-h3/prompt-v1",
+        "fps": {
+          "numerator": 24,
+          "denominator": 1
+        },
+        "modes": [
+          "t2va",
+          "i2va",
+          "l2va",
+          "fl2va",
+          "ref2va"
+        ],
+        "frame_grid": {
+          "modulus": 17,
+          "remainder": 5
+        },
+        "min_frames": 5,
+        "max_frames": 3600,
+        "canvas_multiple": 32,
+        "limits": {
+          "pictures": 9,
+          "videos": 3,
+          "video_audio": 3,
+          "standalone_audio": 3
+        },
+        "supports_reference_frame_anchors": false,
+        "supports_source_intervals": false
+      },
+      "prompt": "subject_definitions:\n\u003cSubject 1\u003e is the driver in red; a red jacket. Its replacement of a source figure in the edited video is referenced from \u003cPicture 1\u003e\n\u003cSubject 2\u003e is the source figure the driver in the edited clip, whose position in frame, actions and timing are transferred to \u003cSubject 1\u003e. Its source appearance is not retained. Its source video for the target video edit is referenced from \u003cVideo 1\u003e\n\u003cSubject 3\u003e is the black sports car; carbon fibre body. Its source video for the target video edit is referenced from \u003cVideo 1\u003e\n\u003cPicture 1\u003e is the driver in red wearing a red jacket. Its role is replacement of a source figure in the edited video. \u003cPicture 1\u003e takes the place of the structurally identified source figure in \u003cVideo 1\u003e, inheriting that figure's position in frame, actions and timing. The picture contributes its replacement identity, never its background, pose, or lighting.\n\u003cVideo 1\u003e is the concrete tunnel edit source with sodium strip lighting and the black sports car. Its role is source video for the target video edit.\n\nsummary:\n[video editing + reference generation] The target video is an edited version of \u003cVideo 1\u003e. Deep inside the concrete tunnel, the sodium strip lights recede into blackness; at first only a faint gloss shows in the dark, then \u003cSubject 3\u003e rolls forward out of the shadow, its carbon fibre body igniting in bands of amber overhead light. \u003cSubject 1\u003e moves alongside the front wing, the red jacket catching the glow as the car clears the deepest dark. In the lit span of the tunnel, \u003cSubject 3\u003e keeps pulling forward along the lane, clearing the last patch of dark as headlight spill washes the concrete. \u003cSubject 1\u003e follows after the car and slips out of the frame edge while the black bodywork takes the foreground, its carbon fibre panels flaring under the sodium strips.\n\nretention_analysis:\n\u003cSubject 1\u003e (appears in [Shot 1], [Shot 2]): fully_preserved - a red jacket is retained.\n\u003cSubject 2\u003e (appears in [Shot 1], [Shot 2]): attribute_transfer - Only the original figure's position, actions, and timing are transferred; its appearance is not retained. Its position in frame, actions and timing are transferred to \u003cSubject 1\u003e; its source appearance is not retained.\n\u003cSubject 3\u003e (appears in [Shot 1], [Shot 2]): fully_preserved - the carbon fibre body is retained.\n\u003cPicture 1\u003e ([Shot 1], [Shot 2]; replacement of a source figure in the edited video): fully_preserved - The driver's red jacket and identity are retained as the replacement subject.\n\u003cVideo 1\u003e ([Shot 1], [Shot 2]; source video for the target video edit): partially_preserved - The tunnel setting, sodium strip lighting, and black sports car are retained; the original driver is replaced by the red-jacketed driver.\n\ndetailed_description:\nThe target video is in live-action style, cinematic.\n[Shot 1] Deep inside the concrete tunnel, the sodium strip lights recede into blackness; at first only a faint gloss shows in the dark, then \u003cSubject 3\u003e rolls forward out of the shadow, its carbon fibre body igniting in bands of amber overhead light. \u003cSubject 1\u003e moves alongside the front wing, the red jacket catching the glow as the car clears the deepest dark. At 00:00.000, The \u003cSubject 3\u003e begins to roll forward from the darkness, carbon fibre catching the first amber strips of overhead light. At 00:00.000, A low engine idle swells into a steady growl. At 00:01.200, The \u003cSubject 1\u003e enters the sodium glow beside the car's front wing, red jacket bright against the concrete. At 00:02.200, The \u003cSubject 3\u003e clears the deepest shadow, its bodywork becoming fully lit. The camera pushes in with small amplitude at slow speed. Throughout the target video: Do not add spoken or sung lines.\n[Shot 2] At 00:02.600, the shot cuts to In the lit span of the tunnel, \u003cSubject 3\u003e keeps pulling forward along the lane, clearing the last patch of dark as headlight spill washes the concrete. \u003cSubject 1\u003e follows after the car and slips out of the frame edge while the black bodywork takes the foreground, its carbon fibre panels flaring under the sodium strips. At 00:02.600, The \u003cSubject 3\u003e keeps pulling forward along the tunnel lane, clearing the last patch of dark. At 00:02.600, The engine note rises as the car comes forward. At 00:03.200, Headlight spill washes across the concrete and the sodium strips flare along the car's carbon fibre body. At 00:04.200, The \u003cSubject 1\u003e walks after the car and slips out of the frame edge as the \u003cSubject 3\u003e takes the foreground. At 00:05.000, Tyres roll over concrete joints beneath a faint electrical hum. The camera tracks with the subject with small amplitude at slow speed.\n\noverall_soundscape:\nLow engine idle swelling into a steady growl, tyre roll on concrete, and a faint electrical hum from the overhead sodium strip lights.\n\nnon_diegetic_music:\nN/A\n",
+      "manifest": {
+        "media": [
+          {
+            "preparation": {
+              "sizing": "match",
+              "width": 1024,
+              "height": 576
+            },
+            "source_metadata": {
+              "width": 1024,
+              "height": 576,
+              "fps": {
+                "numerator": 0,
+                "denominator": 0
+              }
+            },
+            "label": "\u003cPicture 1\u003e",
+            "kind": "picture",
+            "source": {
+              "asset_id": "asset-1",
+              "track": "visual"
+            },
+            "socket": "ref_image_1",
+            "target_uses": [
+              {
+                "reference_id": "ref-asset-1-driver",
+                "roles": [
+                  "replacement_subject"
+                ],
+                "retention": "fully_preserved",
+                "shots": [
+                  {
+                    "id": "shot-1",
+                    "index": 1,
+                    "interval": {
+                      "start_ms": 0,
+                      "end_ms": 2600
+                    }
+                  },
+                  {
+                    "id": "shot-2",
+                    "index": 2,
+                    "interval": {
+                      "start_ms": 2600,
+                      "end_ms": 5167
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "preparation": {
+              "width": 1344,
+              "height": 768,
+              "frames": 120
+            },
+            "source_metadata": {
+              "duration_ms": 5000,
+              "fps": {
+                "numerator": 0,
+                "denominator": 0
+              }
+            },
+            "label": "\u003cVideo 1\u003e",
+            "kind": "video",
+            "source": {
+              "asset_id": "asset-2",
+              "track": "visual"
+            },
+            "socket": "ref_video_1",
+            "target_uses": [
+              {
+                "reference_id": "ref-asset-2-edit",
+                "roles": [
+                  "edit_source"
+                ],
+                "retention": "partially_preserved",
+                "shots": [
+                  {
+                    "id": "shot-1",
+                    "index": 1,
+                    "interval": {
+                      "start_ms": 0,
+                      "end_ms": 2600
+                    }
+                  },
+                  {
+                    "id": "shot-2",
+                    "index": 2,
+                    "interval": {
+                      "start_ms": 2600,
+                      "end_ms": 5167
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "subjects": [
+          {
+            "id": "subject-1",
+            "label": "\u003cSubject 1\u003e"
+          },
+          {
+            "id": "subject-2",
+            "label": "\u003cSubject 2\u003e"
+          },
+          {
+            "id": "subject-3",
+            "label": "\u003cSubject 3\u003e"
+          }
+        ],
+        "references": [
+          {
+            "id": "ref-asset-1-driver",
+            "label": "\u003cPicture 1\u003e"
+          },
+          {
+            "id": "ref-asset-2-edit",
+            "label": "\u003cVideo 1\u003e"
+          }
+        ],
+        "speakers": []
+      },
+      "frames": 124,
+      "effective_duration_seconds": {
+        "numerator": 31,
+        "denominator": 6
+      },
+      "document_sha256": "677f3cd69bc073e4040f2ee1d016554389f4c16f9a83d0e64fb50a87e2e4570c",
+      "profile_sha256": "234d423c54663839ad8ef0aab7924d4da6d8bb212ced940e0b240639c3dcbed4",
+      "prompt_sha256": "4de7a00169785d839bdb12867b7fe332def46dcd9ac6ce1a78913f12cadfc91d",
+      "manifest_sha256": "8d277eb2cac055e4f38351429320a6f50872c3ab680981108bdbbf448ea08f5e",
+      "sha256": "54ebc141eff9cad12d8e46bbce81a65b0e13e876e2b4d871e5a9ac61e20da0e7"
+    },
+    "evidence": [
+      {
+        "card": {
+          "asset_id": "asset-1",
+          "summary": "a driver in a red jacket",
+          "subjects": [
+            {
+              "kind": "person",
+              "descriptor": "the driver in red",
+              "attributes": [
+                "a red jacket"
+              ]
+            }
+          ],
+          "environment": "an empty showroom floor",
+          "style": "Live-action, cinematic",
+          "composition": "unknown",
+          "analyzer_version": "1",
+          "coverage": {
+            "status": "complete",
+            "tracks": [
+              "visual"
+            ]
+          }
+        },
+        "asset_id": "asset-1",
+        "facts": [
+          {
+            "id": "card-asset-1-1",
+            "text": "a driver in a red jacket",
+            "source": {
+              "asset_id": "asset-1",
+              "track": "visual"
+            }
+          },
+          {
+            "id": "card-asset-1-2",
+            "text": "an empty showroom floor",
+            "source": {
+              "asset_id": "asset-1",
+              "track": "visual"
+            }
+          },
+          {
+            "id": "card-asset-1-3",
+            "text": "Live-action, cinematic",
+            "source": {
+              "asset_id": "asset-1",
+              "track": "visual"
+            }
+          },
+          {
+            "id": "card-asset-1-4",
+            "text": "the driver in red",
+            "source": {
+              "asset_id": "asset-1",
+              "track": "visual"
+            }
+          },
+          {
+            "id": "card-asset-1-5",
+            "text": "a red jacket",
+            "source": {
+              "asset_id": "asset-1",
+              "track": "visual"
+            }
+          }
+        ],
+        "analyzer_version": "1",
+        "coverage": {
+          "status": "complete",
+          "tracks": [
+            "visual"
+          ]
+        }
+      },
+      {
+        "card": {
+          "asset_id": "asset-2",
+          "summary": "a driver walks around a car in a tunnel",
+          "subjects": [
+            {
+              "kind": "person",
+              "descriptor": "the driver",
+              "attributes": [
+                "a grey overall"
+              ]
+            },
+            {
+              "kind": "object",
+              "descriptor": "the black sports car",
+              "attributes": [
+                "carbon fibre body"
+              ]
+            }
+          ],
+          "environment": "a concrete road tunnel",
+          "lighting": "overhead sodium strip lights",
+          "framing": "a medium-wide shot",
+          "style": "Live-action, cinematic",
+          "motion": "the driver crosses frame left to right",
+          "frames_seen": 3,
+          "composition": "unknown",
+          "analyzer_version": "1",
+          "coverage": {
+            "status": "partial",
+            "tracks": [
+              "visual"
+            ]
+          }
+        },
+        "asset_id": "asset-2",
+        "facts": [
+          {
+            "id": "card-asset-2-1",
+            "text": "a driver walks around a car in a tunnel",
+            "source": {
+              "asset_id": "asset-2",
+              "track": "visual"
+            }
+          },
+          {
+            "id": "card-asset-2-2",
+            "text": "a concrete road tunnel",
+            "source": {
+              "asset_id": "asset-2",
+              "track": "visual"
+            }
+          },
+          {
+            "id": "card-asset-2-3",
+            "text": "overhead sodium strip lights",
+            "source": {
+              "asset_id": "asset-2",
+              "track": "visual"
+            }
+          },
+          {
+            "id": "card-asset-2-4",
+            "text": "a medium-wide shot",
+            "source": {
+              "asset_id": "asset-2",
+              "track": "visual"
+            }
+          },
+          {
+            "id": "card-asset-2-5",
+            "text": "Live-action, cinematic",
+            "source": {
+              "asset_id": "asset-2",
+              "track": "visual"
+            }
+          },
+          {
+            "id": "card-asset-2-6",
+            "text": "the driver crosses frame left to right",
+            "source": {
+              "asset_id": "asset-2",
+              "track": "visual"
+            }
+          },
+          {
+            "id": "card-asset-2-7",
+            "text": "the driver",
+            "source": {
+              "asset_id": "asset-2",
+              "track": "visual"
+            }
+          },
+          {
+            "id": "card-asset-2-8",
+            "text": "a grey overall",
+            "source": {
+              "asset_id": "asset-2",
+              "track": "visual"
+            }
+          },
+          {
+            "id": "card-asset-2-9",
+            "text": "the black sports car",
+            "source": {
+              "asset_id": "asset-2",
+              "track": "visual"
+            }
+          },
+          {
+            "id": "card-asset-2-10",
+            "text": "carbon fibre body",
+            "source": {
+              "asset_id": "asset-2",
+              "track": "visual"
+            }
+          }
+        ],
+        "analyzer_version": "1",
+        "limitations": [
+          "The video card was constructed from 3 sampled frames, not the entire clip."
+        ],
+        "coverage": {
+          "status": "partial",
+          "tracks": [
+            "visual"
+          ]
+        }
+      }
+    ],
+    "decisions": [
+      {
+        "field": "target",
+        "source": "computed",
+        "value": {
+          "effective_seconds": 5.166666666666667,
+          "frame_count": 124,
+          "nominal_seconds": 5,
+          "policy": "snap_up"
+        },
+        "explanation": "Effective timing and nominal duration are recorded separately; generated cuts use effective timing."
+      },
+      {
+        "field": "canvas",
+        "source": "computed",
+        "value": [
+          1344,
+          768
+        ],
+        "explanation": "Native short-edge canvas is aligned to 32 pixels; explicit megapixels replaces the native area budget."
+      },
+      {
+        "field": "assets.asset-1.preparation",
+        "source": "required_adapter_instruction",
+        "value": {
+          "sizing": "match",
+          "width": 1024,
+          "height": 576
+        },
+        "explanation": "These required input transforms are recorded separately from the original source metadata; the compiler has not executed media IO."
+      },
+      {
+        "field": "assets.asset-2.preparation",
+        "source": "required_adapter_instruction",
+        "value": {
+          "width": 1344,
+          "height": 768,
+          "frames": 120
+        },
+        "explanation": "These required input transforms are recorded separately from the original source metadata; the compiler has not executed media IO."
+      },
+      {
+        "field": "execution",
+        "source": "explicit_adapter_policy",
+        "value": {
+          "effort": "standard"
+        },
+        "explanation": "The injected adapters and explicit compiler repair configuration implement standard effort."
+      },
+      {
+        "field": "mode",
+        "source": "12.2#1",
+        "value": {
+          "clarification_policy": "continue_with_recorded_choice",
+          "confidence_kind": "routing_policy",
+          "aspect_mismatch": false,
+          "needs_clarification": false,
+          "mode": "ref2va",
+          "confidence": 1,
+          "rule": "12.2#1",
+          "signals": [
+            "Mode follows explicit structured choices and media socket requirements."
+          ]
+        },
+        "explanation": "Mode follows the production typed routing contract; publication capabilities are checked separately."
+      },
+      {
+        "field": "replacement_targets",
+        "source": "typed_identity_resolution",
+        "value": {
+          "targets": {
+            "\u003cPicture 1\u003e": "\u003cSubject 2\u003e"
+          },
+          "bindings": [
+            {
+              "picture": "\u003cPicture 1\u003e",
+              "target": "\u003cSubject 2\u003e",
+              "compatible": [
+                "\u003cSubject 2\u003e"
+              ],
+              "unsupported_qualifier": false,
+              "status": "observed_unique",
+              "reason": "The typed source reading establishes a unique compatible figure, or the caller names an unobserved one."
+            }
+          ]
+        },
+        "explanation": "Named figures unsupported by observed identity evidence remain user-symbolic; source look and leftover identity are never guessed."
+      },
+      {
+        "field": "content_scope",
+        "source": "typed_request_interpretation",
+        "value": {
+          "conflict_policy": "supplied_content_wins",
+          "requested": {
+            "speech": false,
+            "music": false,
+            "onscreen_text": false,
+            "magnitude": ""
+          },
+          "forbidden": {
+            "speech": false,
+            "music": false,
+            "onscreen_text": false,
+            "magnitude": ""
+          },
+          "allowed": {
+            "speech": false,
+            "music": true,
+            "onscreen_text": false,
+            "magnitude": "measured"
+          },
+          "dialogue": [],
+          "onscreen_text": [],
+          "reasoning": "The intent describes only a car moving out of the dark. It contains no request for speech, music, or visible lettering, and no explicit prohibition of those classes.",
+          "calls": [
+            {
+              "stage": "scope",
+              "attempt": 1,
+              "model": "deepseek-flash",
+              "usage": {
+                "input_tokens": 1121,
+                "output_tokens": 168
+              },
+              "valid": true
+            }
+          ]
+        },
+        "explanation": "Caller requests and prohibitions are interpreted before code applies the explicit creativity level."
+      },
+      {
+        "field": "reference_licence",
+        "source": "typed_attribute_precedence",
+        "value": {
+          "medium_decision": {
+            "disposition": "preserve",
+            "operation_quote": "",
+            "target": "",
+            "requested_style": "",
+            "reference_medium": "live-action",
+            "requested_medium": "",
+            "treatments": [],
+            "reasoning": "The intent only describes motion and lighting/action (a car pulling forward out of the dark); it does not expressly request a rendering-medium departure. The reference is live-action, so the result should preserve that medium.",
+            "calls": [
+              {
+                "stage": "medium",
+                "attempt": 1,
+                "model": "deepseek-flash",
+                "usage": {
+                  "input_tokens": 1059,
+                  "output_tokens": 210
+                },
+                "valid": true
+              }
+            ]
+          },
+          "identity": [
+            {
+              "descriptor_source": "reference",
+              "kind": "person",
+              "label": "\u003cSubject 1\u003e",
+              "descriptor": "the driver in red",
+              "retained_attributes": [
+                "a red jacket"
+              ],
+              "requested_attributes": [],
+              "request_quote": "",
+              "wardrobe_attributes": [
+                "a red jacket"
+              ]
+            },
+            {
+              "descriptor_source": "reference",
+              "kind": "person",
+              "label": "\u003cSubject 2\u003e",
+              "descriptor": "the driver",
+              "retained_attributes": [
+                "a grey overall"
+              ],
+              "requested_attributes": [],
+              "request_quote": "",
+              "wardrobe_attributes": [
+                "a grey overall"
+              ]
+            },
+            {
+              "descriptor_source": "reference",
+              "kind": "object",
+              "label": "\u003cSubject 3\u003e",
+              "descriptor": "the black sports car",
+              "retained_attributes": [
+                "carbon fibre body"
+              ],
+              "requested_attributes": [],
+              "request_quote": "",
+              "wardrobe_attributes": []
+            }
+          ],
+          "governs": {
+            "action": "request",
+            "framing": "reference",
+            "lighting": "request",
+            "medium": "reference",
+            "palette": "reference",
+            "wardrobe": "reference"
+          },
+          "reasons": {
+            "action": "The brief explicitly requests a new temporal action: the car pulls forward out of the dark. That requested motion overrides the source car's static or other action.",
+            "framing": "The brief only specifies movement/direction and a 16:9 canvas; it does not request a camera composition, shot scale, viewpoint, or camera movement, so the edit source's medium-wide framing governs.",
+            "lighting": "“Out of the dark” is an explicit lighting/visibility condition, so it governs lighting rather than the tunnel's observed sodium strip illumination.",
+            "medium": "The medium decision preserves the live-action reference medium; no rendering-medium departure was requested.",
+            "palette": "No scene color palette is requested; darkness is treated as lighting, not an explicit palette instruction, so the reference palette governs.",
+            "wardrobe": "No clothing or accessory change is requested, so the observed/target wardrobe from the references remains governed by reference."
+          },
+          "transform_phrase": null,
+          "transform_target": "",
+          "medium_transferred": false,
+          "style": {
+            "observed_phrase": "Live-action, cinematic",
+            "phrase": "Live-action, cinematic",
+            "source": "reference",
+            "reference_medium": "live-action",
+            "requested_medium": "",
+            "discrepancy": false,
+            "note": ""
+          },
+          "subjects": [
+            {
+              "label": "\u003cSubject 1\u003e",
+              "kind": "person",
+              "sources": [
+                "\u003cPicture 1\u003e"
+              ],
+              "descriptor": "the driver in red",
+              "attributes": [
+                "a red jacket"
+              ],
+              "pose": [],
+              "pose_licensed": false,
+              "retention": "fully_preserved",
+              "retention_note": "",
+              "appears_in": [],
+              "taken_over_by": ""
+            },
+            {
+              "label": "\u003cSubject 2\u003e",
+              "kind": "person",
+              "sources": [
+                "\u003cVideo 1\u003e"
+              ],
+              "descriptor": "the driver",
+              "attributes": [
+                "a grey overall"
+              ],
+              "pose": [],
+              "pose_licensed": false,
+              "retention": "fully_preserved",
+              "retention_note": "",
+              "appears_in": [],
+              "taken_over_by": ""
+            },
+            {
+              "label": "\u003cSubject 3\u003e",
+              "kind": "object",
+              "sources": [
+                "\u003cVideo 1\u003e"
+              ],
+              "descriptor": "the black sports car",
+              "attributes": [
+                "carbon fibre body"
+              ],
+              "pose": [],
+              "pose_licensed": false,
+              "retention": "fully_preserved",
+              "retention_note": "",
+              "appears_in": [],
+              "taken_over_by": ""
+            }
+          ],
+          "calls": [
+            {
+              "stage": "medium",
+              "attempt": 1,
+              "model": "deepseek-flash",
+              "usage": {
+                "input_tokens": 1059,
+                "output_tokens": 210
+              },
+              "valid": true
+            },
+            {
+              "stage": "identity_requirements",
+              "attempt": 1,
+              "model": "deepseek-flash",
+              "usage": {
+                "input_tokens": 2323,
+                "output_tokens": 818
+              },
+              "valid": true
+            },
+            {
+              "stage": "licence",
+              "attempt": 1,
+              "model": "deepseek-flash",
+              "usage": {
+                "input_tokens": 2341,
+                "output_tokens": 2202
+              },
+              "valid": true
+            }
+          ]
+        },
+        "explanation": "Each attribute follows explicit request or observed reference; poses and reference-sheet presentation are not subject identity."
+      },
+      {
+        "field": "shots.camera",
+        "source": "host_template",
+        "value": [
+          {
+            "subjects": [
+              "\u003cSubject 3\u003e",
+              "\u003cSubject 2\u003e"
+            ],
+            "sync_sound": [
+              "low engine idle swelling as the car takes up drive",
+              "tyre roll on concrete",
+              "sodium strip lights humming overhead"
+            ],
+            "start_ms": 0,
+            "purpose": "establish",
+            "framing": "medium wide",
+            "action": "Deep inside the concrete road tunnel, the sodium strip lights fade behind into blackness; at first only a faint gloss in the dark, then \u003cSubject 3\u003e the black sports car rolls forward out of the shadow, its carbon fibre body igniting in strips of amber overhead light, with \u003cSubject 2\u003e the driver in the red jacket moving alongside the front wing.",
+            "what_changes": "The car travels from invisible darkness into the lit span of the tunnel, its bodywork going from a faint gloss to fully lit.",
+            "camera": {
+              "type": "Push In",
+              "amplitude": "small",
+              "speed": "slow"
+            }
+          },
+          {
+            "subjects": [
+              "\u003cSubject 3\u003e",
+              "\u003cSubject 2\u003e"
+            ],
+            "sync_sound": [
+              "engine note rising as the car comes forward",
+              "tyres rolling over concrete joints",
+              "overhead strip lights buzzing"
+            ],
+            "start_ms": 2600,
+            "purpose": "develop",
+            "framing": "medium",
+            "action": "\u003cSubject 3\u003e the car keeps pulling forward along the tunnel lane, clearing the last patch of dark and swinging past the camera as it comes, headlight spill washing the concrete; \u003cSubject 2\u003e in the red jacket walks after it and is swallowed by the frame edge as the car takes the foreground.",
+            "what_changes": "The car moves from mid-tunnel to the immediate foreground, filling the frame and pushing the driver out of view.",
+            "camera": {
+              "type": "Tracking Shot",
+              "amplitude": "small",
+              "speed": "slow"
+            }
+          }
+        ],
+        "explanation": "Canonical camera events are assembled from the typed structural plan after prose."
+      },
+      {
+        "field": "creativity",
+        "source": "caller_or_default",
+        "value": {
+          "speech": false,
+          "music": true,
+          "onscreen_text": false,
+          "magnitude": "measured"
+        },
+        "explanation": "Scope reflects requested elements, explicit prohibitions, and the selected four-position creativity control."
+      }
+    ],
+    "calls": [
+      {
+        "stage": "scope",
+        "attempt": 1,
+        "model": "deepseek-flash",
+        "usage": {
+          "input_tokens": 1121,
+          "output_tokens": 168
+        },
+        "valid": true
+      },
+      {
+        "stage": "medium",
+        "attempt": 1,
+        "model": "deepseek-flash",
+        "usage": {
+          "input_tokens": 1059,
+          "output_tokens": 210
+        },
+        "valid": true
+      },
+      {
+        "stage": "identity_requirements",
+        "attempt": 1,
+        "model": "deepseek-flash",
+        "usage": {
+          "input_tokens": 2323,
+          "output_tokens": 818
+        },
+        "valid": true
+      },
+      {
+        "stage": "licence",
+        "attempt": 1,
+        "model": "deepseek-flash",
+        "usage": {
+          "input_tokens": 2341,
+          "output_tokens": 2202
+        },
+        "valid": true
+      },
+      {
+        "stage": "structure",
+        "attempt": 1,
+        "model": "deepseek-flash",
+        "usage": {
+          "input_tokens": 4736,
+          "output_tokens": 1749
+        },
+        "valid": true
+      },
+      {
+        "stage": "plan",
+        "attempt": 1,
+        "model": "deepseek-flash",
+        "usage": {
+          "input_tokens": 10566,
+          "output_tokens": 8620
+        },
+        "valid": true
+      }
+    ]
+  }
+}

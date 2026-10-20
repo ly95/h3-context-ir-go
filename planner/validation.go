@@ -133,6 +133,9 @@ func perceptionError(cause error) *contextir.Error {
 }
 
 func validateLocked(request contextir.Request, document contextir.Document, evidence []contextir.Evidence) error {
+	if !reflect.DeepEqual(request.LoRAs, document.LoRAs) && (len(request.LoRAs) != 0 || len(document.LoRAs) != 0) {
+		return issueError(contextir.CodeModelOutput, "plan", "loras", "Preserve all resolved LoRA decisions unchanged.", nil)
+	}
 	if document.Mode != request.Mode {
 		return issueError(contextir.CodeModelOutput, "plan", "mode", "Copy the explicit request mode unchanged.", nil)
 	}
@@ -180,6 +183,9 @@ func validateLocked(request contextir.Request, document contextir.Document, evid
 	}
 	if len(document.Evidence) != 0 && !reflect.DeepEqual(document.Evidence, evidence) {
 		return issueError(contextir.CodeModelOutput, "plan", "evidence", "Do not alter or invent evidence; omit it so the host can attach the original records.", nil)
+	}
+	if err := validateControls(request, document); err != nil {
+		return err
 	}
 	return validateProvenance(request, document, evidence)
 }

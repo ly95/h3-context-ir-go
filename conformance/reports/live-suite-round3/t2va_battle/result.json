@@ -1,0 +1,1204 @@
+{
+  "case_id": "t2va_battle",
+  "input_sha256": "",
+  "status": "compiled",
+  "calls": [
+    {
+      "stage": "scope",
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 851,
+        "output_tokens": 358
+      },
+      "usage_valid": true,
+      "images": 0
+    },
+    {
+      "stage": "medium",
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 762,
+        "output_tokens": 176
+      },
+      "usage_valid": true,
+      "images": 0
+    },
+    {
+      "stage": "licence",
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 1552,
+        "output_tokens": 338
+      },
+      "usage_valid": true,
+      "images": 0
+    },
+    {
+      "stage": "structure",
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 2439,
+        "output_tokens": 1580
+      },
+      "usage_valid": true,
+      "images": 0
+    },
+    {
+      "stage": "plan",
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 8119,
+        "output_tokens": 6675
+      },
+      "usage_valid": true,
+      "images": 0
+    },
+    {
+      "stage": "plan",
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 8152,
+        "output_tokens": 9528
+      },
+      "usage_valid": true,
+      "images": 0
+    }
+  ],
+  "elapsed_ms": 89024,
+  "result": {
+    "mode_decision": {
+      "confidence_kind": "routing_policy",
+      "aspect_mismatch": false,
+      "needs_clarification": false,
+      "mode": "t2va",
+      "confidence": 1,
+      "rule": "12.2#3",
+      "signals": [
+        "Mode follows explicit structured choices and media socket requirements."
+      ]
+    },
+    "scope_decision": {
+      "requested": {
+        "speech": true,
+        "music": false,
+        "onscreen_text": false,
+        "magnitude": ""
+      },
+      "forbidden": {
+        "speech": false,
+        "music": false,
+        "onscreen_text": false,
+        "magnitude": ""
+      },
+      "allowed": {
+        "speech": true,
+        "music": true,
+        "onscreen_text": false,
+        "magnitude": "measured"
+      },
+      "dialogue": [
+        {
+          "text": "Hold the line!",
+          "language": "English",
+          "speaker_hint": "the knight",
+          "voiceover": false,
+          "kind": "",
+          "delivery": ""
+        }
+      ],
+      "onscreen_text": [],
+      "reasoning": "The supplied structured dialogue requests spoken words, so requested.speech is true and the exact line is copied. No music or onscreen text is requested, and no prohibitions are present.",
+      "calls": [
+        {
+          "stage": "scope",
+          "attempt": 1,
+          "model": "deepseek-flash",
+          "usage": {
+            "input_tokens": 851,
+            "output_tokens": 358
+          },
+          "valid": true
+        }
+      ]
+    },
+    "licence": {
+      "medium_decision": {
+        "disposition": "no_reference",
+        "operation_quote": "",
+        "target": "",
+        "requested_style": "",
+        "reference_medium": "",
+        "requested_medium": "",
+        "treatments": [
+          "cinematic"
+        ],
+        "reasoning": "No visual reference is supplied, so there is no source medium to preserve or convert. The request describes a scene and includes the treatment \"cinematic,\" but names no visual medium.",
+        "calls": [
+          {
+            "stage": "medium",
+            "attempt": 1,
+            "model": "deepseek-flash",
+            "usage": {
+              "input_tokens": 762,
+              "output_tokens": 176
+            },
+            "valid": true
+          }
+        ]
+      },
+      "identity": [],
+      "governs": {
+        "action": "request",
+        "framing": "request",
+        "lighting": "request",
+        "medium": "request",
+        "palette": "request",
+        "wardrobe": "request"
+      },
+      "reasons": {
+        "action": "No visual reference or subject plate is supplied, so the requested action of the knight riding the dragon is governed entirely by the request.",
+        "framing": "No visual reference is supplied, so framing and composition are request-governed; the 16:9 aspect and 10-second duration are canvas/timing configuration rather than framing instructions.",
+        "lighting": "No visual reference is supplied, so lighting is request-governed; the burning battlefield and cinematic treatment inform the requested look.",
+        "medium": "No visual reference is supplied and the medium_decision establishes no reference medium; the request uses only the treatment \"cinematic\" without naming a rendering medium, so the default Live-action, cinematic medium applies.",
+        "palette": "No visual reference is supplied, so palette is request-governed; the burning battlefield and cinematic treatment inform the requested look.",
+        "wardrobe": "No visual reference or subject identity is supplied, so the knight's battered plate armour is governed by the request."
+      },
+      "transform_phrase": null,
+      "transform_target": "",
+      "medium_transferred": false,
+      "style": {
+        "observed_phrase": "",
+        "phrase": "Live-action, cinematic",
+        "source": "default",
+        "reference_medium": "",
+        "requested_medium": "",
+        "discrepancy": false,
+        "note": ""
+      },
+      "calls": [
+        {
+          "stage": "medium",
+          "attempt": 1,
+          "model": "deepseek-flash",
+          "usage": {
+            "input_tokens": 762,
+            "output_tokens": 176
+          },
+          "valid": true
+        },
+        {
+          "stage": "licence",
+          "attempt": 1,
+          "model": "deepseek-flash",
+          "usage": {
+            "input_tokens": 1552,
+            "output_tokens": 338
+          },
+          "valid": true
+        }
+      ]
+    },
+    "budget": {
+      "prompt_tokens": 847,
+      "target_video_rows": 72576,
+      "target_audio_rows": 810,
+      "known_reference_rows": 0,
+      "in_trained_band": true
+    },
+    "findings": [
+      {
+        "rule": "A2-sound-duplicated",
+        "severity": "WARN",
+        "msg": "overall_soundscape repeats content already in the description rather than a separate layer"
+      }
+    ],
+    "status": "compiled",
+    "version": "contextir/compiler/v1",
+    "brief": {
+      "effort": "standard",
+      "seconds_explicit": true,
+      "aspect_explicit": true,
+      "intent": "a knight in battered plate armour rides a huge black dragon low over a burning battlefield, cinematic",
+      "seconds": 10,
+      "aspect": "16:9",
+      "dialogue": [
+        {
+          "text": "Hold the line!",
+          "language": "English",
+          "speaker_hint": "the knight",
+          "voiceover": false,
+          "kind": "",
+          "delivery": ""
+        }
+      ],
+      "creativity": "balanced"
+    },
+    "request": {
+      "instruction": "a knight in battered plate armour rides a huge black dragon low over a burning battlefield, cinematic",
+      "mode": "t2va",
+      "target": {
+        "duration_ms": 10125,
+        "frame_count": 243,
+        "aspect_ratio": "16:9",
+        "fps": {
+          "numerator": 24,
+          "denominator": 1
+        },
+        "width": 1344,
+        "height": 768
+      },
+      "dialogue": [
+        {
+          "id": "line-1",
+          "speaker_ids": [
+            "speaker-1"
+          ],
+          "language": "English",
+          "text": "Hold the line!"
+        }
+      ],
+      "allow_creative_additions": true,
+      "allow_generated_dialogue": false,
+      "pinned_shots": [
+        {
+          "id": "shot-1",
+          "start_ms": 0,
+          "end_ms": 3200
+        },
+        {
+          "id": "shot-2",
+          "start_ms": 3200,
+          "end_ms": 6500
+        },
+        {
+          "id": "shot-3",
+          "start_ms": 6500,
+          "end_ms": 10125
+        }
+      ],
+      "addition_scope": {
+        "dialogue": true,
+        "music": true,
+        "visible_text": false
+      }
+    },
+    "structure": {
+      "replacement_targets": {},
+      "style": "Live-action, cinematic",
+      "mode": "t2va",
+      "assets": [],
+      "shots": [
+        {
+          "subjects": [
+            "the knight",
+            "the black dragon",
+            "the burning battlefield"
+          ],
+          "sync_sound": [
+            "heavy wingbeats",
+            "roaring flames",
+            "distant battle clamor"
+          ],
+          "start_ms": 0,
+          "purpose": "establish",
+          "framing": "wide",
+          "action": "A huge black dragon beats low across a burning battlefield, the battered knight braced on its back as fire and smoke streak past beneath them.",
+          "what_changes": "The dragon and rider sweep from distant smoke into clearer view, revealing the burning field below.",
+          "camera": {
+            "type": "Tracking Shot",
+            "amplitude": "small",
+            "speed": "slow"
+          }
+        },
+        {
+          "subjects": [
+            "the knight",
+            "the black dragon"
+          ],
+          "sync_sound": [
+            "wind rushing past armor",
+            "creaking harness",
+            "dragon's low rumble"
+          ],
+          "start_ms": 3200,
+          "purpose": "develop",
+          "framing": "medium close",
+          "action": "The knight hauls on the harness and calls out over the wind, visor turned toward the embattled ranks below while the dragon banks sharply.",
+          "what_changes": "The dragon banks, bringing the knight's visor toward camera as flame-light sweeps across the battered plate.",
+          "camera": {
+            "type": "Push In",
+            "amplitude": "small",
+            "speed": "slow"
+          }
+        },
+        {
+          "subjects": [
+            "the knight",
+            "the black dragon",
+            "the burning battlefield"
+          ],
+          "sync_sound": [
+            "powerful wingbeats",
+            "smoke-laden wind",
+            "crackling fires fading below"
+          ],
+          "start_ms": 6500,
+          "purpose": "resolve",
+          "framing": "wide",
+          "action": "The black dragon climbs through a curtain of smoke, wings hammering, as the knight lowers into the saddle and the battlefield falls away beneath them.",
+          "what_changes": "The pair rise out of the smoke into clearer air, leaving the burning battlefield spread below.",
+          "camera": {
+            "type": "Pull Out",
+            "amplitude": "large",
+            "speed": "slow"
+          }
+        }
+      ],
+      "dialogue": [
+        {
+          "text": "Hold the line!",
+          "language": "English",
+          "speaker_hint": "the knight",
+          "voiceover": false,
+          "kind": "",
+          "delivery": ""
+        }
+      ],
+      "onscreen_text": [],
+      "requested": {
+        "speech": true,
+        "music": false,
+        "onscreen_text": false,
+        "magnitude": ""
+      },
+      "forbidden": {
+        "speech": false,
+        "music": false,
+        "onscreen_text": false,
+        "magnitude": ""
+      },
+      "reasoning": "The request is a text-only cinematic scene with no visual references or attached assets, so all imagery is generated from prose and the medium defaults to live-action cinematic. The supplied knight dialogue is preserved exactly as the only spoken line. No music or visible lettering is requested, and no explicit prohibitions apply. Three shots cover the 10.1-second target: an establishing low pass, a closer beat for the knight's command, and a resolving climb through smoke."
+    },
+    "scope": {
+      "speech": true,
+      "music": true,
+      "onscreen_text": false,
+      "magnitude": "measured"
+    },
+    "document": {
+      "version": "contextir/v1",
+      "mode": "t2va",
+      "target": {
+        "duration_ms": 10125,
+        "frame_count": 243,
+        "aspect_ratio": "16:9",
+        "fps": {
+          "numerator": 24,
+          "denominator": 1
+        },
+        "width": 1344,
+        "height": 768
+      },
+      "subjects": [
+        {
+          "kind": "person",
+          "attributes": [
+            "battered plate armour"
+          ],
+          "origin": "user",
+          "id": "knight",
+          "description": "A knight in battered plate armour, riding the dragon.",
+          "shot_ids": [
+            "shot-1",
+            "shot-2",
+            "shot-3"
+          ]
+        },
+        {
+          "kind": "animal",
+          "attributes": [
+            "huge",
+            "black"
+          ],
+          "origin": "user",
+          "id": "dragon",
+          "description": "A huge black dragon flying low over the battlefield.",
+          "shot_ids": [
+            "shot-1",
+            "shot-2",
+            "shot-3"
+          ]
+        },
+        {
+          "kind": "environment",
+          "attributes": [
+            "burning"
+          ],
+          "origin": "user",
+          "id": "battlefield",
+          "description": "A burning battlefield below the dragon and rider.",
+          "shot_ids": [
+            "shot-1",
+            "shot-2",
+            "shot-3"
+          ]
+        }
+      ],
+      "speakers": [
+        {
+          "onscreen": true,
+          "id": "speaker-1",
+          "description": "The knight in battered plate armour, onscreen.",
+          "subject_id": "knight"
+        }
+      ],
+      "dialogue": [
+        {
+          "id": "line-1",
+          "speaker_ids": [
+            "speaker-1"
+          ],
+          "language": "English",
+          "text": "Hold the line!"
+        }
+      ],
+      "summary": [
+        {
+          "text": "A "
+        },
+        {
+          "subject_id": "knight"
+        },
+        {
+          "text": " rides a "
+        },
+        {
+          "subject_id": "dragon"
+        },
+        {
+          "text": " low over a burning "
+        },
+        {
+          "subject_id": "battlefield"
+        },
+        {
+          "text": " in a cinematic aerial pass."
+        }
+      ],
+      "style": "Live-action, cinematic",
+      "shots": [
+        {
+          "id": "shot-1",
+          "start_ms": 0,
+          "end_ms": 3200,
+          "description": [
+            {
+              "text": "A huge black "
+            },
+            {
+              "subject_id": "dragon"
+            },
+            {
+              "text": " sweeps low over a "
+            },
+            {
+              "subject_id": "battlefield"
+            },
+            {
+              "text": ", its wings spread wide and its neck stretched forward. The "
+            },
+            {
+              "subject_id": "knight"
+            },
+            {
+              "text": " sits braced in a worn saddle harness on the dragon's back, battered plate armour catching the orange firelight. Below them, lines of flame and thick smoke cross broken ground, and embers stream past in the wind. The dragon and rider rush from distant smoke into clearer air, revealing the burning field beneath, with scattered fires and ruined earth stretching toward the horizon."
+            }
+          ],
+          "events": [
+            {
+              "kind": "visual",
+              "at_ms": 0,
+              "description": [
+                {
+                  "text": "The black "
+                },
+                {
+                  "subject_id": "dragon"
+                },
+                {
+                  "text": " and the "
+                },
+                {
+                  "subject_id": "knight"
+                },
+                {
+                  "text": " sweep low over the burning field, wings beating against the smoke."
+                }
+              ]
+            },
+            {
+              "kind": "sound",
+              "at_ms": 700,
+              "description": [
+                {
+                  "text": "Heavy wingbeats and roaring flames fill the air."
+                }
+              ]
+            },
+            {
+              "kind": "action",
+              "at_ms": 1500,
+              "description": [
+                {
+                  "text": "The "
+                },
+                {
+                  "subject_id": "knight"
+                },
+                {
+                  "text": " braces in the saddle while embers stream past the battered plate."
+                }
+              ]
+            },
+            {
+              "kind": "sound",
+              "at_ms": 2500,
+              "description": [
+                {
+                  "text": "Wind and distant battle clamor rise beneath the wingbeats."
+                }
+              ]
+            },
+            {
+              "kind": "camera",
+              "description": [
+                {
+                  "text": "The camera tracks with the subject with small amplitude at slow speed."
+                }
+              ]
+            },
+            {
+              "kind": "dialogue",
+              "dialogue": {
+                "line_id": "line-1",
+                "text": "Hold the line!"
+              }
+            }
+          ]
+        },
+        {
+          "id": "shot-2",
+          "start_ms": 3200,
+          "end_ms": 6500,
+          "description": [
+            {
+              "text": "The "
+            },
+            {
+              "subject_id": "dragon"
+            },
+            {
+              "text": " banks sharply, and the "
+            },
+            {
+              "subject_id": "knight"
+            },
+            {
+              "text": " hauls on the harness. The visor turns toward the embattled ranks below as flame-light sweeps across the battered plate. Wind presses the loose straps flat against the saddle, and the dragon's low rumble vibrates through its neck and chest. The bank brings the knight and dragon into a closer, clearer view against the smoke, with the burning field tilting below them."
+            }
+          ],
+          "events": [
+            {
+              "kind": "visual",
+              "at_ms": 3200,
+              "description": [
+                {
+                  "text": "The "
+                },
+                {
+                  "subject_id": "dragon"
+                },
+                {
+                  "text": " banks, and flame-light crosses the "
+                },
+                {
+                  "subject_id": "knight"
+                },
+                {
+                  "text": "'s battered plate."
+                }
+              ]
+            },
+            {
+              "kind": "action",
+              "at_ms": 4100,
+              "description": [
+                {
+                  "text": "The "
+                },
+                {
+                  "subject_id": "knight"
+                },
+                {
+                  "text": " hauls on the harness and turns the visor toward the ranks below."
+                }
+              ]
+            },
+            {
+              "kind": "sound",
+              "at_ms": 5700,
+              "description": [
+                {
+                  "text": "Wind rushes past armour, the harness creaks, and the dragon gives a low rumble."
+                }
+              ]
+            },
+            {
+              "kind": "camera",
+              "description": [
+                {
+                  "text": "The camera pushes in with small amplitude at slow speed."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "shot-3",
+          "start_ms": 6500,
+          "end_ms": 10125,
+          "description": [
+            {
+              "text": "The "
+            },
+            {
+              "subject_id": "dragon"
+            },
+            {
+              "text": " climbs through a curtain of smoke, wings hammering and embers sliding off its wings. The "
+            },
+            {
+              "subject_id": "knight"
+            },
+            {
+              "text": " settles lower into the saddle as the "
+            },
+            {
+              "subject_id": "battlefield"
+            },
+            {
+              "text": " falls away beneath them. Fires shrink to scattered orange points under ash and drifting smoke, and clearer air opens above. The pair rise out of the smoke, leaving the burning field spread below in a wide, dark plain crossed by flame."
+            }
+          ],
+          "events": [
+            {
+              "kind": "visual",
+              "at_ms": 6500,
+              "description": [
+                {
+                  "text": "The "
+                },
+                {
+                  "subject_id": "dragon"
+                },
+                {
+                  "text": " climbs through smoke, wings hammering."
+                }
+              ]
+            },
+            {
+              "kind": "action",
+              "at_ms": 7600,
+              "description": [
+                {
+                  "text": "The "
+                },
+                {
+                  "subject_id": "knight"
+                },
+                {
+                  "text": " settles lower into the saddle as the "
+                },
+                {
+                  "subject_id": "battlefield"
+                },
+                {
+                  "text": " falls away."
+                }
+              ]
+            },
+            {
+              "kind": "sound",
+              "at_ms": 9000,
+              "description": [
+                {
+                  "text": "Powerful wingbeats and smoke-laden wind fade above crackling fires."
+                }
+              ]
+            },
+            {
+              "kind": "camera",
+              "description": [
+                {
+                  "text": "The camera pulls out with large amplitude at slow speed."
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "soundscape": "Heavy wingbeats, roaring flames, wind rushing over armour, creaking harness, a dragon's low rumble, and distant battle clamor.",
+      "music": "N/A",
+      "claims": [
+        {
+          "id": "claim-user-1",
+          "origin": "user",
+          "text": "A knight in battered plate armour rides a huge black dragon low over a burning battlefield, cinematic."
+        },
+        {
+          "id": "claim-creative-1",
+          "origin": "creative",
+          "text": "The knight is braced in a worn saddle harness with loose straps."
+        },
+        {
+          "id": "claim-creative-2",
+          "origin": "creative",
+          "text": "The battlefield has broken ground, embers, ash, drifting smoke, and scattered fires on a wide dark plain."
+        },
+        {
+          "id": "claim-creative-3",
+          "origin": "creative",
+          "text": "The knight's visor turns toward the embattled ranks, and flame-light sweeps across the battered plate."
+        },
+        {
+          "id": "claim-creative-4",
+          "origin": "creative",
+          "text": "The dragon gives a low rumble and powerful wingbeats while wind rushes past the armour."
+        }
+      ]
+    },
+    "artifact": {
+      "version": "contextir-h3/artifact-v1",
+      "compiler_version": "contextir-h3/v1.2",
+      "format_version": "minimax-h3/prompt-v1",
+      "mode": "t2va",
+      "target": {
+        "duration_ms": 10125,
+        "frame_count": 243,
+        "aspect_ratio": "16:9",
+        "fps": {
+          "numerator": 24,
+          "denominator": 1
+        },
+        "width": 1344,
+        "height": 768
+      },
+      "profile": {
+        "name": "h3-comfyui-17k5-v1",
+        "format": "minimax-h3/prompt-v1",
+        "fps": {
+          "numerator": 24,
+          "denominator": 1
+        },
+        "modes": [
+          "t2va",
+          "i2va",
+          "l2va",
+          "fl2va",
+          "ref2va"
+        ],
+        "frame_grid": {
+          "modulus": 17,
+          "remainder": 5
+        },
+        "min_frames": 5,
+        "max_frames": 3600,
+        "canvas_multiple": 32,
+        "limits": {
+          "pictures": 9,
+          "videos": 3,
+          "video_audio": 3,
+          "standalone_audio": 3
+        },
+        "supports_reference_frame_anchors": false,
+        "supports_source_intervals": false
+      },
+      "prompt": "integrated_multimodal_description: [Shot 1] Live-action, cinematic. A huge black A huge black dragon flying low over the battlefield. sweeps low over a A burning battlefield below the dragon and rider., its wings spread wide and its neck stretched forward. The A knight in battered plate armour, riding the dragon. sits braced in a worn saddle harness on the dragon's back, battered plate armour catching the orange firelight. Below them, lines of flame and thick smoke cross broken ground, and embers stream past in the wind. The dragon and rider rush from distant smoke into clearer air, revealing the burning field beneath, with scattered fires and ruined earth stretching toward the horizon. At 00:00.000, The black A huge black dragon flying low over the battlefield. and the A knight in battered plate armour, riding the dragon. sweep low over the burning field, wings beating against the smoke. At 00:00.700, Heavy wingbeats and roaring flames fill the air. At 00:01.500, The A knight in battered plate armour, riding the dragon. braces in the saddle while embers stream past the battered plate. At 00:02.500, Wind and distant battle clamor rise beneath the wingbeats. The camera tracks with the subject with small amplitude at slow speed. The knight in battered plate armour, onscreen. (S1) says: \u003cd\u003e[English] Hold the line!\u003c/d\u003e [Shot 2] At 00:03.200, the shot cuts to The A huge black dragon flying low over the battlefield. banks sharply, and the A knight in battered plate armour, riding the dragon. hauls on the harness. The visor turns toward the embattled ranks below as flame-light sweeps across the battered plate. Wind presses the loose straps flat against the saddle, and the dragon's low rumble vibrates through its neck and chest. The bank brings the knight and dragon into a closer, clearer view against the smoke, with the burning field tilting below them. At 00:03.200, The A huge black dragon flying low over the battlefield. banks, and flame-light crosses the A knight in battered plate armour, riding the dragon.'s battered plate. At 00:04.100, The A knight in battered plate armour, riding the dragon. hauls on the harness and turns the visor toward the ranks below. At 00:05.700, Wind rushes past armour, the harness creaks, and the dragon gives a low rumble. The camera pushes in with small amplitude at slow speed. [Shot 3] At 00:06.500, the shot cuts to The A huge black dragon flying low over the battlefield. climbs through a curtain of smoke, wings hammering and embers sliding off its wings. The A knight in battered plate armour, riding the dragon. settles lower into the saddle as the A burning battlefield below the dragon and rider. falls away beneath them. Fires shrink to scattered orange points under ash and drifting smoke, and clearer air opens above. The pair rise out of the smoke, leaving the burning field spread below in a wide, dark plain crossed by flame. At 00:06.500, The A huge black dragon flying low over the battlefield. climbs through smoke, wings hammering. At 00:07.600, The A knight in battered plate armour, riding the dragon. settles lower into the saddle as the A burning battlefield below the dragon and rider. falls away. At 00:09.000, Powerful wingbeats and smoke-laden wind fade above crackling fires. The camera pulls out with large amplitude at slow speed.\n\noverall_soundscape: Heavy wingbeats, roaring flames, wind rushing over armour, creaking harness, a dragon's low rumble, and distant battle clamor.\n\nnon_diegetic_music: N/A\n",
+      "manifest": {
+        "media": [],
+        "subjects": [
+          {
+            "id": "knight",
+            "label": "\u003cSubject 1\u003e"
+          },
+          {
+            "id": "dragon",
+            "label": "\u003cSubject 2\u003e"
+          },
+          {
+            "id": "battlefield",
+            "label": "\u003cSubject 3\u003e"
+          }
+        ],
+        "references": [],
+        "speakers": [
+          {
+            "id": "speaker-1",
+            "label": "(S1)"
+          }
+        ]
+      },
+      "frames": 243,
+      "effective_duration_seconds": {
+        "numerator": 81,
+        "denominator": 8
+      },
+      "document_sha256": "ccd2b80dda7ec5d1341951e843d88143d6d3e98334ac198f56d1782c4252f0e1",
+      "profile_sha256": "234d423c54663839ad8ef0aab7924d4da6d8bb212ced940e0b240639c3dcbed4",
+      "prompt_sha256": "8a8a2c6baaf4ad3cf77836f0a944e63ae4d3aece340a6f671264e2a0192f564e",
+      "manifest_sha256": "2b9bfbbb609aac050ca495509f5a99414219a17484d20f60097a1302f6088411",
+      "sha256": "999d8ccc2278e2cb9bc2805f6c054625fbabc6400d588b9433954cb14670a7c0"
+    },
+    "decisions": [
+      {
+        "field": "target",
+        "source": "computed",
+        "value": {
+          "effective_seconds": 10.125,
+          "frame_count": 243,
+          "nominal_seconds": 10,
+          "policy": "snap_up"
+        },
+        "explanation": "Effective timing and nominal duration are recorded separately; generated cuts use effective timing."
+      },
+      {
+        "field": "canvas",
+        "source": "computed",
+        "value": [
+          1344,
+          768
+        ],
+        "explanation": "Native short-edge canvas is aligned to 32 pixels; explicit megapixels replaces the native area budget."
+      },
+      {
+        "field": "execution",
+        "source": "explicit_adapter_policy",
+        "value": {
+          "effort": "standard"
+        },
+        "explanation": "The injected adapters and explicit compiler repair configuration implement standard effort."
+      },
+      {
+        "field": "mode",
+        "source": "12.2#3",
+        "value": {
+          "confidence_kind": "routing_policy",
+          "aspect_mismatch": false,
+          "needs_clarification": false,
+          "mode": "t2va",
+          "confidence": 1,
+          "rule": "12.2#3",
+          "signals": [
+            "Mode follows explicit structured choices and media socket requirements."
+          ]
+        },
+        "explanation": "Mode follows the production typed routing contract; publication capabilities are checked separately."
+      },
+      {
+        "field": "content_scope",
+        "source": "typed_request_interpretation",
+        "value": {
+          "requested": {
+            "speech": true,
+            "music": false,
+            "onscreen_text": false,
+            "magnitude": ""
+          },
+          "forbidden": {
+            "speech": false,
+            "music": false,
+            "onscreen_text": false,
+            "magnitude": ""
+          },
+          "allowed": {
+            "speech": true,
+            "music": true,
+            "onscreen_text": false,
+            "magnitude": "measured"
+          },
+          "dialogue": [
+            {
+              "text": "Hold the line!",
+              "language": "English",
+              "speaker_hint": "the knight",
+              "voiceover": false,
+              "kind": "",
+              "delivery": ""
+            }
+          ],
+          "onscreen_text": [],
+          "reasoning": "The supplied structured dialogue requests spoken words, so requested.speech is true and the exact line is copied. No music or onscreen text is requested, and no prohibitions are present.",
+          "calls": [
+            {
+              "stage": "scope",
+              "attempt": 1,
+              "model": "deepseek-flash",
+              "usage": {
+                "input_tokens": 851,
+                "output_tokens": 358
+              },
+              "valid": true
+            }
+          ]
+        },
+        "explanation": "Caller requests and prohibitions are interpreted before code applies the explicit creativity level."
+      },
+      {
+        "field": "reference_licence",
+        "source": "typed_attribute_precedence",
+        "value": {
+          "medium_decision": {
+            "disposition": "no_reference",
+            "operation_quote": "",
+            "target": "",
+            "requested_style": "",
+            "reference_medium": "",
+            "requested_medium": "",
+            "treatments": [
+              "cinematic"
+            ],
+            "reasoning": "No visual reference is supplied, so there is no source medium to preserve or convert. The request describes a scene and includes the treatment \"cinematic,\" but names no visual medium.",
+            "calls": [
+              {
+                "stage": "medium",
+                "attempt": 1,
+                "model": "deepseek-flash",
+                "usage": {
+                  "input_tokens": 762,
+                  "output_tokens": 176
+                },
+                "valid": true
+              }
+            ]
+          },
+          "identity": [],
+          "governs": {
+            "action": "request",
+            "framing": "request",
+            "lighting": "request",
+            "medium": "request",
+            "palette": "request",
+            "wardrobe": "request"
+          },
+          "reasons": {
+            "action": "No visual reference or subject plate is supplied, so the requested action of the knight riding the dragon is governed entirely by the request.",
+            "framing": "No visual reference is supplied, so framing and composition are request-governed; the 16:9 aspect and 10-second duration are canvas/timing configuration rather than framing instructions.",
+            "lighting": "No visual reference is supplied, so lighting is request-governed; the burning battlefield and cinematic treatment inform the requested look.",
+            "medium": "No visual reference is supplied and the medium_decision establishes no reference medium; the request uses only the treatment \"cinematic\" without naming a rendering medium, so the default Live-action, cinematic medium applies.",
+            "palette": "No visual reference is supplied, so palette is request-governed; the burning battlefield and cinematic treatment inform the requested look.",
+            "wardrobe": "No visual reference or subject identity is supplied, so the knight's battered plate armour is governed by the request."
+          },
+          "transform_phrase": null,
+          "transform_target": "",
+          "medium_transferred": false,
+          "style": {
+            "observed_phrase": "",
+            "phrase": "Live-action, cinematic",
+            "source": "default",
+            "reference_medium": "",
+            "requested_medium": "",
+            "discrepancy": false,
+            "note": ""
+          },
+          "calls": [
+            {
+              "stage": "medium",
+              "attempt": 1,
+              "model": "deepseek-flash",
+              "usage": {
+                "input_tokens": 762,
+                "output_tokens": 176
+              },
+              "valid": true
+            },
+            {
+              "stage": "licence",
+              "attempt": 1,
+              "model": "deepseek-flash",
+              "usage": {
+                "input_tokens": 1552,
+                "output_tokens": 338
+              },
+              "valid": true
+            }
+          ]
+        },
+        "explanation": "Each attribute follows explicit request or observed reference; poses and reference-sheet presentation are not subject identity."
+      },
+      {
+        "field": "dialogue",
+        "source": "host_literal_slots",
+        "value": [
+          {
+            "placeholder": "{{D1}}",
+            "line_id": "line-1",
+            "shot_id": "shot-1",
+            "speaker_ids": [
+              "speaker-1"
+            ],
+            "speaker_hint": "the knight",
+            "language": "English",
+            "voiceover": false,
+            "words": 3
+          }
+        ],
+        "explanation": "The structure stage fixes placement; the host restores exact dialogue after prose. The writer does not author the supplied words."
+      },
+      {
+        "field": "shots.camera",
+        "source": "host_template",
+        "value": [
+          {
+            "subjects": [
+              "the knight",
+              "the black dragon",
+              "the burning battlefield"
+            ],
+            "sync_sound": [
+              "heavy wingbeats",
+              "roaring flames",
+              "distant battle clamor"
+            ],
+            "start_ms": 0,
+            "purpose": "establish",
+            "framing": "wide",
+            "action": "A huge black dragon beats low across a burning battlefield, the battered knight braced on its back as fire and smoke streak past beneath them.",
+            "what_changes": "The dragon and rider sweep from distant smoke into clearer view, revealing the burning field below.",
+            "camera": {
+              "type": "Tracking Shot",
+              "amplitude": "small",
+              "speed": "slow"
+            }
+          },
+          {
+            "subjects": [
+              "the knight",
+              "the black dragon"
+            ],
+            "sync_sound": [
+              "wind rushing past armor",
+              "creaking harness",
+              "dragon's low rumble"
+            ],
+            "start_ms": 3200,
+            "purpose": "develop",
+            "framing": "medium close",
+            "action": "The knight hauls on the harness and calls out over the wind, visor turned toward the embattled ranks below while the dragon banks sharply.",
+            "what_changes": "The dragon banks, bringing the knight's visor toward camera as flame-light sweeps across the battered plate.",
+            "camera": {
+              "type": "Push In",
+              "amplitude": "small",
+              "speed": "slow"
+            }
+          },
+          {
+            "subjects": [
+              "the knight",
+              "the black dragon",
+              "the burning battlefield"
+            ],
+            "sync_sound": [
+              "powerful wingbeats",
+              "smoke-laden wind",
+              "crackling fires fading below"
+            ],
+            "start_ms": 6500,
+            "purpose": "resolve",
+            "framing": "wide",
+            "action": "The black dragon climbs through a curtain of smoke, wings hammering, as the knight lowers into the saddle and the battlefield falls away beneath them.",
+            "what_changes": "The pair rise out of the smoke into clearer air, leaving the burning battlefield spread below.",
+            "camera": {
+              "type": "Pull Out",
+              "amplitude": "large",
+              "speed": "slow"
+            }
+          }
+        ],
+        "explanation": "Canonical camera events are assembled from the typed structural plan after prose."
+      },
+      {
+        "field": "creativity",
+        "source": "caller_or_default",
+        "value": {
+          "speech": true,
+          "music": true,
+          "onscreen_text": false,
+          "magnitude": "measured"
+        },
+        "explanation": "Scope reflects requested elements, explicit prohibitions, and the selected four-position creativity control."
+      }
+    ],
+    "calls": [
+      {
+        "stage": "scope",
+        "attempt": 1,
+        "model": "deepseek-flash",
+        "usage": {
+          "input_tokens": 851,
+          "output_tokens": 358
+        },
+        "valid": true
+      },
+      {
+        "stage": "medium",
+        "attempt": 1,
+        "model": "deepseek-flash",
+        "usage": {
+          "input_tokens": 762,
+          "output_tokens": 176
+        },
+        "valid": true
+      },
+      {
+        "stage": "licence",
+        "attempt": 1,
+        "model": "deepseek-flash",
+        "usage": {
+          "input_tokens": 1552,
+          "output_tokens": 338
+        },
+        "valid": true
+      },
+      {
+        "stage": "structure",
+        "attempt": 1,
+        "model": "deepseek-flash",
+        "usage": {
+          "input_tokens": 2439,
+          "output_tokens": 1580
+        },
+        "valid": true
+      },
+      {
+        "stage": "plan",
+        "attempt": 1,
+        "model": "deepseek-flash",
+        "usage": {
+          "input_tokens": 8119,
+          "output_tokens": 6675
+        },
+        "valid": true
+      },
+      {
+        "stage": "plan",
+        "attempt": 2,
+        "model": "deepseek-flash",
+        "usage": {
+          "input_tokens": 8152,
+          "output_tokens": 9528
+        },
+        "valid": true
+      }
+    ]
+  }
+}

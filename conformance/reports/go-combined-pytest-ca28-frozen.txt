@@ -1,0 +1,493 @@
+........................................................................ [  7%]
+........................................................................ [ 14%]
+........................................................................ [ 21%]
+........................................................................ [ 29%]
+........................................................................ [ 36%]
+........................................................................ [ 43%]
+............................................................FF.......... [ 50%]
+........................................................................ [ 58%]
+..................FFFFFF....................F........................... [ 65%]
+.............................................................F..F....... [ 72%]
+.......F....................F........................................... [ 79%]
+.F...................................................................... [ 87%]
+........................................................................ [ 94%]
+.......................................................                  [100%]
+=================================== FAILURES ===================================
+_ test_the_callers_characterisation_reaches_the_definition_not_the_soundscape __
+
+    def test_the_callers_characterisation_reaches_the_definition_not_the_soundscape():
+        """It used to arrive via the audio card's `summary`, which the draft appended to ambient sound —
+        so `overall_soundscape` carried "a spoken vocal reference supplying voice timbre and delivery,
+        described by the caller as: ... (6.00s)". That section is for the target video's ambience. And the
+        definition line said "containing a spoken vocal layer", which tells the encoder nothing, while
+        being the only channel it has for that audio."""
+        from h3ir.analyse import analyse_audio
+        from h3ir.render import render_ir
+    
+        ref = AssetRef(kind=AssetKind.AUDIO, role=Role.VOICE_TIMBRE, sha256="a" * 64, path="/tmp/v.wav",
+                       note="his own voice, calm and low, with a slight rasp", seconds=6.0)
+        brief = Brief(intent="the man speaks in the corridor", seconds=8.0, assets=[ref],
+                      dialogue=[DialogueLine(text="Something has been down here a long time.")])
+>       plan = deterministic_draft(brief, Mode.REF2VA, {ref.sha256: analyse_audio(ref, "a line.")})
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_hardening.py:497: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+h3ir/draft.py:204: in deterministic_draft
+    licence = resolve_licence(brief, cards)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+args = (Brief(intent='the man speaks in the corridor', assets=[AssetRef(kind=<AssetKind.AUDIO: 'audio'>, role=<Role.VOICE_TIM...', timbre='', music='', analyzer_version='contextir-media/v1/caller-metadata', model_id='none (typed metadata only)')})
+kwargs = {}
+
+    @functools.wraps(original)
+    def invoke(*args,**kwargs):
+        bound=signature.bind(*args,**kwargs);bound.apply_defaults();arguments={k:plain(bound.arguments[k]) for k in ('brief','cards')}
+        item=inputs.get(key(arguments))
+>       if item is None:raise RuntimeError('No actual licence transcript exists for this exact original input')
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       RuntimeError: No actual licence transcript exists for this exact original input
+
+/Users/linyang/Code/contextir/conformance/licence_bridge.py:36: RuntimeError
+_____________ test_an_uncharacterised_voice_reference_is_reported ______________
+
+    def test_an_uncharacterised_voice_reference_is_reported():
+        """A role that claims a sonic property with nothing describing it is a reference carrying no
+        information. Reported rather than guessed at, and it names what to supply."""
+        from h3ir.analyse import analyse_audio
+        from h3ir.compile import _assess
+        from h3ir.plan import ProfileOptions as PO
+    
+        ref = AssetRef(kind=AssetKind.AUDIO, role=Role.VOICE_TIMBRE, sha256="a" * 64,
+                       path="/tmp/v.wav", seconds=6.0)          # no note
+        brief = Brief(intent="the man speaks", seconds=8.0, assets=[ref],
+                      dialogue=[DialogueLine(text="a line.")])
+>       plan = deterministic_draft(brief, Mode.REF2VA, {ref.sha256: analyse_audio(ref, "")})
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_hardening.py:519: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+h3ir/draft.py:204: in deterministic_draft
+    licence = resolve_licence(brief, cards)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+args = (Brief(intent='the man speaks', assets=[AssetRef(kind=<AssetKind.AUDIO: 'audio'>, role=<Role.VOICE_TIMBRE: 'voice_timb...', timbre='', music='', analyzer_version='contextir-media/v1/caller-metadata', model_id='none (typed metadata only)')})
+kwargs = {}
+
+    @functools.wraps(original)
+    def invoke(*args,**kwargs):
+        bound=signature.bind(*args,**kwargs);bound.apply_defaults();arguments={k:plain(bound.arguments[k]) for k in ('brief','cards')}
+        item=inputs.get(key(arguments))
+>       if item is None:raise RuntimeError('No actual licence transcript exists for this exact original input')
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       RuntimeError: No actual licence transcript exists for this exact original input
+
+/Users/linyang/Code/contextir/conformance/licence_bridge.py:36: RuntimeError
+_____________ test_the_ask_carries_the_transcribed_words_verbatim ______________
+
+    def test_the_ask_carries_the_transcribed_words_verbatim():
+>       ask = _capture_ask(Role.VOICE_TIMBRE, WORDS,
+                           "Have the man at the counter say again, word for word, the line that is "
+                           "on the recording.")
+
+tests/test_reference_audio_words.py:161: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_reference_audio_words.py:150: in _capture_ask
+    plan = deterministic_draft(brief, Mode.REF2VA, {"wav": card}, opts=ProfileOptions())
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+h3ir/draft.py:204: in deterministic_draft
+    licence = resolve_licence(brief, cards)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+args = (Brief(intent='Have the man at the counter say again, word for word, the line that is on the recording.', assets=[Asse...', timbre='', music='', analyzer_version='contextir-media/v1/caller-metadata', model_id='none (typed metadata only)')})
+kwargs = {}
+
+    @functools.wraps(original)
+    def invoke(*args,**kwargs):
+        bound=signature.bind(*args,**kwargs);bound.apply_defaults();arguments={k:plain(bound.arguments[k]) for k in ('brief','cards')}
+        item=inputs.get(key(arguments))
+>       if item is None:raise RuntimeError('No actual licence transcript exists for this exact original input')
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       RuntimeError: No actual licence transcript exists for this exact original input
+
+/Users/linyang/Code/contextir/conformance/licence_bridge.py:36: RuntimeError
+_________________ test_the_ask_states_both_halves_of_the_rule __________________
+
+    def test_the_ask_states_both_halves_of_the_rule():
+        """Handing over the words without ref-en.txt 5.4's prohibition would trade one defect for its
+        mirror image: a timbre-only reference whose dialogue gets carried into the video."""
+>       ask = _capture_ask(Role.VOICE_TIMBRE, WORDS, "Reuse this voice for the man at the counter.")
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_reference_audio_words.py:171: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_reference_audio_words.py:150: in _capture_ask
+    plan = deterministic_draft(brief, Mode.REF2VA, {"wav": card}, opts=ProfileOptions())
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+h3ir/draft.py:204: in deterministic_draft
+    licence = resolve_licence(brief, cards)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+args = (Brief(intent='Reuse this voice for the man at the counter.', assets=[AssetRef(kind=<AssetKind.AUDIO: 'audio'>, role=<...', timbre='', music='', analyzer_version='contextir-media/v1/caller-metadata', model_id='none (typed metadata only)')})
+kwargs = {}
+
+    @functools.wraps(original)
+    def invoke(*args,**kwargs):
+        bound=signature.bind(*args,**kwargs);bound.apply_defaults();arguments={k:plain(bound.arguments[k]) for k in ('brief','cards')}
+        item=inputs.get(key(arguments))
+>       if item is None:raise RuntimeError('No actual licence transcript exists for this exact original input')
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       RuntimeError: No actual licence transcript exists for this exact original input
+
+/Users/linyang/Code/contextir/conformance/licence_bridge.py:36: RuntimeError
+_______________ test_the_ask_says_the_words_go_in_one_place_only _______________
+
+    def test_the_ask_says_the_words_go_in_one_place_only():
+        """Measured after the words started arriving: the writer put them inside <d> AND in double
+        quotes in the surrounding prose, and `Q2-unlicensed-addition` rejected the brief twice on two of
+        seven runs. Q2 was right. base-en.txt 4.5 makes a double-quoted span text that is visible on
+        screen, so quoting the line tells H3 to letter it across the picture as well as speak it."""
+>       ask = _capture_ask(Role.VOICE_TIMBRE, WORDS,
+                           "Have the man at the counter say the line on the recording again.")
+
+tests/test_reference_audio_words.py:182: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_reference_audio_words.py:150: in _capture_ask
+    plan = deterministic_draft(brief, Mode.REF2VA, {"wav": card}, opts=ProfileOptions())
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+h3ir/draft.py:204: in deterministic_draft
+    licence = resolve_licence(brief, cards)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+args = (Brief(intent='Have the man at the counter say the line on the recording again.', assets=[AssetRef(kind=<AssetKind.AUD...', timbre='', music='', analyzer_version='contextir-media/v1/caller-metadata', model_id='none (typed metadata only)')})
+kwargs = {}
+
+    @functools.wraps(original)
+    def invoke(*args,**kwargs):
+        bound=signature.bind(*args,**kwargs);bound.apply_defaults();arguments={k:plain(bound.arguments[k]) for k in ('brief','cards')}
+        item=inputs.get(key(arguments))
+>       if item is None:raise RuntimeError('No actual licence transcript exists for this exact original input')
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       RuntimeError: No actual licence transcript exists for this exact original input
+
+/Users/linyang/Code/contextir/conformance/licence_bridge.py:36: RuntimeError
+____ test_the_ask_says_nothing_about_words_when_no_transcript_was_supplied _____
+
+    def test_the_ask_says_nothing_about_words_when_no_transcript_was_supplied():
+>       ask = _capture_ask(Role.BGM, "", "Score this like the attached track.")
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_reference_audio_words.py:189: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_reference_audio_words.py:150: in _capture_ask
+    plan = deterministic_draft(brief, Mode.REF2VA, {"wav": card}, opts=ProfileOptions())
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+h3ir/draft.py:204: in deterministic_draft
+    licence = resolve_licence(brief, cards)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+args = (Brief(intent='Score this like the attached track.', assets=[AssetRef(kind=<AssetKind.AUDIO: 'audio'>, role=<Role.BGM:...', timbre='', music='', analyzer_version='contextir-media/v1/caller-metadata', model_id='none (typed metadata only)')})
+kwargs = {}
+
+    @functools.wraps(original)
+    def invoke(*args,**kwargs):
+        bound=signature.bind(*args,**kwargs);bound.apply_defaults();arguments={k:plain(bound.arguments[k]) for k in ('brief','cards')}
+        item=inputs.get(key(arguments))
+>       if item is None:raise RuntimeError('No actual licence transcript exists for this exact original input')
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       RuntimeError: No actual licence transcript exists for this exact original input
+
+/Users/linyang/Code/contextir/conformance/licence_bridge.py:36: RuntimeError
+___________ test_the_compiler_passes_the_transcript_to_the_composer ____________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x111e98830>
+
+    def test_the_compiler_passes_the_transcript_to_the_composer(monkeypatch):
+        """A test on the plumbing rather than on the helper: the fact is only worth anything if the real
+        compile hands it over. This is the line that was missing."""
+        import pytest
+    
+        import h3ir.compile as C
+        from h3ir.analyse import analyse_audio
+        from h3ir.models import ModeDecision
+    
+        ref = AssetRef(kind=AssetKind.AUDIO, role=Role.VOICE_TIMBRE, sha256="wav", seconds=3.0,
+                       note="a flat male voice")
+        cards = {"wav": analyse_audio(ref, WORDS)}
+        seen: dict[str, object] = {}
+    
+        def spy(backend, brief, subjects, cards_, target, labels, **kw):
+            seen.update(kw)
+            raise RuntimeError("stop here; the ask is what this test is about")
+    
+        class _Backend:
+            class cfg:
+                model = "capture"
+    
+            def require_available(self): pass
+            def server_version(self): return "test"
+            def close(self): pass
+    
+        monkeypatch.setattr(C, "compose_brief", spy)
+        monkeypatch.setattr(C, "analyse_all", lambda *a, **k: cards)
+        monkeypatch.setattr(C, "infer_mode", lambda *a, **k: ModeDecision(
+            mode=Mode.REF2VA, confidence=1.0, rule_fired="audio-attached", signals=[]))
+        brief = Brief(intent="Have the man say the line on the recording again, word for word.",
+                      seconds=8.0, assets=[ref])
+        with pytest.raises(RuntimeError):
+            C.compile_brief(brief, backend=_Backend(), opts=ProfileOptions(),
+                            transcripts={"wav": WORDS})
+>       assert seen["audio_transcripts"] == (("<Audio 1>", WORDS),)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'audio_transcripts'
+
+tests/test_reference_audio_words.py:228: KeyError
+_____________ test_the_validator_context_carries_it_on_both_paths ______________
+
+    def test_the_validator_context_carries_it_on_both_paths():
+        """`_assess` (the draft) and `_written_context` (the model's brief) must agree, or the rule would
+        exist on one path only."""
+        from h3ir.analyse import analyse_audio
+        from h3ir.compile import _written_context
+        from h3ir.draft import deterministic_draft
+    
+        ref = AssetRef(kind=AssetKind.AUDIO, role=Role.VOICE_TIMBRE, sha256="wav", seconds=3.0,
+                       note="a flat male voice")
+        cards = {"wav": analyse_audio(ref, WORDS)}
+        brief = Brief(intent="say it again word for word", seconds=8.0, assets=[ref])
+>       plan = deterministic_draft(brief, Mode.REF2VA, cards, opts=ProfileOptions())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_reference_audio_words.py:242: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+h3ir/draft.py:204: in deterministic_draft
+    licence = resolve_licence(brief, cards)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+args = (Brief(intent='say it again word for word', assets=[AssetRef(kind=<AssetKind.AUDIO: 'audio'>, role=<Role.VOICE_TIMBRE:...', timbre='', music='', analyzer_version='contextir-media/v1/caller-metadata', model_id='none (typed metadata only)')})
+kwargs = {}
+
+    @functools.wraps(original)
+    def invoke(*args,**kwargs):
+        bound=signature.bind(*args,**kwargs);bound.apply_defaults();arguments={k:plain(bound.arguments[k]) for k in ('brief','cards')}
+        item=inputs.get(key(arguments))
+>       if item is None:raise RuntimeError('No actual licence transcript exists for this exact original input')
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       RuntimeError: No actual licence transcript exists for this exact original input
+
+/Users/linyang/Code/contextir/conformance/licence_bridge.py:36: RuntimeError
+__________ test_the_kept_reference_is_reported_with_how_to_change_it ___________
+
+    def test_the_kept_reference_is_reported_with_how_to_change_it():
+        """Only a genuine MEDIUM conflict is worth reporting. 'anime' against a comic illustration is
+        the same bucket -- two 2D illustrated media -- so there is nothing to warn about; against 3D
+        it is a real divergence and the note must say how to ask for it properly."""
+        d = resolve_style(_brief(intent="the man walks. Anime style."),
+                          {"char": _card_with_style("3D computer animation")})
+        assert d.discrepancy is True
+        note = d.note()
+>       assert note and "keeps the reference" in note
+E       AssertionError: assert ('The request explicitly changes the rendering medium while retaining the referenced identity; this does not by itself select an attribute-transfer relationship.' and 'keeps the reference' in 'The request explicitly changes the rendering medium while retaining the referenced identity; this does not by itself select an attribute-transfer relationship.')
+
+tests/test_reference_licence.py:217: AssertionError
+_ test_a_request_that_names_an_attribute_is_not_silent_about_it[palette-a high contrast colour grade] _
+
+attr = 'palette', intent = 'a high contrast colour grade'
+
+    @pytest.mark.parametrize("attr,intent", ATTRIBUTE_PHRASINGS)
+    def test_a_request_that_names_an_attribute_is_not_silent_about_it(attr, intent):
+        """Lighting, framing and palette reach only the sentence in the ask -- there is no mechanism
+        behind them, which is why they rank below wardrobe. They still have to be right: naming an
+        attribute in the list of things the references govern is the wrong emphasis for an attribute the
+        caller just specified.
+    
+        Framing is anchored on a camera word on purpose. "from above" alone is how LIGHTING gets
+        described ("light from above"), and "shot" alone is how a treatment word rides ("a cinematic
+        shot of the man"), so the signal is `shot from` / `seen from` / an angle, never a bare direction.
+        """
+        lic = resolve_licence(_brief(intent=intent), {"char": _card_with_style("live-action")})
+>       assert lic.governs[attr] == "request", f"{intent!r}: {lic.reasons[attr]}"
+E       AssertionError: 'a high contrast colour grade': The intent asks for a high-contrast colour grade treatment rather than a specified scene colour palette; incidental reference colours are not a palette request, so the reference's observed palette governs.
+E       assert 'reference' == 'request'
+E         
+E         - request
+E         + reference
+
+tests/test_reference_licence.py:820: AssertionError
+_ test_a_request_that_states_what_the_body_does_takes_the_action[she leans against the wall] _
+
+intent = 'she leans against the wall'
+
+    @pytest.mark.parametrize("intent", ACTION_PHRASINGS)
+    def test_a_request_that_states_what_the_body_does_takes_the_action(intent):
+        """The verb space is genuinely open, unlike the transforming verbs -- English has thousands of
+        action verbs and a closed list of eight ways to say "restyle". So this list will never be
+        complete, and it does not have to be: `governs[ACTION]` reaches nothing but the sentence in the
+        ask. Ranked and treated accordingly -- the common verbs, correctly inflected, and no chase.
+        """
+        from h3ir.licence import ACTION
+>       lic = resolve_licence(_brief(intent=intent), {"char": _card_with_style("live-action")})
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_reference_licence.py:841: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/Users/linyang/Code/contextir/conformance/licence_bridge.py:48: in invoke
+    output=native_operation(function,{**arguments,'responses':responses,'actual_case_id':item['case_id'],'actual_report':result['run_report']})['decision']
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+qualified = 'h3ir.licence.resolve_licence'
+arguments = {'brief': {'intent': 'she leans against the wall', 'assets': [{'kind': 'image', 'role': 'subject', 'sha256': 'char', '...age': {'input_tokens': 1426, 'output_tokens': 1984}, 'usage_invalid': False}}], 'actual_case_id': 'licence-01218', ...}
+
+    def native_operation(qualified,arguments):
+        request={'operation':qualified,'arguments':cap.plain(arguments)}
+        observed_callbacks=[]
+        p=validator.PROCESS
+        p.stdin.write(json.dumps(request,ensure_ascii=False)+'\n');p.stdin.flush()
+        while True:
+            line=p.stdout.readline()
+            if not line:raise RuntimeError('Go core bridge stopped before responding')
+            result=json.loads(line)
+            if 'callback' not in result:break
+            import callbacks
+            reply=callbacks.dispatch(result['callback'],result.get('payload'))
+            observed_callbacks.append({'name':result['callback'],'payload':result.get('payload'),'reply':reply})
+            p.stdin.write(json.dumps(reply,ensure_ascii=False)+'\n');p.stdin.flush()
+        def redacted(value):
+            if isinstance(value,dict):return {k:('[redacted]' if k in ('api_key','llm_key','authorization','Authorization','access_token','refresh_token','password','bearer_token') else redacted(v)) for k,v in value.items()}
+            if isinstance(value,list):return [redacted(v) for v in value]
+            return value
+        record={'nodeid':cap.CURRENT,'function':qualified,'arguments':redacted(request['arguments'])}
+        if observed_callbacks:record['injected_test_callbacks']=redacted(observed_callbacks)
+        CORE_CALLS.append(record)
+        if result.get('error'):
+            record.update(raised='ValueError',error=result['error'])
+            if result.get('value') is not None:record['failed_native_value']=redacted(result['value'])
+>           raise GoOperationError(result['error'],result.get('error_code'))
+E           pytest_go_core.GoOperationError: contextir: invalid_model_output at identity_requirements (1 issues)
+
+/Users/linyang/Code/contextir/conformance/pytest_go_core.py:47: GoOperationError
+________ test_every_action_verb_is_detected_in_every_inflection[speak] _________
+
+base = 'speak'
+
+    @pytest.mark.parametrize("base", sorted(INDEPENDENT_VERB_FORMS))
+    def test_every_action_verb_is_detected_in_every_inflection(base):
+        """§41 again, one list over. `\\bswims\\b` matched "swims" and missed "swimming"; `stands? up`
+        needed the preposition; `crouch(?:es|ing)?` had no past tense. Half the entries were inflected by
+        hand and the halves disagreed, which is what a hand-written alternation always ends up doing.
+        """
+        from h3ir.licence import ACTION
+        cards = {"char": _card_with_style("live-action")}
+        for form in (base, *INDEPENDENT_VERB_FORMS[base]):
+            lic = resolve_licence(_brief(intent=f"the man {form} across the room"), cards)
+>           assert lic.governs[ACTION] == "request", form
+E           AssertionError: spoken
+E           assert 'reference' == 'request'
+E             
+E             - request
+E             + reference
+
+tests/test_reference_licence.py:882: AssertionError
+____ test_the_rule_is_NOT_armed_when_the_requested_medium_is_unclassifiable ____
+
+    def test_the_rule_is_NOT_armed_when_the_requested_medium_is_unclassifiable():
+        """The false positive that this rule produced on real output before it shipped, and the reason.
+    
+        `classify_medium("1990s cel animation")` is `None` -- outside the closed vocabulary, which is the
+        whole reason `transform_target` reads targets from the request instead. The first version of the
+        arming condition read `observed != requested` and `None != "2d-animation"` is True, so it armed;
+        the plate and the target are in fact BOTH 2D, the correct opening landed in the reference's own
+        bucket, and the rule flagged output that was right.
+    
+        §35's line, one layer down and made by the author who had just written it into §42: absence of a
+        statement is not a statement of absence. `None` means the classifier could not place it.
+        """
+        from h3ir.compile import _transformed_from
+        lic, style = _real_brief_style()
+        assert lic.medium_transferred, "the transformation IS detected"
+>       assert style.requested_medium is None, "and its target is outside the closed vocabulary"
+E       AssertionError: and its target is outside the closed vocabulary
+E       assert '2d-animation' is None
+E        +  where '2d-animation' = install.<locals>.NativeStyle(phrase='1990s cel animation', source='request', requested_medium='2d-animation', observed_medium='2d-animation', observed_phrase='Digital illustration, semi-realistic character design').requested_medium
+
+tests/test_reference_licence.py:1077: AssertionError
+________________ test_a_brief_with_no_picture_at_all_is_told_so ________________
+
+    def test_a_brief_with_no_picture_at_all_is_told_so():
+        """The statement was emitted only when a <Picture N> existed, so the brief that had none was
+        left to infer from the specification in its system prompt, which teaches the construct."""
+        from h3ir.analyse import analyse_audio
+        from h3ir.draft import deterministic_draft
+        from h3ir.models import AssetKind, AssetRef, Brief, Mode, Role
+        from h3ir.plan import ProfileOptions
+        from h3ir.prose import compose_brief
+    
+        class Capture:
+            class _Cfg:
+                model = "capture"
+            cfg = _Cfg()
+    
+            class _Reply:
+                content = "subject_definitions:\n"
+    
+            def __init__(self) -> None:
+                self.asks: list[str] = []
+    
+            def chat(self, messages, **kw):
+                c = messages[-1]["content"]
+                self.asks.append(c if isinstance(c, str) else c[0]["text"])
+                return self._Reply()
+    
+        ref = AssetRef(kind=AssetKind.AUDIO, role=Role.BGM, sha256="wav", seconds=4.0,
+                       note="a slow piano loop")
+        cards = {"wav": analyse_audio(ref, "")}
+        brief = Brief(intent="Use this recording as the complete final audio of a ferry leaving a "
+                             "jetty.", seconds=8.0, assets=[ref])
+>       plan = deterministic_draft(brief, Mode.REF2VA, cards, opts=ProfileOptions())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_retention_bookkeeping.py:319: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+h3ir/draft.py:204: in deterministic_draft
+    licence = resolve_licence(brief, cards)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+args = (Brief(intent='Use this recording as the complete final audio of a ferry leaving a jetty.', assets=[AssetRef(kind=<Ass...', timbre='', music='', analyzer_version='contextir-media/v1/caller-metadata', model_id='none (typed metadata only)')})
+kwargs = {}
+
+    @functools.wraps(original)
+    def invoke(*args,**kwargs):
+        bound=signature.bind(*args,**kwargs);bound.apply_defaults();arguments={k:plain(bound.arguments[k]) for k in ('brief','cards')}
+        item=inputs.get(key(arguments))
+>       if item is None:raise RuntimeError('No actual licence transcript exists for this exact original input')
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       RuntimeError: No actual licence transcript exists for this exact original input
+
+/Users/linyang/Code/contextir/conformance/licence_bridge.py:36: RuntimeError
+=========================== short test summary info ============================
+FAILED tests/test_hardening.py::test_the_callers_characterisation_reaches_the_definition_not_the_soundscape
+FAILED tests/test_hardening.py::test_an_uncharacterised_voice_reference_is_reported
+FAILED tests/test_reference_audio_words.py::test_the_ask_carries_the_transcribed_words_verbatim
+FAILED tests/test_reference_audio_words.py::test_the_ask_states_both_halves_of_the_rule
+FAILED tests/test_reference_audio_words.py::test_the_ask_says_the_words_go_in_one_place_only
+FAILED tests/test_reference_audio_words.py::test_the_ask_says_nothing_about_words_when_no_transcript_was_supplied
+FAILED tests/test_reference_audio_words.py::test_the_compiler_passes_the_transcript_to_the_composer
+FAILED tests/test_reference_audio_words.py::test_the_validator_context_carries_it_on_both_paths
+FAILED tests/test_reference_licence.py::test_the_kept_reference_is_reported_with_how_to_change_it
+FAILED tests/test_reference_licence.py::test_a_request_that_names_an_attribute_is_not_silent_about_it[palette-a high contrast colour grade]
+FAILED tests/test_reference_licence.py::test_a_request_that_states_what_the_body_does_takes_the_action[she leans against the wall]
+FAILED tests/test_reference_licence.py::test_every_action_verb_is_detected_in_every_inflection[speak]
+FAILED tests/test_reference_licence.py::test_the_rule_is_NOT_armed_when_the_requested_medium_is_unclassifiable
+FAILED tests/test_retention_bookkeeping.py::test_a_brief_with_no_picture_at_all_is_told_so
+14 failed, 977 passed in 7.87s
+/Users/linyang/Code/contextir/conformance/service_bridge.py:18: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+  from starlette.testclient import TestClient

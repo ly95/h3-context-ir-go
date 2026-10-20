@@ -1,0 +1,197 @@
+{
+  "case_id": "compiler-00972",
+  "input_sha256": "fa242014abd64c29d2208cbc99d283db0704efdc059787be65ec98e756399783",
+  "status": "mode_decided",
+  "calls": [
+    {
+      "stage": "mode",
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 633,
+        "output_tokens": 180
+      },
+      "usage_valid": true,
+      "images": 0
+    }
+  ],
+  "elapsed_ms": 1625,
+  "result": {
+    "usage_complete": false,
+    "clarification_policy": "",
+    "budget": {
+      "prompt_tokens": 0,
+      "target_video_rows": 0,
+      "target_audio_rows": 0,
+      "known_reference_rows": 0,
+      "in_trained_band": false
+    },
+    "status": "",
+    "version": "",
+    "brief": {
+      "intent": ""
+    },
+    "request": {
+      "instruction": "",
+      "mode": "",
+      "target": {
+        "duration_ms": 0,
+        "aspect_ratio": "",
+        "fps": {
+          "numerator": 0,
+          "denominator": 0
+        }
+      },
+      "allow_creative_additions": false,
+      "allow_generated_dialogue": false
+    },
+    "structure": {
+      "replacement_targets": null,
+      "mode": "",
+      "assets": null,
+      "shots": null,
+      "dialogue": null,
+      "onscreen_text": null,
+      "requested": {
+        "speech": false,
+        "music": false,
+        "onscreen_text": false,
+        "magnitude": ""
+      },
+      "forbidden": {
+        "speech": false,
+        "music": false,
+        "onscreen_text": false,
+        "magnitude": ""
+      },
+      "reasoning": ""
+    },
+    "scope": {
+      "speech": false,
+      "music": false,
+      "onscreen_text": false,
+      "magnitude": ""
+    },
+    "document": {
+      "version": "",
+      "mode": "",
+      "target": {
+        "duration_ms": 0,
+        "aspect_ratio": "",
+        "fps": {
+          "numerator": 0,
+          "denominator": 0
+        }
+      },
+      "shots": null,
+      "soundscape": "",
+      "music": ""
+    },
+    "artifact": {
+      "version": "",
+      "compiler_version": "",
+      "format_version": "",
+      "mode": "",
+      "target": {
+        "duration_ms": 0,
+        "aspect_ratio": "",
+        "fps": {
+          "numerator": 0,
+          "denominator": 0
+        }
+      },
+      "profile": {
+        "name": "",
+        "format": "",
+        "fps": {
+          "numerator": 0,
+          "denominator": 0
+        },
+        "modes": null,
+        "limits": {
+          "pictures": 0,
+          "videos": 0,
+          "video_audio": 0,
+          "standalone_audio": 0
+        },
+        "supports_reference_frame_anchors": false,
+        "supports_source_intervals": false
+      },
+      "prompt": "",
+      "manifest": {
+        "media": null,
+        "subjects": null,
+        "references": null,
+        "speakers": null
+      },
+      "frames": 0,
+      "effective_duration_seconds": {
+        "numerator": 0,
+        "denominator": 0
+      },
+      "document_sha256": "",
+      "profile_sha256": "",
+      "prompt_sha256": "",
+      "manifest_sha256": "",
+      "sha256": ""
+    },
+    "decisions": null
+  },
+  "mode_decision": {
+    "clarification_policy": "continue_with_recorded_choice",
+    "model_signals": [
+      "User asks to animate the supplied photo itself",
+      "The car in the photo is requested to pull forward",
+      "No scene recreation or content-reference framing is stated"
+    ],
+    "confidence_kind": "routing_policy",
+    "model_confidence": 0.95,
+    "interpretation": "anchor_instruction",
+    "questions": [
+      {
+        "id": "anchor_or_reference",
+        "ask": "Should the image be an exact opening/closing frame (with an explicit crop/resize/canvas decision if its aspect differs), or should what it shows appear redrawn in a new scene?",
+        "options": [
+          {
+            "id": "opening_frame",
+            "label": "Use it as the opening frame"
+          },
+          {
+            "id": "appears_in",
+            "label": "Put what it shows into a new scene"
+          }
+        ],
+        "recommended": "appears_in",
+        "default_if_unanswered": "appears_in"
+      }
+    ],
+    "aspect_mismatch": true,
+    "needs_clarification": true,
+    "mode": "i2va",
+    "confidence": 0.6,
+    "rule": "12.3-anchor-language",
+    "signals": [
+      "User asks to animate the supplied photo itself",
+      "The car in the photo is requested to pull forward",
+      "No scene recreation or content-reference framing is stated",
+      "anchor phrase: Animate this photo so the car pulls forward.",
+      "Confidence records the original routing-policy value; model_confidence separately preserves the provider's interpretation confidence.",
+      "aspect mismatch: Image asset-1 aspect 1 differs from requested 16:9 by more than 20%. The anchor choice is preserved; exact-frame conditioning requires an explicit crop/resize/canvas decision."
+    ],
+    "alternatives": [
+      "l2va",
+      "ref2va"
+    ],
+    "calls": [
+      {
+        "stage": "mode",
+        "attempt": 1,
+        "model": "deepseek-flash",
+        "usage": {
+          "input_tokens": 633,
+          "output_tokens": 180
+        },
+        "valid": true
+      }
+    ]
+  }
+}

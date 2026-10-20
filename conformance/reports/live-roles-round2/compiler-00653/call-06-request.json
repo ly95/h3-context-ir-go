@@ -1,0 +1,172 @@
+{
+  "stage": "semantic_review",
+  "system": "Audit this final H3 composition against its typed responsibilities. Return findings only for clear contradictions, not aesthetic preferences, prose length, optional creative choices, or unknown video quality. The supplied fragments are the actual final narrative, with typed subject/reference IDs printed explicitly. Read their full context and the target subject kinds: a floor or other environment must not become a moving vehicle merely because it is Subject 1. A source structure/storyboard provides only its declared camera/cutting/planning properties, not its people, objects, world, lighting or palette. A placed subject adds to the edited scene; a replacement takes over the identified source figure. Both must actually appear in prose/actions, not only definitions. Accepted target identity outranks raw source observations. Property-only voice, music-style, beat and sound-texture references condition a new sound; they do not play the original recording. BGM music references with partially_copy copy the supplied signal, and prose must not deny that. Music=N/A under no_added_music only prohibits adding a new score; it does not cancel an explicitly copied BGM. References with no actual dialogue do not authorize inventing spoken words. For actual first/last frame responsibilities, the whole supplied still is that frame: reference-sheet panels/labels/background are frame pixels, not packaging to silently remove. Moving one panel within an otherwise preserved sheet is legitimate. A recorded aspect-ratio warning alone is not a contradiction and does not authorize a crop. Do not invent preparation IO or assume its execution. Every finding must identify an actual fragment and an exact nonempty quote from that fragment demonstrating the contradiction, plus the implicated target subject ID when relevant. Empty findings means no clear supported contradiction was found, not proof of overall quality. No Markdown.",
+  "input": {
+    "assets": [
+      {
+        "id": "asset-1",
+        "kind": "audio",
+        "metadata": {
+          "duration_ms": 3000,
+          "fps": {
+            "numerator": 0,
+            "denominator": 0
+          }
+        },
+        "preparation": {}
+      }
+    ],
+    "constraints": null,
+    "declared_roles": [
+      {
+        "asset_id": "asset-1",
+        "role": "music_style",
+        "replaces": ""
+      }
+    ],
+    "fragments": {
+      "music": "A low, restrained industrial score built from a slow engine-like pulse and a thin metallic drone, matching the reference's low-rumble character without reusing its recording.",
+      "shot:shot-1:description": "In near-total darkness, the faint shape of a parked car sits facing forward, its bodywork catching only a thin rim of ambient light along the hood, roofline and one front fender. The surrounding space is almost featureless black, with no visible horizon or background detail, so the car reads first as a low silhouette and only gradually gains solidity at its edges. A narrow band of weak light traces the windshield and the top of the grille, leaving the cabin and wheel wells sunk in shadow. The front wheels are barely discernible as darker masses beneath the body, and the ground beneath the car is lost in black. The low engine rumble rises from idle as the car begins to shudder awake; a faint tremor travels through the chassis, and pale exhaust vapour drifts through the gloom, catching the same weak rim light before dissolving. The stillness of the opening gives way to a charged, mechanical presence as the vehicle stirs in place, its dark surfaces holding small highlights while the rest of the frame remains deep and uncluttered. The car does not yet move forward; it gathers itself in the dark, engine sound building, vapor curling around the rear and lower body, and the faint reflection on the hood sharpening as the idle settles into a more insistent rhythm.",
+      "shot:shot-1:event:0": "The camera pushes in with small amplitude at slow speed.",
+      "shot:shot-2:description": "The headlights snap on and blaze through the darkness, throwing the car's front end into hard relief and cutting a bright corridor through the surrounding black. The car rolls forward out of the dark toward the viewer, its shape growing larger and clearer as the beams sweep across the ground and the vehicle's advance compresses the distance. Reflection slides across the bodywork; the grille, bumper and leading edges resolve from shadow, while the tires and lower chassis remain rooted in darkness. The engine's low rumble steadies into a close, continuous vibration. Dust and exhaust vapour drift through the light shafts, and the car's forward motion turns the empty darkness into a charged reveal, the lit front end dominating the frame as the surrounding space falls away behind it. The bodywork shifts from a dim outline into a solid, reflective mass, with the headlight glare bleaching the center of the hood and fenders while the edges of the vehicle stay heavy with shadow. The beams pick out the texture of the road surface ahead, each ridge and grain briefly visible before the car's advance swallows it, and the car keeps moving through the final moment, headlights leading, its mass expanding toward the viewer as the dark recedes around the lit grille and bumper.",
+      "shot:shot-2:event:0": "The camera pushes in with small amplitude at slow speed.",
+      "soundscape": "A low engine rumble builds from idle to a steady, close vibration; faint exhaust-vapour hiss and a thin ambient room tone fill the darkness.",
+      "summary": ""
+    },
+    "intent": "the car pulls forward out of the dark",
+    "mode": "ref2va",
+    "references": [
+      {
+        "id": "reference-asset-1-1",
+        "kind": "audio",
+        "source": {
+          "asset_id": "asset-1",
+          "track": "audio"
+        },
+        "roles": [
+          "music_style"
+        ],
+        "description": "Instrumentation, tempo and musical-style property reference only.",
+        "retention": "reference",
+        "retention_details": "Generate new music following those properties, without copying the source recording.",
+        "shot_ids": [
+          "shot-1",
+          "shot-2"
+        ]
+      }
+    ],
+    "source_evidence": [
+      {
+        "card": {
+          "asset_id": "asset-1",
+          "summary": "an audio reference.",
+          "characterisation": "a low engine rumble",
+          "composition": "unknown",
+          "analyzer_version": "1",
+          "coverage": {
+            "status": "partial",
+            "tracks": [
+              "audio"
+            ]
+          }
+        },
+        "asset_id": "asset-1",
+        "facts": [
+          {
+            "id": "card-asset-1-1",
+            "text": "an audio reference.",
+            "source": {
+              "asset_id": "asset-1",
+              "track": "audio"
+            }
+          },
+          {
+            "id": "card-asset-1-2",
+            "text": "a low engine rumble",
+            "source": {
+              "asset_id": "asset-1",
+              "track": "audio"
+            }
+          }
+        ],
+        "analyzer_version": "1",
+        "coverage": {
+          "status": "partial",
+          "tracks": [
+            "audio"
+          ]
+        }
+      }
+    ],
+    "target": {
+      "duration_ms": 5167,
+      "frame_count": 124,
+      "aspect_ratio": "16:9",
+      "fps": {
+        "numerator": 24,
+        "denominator": 1
+      },
+      "width": 1344,
+      "height": 768
+    },
+    "target_subjects": null,
+    "version": "contextir/composition-review/v1"
+  },
+  "response_schema": {
+    "additionalProperties": false,
+    "properties": {
+      "findings": {
+        "items": {
+          "additionalProperties": false,
+          "properties": {
+            "code": {
+              "enum": [
+                "wrong_subject_action",
+                "unlicensed_source_content",
+                "missing_placement",
+                "frame_content_changed",
+                "target_identity_changed",
+                "audio_signal_misuse"
+              ],
+              "type": "string"
+            },
+            "fragment_id": {
+              "enum": [
+                "summary",
+                "soundscape",
+                "music",
+                "shot:shot-1:description",
+                "shot:shot-1:event:0",
+                "shot:shot-2:description",
+                "shot:shot-2:event:0"
+              ],
+              "type": "string"
+            },
+            "quote": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "subject_id": {
+              "enum": [
+                ""
+              ],
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "fragment_id",
+            "quote",
+            "subject_id"
+          ],
+          "type": "object"
+        },
+        "type": "array"
+      }
+    },
+    "required": [
+      "findings"
+    ],
+    "type": "object"
+  }
+}

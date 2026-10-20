@@ -1,0 +1,190 @@
+/Users/linyang/Code/contextir/conformance/service_bridge.py:18: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+  from starlette.testclient import TestClient
+..............................................F......................... [  7%]
+............F........................................................... [ 14%]
+........................................................................ [ 21%]
+........................................................................ [ 29%]
+........................................................................ [ 36%]
+.............................................F.......................... [ 43%]
+........................................................................ [ 50%]
+...............................................................F.F...... [ 58%]
+........................................................................ [ 65%]
+........................................................................ [ 72%]
+...................................F...........F........................ [ 79%]
+........................................................................ [ 87%]
+.......................................................................F [ 94%]
+.......................................................                  [100%]
+=================================== FAILURES ===================================
+_________________ test_over_capacity_is_a_422_naming_the_code __________________
+
+tmp_path = PosixPath('/private/var/folders/9s/sc0zm9516rv0tzlt31yt3j4h0000gn/T/pytest-of-linyang/pytest-17/test_over_capacity_is_a_422_na0')
+
+    def test_over_capacity_is_a_422_naming_the_code(tmp_path):
+        """422, not a truncated manifest and not a 500. The caller can act on it."""
+        f = tmp_path / "plate.jpg"
+        f.write_bytes(b"\xff\xd8\xff\xd9")
+        client = TestClient(service.app, raise_server_exceptions=False)
+        r = client.post("/v1/briefs", json={
+            "intent": "Put all of these together.",
+            "assets": [{"path": str(f), "kind": "image"} for _ in range(MAX_REF_IMAGES + 1)]})
+>       assert r.status_code == 422, r.text
+E       AssertionError: {"detail":{"code":"unmocked-compiler","message":"This offline conformance bridge requires an original test-injected compiler"}}
+E         
+E       assert 500 == 422
+E        +  where 500 = <Response [500 Internal Server Error]>.status_code
+
+tests/test_capacity.py:115: AssertionError
+____________ test_the_endpoint_and_the_import_answer_the_same_thing ____________
+
+    def test_the_endpoint_and_the_import_answer_the_same_thing():
+        served = TestClient(app).get("/v1/contract").json()
+        imported = C.contract()
+>       assert served == imported, "the HTTP surface and the import disagree about the contract"
+E       AssertionError: the HTTP surface and the import disagree about the contract
+E       assert {'asset_field...sion': 2, ...} == {'contract_ve...e', ...], ...}
+E         
+E         Omitting 9 identical items, use -vv to show
+E         Differing items:
+E         {'directors': [{'id': 'cameron', 'name': 'James Cameron', 'notes': 'The camera is mounted and travelling — it rides wi... slow Latin waltz — at a fixed unhurried tempo, the same figure repeating from beginning to end at one volume.'}, ...]} != {'directors': [{'id': 'cameron', 'name': 'James Cameron', 'notes': 'The camera is mounted and travelling — it rides wi...t a fixed unhurried tempo, the same figure repeating from beginning to end at one volume.', 'origin': 'builtin'}, ...]}
+E         {'package_version': ''} != {'pack...
+E         
+E         ...Full output truncated (3 lines hidden), use '-vv' to show
+
+tests/test_contract.py:265: AssertionError
+_________________ test_the_refusal_reaches_the_caller_as_a_422 _________________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10cf935c0>
+
+    def test_the_refusal_reaches_the_caller_as_a_422(monkeypatch):
+        """Through the compiler, where measuring runs, and before the backend is probed."""
+        from starlette.testclient import TestClient
+    
+        from h3ir import service
+    
+        client = TestClient(service.app, raise_server_exceptions=False)
+        r = client.post("/v1/briefs", json={"intent": "Animate this photo.",
+                                            "assets": [{"path": str(MP4), "kind": "image"}]})
+>       assert r.status_code == 422, r.text
+E       AssertionError: {"detail":{"code":"unmocked-compiler","message":"This offline conformance bridge requires an original test-injected compiler"}}
+E         
+E       assert 500 == 422
+E        +  where 500 = <Response [500 Internal Server Error]>.status_code
+
+tests/test_file_facts.py:283: AssertionError
+____ test_a_pointer_the_service_cannot_open_is_refused_rather_than_ignored _____
+
+client = <starlette.testclient.TestClient object at 0x10cacfcb0>
+tmp_path = PosixPath('/private/var/folders/9s/sc0zm9516rv0tzlt31yt3j4h0000gn/T/pytest-of-linyang/pytest-17/test_a_pointer_the_service_can0')
+
+    def test_a_pointer_the_service_cannot_open_is_refused_rather_than_ignored(client, tmp_path):
+        """Ignoring it produced a brief that silently disagreed with the graph. `asset-missing` is also
+        the one code the ComfyUI node retries a path translation on, so refusing here is what lets a
+        split install find the spelling that works."""
+        sound = _silence(tmp_path / "s.wav")
+        r = client.post("/v1/briefs", json={
+            "intent": "carry on from this clip",
+            "assets": [{"path": str(sound), "kind": "audio", "role": "bgm",
+                        "paired_video_path": r"C:\ComfyUI\temp\clip.mp4"}]})
+        assert r.status_code == 422
+        detail = r.json()["detail"]
+        assert detail["code"] == "asset-missing", "the code the caller retries a translation on"
+        assert "clip.mp4" in detail["message"]
+>       assert "paired with" in detail["message"], "say which of the two paths was the unreadable one"
+E       AssertionError: say which of the two paths was the unreadable one
+E       assert 'paired with' in 'no such file: C:\\ComfyUI\\temp\\clip.mp4'
+
+tests/test_paired_soundtrack.py:121: AssertionError
+_ test_the_prompt_route_says_which_wiring_slot_and_what_kind_each_label_rides __
+
+client = <starlette.testclient.TestClient object at 0x10cfcb230>
+
+    def test_the_prompt_route_says_which_wiring_slot_and_what_kind_each_label_rides(client):
+        """The ComfyUI node's report is built from this, and `ref_audio_1` versus `ref_video_audio_1` is
+        the whole difference between a pairing that happened and one that did not.
+    
+        Driven through the real route with a stand-in document, because writing a brief needs a language
+        model and the projection under test needs none. The manifest entries themselves are real.
+        """
+        from types import SimpleNamespace
+    
+        manifest = _manifest(paired=True)
+        doc = SimpleNamespace(
+            prompt="a document", mode=Mode.REF2VA, render_hash=lambda: "d" * 64,
+            plan=SimpleNamespace(manifest=manifest, subjects=[], target=Target(
+                nominal_seconds=8.0, frames=192, canvas=(1344, 768))))
+        service._STORE["probe"] = {"doc": doc, "brief": None}
+        try:
+            p = client.get("/v1/briefs/probe/prompt")
+        finally:
+            service._STORE.pop("probe", None)
+        assert p.status_code == 200, p.text
+        got = {e["label"]: (e["wiring"], e["kind"]) for e in p.json()["wiring"]}
+>       assert got == {"<Audio 1>": ("ref_video_audio_1", "audio"),
+                       "<Video 1>": ("ref_video_1", "video")}
+E       AssertionError: assert {} == {'<Audio 1>':..._1', 'video')}
+E         
+E         Right contains 2 more items:
+E         {'<Audio 1>': ('ref_video_audio_1', 'audio'),
+E          '<Video 1>': ('ref_video_1', 'video')}
+E         Use -v to get more diff
+
+tests/test_paired_soundtrack.py:158: AssertionError
+____ test_an_empty_intent_over_http_is_a_422_and_not_a_brief_about_nothing _____
+
+    def test_an_empty_intent_over_http_is_a_422_and_not_a_brief_about_nothing():
+        r = _client().post("/v1/briefs", json={"intent": ""})
+>       assert r.status_code == 422, r.text
+E       AssertionError: {"detail":{"code":"unmocked-compiler","message":"This offline conformance bridge requires an original test-injected compiler"}}
+E         
+E       assert 500 == 422
+E        +  where 500 = <Response [500 Internal Server Error]>.status_code
+
+tests/test_request_validation.py:37: AssertionError
+_______________ test_a_bad_aspect_over_http_is_a_422_with_a_body _______________
+
+    def test_a_bad_aspect_over_http_is_a_422_with_a_body():
+        r = _client().post("/v1/briefs", json={"intent": "a car pulls away", "aspect": "banana"})
+>       assert r.status_code == 422, r.text
+E       AssertionError: {"detail":{"code":"unmocked-compiler","message":"This offline conformance bridge requires an original test-injected compiler"}}
+E         
+E       assert 500 == 422
+E        +  where 500 = <Response [500 Internal Server Error]>.status_code
+
+tests/test_request_validation.py:101: AssertionError
+___ test_a_brief_naming_an_upload_the_service_does_not_hold_says_which_ones ____
+
+client = <starlette.testclient.TestClient object at 0x10c928830>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x111978d40>
+
+    def test_a_brief_naming_an_upload_the_service_does_not_hold_says_which_ones(client, monkeypatch):
+        """One answer listing every missing file, not one round trip per file. A caller with nine
+        references needs to know which nine to send; `missing` is what it acts on.
+        """
+        _sent(monkeypatch)
+        gone_a, gone_b = "a" * 64, "b" * 64
+        client.put(f"/v1/assets/{SHA}", content=PAYLOAD)
+        r = client.post("/v1/briefs", json={
+            "intent": "x", "assets": [{"sha256": gone_a, "kind": "image"},
+                                      {"sha256": SHA, "kind": "image"},
+                                      {"sha256": gone_b, "kind": "video"}]})
+        assert r.status_code == 422, r.text
+        detail = r.json()["detail"]
+        assert detail["code"] == "asset-not-uploaded"
+        assert detail["missing"] == [gone_a, gone_b], "in request order, and only the absent ones"
+        assert "PUT /v1/assets" in detail["message"], "say where to send them"
+>       assert "kept for a while and then dropped" in detail["message"], \
+            "say why one that worked an hour ago may need sending again"
+E       AssertionError: say why one that worked an hour ago may need sending again
+E       assert 'kept for a while and then dropped' in 'this service does not hold 2 of the attachments this request names. Send the bytes to PUT /v1/assets/{sha256} and ask again.'
+
+tests/test_upload_endpoint.py:187: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_capacity.py::test_over_capacity_is_a_422_naming_the_code - ...
+FAILED tests/test_contract.py::test_the_endpoint_and_the_import_answer_the_same_thing
+FAILED tests/test_file_facts.py::test_the_refusal_reaches_the_caller_as_a_422
+FAILED tests/test_paired_soundtrack.py::test_a_pointer_the_service_cannot_open_is_refused_rather_than_ignored
+FAILED tests/test_paired_soundtrack.py::test_the_prompt_route_says_which_wiring_slot_and_what_kind_each_label_rides
+FAILED tests/test_request_validation.py::test_an_empty_intent_over_http_is_a_422_and_not_a_brief_about_nothing
+FAILED tests/test_request_validation.py::test_a_bad_aspect_over_http_is_a_422_with_a_body
+FAILED tests/test_upload_endpoint.py::test_a_brief_naming_an_upload_the_service_does_not_hold_says_which_ones
+8 failed, 983 passed in 7.37s

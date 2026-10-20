@@ -1,0 +1,35 @@
+........................................................................ [  7%]
+........................................................................ [ 14%]
+........................................................................ [ 21%]
+....F................................................................... [ 29%]
+........................................................................ [ 36%]
+........................................................................ [ 43%]
+........................................................................ [ 50%]
+........................................................................ [ 58%]
+........................................................................ [ 65%]
+........................................................................ [ 72%]
+........................................................................ [ 79%]
+........................................................................ [ 87%]
+........................................................................ [ 94%]
+.......................................................                  [100%]
+=================================== FAILURES ===================================
+_________________ test_wiring_decides_the_mode_without_a_model _________________
+
+    def test_wiring_decides_the_mode_without_a_model():
+        from h3ir.mode import infer_mode
+        assert infer_mode(Brief(intent="x")).mode is Mode.T2VA
+        assert infer_mode(Brief(intent="x", assets=[_vid("v1")])).mode is Mode.REF2VA
+        assert infer_mode(Brief(intent="x", assets=[_img(f"i{i}") for i in range(3)])).mode \
+            is Mode.REF2VA
+        d = infer_mode(Brief(intent="animate this photo", assets=[_img("i1")]))
+>       assert d.mode is Mode.I2VA and d.confidence >= 0.6
+E       AssertionError: assert (<Mode.REF2VA: 'ref2va'> is <Mode.I2VA: 'i2va'>)
+E        +  where <Mode.REF2VA: 'ref2va'> = ModeDecision(mode=<Mode.REF2VA: 'ref2va'>, confidence=0.5, rule_fired='12.4-failsafe', signals=['single image asset', ...els. The selected mode remains recorded for an explicit caller decision.'], alternatives=['i2va', 'l2va'], asked=False).mode
+E        +  and   <Mode.I2VA: 'i2va'> = Mode.I2VA
+
+tests/test_deterministic.py:488: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_deterministic.py::test_wiring_decides_the_mode_without_a_model
+1 failed, 990 passed in 7.75s
+/Users/linyang/Code/contextir/conformance/service_bridge.py:18: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+  from starlette.testclient import TestClient

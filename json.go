@@ -160,6 +160,13 @@ func strictShape(value any, typ reflect.Type) bool {
 	case reflect.Bool:
 		_, ok := value.(bool)
 		return ok
+	case reflect.Float64:
+		n, ok := value.(json.Number)
+		if !ok {
+			return false
+		}
+		f, err := strconv.ParseFloat(string(n), 64)
+		return err == nil && !math.IsNaN(f) && !math.IsInf(f, 0)
 	case reflect.Int, reflect.Int64:
 		number, ok := value.(json.Number)
 		if !ok {
@@ -235,8 +242,11 @@ func exactInteger(s string) (int64, bool) {
 func normalizeIntegers(value any) any {
 	switch value := value.(type) {
 	case json.Number:
-		n, _ := exactInteger(string(value))
-		return n
+		n, ok := exactInteger(string(value))
+		if ok {
+			return n
+		}
+		return value
 	case []any:
 		for i := range value {
 			value[i] = normalizeIntegers(value[i])

@@ -1,0 +1,62 @@
+........................................................................ [  7%]
+........................................................................ [ 14%]
+........F....F.......................................................... [ 21%]
+........................................................................ [ 29%]
+........................................................................ [ 36%]
+........................................................................ [ 43%]
+........................................................................ [ 50%]
+........................................................................ [ 58%]
+........................................................................ [ 65%]
+........................................................................ [ 72%]
+........................................................................ [ 79%]
+........................................................................ [ 87%]
+........................................................................ [ 94%]
+.......................................................                  [100%]
+=================================== FAILURES ===================================
+__________ test_the_decision_records_that_the_wording_was_overridden ___________
+
+    def test_the_decision_records_that_the_wording_was_overridden():
+        """Reported, never silently resolved: the request said "animate this photo" and the role said
+        storyboard, and the caller has to be able to see which one won."""
+        brief = Brief(intent=ANCHOR_WORDING, assets=[_image(Role.STORYBOARD, stated=True)])
+        d = infer_mode(brief, _cards(), backend=None)
+>       assert any("overridden by the declared role" in s for s in d.signals), d.signals
+E       AssertionError: ['The caller declared storyboard, which is a content reference rather than an actual frame of the video.', "Confidence...ds the original routing-policy value; model_confidence separately preserves the provider's interpretation confidence."]
+E       assert False
+E        +  where False = any(<generator object test_the_decision_records_that_the_wording_was_overridden.<locals>.<genexpr> at 0x108e797d0>)
+
+tests/test_declared_roles.py:60: AssertionError
+_____________ test_the_compiler_reports_the_override_as_a_finding ______________
+
+    def test_the_compiler_reports_the_override_as_a_finding():
+        """X18, the counterpart to X10. Compiled for real with the model switched off, so this is the
+        finding list a caller receives rather than a hand-built one."""
+        from h3ir import compile as C
+    
+        class _Backend:
+            class cfg:
+                model = "test-model"
+            def require_available(self): pass
+            def server_version(self): return "test"
+            def close(self): pass
+    
+        cards = _cards()
+        brief = Brief(intent=ANCHOR_WORDING, assets=[_image(Role.STORYBOARD, stated=True)])
+        real_analyse = C.analyse_all
+        C.analyse_all = lambda *a, **k: cards
+        try:
+            doc = C.compile_brief(brief, backend=_Backend(), llm=False)
+        finally:
+            C.analyse_all = real_analyse
+        hit = [f for f in doc.findings if f.rule == "X18-role-overrides-anchor-language"]
+>       assert hit, [str(f) for f in doc.findings]
+E       AssertionError: ['[WARN] P2-too-short: detailed_description is 65 words; spec guidance 350-500, official example 336', '[WARN] H3-token-band: prompt is 200 tokens, outside the 350-1400 band']
+E       assert []
+
+tests/test_declared_roles.py:131: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_declared_roles.py::test_the_decision_records_that_the_wording_was_overridden
+FAILED tests/test_declared_roles.py::test_the_compiler_reports_the_override_as_a_finding
+2 failed, 989 passed in 7.78s
+/Users/linyang/Code/contextir/conformance/service_bridge.py:18: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+  from starlette.testclient import TestClient
