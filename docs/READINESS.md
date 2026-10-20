@@ -1,6 +1,6 @@
 # 实现与验收状态
 
-更新日期：2026-10-20。当前工作树以独立 Go package 实现公开的 Brief → ContextIR → H3 流程，运行时仅使用 Go 标准库，不依赖 Python、CLW、数据库或队列。它不包含 MiniMax 托管 Context-IR 的内部代码，也没有托管服务或成片质量等价证据。
+更新日期：2026-10-20。当前发布版本以独立 Go package 实现公开的 Brief → ContextIR → H3 流程，运行时仅使用 Go 标准库，不依赖 Python、CLW、数据库或队列。它不包含 MiniMax 托管 Context-IR 的内部代码，也没有托管服务或成片质量等价证据。
 
 ## 当前验收结论
 
@@ -60,7 +60,11 @@
 
 ## 发布与外部验证
 
-README 的安装 pin 暂保留此前已验证的 `fe1feb7`：`v0.1.1-0.20261020092710-fe1feb7727b0`。那次真实私有远端下载的 ZIP 为 5,879,718 字节，无 `replace` 或工作区源码引用；独立 build/run、IR/H3/哈希/评分重放及下载包内五组旧契约测试通过，见 [消费者报告](../conformance/reports/contextir-private-consumer-fe1feb7-go-adapted-v1.json) 与 [测试事件](../conformance/reports/private-go-adapted-tests-fe1feb7-v1.json)。**它是旧分发版本证据，不能证明当前新增实现已经发布或已从远端安装。** 新提交的发布/消费者验证另行固定，不改写旧标签或记录。
+当前固定产品提交 `874c5ee273bc406e122ca4a59db64c4c743f3820`，安装版本 `v0.1.1-0.20261020120832-874c5ee273bc`。已从 GitHub 私有远端真实下载 9,371,622 字节 ZIP；无 `replace` 或工作区源码引用，独立消费者 build/run、IR/H3/哈希/评分重放通过，见 [消费者报告](../conformance/reports/private-consumer-remaining-final-v4.json)。
+
+从同一实际下载目录、关闭工作区与模块网络、移除提供商凭据，完整执行 `go test -json -count=1 -timeout=240s ./...`：**370 主测试、7806 子测试，全部通过且无测试跳过**。测试前后源码与 ZIP 逐文件一致，ZIP 不包含 `conformance/reports`，证明包内测试不依赖历史报告。见 [外部完整测试](../conformance/reports/private-native-remaining-final-v4.json) 和 [最终汇总](../conformance/reports/completion-remaining-v3.json)。
+
+首轮外部测试在 `dc2731a` 发现一项测试错误依赖 checkout 的 Git HEAD，记录保留在 [原失败报告](../conformance/reports/private-native-remaining-final-v2.json)。现按 Go 契约验证调用方传入的短/完整 commit、缺省未知状态和完整持久化，不要求模块目录存在 Git；修正后重跑逐项验收、全仓 race/vet 与上述外部全套。此前 `fe1feb7` 的旧分发证据和旧标签继续保留。
 
 GitHub Actions 曾因账户付款/spending limit 在启动前被阻止，不能声称历史远端 CI 通过；[实际远端注释](../conformance/reports/remote-ci-71a4bb5.json) 和旧记录独立保留。当前以本地可复验的命令、原断言、独立 Go 测试和来源证明为依据。
 

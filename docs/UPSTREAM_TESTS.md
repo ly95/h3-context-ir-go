@@ -2,6 +2,8 @@
 
 固定上游原清单的 **989 项 Go 适用要求全部通过**；另外 2 项 Python 语法检查不适用，未计入通过数。来源是 42 文件、991 个原 nodeid，不以自编示例代替原要求。
 
+本版已发布并从 GitHub 私有远端独立下载：`v0.1.1-0.20261020120832-874c5ee273bc`。下载包内 370 个主测试、7806 个子测试全部通过且无跳过，见 [外部全套证据](../conformance/reports/private-native-remaining-final-v4.json) 与 [最终汇总](../conformance/reports/completion-remaining-v3.json)。
+
 [最终逐项报告](../conformance/reports/native-functionality-remaining-all-v3.json) 对每个要求保存实际验证入口、原断言意图、输入调整和证据：**672 项由未修改的原断言检查实际 Go 主输出，317 项用独立 Go 接口测试适配**。没有遗漏、重复、跳过或把辅助函数触达当作主功能通过。独立 Go 测试与原断言使用同一生产实现；受控模型候选和严格录音回放不需要付费服务。
 
 原样 Python 断言重跑依然是 **981 passed / 10 failed，0 skipped**，见 [完整原报告](../conformance/reports/go-draft-pytest-remaining-final-v1.json)。这不是“991 原断言全部通过”。十项 Go 接口差异另有实际正反例验证，原失败保持红色。此前 986/5 和其他所有历史轮次继续保留。

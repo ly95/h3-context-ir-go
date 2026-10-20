@@ -13,10 +13,12 @@
 需要 Go 1.25+。私有仓库调用方需要相应 GitHub 访问权限，可按环境设置 `GOPRIVATE=github.com/ly95/*`，不要把凭据放进 module URL。
 
 ```sh
-go get github.com/ly95/contextir@v0.1.1-0.20261020092710-fe1feb7727b0
+go get github.com/ly95/contextir@v0.1.1-0.20261020120832-874c5ee273bc
 ```
 
-**此安装 pin 是此前 `fe1feb7` 的分发验证版本，不是本次 989 项验收后的新发布版本。** 它已完成仓库外下载、独立构建及公共 API 重放验证，详见 [验证记录](conformance/reports/contextir-private-consumer-fe1feb7-go-adapted-v1.json)。下载包中的五组 Go 适配契约也已独立通过（8 个主测试、17 个子测试，零跳过），见 [实际 Go 测试事件](conformance/reports/private-go-adapted-tests-fe1feb7-v1.json)。当前实现、后续能力与完整验收记录在 `codex/readiness-audit` 开发验收分支；新发布与其外部消费者验证应另外固定提交。旧标签 `v0.1.0` 不包含后续实现和修复，不会重写该标签。生产使用应固定经过自己验收的提交。
+此版本固定产品提交 `874c5ee273bc406e122ca4a59db64c4c743f3820`，已从 GitHub 私有远端下载验证，ZIP 为 9,371,622 字节。仓库外的独立消费者构建、IR/H3/哈希/评分重放通过；下载包内完整 Go 测试 **370 个主测试、7806 个子测试全部通过，0 失败、0 跳过**，没有 `replace`、工作区源码或历史报告依赖。见 [消费者验证](conformance/reports/private-consumer-remaining-final-v4.json)、[下载包完整测试](conformance/reports/private-native-remaining-final-v4.json) 与 [汇总证据](conformance/reports/completion-remaining-v3.json)。
+
+当前实现与证据位于 `codex/readiness-audit` 分支。`v0.1.0` 是旧标签，不包含后续实现；旧标签和历史测试记录保持不变。
 
 历史模型输出、源码快照和测试报告保存在独立的审计 module `conformance/reports`。安装 Go 库不下载这些历史文件；需要完整证据时克隆 Git 仓库。
 

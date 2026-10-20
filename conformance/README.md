@@ -231,7 +231,17 @@ not reports; a repository clone is needed to reproduce this complete audit.
 Ordinary corpus tests write only `t.TempDir`; `CONTEXTIR_PLAN_CORPUS_REPORT` is an
 explicit opt-in destination for retained reports.
 
-The README installation pin `fe1feb7` is a previously verified distribution, not
-the version of the new 989-item worktree evidence. Its external private download,
-build/run and old eight-root/seventeen-subtest results remain separate. A new
-published commit requires its own external-consumer report.
+The published product commit is `874c5ee273bc406e122ca4a59db64c4c743f3820`, pinned as
+`v0.1.1-0.20261020120832-874c5ee273bc`. The verified private remote ZIP contains 9,371,622
+bytes. [The consumer](reports/private-consumer-remaining-final-v4.json) built and
+ran without replacement/workspace resolution. [The complete downloaded native
+suite](reports/private-native-remaining-final-v4.json) passed 370 root tests
+and 7806 subtests with no failed/skipped test events, no provider credentials,
+no reports directory, and no cache-source changes.
+
+The [first external failure](reports/private-native-remaining-final-v2.json) is
+retained: one test incorrectly required checkout Git metadata. Its Go adaptation
+now verifies explicit caller provenance and unknown defaults in a directory
+without Git. The complete v3 local/native/external results are indexed in
+[the completion receipt](reports/completion-remaining-v3.json); previous `fe1feb7`
+distribution evidence and all historical source outcomes remain unchanged.
