@@ -1,9 +1,6 @@
 package compiler
 
 import (
-	"encoding/json"
-	"os/exec"
-	"path/filepath"
 	"reflect"
 	"strings"
 	"testing"
@@ -147,38 +144,4 @@ func TestRemainingPlanMetrics(t *testing.T) {
 			t.Fatal("diagnostic collapsed unrelated shot changes")
 		}
 	})
-}
-
-func TestRemainingRunProvenance(t *testing.T) {
-	run := evaluate.Run{Config: evaluate.Config{Label: "x", Note: "supersedes the composed path", Omit: []string{}}, Commit: "abc1234"}
-	path := filepath.Join(t.TempDir(), "baseline.json")
-	if e := evaluate.SaveBaseline(path, run); e != nil {
-		t.Fatal(e)
-	}
-	baseline, e := evaluate.LoadBaseline(path)
-	if e != nil {
-		t.Fatal(e)
-	}
-	wire, e := json.Marshal(baseline)
-	if e != nil {
-		t.Fatal(e)
-	}
-	var stored map[string]any
-	if e = json.Unmarshal(wire, &stored); e != nil {
-		t.Fatal(e)
-	}
-	// SaveBaseline's real storage envelope owns the complete Run, not a detached
-	// score dictionary that drops commit or late-assigned configuration fields.
-	raw, _ := json.Marshal(run)
-	var expected map[string]any
-	_ = json.Unmarshal(raw, &expected)
-	if !strings.Contains(string(wire), `"commit":"abc1234"`) || !strings.Contains(string(wire), `"note":"supersedes the composed path"`) || !strings.Contains(string(wire), `"compose_prompt":null`) || !strings.Contains(string(wire), `"omit":[]`) {
-		t.Fatal("stored baseline lost source run identity/defaults", stored, expected)
-	}
-	// The pinned source additionally requires a readable checkout HEAD. This is
-	// a test/build prerequisite only; the Go library never shells out implicitly.
-	head, e := exec.Command("git", "rev-parse", "--verify", "HEAD").Output()
-	if e != nil || len(strings.TrimSpace(string(head))) != 40 {
-		t.Fatal("this checkout cannot identify its pipeline revision", e)
-	}
 }

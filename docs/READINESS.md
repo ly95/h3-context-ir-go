@@ -4,7 +4,7 @@
 
 ## 当前验收结论
 
-固定上游 `fd031e136ae3d89147324c0d1b2aa65e838c21f5` 的原清单有 **42 文件、991 项**。本轮 **989/989 项 Go 适用要求通过**，另 2 项 Python 语法检查单列不适用，没有计入通过数。完整结果见 [最终逐项报告](../conformance/reports/native-functionality-remaining-all-v2.json)、[映射矩阵](../conformance/matrix.json) 与 [验收说明](UPSTREAM_TESTS.md)。
+固定上游 `fd031e136ae3d89147324c0d1b2aa65e838c21f5` 的原清单有 **42 文件、991 项**。本轮 **989/989 项 Go 适用要求通过**，另 2 项 Python 语法检查单列不适用，没有计入通过数。完整结果见 [最终逐项报告](../conformance/reports/native-functionality-remaining-all-v3.json)、[映射矩阵](../conformance/matrix.json) 与 [验收说明](UPSTREAM_TESTS.md)。
 
 | 证据类型 | 项数 | 实际验证的内容 |
 | --- | ---: | --- |
@@ -16,7 +16,7 @@
 
 最新未修改原断言重跑仍是 **981 passed / 10 failed，0 skipped**，见 [原报告](../conformance/reports/go-draft-pytest-remaining-final-v1.json)。十项失败分别是五项既有合法入口/观察/后端/分类差异，加上 native wire contract v3 与真实 Go CLI 的五项版本/再生接口差异；对应 Go 要求已独立验证，原失败没有被豁免、删掉或改成原断言通过。逐项说明见 [UPSTREAM_TESTS](UPSTREAM_TESTS.md#原样重跑保留的十项差异)。旧 986/5、953/38 和其他失败轮次继续保留。
 
-最终全仓 Go 测试、race、vet、格式与 diff 检查以 [local-final-quality-v2.json](../conformance/reports/local-final-quality-v2.json) 的实际命令/结果为准。原 989 聚合首轮 [v1](../conformance/reports/native-functionality-remaining-all-v1.json) 也保持不变；最终 v2 另外纳入最新真实高层编译录音的严格回放测试，不把补充测试再算作新的上游节点。
+最终全仓 Go 测试、race、vet、格式与 diff 检查以 [local-final-quality-v3.json](../conformance/reports/local-final-quality-v3.json) 的实际命令/结果为准。原 989 聚合首轮 [v1](../conformance/reports/native-functionality-remaining-all-v1.json) 也保持不变；最终 v3 另外纳入最新真实高层编译录音的严格回放测试，不把补充测试再算作新的上游节点。
 
 ## 实际提供的能力
 

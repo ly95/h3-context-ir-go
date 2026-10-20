@@ -8,12 +8,12 @@ replace this corpus.
 
 ## Current acceptance
 
-[The final native functionality report](reports/native-functionality-remaining-all-v2.json)
+[The final native functionality report](reports/native-functionality-remaining-all-v3.json)
 verifies **989/989 Go-applicable requirements**: **672 unchanged original assertions
 consume actual native primary output; 317 have separately executed Go API/input
 adaptations**. Two Python grammar checks are not applicable and are not Go passes.
 There are no duplicate/missing original nodeids, failed or skipped Go test events.
-[Whole-repository race/vet/format and harness gates](reports/local-final-quality-v2.json)
+[Whole-repository race/vet/format and harness gates](reports/local-final-quality-v3.json)
 also pass. The earlier aggregate v1 and every failing historical run remain intact.
 
 This is not a claim that every unchanged Python assertion passes. The current
@@ -164,8 +164,8 @@ environment as a new run.
 
 | Artifact | Establishes |
 | --- | --- |
-| `reports/native-functionality-remaining-all-v2.json` | All 989 applicable requirements, exact verification class/leaf or original primary operation, raw Go events and immutable source hashes. |
-| `reports/local-final-quality-v2.json` | Actual full-repository race, vet, gofmt, diff and harness gates. |
+| `reports/native-functionality-remaining-all-v3.json` | All 989 applicable requirements, exact verification class/leaf or original primary operation, raw Go events and immutable source hashes. |
+| `reports/local-final-quality-v3.json` | Actual full-repository race, vet, gofmt, diff and harness gates. |
 | `adaptations/remaining_*.json` | One unique mapping per applicable original nodeid; source assertion intent, Go API/input adjustments and real execution evidence. |
 | `reports/go-draft-pytest-remaining-final-v1.json` | Unmodified original assertions; 981 passed/10 failed, 865 Go-touched/126 Python-only. Touch alone is not current primary verification. |
 | `reports/upstream-pytest.json` | Original Python 991-test baseline and collected assert sources; no Go claim. |

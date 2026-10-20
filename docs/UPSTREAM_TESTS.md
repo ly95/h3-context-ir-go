@@ -2,7 +2,7 @@
 
 固定上游原清单的 **989 项 Go 适用要求全部通过**；另外 2 项 Python 语法检查不适用，未计入通过数。来源是 42 文件、991 个原 nodeid，不以自编示例代替原要求。
 
-[最终逐项报告](../conformance/reports/native-functionality-remaining-all-v2.json) 对每个要求保存实际验证入口、原断言意图、输入调整和证据：**672 项由未修改的原断言检查实际 Go 主输出，317 项用独立 Go 接口测试适配**。没有遗漏、重复、跳过或把辅助函数触达当作主功能通过。独立 Go 测试与原断言使用同一生产实现；受控模型候选和严格录音回放不需要付费服务。
+[最终逐项报告](../conformance/reports/native-functionality-remaining-all-v3.json) 对每个要求保存实际验证入口、原断言意图、输入调整和证据：**672 项由未修改的原断言检查实际 Go 主输出，317 项用独立 Go 接口测试适配**。没有遗漏、重复、跳过或把辅助函数触达当作主功能通过。独立 Go 测试与原断言使用同一生产实现；受控模型候选和严格录音回放不需要付费服务。
 
 原样 Python 断言重跑依然是 **981 passed / 10 failed，0 skipped**，见 [完整原报告](../conformance/reports/go-draft-pytest-remaining-final-v1.json)。这不是“991 原断言全部通过”。十项 Go 接口差异另有实际正反例验证，原失败保持红色。此前 986/5 和其他所有历史轮次继续保留。
 
@@ -16,7 +16,7 @@
 
 317 项包含旧 126 个 Python-only 节点中的 124 个适用要求，以及 193 个此前已经触达 Go、但主断言仍需独立验证或接口适配的节点。672 项没有虚构独立 Go test leaf：入口仍是原 source nodeid 与实际 native operation。逐项 [适配清单](../conformance/adaptations/remaining_existing_native.json) 与其他 `remaining_*.json` 列出原断言、来源 SHA、边界和精确测试/fixture IDs。
 
-[最终本地质量检查](../conformance/reports/local-final-quality-v2.json) 的全仓 race、vet、gofmt、diff 与 conformance 门卫全部通过。最终聚合也执行全部 Go 测试并核验运行期间源文件不变；原始 Go JSON events、源码归档和 hash 在报告中。首轮 [v1](../conformance/reports/native-functionality-remaining-all-v1.json) 保持不变，不把两轮事件数相加。
+[最终本地质量检查](../conformance/reports/local-final-quality-v3.json) 的全仓 race、vet、gofmt、diff 与 conformance 门卫全部通过。最终聚合也执行全部 Go 测试并核验运行期间源文件不变；原始 Go JSON events、源码归档和 hash 在报告中。首轮 [v1](../conformance/reports/native-functionality-remaining-all-v1.json) 保持不变，不把两轮事件数相加。
 
 ## 原样重跑保留的十项差异
 
