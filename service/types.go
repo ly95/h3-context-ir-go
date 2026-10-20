@@ -149,6 +149,10 @@ type DialogueIn struct {
 	Voiceover bool    `json:"voiceover"`
 }
 type BriefIn struct {
+	TranscriptUses     []plan.TranscriptUse     `json:"transcript_uses"`
+	SubjectProjections []plan.SubjectProjection `json:"subject_projections"`
+	// AudioCopyModes names explicit BGM signal-copy relationships by stable asset-N ID.
+	AudioCopyModes  map[string]string `json:"audio_copy_modes"`
 	Intent          string            `json:"intent"`
 	Assets          []AssetIn         `json:"assets"`
 	Seconds         float64           `json:"seconds"`

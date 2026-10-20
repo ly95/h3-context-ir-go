@@ -25,6 +25,20 @@ can carry already observed `Evidence` or structured `Cards`, so callers can cach
 and reuse expensive media observations. Coverage is explicit. Partial and legacy
 coverage require the corresponding `planner.Options` authorization.
 
+`Options.AssetInspector` optionally measures source file/container metadata before
+preparation, geometry decisions and budgeting. `media.Perceiver` implements this
+port through its explicitly configured resolver/tools; `media.MeasureAssets` is
+also available independently. Caller-supplied dimensions remain authoritative
+(e.g. a tensor re-encoded into a temporary file); an inspector that overwrites an
+explicit field fails. A failed configured measurement is an error. Without that
+capability, source geometry and reference row costs remain visibly unknown rather
+than being inferred from the target canvas. Measurement makes no semantic model
+call or claim about depicted content. Video perception sends decoded PNG samples
+from one clip. `media.PerceiverOptions.MaxImageRetries` explicitly supplies the
+same zero-to-five repair budget to image and sampled-video observations; zero
+means no retry. Every attempted model call is metered, while transport failures,
+cancellation and invalid usage stop without a content retry.
+
 A generic observer can return facts without a Card. The additional
 `observation_card` stage structures only those existing facts, with an exact
 fact-ID/quotation citation for every populated value; unknown modalities remain
@@ -117,6 +131,21 @@ by root `ConstraintNoAddedMusic`, distinct from the target-wide
 `ConstraintNoMusic` used for an actual no-music instruction. `SilenceAll` excludes
 all audio. `ScopeDecision.MusicConstraint` records which contract was resolved.
 
+`Brief.AudioCopyModes` maps stable attachment IDs to `fully_copy` or
+`partially_copy` for an explicitly declared BGM audio. An omitted choice keeps
+the mixed/partial BGM default. A complete final recording cannot be combined with
+new dialogue, generated sound events, a new score or another copied recording;
+invalid attachment IDs, property-only roles and unknown markers fail intake.
+Refinement preserves the map unless an authorized typed update changes it.
+
+Both structural planning and prose receive `composition_facts` derived from the
+resolved bindings: actual frame anchors, separately wired audio copy/property
+relationships and observed versus unknown source-video camera motion. A video
+container alone does not promise soundtrack reuse. Deterministic Draft takes its
+source look from the edited/continued video before an incoming identity plate;
+an explicit caller Style retains precedence. Subject, environment, style and
+storyboard responsibilities accept image or video, matching the published API.
+
 Medium classification records semantic rendering families rather than reproducing
 the original keyword recognizer's omissions. A cel-animation target can therefore
 be classified as `2d-animation` where the original closed vocabulary returned
@@ -135,6 +164,12 @@ already assigned figures. Unsupported identifying qualifiers and broad names
 matching multiple people produce an explicitly labeled `user_symbolic` removed
 figure. They never borrow a leftover identity. Source and target relationships
 then pass through `plan.BindReplacements`.
+
+`InspectReplacements` provides a readonly typed report of incoming identities,
+all compatible observed candidates, existing bindings and actionable ambiguity
+states. It shares candidate enumeration with `ResolveReplacements`; it does not
+rank descriptions, assign leftovers, or authorize a selection. Callers can use
+its graph identities for an explicit selection or request semantic resolution.
 
 `Brief.ReplacementTargets` provides complete explicit graph choices without a
 replacement-model call: each incoming attachment ID maps to a pre-binding native
@@ -251,6 +286,23 @@ runs the same Compile path. It preserves unaffected assets, original evidence,
 fixed dialogue, target and constraints. It does not concatenate prompts or mutate
 the prior artifact.
 
+Refinement can explicitly set or clear `transcript_uses`, `subject_projections`,
+`replacement_targets` and `audio_copy_modes`. Previously published structured
+selections and exact dialogue/lettering become the next refinement's fixed
+baseline, including selections originally made by a model. Conflicting historical
+Brief and published choices are refused. Removing a selected source requires an
+explicit update or clear of its dependent selection in the same patch; a source
+removal cannot silently discard its performance. Unchanged subject selectors are
+mechanically remapped by stable attachment/interval and within-source identity
+when unrelated assets are removed, with a `stable_source_graph_remap` decision.
+An explicit new selector addresses the amended graph. No remaining figure is
+automatically substituted for a removed selected source.
+
+Selected transcript words stay in host-owned dialogue. The output gate checks
+adjacent literal spans as emitted text and checks subject/speaker definitions and
+delivery instructions, preventing a writer from echoing a selected utterance into
+visual prose by splitting it across spans.
+
 `ScopeInput` analyzes permissions without inventing words for externally supplied
 content. Conflicts remain typed findings with additions disallowed; actual Compile
 refuses contradictory fixed content. `DecideLicenceWithReferences` accepts
@@ -299,3 +351,31 @@ silent fallback are deliberately replaced with typed interpretation, validation,
 explicit policies, and recorded status. Native-profile conformance opts in to the
 source's frame snapping. The native ComfyUI base-mode frame sockets take precedence
 over the upstream deterministic manifest's old `ref_image_N` spelling.
+
+The prose writer receives a typed `prose_length_policy` from mode and resolved
+responsibilities. Reference generation normally targets 350–500 English words;
+base formats use their own suggested target without that band. An edit scales
+with the complexity of its source and requested change, with no compulsory
+word target. P2 remains a warning for reference generation and is disabled for
+actual video-editing tasks. These guides never cause local padding, invented
+observations, hidden model calls or truncation.
+
+`PrepareGeneratedShot` is an explicitly selected compatibility converter for
+legacy generated template bodies; Compile and Draft do not run it on literals.
+It records every camera/dialogue token conversion. Camera-looking sentences and
+lowercase text after a camera slot remain unchanged unless the caller selects
+exact `CameraContinuation` or `RedundantCameraSentences` bytes for removal.
+Present dialogue placeholders keep their actual occurrence order. Multiple
+omitted tokens require a complete `DialogueOrder`; mismatched, repeated or
+unknown ordering is refused. Sentence trimming still requires `TrimSentences`.
+
+Edit retention statements use actual replacement source ownership (including
+source intervals) or unambiguous explicit shot associations. With multiple edit
+clips, an ambiguous placed-picture destination is refused rather than claiming
+that every clip was changed. X18 override warnings require the typed role-free
+mode audit; a deterministic Draft cannot infer an override from request words.
+The compatibility template converter supports tail dialogue slots. Prose after a
+dialogue slot is explicitly unsupported because collecting it into the shot's
+opening description would reorder the scene; callers can express that sequence
+with native Action and Dialogue events. The original body remains unchanged on
+this error.

@@ -1,0 +1,16 @@
+{
+  "recorded_at": "2026-10-20T11:40:10.180320+00:00",
+  "failure_log_preserved": "conformance/reports/local-final-race-v1.txt",
+  "command": "go test -race ./compiler -count=1",
+  "exit_code": 0,
+  "output": "ok  \tgithub.com/ly95/contextir/compiler\t34.028s\n",
+  "source_hashes": {
+    "compiler/refine.go": "65b60f52dd0ff180785dc69f21b9a152857be29dcb196a1e881215956f8adf44",
+    "compiler/refine_graph.go": "e00b34c21c04131c38e26a9053fa266dbe5cfd2df941a9f49ba044b50040f96b",
+    "compiler/transcript_use.go": "8db7e6feedbdc0ed13edd563c1f24ac080462e0574aeff530e311427401533e9",
+    "compiler/refine_choice_review_test.go": "d049aac33a11148454cc48cea073d08338f0930eb4e84767436a14df1cf6223b"
+  },
+  "diagnosis": "The v1 race binary contains the pre-correction test: its assertion was at line 259. In current source line 259 checks ResolveReplacements errors; the assertion moved to line 268 after adding the real production resolver. Draft stores its explicit replacement choice in Brief, not Structure; the initial test removed Brief selection without populating a resolved structural graph. The corrected test obtains that graph from ResolveReplacements before testing the reverse mapping. No runtime production code was changed during this audit.",
+  "failure_log_mtime": "2026-10-20T11:34:56.350260+00:00",
+  "corrected_test_mtime": "2026-10-20T11:34:57.105515+00:00"
+}

@@ -64,7 +64,28 @@ func (d *DialogueLine) UnmarshalJSON(b []byte) error {
 	return nil
 }
 
+// TranscriptUse selects exact caller-supplied source words for a new performance.
+type TranscriptUse struct {
+	AssetID     string `json:"asset_id"`
+	Text        string `json:"text"`
+	Language    string `json:"language"`
+	SpeakerHint string `json:"speaker_hint"`
+	Voiceover   bool   `json:"voiceover"`
+}
+type SubjectProjectionSource struct {
+	SubjectID  string   `json:"subject_id"`
+	Attributes []string `json:"attributes"`
+}
+type SubjectProjection struct {
+	Descriptor string                    `json:"descriptor"`
+	SubjectID  string                    `json:"subject_id"`
+	Sources    []SubjectProjectionSource `json:"sources"`
+}
+
 type Brief struct {
+	TranscriptUses     []TranscriptUse     `json:"transcript_uses,omitempty"`
+	SubjectProjections []SubjectProjection `json:"subject_projections,omitempty"`
+	AudioCopyModes     map[string]string   `json:"audio_copy_modes,omitempty"`
 	// Seed and Transcripts are explicit service caller choices carried to the
 	// injected compiler/analyzer boundary; this deterministic planner never
 	// treats them as observations or silently invokes a recognizer.

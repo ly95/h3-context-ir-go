@@ -453,7 +453,7 @@ func (s *Service) refine(w http.ResponseWriter, r *http.Request, id string, rec 
 	}
 	previous := rec.Result
 	rec.Result = result
-	rec.Brief, e = amendedBrief(rec.Brief, previous.Brief, result.Brief)
+	rec.Brief, e = amendedBrief(rec.Brief, previous.Brief, result.Brief, result.Decisions)
 	if e != nil {
 		writeCompileError(w, e, result)
 		return

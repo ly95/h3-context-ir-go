@@ -8,6 +8,10 @@ import (
 )
 
 func renderDefinitions(doc contextir.Document, state bindingState) (string, string, error) {
+	editTargets, relationshipErr := editReferenceRelationships(doc)
+	if relationshipErr != nil {
+		return "", "", relationshipErr
+	}
 	var definitions, retentions []string
 	for i, subject := range doc.Subjects {
 		label := state.subjects[subject.ID]
@@ -85,17 +89,15 @@ func renderDefinitions(doc contextir.Document, state bindingState) (string, stri
 				description = append(description, "Only camera movement and cutting structure are referenced; its people, objects, setting and visible content never appear in the target video.")
 			}
 			if containsRole(item.Roles, contextir.RolePlacedSubject) || containsRole(item.Roles, contextir.RoleReplacementSubject) {
-				for _, video := range doc.References {
-					if containsRole(video.Roles, contextir.RoleEditSource) {
-						if containsRole(item.Roles, contextir.RolePlacedSubject) {
-							description = append(description, label+" is placed into "+state.refs[video.ID]+"; the picture contributes its subject only, never its background, pose, or photographic lighting.")
-						} else {
-							target := item.Replaces
-							if target == "" {
-								target = "the structurally identified source figure"
-							}
-							description = append(description, label+" takes the place of "+target+" in "+state.refs[video.ID]+", inheriting that figure's position in frame, actions and timing. The picture contributes its replacement identity, never its background, pose, or lighting.")
+				for _, video := range editTargets[item.ID] {
+					if containsRole(item.Roles, contextir.RolePlacedSubject) {
+						description = append(description, label+" is placed into "+state.refs[video.ID]+"; the picture contributes its subject only, never its background, pose, or photographic lighting.")
+					} else {
+						target := item.Replaces
+						if target == "" {
+							target = "the structurally identified source figure"
 						}
+						description = append(description, label+" takes the place of "+target+" in "+state.refs[video.ID]+", inheriting that figure's position in frame, actions and timing. The picture contributes its replacement identity, never its background, pose, or lighting.")
 					}
 				}
 			}
@@ -123,6 +125,36 @@ func renderDefinitions(doc contextir.Document, state bindingState) (string, stri
 				description = append(description, "Its selected source segment runs from "+timestamp(item.Source.Interval.Start)+" to "+timestamp(item.Source.Interval.End)+".")
 			}
 			reason := retentionDetails(item.Retention, item.RetentionDetails)
+			if containsRole(item.Roles, contextir.RoleEditSource) {
+				var changes []string
+				for _, subject := range doc.Subjects {
+					if subject.TakenOverBy == "" {
+						continue
+					}
+					fromSource := false
+					for _, source := range subject.Sources {
+						fromSource = fromSource || sourceKey(source.Source) == sourceKey(item.Source)
+					}
+					if fromSource {
+						changes = append(changes, state.subjects[subject.TakenOverBy]+" takes the place of "+state.subjects[subject.ID])
+					}
+				}
+				for _, incoming := range doc.References {
+					if containsRole(incoming.Roles, contextir.RolePlacedSubject) {
+						for _, target := range editTargets[incoming.ID] {
+							if sourceKey(target.Source) == sourceKey(item.Source) {
+								changes = append(changes, state.refs[incoming.ID]+" is placed into the scene")
+							}
+						}
+					}
+				}
+				if len(changes) > 0 {
+					reason = "The original camera movement, timing and setting are maintained while " + strings.Join(changes, "; ") + ". " + reason
+				}
+			}
+			if containsRole(item.Roles, contextir.RolePlacedSubject) {
+				reason = label + " is placed into the scene. " + reason
+			}
 			if item.Kind == contextir.ReferenceAudio && containsRole(item.Roles, contextir.RoleSoundTexture) && item.Retention == contextir.AudioReference {
 				reason = label + "'s sound texture is referenced. " + reason
 			}

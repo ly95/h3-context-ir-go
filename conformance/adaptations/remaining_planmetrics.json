@@ -1,0 +1,144 @@
+{
+  "source_commit": "fd031e136ae3d89147324c0d1b2aa65e838c21f5",
+  "cases": [
+    {
+      "upstream_nodeid": "tests/test_deterministic.py::test_a_long_but_aligned_duration_is_not_an_error",
+      "go_package": "./compiler",
+      "go_test": "TestRemainingPlanMetrics/long_aligned_duration_is_warning_not_error",
+      "assertion_intent": "assert is_on_grid(twenty); assert not [f for f in findings if f.severity == \"ERROR\"]; assert any(f.rule == \"T10-outside-trained-band\" for f in findings)",
+      "adaptation": "Original durations, word sequences and synonymous shot text feed actual native budget/grid, timeline allocation/dialogue capacity or diagnostics. The pinned-count case also verifies actual eight-shot allocation; explicit changed-ceiling and unrelated-shot controls demonstrate behavior rather than a static API-name assertion.",
+      "source_file_sha256": "0a9beff629b7a6915aa4db6312121f0ad87a9b96da86eedd31c3f8948d596827",
+      "source_line": 67,
+      "source_assertions": [
+        {
+          "line": 75,
+          "source": "assert is_on_grid(twenty)"
+        },
+        {
+          "line": 77,
+          "source": "assert not [f for f in findings if f.severity == \"ERROR\"]"
+        },
+        {
+          "line": 78,
+          "source": "assert any(f.rule == \"T10-outside-trained-band\" for f in findings)"
+        }
+      ],
+      "paid_model_calls": 0,
+      "evidence_kind": "actual_native_budget_plan_validator_and_diagnostics"
+    },
+    {
+      "upstream_nodeid": "tests/test_deterministic.py::test_an_off_grid_duration_is_still_an_error",
+      "go_package": "./compiler",
+      "go_test": "TestRemainingPlanMetrics/off_grid_duration_still_errors",
+      "assertion_intent": "assert not is_on_grid(20.0); assert \"T7-illegal-duration\" in rules",
+      "adaptation": "Original durations, word sequences and synonymous shot text feed actual native budget/grid, timeline allocation/dialogue capacity or diagnostics. The pinned-count case also verifies actual eight-shot allocation; explicit changed-ceiling and unrelated-shot controls demonstrate behavior rather than a static API-name assertion.",
+      "source_file_sha256": "0a9beff629b7a6915aa4db6312121f0ad87a9b96da86eedd31c3f8948d596827",
+      "source_line": 81,
+      "source_assertions": [
+        {
+          "line": 85,
+          "source": "assert not is_on_grid(20.0)"
+        },
+        {
+          "line": 88,
+          "source": "assert \"T7-illegal-duration\" in rules"
+        }
+      ],
+      "paid_model_calls": 0,
+      "evidence_kind": "actual_native_budget_plan_validator_and_diagnostics"
+    },
+    {
+      "upstream_nodeid": "tests/test_deterministic.py::test_dialogue_never_exceeds_what_can_be_spoken",
+      "go_package": "./compiler",
+      "go_test": "TestRemainingPlanMetrics/all_dialogue_fits_source_shot_capacity",
+      "assertion_intent": "assert sum(len(s.dialogue) for s in shots) == 2, \"no line may be dropped\"; assert spoken <= (s.duration_ms / 1000) * 2.6 + 4",
+      "adaptation": "Original durations, word sequences and synonymous shot text feed actual native budget/grid, timeline allocation/dialogue capacity or diagnostics. The pinned-count case also verifies actual eight-shot allocation; explicit changed-ceiling and unrelated-shot controls demonstrate behavior rather than a static API-name assertion.",
+      "source_file_sha256": "0a9beff629b7a6915aa4db6312121f0ad87a9b96da86eedd31c3f8948d596827",
+      "source_line": 176,
+      "source_assertions": [
+        {
+          "line": 182,
+          "source": "assert sum(len(s.dialogue) for s in shots) == 2, \"no line may be dropped\""
+        },
+        {
+          "line": 185,
+          "source": "assert spoken <= (s.duration_ms / 1000) * 2.6 + 4"
+        }
+      ],
+      "paid_model_calls": 0,
+      "evidence_kind": "actual_native_budget_plan_validator_and_diagnostics"
+    },
+    {
+      "upstream_nodeid": "tests/test_deterministic.py::test_editing_a_source_video_does_not_invent_cuts",
+      "go_package": "./compiler",
+      "go_test": "TestRemainingPlanMetrics/editing_source_keeps_one_automatic_shot",
+      "assertion_intent": "assert shot_count(Target.build(15), brief, Mode.REF2VA, ProfileOptions(), m) == 1",
+      "adaptation": "Original durations, word sequences and synonymous shot text feed actual native budget/grid, timeline allocation/dialogue capacity or diagnostics. The pinned-count case also verifies actual eight-shot allocation; explicit changed-ceiling and unrelated-shot controls demonstrate behavior rather than a static API-name assertion.",
+      "source_file_sha256": "0a9beff629b7a6915aa4db6312121f0ad87a9b96da86eedd31c3f8948d596827",
+      "source_line": 170,
+      "source_assertions": [
+        {
+          "line": 173,
+          "source": "assert shot_count(Target.build(15), brief, Mode.REF2VA, ProfileOptions(), m) == 1"
+        }
+      ],
+      "paid_model_calls": 0,
+      "evidence_kind": "actual_native_budget_plan_validator_and_diagnostics"
+    },
+    {
+      "upstream_nodeid": "tests/test_pinned_shots.py::test_a_pinned_count_is_delivered_not_clamped_to_the_profile_ceiling",
+      "go_package": "./compiler",
+      "go_test": "TestRemainingPlanMetrics/eight_pinned_shots_are_not_clamped",
+      "assertion_intent": "assert n == 8",
+      "adaptation": "Original durations, word sequences and synonymous shot text feed actual native budget/grid, timeline allocation/dialogue capacity or diagnostics. The pinned-count case also verifies actual eight-shot allocation; explicit changed-ceiling and unrelated-shot controls demonstrate behavior rather than a static API-name assertion.",
+      "source_file_sha256": "f49b2d646fabf6d0abd6ad3d3d6474544980414e49ff3156bf62e79cbaf1e236",
+      "source_line": 67,
+      "source_assertions": [
+        {
+          "line": 72,
+          "source": "assert n == 8"
+        }
+      ],
+      "paid_model_calls": 0,
+      "evidence_kind": "actual_native_budget_plan_validator_and_diagnostics"
+    },
+    {
+      "upstream_nodeid": "tests/test_pinned_shots.py::test_auto_keeps_the_heuristic_and_its_ceiling",
+      "go_package": "./compiler",
+      "go_test": "TestRemainingPlanMetrics/automatic_shots_respect_heuristic_ceiling",
+      "assertion_intent": "assert 1 <= n <= ProfileOptions().max_shots",
+      "adaptation": "Original durations, word sequences and synonymous shot text feed actual native budget/grid, timeline allocation/dialogue capacity or diagnostics. The pinned-count case also verifies actual eight-shot allocation; explicit changed-ceiling and unrelated-shot controls demonstrate behavior rather than a static API-name assertion.",
+      "source_file_sha256": "f49b2d646fabf6d0abd6ad3d3d6474544980414e49ff3156bf62e79cbaf1e236",
+      "source_line": 75,
+      "source_assertions": [
+        {
+          "line": 79,
+          "source": "assert 1 <= n <= ProfileOptions().max_shots"
+        }
+      ],
+      "paid_model_calls": 0,
+      "evidence_kind": "actual_native_budget_plan_validator_and_diagnostics"
+    },
+    {
+      "upstream_nodeid": "tests/test_shot_planning.py::test_the_metric_scores_identical_shots_as_zero_distinctness",
+      "go_package": "./compiler",
+      "go_test": "TestRemainingPlanMetrics/synonymous_shots_have_same_diagnostic_signature",
+      "assertion_intent": "assert jaccard(content_words(a), content_words(b)) < 0.4, \"word overlap looks fine\"; assert _shot_signature(a) == _shot_signature(b), \"content is identical\"",
+      "adaptation": "Original durations, word sequences and synonymous shot text feed actual native budget/grid, timeline allocation/dialogue capacity or diagnostics. The pinned-count case also verifies actual eight-shot allocation; explicit changed-ceiling and unrelated-shot controls demonstrate behavior rather than a static API-name assertion.",
+      "source_file_sha256": "ed87012db5a95ed51a616b9fd00fcfbb34bd44005d3ce23c2fa7b21dbd2aec0d",
+      "source_line": 224,
+      "source_assertions": [
+        {
+          "line": 231,
+          "source": "assert jaccard(content_words(a), content_words(b)) < 0.4, \"word overlap looks fine\""
+        },
+        {
+          "line": 232,
+          "source": "assert _shot_signature(a) == _shot_signature(b), \"content is identical\""
+        }
+      ],
+      "paid_model_calls": 0,
+      "evidence_kind": "actual_native_budget_plan_validator_and_diagnostics"
+    }
+  ]
+}

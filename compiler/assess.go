@@ -11,6 +11,12 @@ import (
 )
 
 func (c *Compiler) assess(b Brief, st Structure, scope Scope, d contextir.Document, licences ...*LicenceDecision) ([]h3check.Finding, error) {
+	if err := verifyTranscriptPerformance(d, st); err != nil {
+		return nil, err
+	}
+	if err := verifyTranscriptLiteralPlacement(d, st.TranscriptUses, st.OnscreenText); err != nil {
+		return nil, err
+	}
 	a, err := h3.Compile(d, c.options.Profile)
 	if err != nil {
 		return nil, err
@@ -20,11 +26,7 @@ func (c *Compiler) assess(b Brief, st Structure, scope Scope, d contextir.Docume
 	if len(licences) > 0 && licences[0] != nil {
 		licence := licences[0]
 		ctx.TransformedFrom = transformedFrom(*licence)
-		if licence.Governs["wardrobe"] == "reference" {
-			for _, identity := range licence.Identity {
-				ctx.WardrobeTerms = append(ctx.WardrobeTerms, identity.WardrobeAttributes...)
-			}
-		}
+		ctx.WardrobeTerms = ReferenceWardrobeTerms(*licence)
 	}
 	gridCheck := c.options.Profile.Grid != nil
 	ctx.CheckFrameGrid = &gridCheck
@@ -130,6 +132,12 @@ func (c *Compiler) assess(b Brief, st Structure, scope Scope, d contextir.Docume
 		}
 	}
 	ctx.TaskTypes = derivedTasks(d)
+	ctx.GenerationTask = true
+	for _, task := range ctx.TaskTypes {
+		if task == "video editing" {
+			ctx.GenerationTask = false
+		}
+	}
 	findings := h3check.Validate(a.Prompt, ctx)
 	var issues []contextir.Issue
 	for _, f := range findings {
@@ -141,6 +149,20 @@ func (c *Compiler) assess(b Brief, st Structure, scope Scope, d contextir.Docume
 		return findings, &contextir.Error{Code: contextir.CodeModelOutput, Stage: "h3.validation", Issues: issues}
 	}
 	return findings, nil
+}
+
+// ReferenceWardrobeTerms returns only the accepted model-identified garment
+// properties when the reference governs wardrobe. A caller-governed change must
+// never re-arm the source garment hold. It contains no garment-word classifier.
+func ReferenceWardrobeTerms(licence LicenceDecision) []string {
+	if licence.Governs["wardrobe"] != "reference" {
+		return nil
+	}
+	var out []string
+	for _, identity := range licence.Identity {
+		out = append(out, identity.WardrobeAttributes...)
+	}
+	return out
 }
 
 // An unknown classification cannot establish a cross-medium change. The

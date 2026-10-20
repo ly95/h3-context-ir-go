@@ -24,6 +24,7 @@ type ScopeResolution struct {
 }
 
 type ScopeDecision struct {
+	TranscriptUses  []TranscriptUse          `json:"transcript_uses,omitempty"`
 	MusicConstraint contextir.ConstraintKind `json:"music_constraint,omitempty"`
 	ConflictPolicy  ScopeConflictPolicy      `json:"conflict_policy"`
 	Resolutions     []ScopeResolution        `json:"resolutions,omitempty"`
@@ -108,6 +109,15 @@ func (c *Compiler) interpretScope(ctx context.Context, b Brief, presence *ScopeI
 	if isNil(c.model) {
 		return out, failure(contextir.CodeModel, "scope", "model", "Prose scope interpretation needs a model adapter.", nil)
 	}
+	sources, sourceErr := transcriptSources(b)
+	if sourceErr != nil {
+		return out, sourceErr
+	}
+	explicitLines, selectionErr := transcriptDialogue(b, b.TranscriptUses)
+	if selectionErr != nil {
+		return out, selectionErr
+	}
+	b.Dialogue = append(append([]Dialogue(nil), b.Dialogue...), explicitLines...)
 	object := func(props map[string]any) map[string]any {
 		required := []string{}
 		for key := range props {
@@ -127,7 +137,12 @@ func (c *Compiler) interpretScope(ctx context.Context, b Brief, presence *ScopeI
 	if len(b.OnscreenText) > 0 {
 		words = map[string]any{"const": b.OnscreenText}
 	}
-	schema, _ := json.Marshal(object(map[string]any{"requested": scope, "forbidden": scope, "dialogue": dialogue, "onscreen_text": words, "reasoning": str}))
+	schemaObject := object(map[string]any{"requested": scope, "forbidden": scope, "dialogue": dialogue, "onscreen_text": words, "reasoning": str})
+	if len(sources) > 0 {
+		schemaObject["properties"].(map[string]any)["transcript_uses"] = transcriptUseSchema(sources, b.TranscriptUses)
+		schemaObject["required"] = append(schemaObject["required"].([]string), "transcript_uses")
+	}
+	schema, _ := json.Marshal(schemaObject)
 	const system = `Interpret only the requested and forbidden content classes of this complete video request. Return JSON matching the schema. Do not infer from keyword lists. Treat negation and context semantically. The creativity setting does not change requested or forbidden: code applies its additions later.
 speech means spoken or sung words; music means added non-diegetic score; onscreen_text means visible lettering. Requests for someone to say something, sing, whisper or speak authorize speech even when no exact words are provided. Merely walking or a mood adjective does not. A prohibition containing a class noun is not a request for that class. Quiet/minimal/subdued describe mood and alone do not forbid music. Interpret forbidden only from the caller's free-text instructions here: do not mark a class forbidden merely because structured Silent/SilenceAll is true, because host code applies those precise structured controls afterwards. Silent prohibits adding a score but does not remove an explicitly attached BGM copy relationship; SilenceAll prohibits all audio. Explicit free-text no-dialogue/no-music/no-lettering instructions remain independently recorded. Do not infer a quota of shots or cuts.
 Copy structured Dialogue and OnscreenText exactly, preserving all fields, order, punctuation and original language. If the intent itself supplies exact dialogue or visible words, extract those exact words, never translate, embellish or invent them. If speech is requested without exact words, set requested.speech true but leave dialogue empty for the later licensed writer. Every extracted word sequence must be an exact substring of the caller's intent. Both magnitude fields are empty strings, never omitted/none/null.
@@ -144,7 +159,13 @@ A supplied concrete line plus an explicit no-dialogue instruction is a conflicti
 		safe.Cards = nil
 		safe.Evidence = nil
 		input, _ := json.Marshal(map[string]any{"version": Version, "brief": safe, "presence_claims": presence, "diagnostics": diagnostics})
-		response, callErr := c.model.Generate(ctx, contextir.ModelRequest{Stage: "scope", System: system, Input: input, ResponseSchema: append(json.RawMessage(nil), schema...)})
+		requestSystem := system
+		if len(sources) > 0 {
+			requestSystem += "\n" + transcriptUseInstruction
+			safe.Transcripts = sources
+			input, _ = json.Marshal(map[string]any{"version": Version, "brief": safe, "presence_claims": presence, "diagnostics": diagnostics})
+		}
+		response, callErr := c.model.Generate(ctx, contextir.ModelRequest{Stage: "scope", System: requestSystem, Input: input, ResponseSchema: append(json.RawMessage(nil), schema...)})
 		valid := !response.UsageInvalid && response.Usage.InputTokens >= 0 && response.Usage.OutputTokens >= 0
 		out.Calls = append(out.Calls, planner.CallUsage{Stage: "scope", Attempt: attempt, Model: response.Model, Usage: response.Usage, Valid: valid})
 		if ctx.Err() != nil {
@@ -164,11 +185,12 @@ A supplied concrete line plus an explicit no-dialogue instruction is a conflicti
 			return out, failure(modelFailureCode(callErr), "scope", "model", "Scope interpretation failed.", callErr)
 		}
 		var reply struct {
-			Requested    Scope      `json:"requested"`
-			Forbidden    Scope      `json:"forbidden"`
-			Dialogue     []Dialogue `json:"dialogue"`
-			OnscreenText []string   `json:"onscreen_text"`
-			Reasoning    string     `json:"reasoning"`
+			TranscriptUses []TranscriptUse `json:"transcript_uses,omitempty"`
+			Requested      Scope           `json:"requested"`
+			Forbidden      Scope           `json:"forbidden"`
+			Dialogue       []Dialogue      `json:"dialogue"`
+			OnscreenText   []string        `json:"onscreen_text"`
+			Reasoning      string          `json:"reasoning"`
 		}
 		err = validateWire(response.JSON, schema)
 		if err == nil {
@@ -188,6 +210,16 @@ A supplied concrete line plus an explicit no-dialogue instruction is a conflicti
 					err = invalid("onscreen_text", "Extracted visible lettering must quote the caller's exact intent.")
 					break
 				}
+			}
+		}
+		if err == nil && len(reply.TranscriptUses) > 0 {
+			var selected []Dialogue
+			selected, err = transcriptDialogue(b, reply.TranscriptUses)
+			if err == nil && !reply.Requested.Speech {
+				err = invalid("transcript_uses", "A selected reperformance requires an explicit requested-speech decision, not merely transcript presence.")
+			}
+			if err == nil && len(b.TranscriptUses) == 0 {
+				reply.Dialogue = append(reply.Dialogue, selected...)
 			}
 		}
 		if err == nil {
@@ -247,6 +279,7 @@ A supplied concrete line plus an explicit no-dialogue instruction is a conflicti
 					out.MusicConstraint = contextir.ConstraintNoMusic
 				}
 			}
+			out.TranscriptUses = append([]TranscriptUse(nil), reply.TranscriptUses...)
 			out.Dialogue = st.Dialogue
 			out.OnscreenText = st.OnscreenText
 			out.Reasoning = reply.Reasoning

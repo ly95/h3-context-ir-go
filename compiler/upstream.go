@@ -27,6 +27,20 @@ func FromOriginal(original plan.Brief, cards map[string]plan.AssetCard) (Brief, 
 		}
 		b.DirectorProfile = &d
 	}
+	for _, use := range original.TranscriptUses {
+		b.TranscriptUses = append(b.TranscriptUses, TranscriptUse{AssetID: use.AssetID, Text: use.Text, Language: use.Language, SpeakerHint: use.SpeakerHint, Voiceover: use.Voiceover})
+	}
+	for _, projection := range original.SubjectProjections {
+		mapped := SubjectProjection{Descriptor: projection.Descriptor, SubjectID: projection.SubjectID, Sources: []SubjectProjectionSource{}}
+		for _, source := range projection.Sources {
+			mapped.Sources = append(mapped.Sources, SubjectProjectionSource{SubjectID: source.SubjectID, Attributes: append([]string(nil), source.Attributes...)})
+		}
+		b.SubjectProjections = append(b.SubjectProjections, mapped)
+	}
+	b.AudioCopyModes = map[string]contextir.Retention{}
+	for id, value := range original.AudioCopyModes {
+		b.AudioCopyModes[id] = contextir.Retention(value)
+	}
 	ids := map[string]string{}
 	for i, a := range original.Assets {
 		if a.Kind == "video" {
@@ -137,7 +151,7 @@ func FromOriginal(original plan.Brief, cards map[string]plan.AssetCard) (Brief, 
 // CardFromOriginal converts a source reading without inventing an attachment or
 // conditioning source. The caller chooses its independent stable reading ID.
 func CardFromOriginal(assetID string, card plan.AssetCard) AssetCard {
-	copied := AssetCard{AssetID: assetID, Summary: card.Summary, Environment: card.Environment, Lighting: card.Lighting, Palette: card.Palette, Framing: card.Framing, Style: card.Style, VisibleText: card.VisibleText, Motion: card.Motion, Camera: card.Camera, FramesSeen: card.FramesSeen, Characterisation: card.Characterisation, Composition: card.Composition, IsReferenceSheet: card.IsReferenceSheet, Transcript: card.Transcript, Language: card.Language, Timbre: card.Timbre, Music: card.Music, AnalyzerVersion: card.AnalyzerVersion, Model: card.ModelID}
+	copied := AssetCard{AssetID: assetID, Summary: card.Summary, Environment: card.Environment, Lighting: card.Lighting, Palette: card.Palette, Framing: card.Framing, Style: card.Style, VisibleText: card.VisibleText, Motion: card.Motion, Camera: observedCamera(card.Camera), FramesSeen: card.FramesSeen, Characterisation: card.Characterisation, Composition: card.Composition, IsReferenceSheet: card.IsReferenceSheet, Transcript: card.Transcript, Language: card.Language, Timbre: card.Timbre, Music: card.Music, AnalyzerVersion: card.AnalyzerVersion, Model: card.ModelID}
 	for _, s := range card.Subjects {
 		copied.Subjects = append(copied.Subjects, SubjectCard{Kind: s.Kind, Descriptor: s.Descriptor, Attributes: s.Attributes, Pose: s.Pose})
 	}

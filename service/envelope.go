@@ -265,7 +265,11 @@ func promptLayer(r compiler.Result) map[string]any {
 	}
 	return map[string]any{"prompt": r.Artifact.Prompt, "mode": r.Document.Mode, "wiring": wiring, "frames": r.Artifact.Frames, "canvas": []int{r.Document.Target.Width, r.Document.Target.Height}, "render_hash": r.Artifact.SHA256}
 }
-func amendedBrief(previous plan.Brief, before compiler.Brief, b compiler.Brief) (plan.Brief, error) {
+func amendedBrief(previous plan.Brief, before compiler.Brief, b compiler.Brief, decisions ...[]compiler.Decision) (plan.Brief, error) {
+	explicitRoles, choiceErr := refinementRoleDeclarations(decisions)
+	if choiceErr != nil {
+		return previous, choiceErr
+	}
 	if len(previous.Assets) != len(before.Assets) {
 		return plan.Brief{}, refusal(500, "internal-error", "stored request assets and compiler source identities disagree")
 	}
@@ -299,6 +303,33 @@ func amendedBrief(previous plan.Brief, before compiler.Brief, b compiler.Brief) 
 		previous.Seed = &seed
 	}
 	previous.Effort = b.Effort
+	previous.AudioCopyModes = map[string]string{}
+	for i, asset := range b.Assets {
+		if mode, stated := b.AudioCopyModes[asset.ID]; stated {
+			// The source-compatible DTO has positional asset-N IDs on re-import.
+			previous.AudioCopyModes[fmt.Sprintf("asset-%d", i+1)] = string(mode)
+		}
+	}
+	previous.TranscriptUses = nil
+	assetPositions := map[string]string{}
+	for i, asset := range b.Assets {
+		assetPositions[asset.ID] = fmt.Sprintf("asset-%d", i+1)
+	}
+	for _, use := range b.TranscriptUses {
+		id, exists := assetPositions[use.AssetID]
+		if !exists {
+			return previous, fmt.Errorf("transcript use references an asset absent from the refined brief")
+		}
+		previous.TranscriptUses = append(previous.TranscriptUses, plan.TranscriptUse{AssetID: id, Text: use.Text, Language: use.Language, SpeakerHint: use.SpeakerHint, Voiceover: use.Voiceover})
+	}
+	previous.SubjectProjections = nil
+	for _, projection := range b.SubjectProjections {
+		mapped := plan.SubjectProjection{Descriptor: projection.Descriptor, SubjectID: projection.SubjectID, Sources: []plan.SubjectProjectionSource{}}
+		for _, source := range projection.Sources {
+			mapped.Sources = append(mapped.Sources, plan.SubjectProjectionSource{SubjectID: source.SubjectID, Attributes: append([]string(nil), source.Attributes...)})
+		}
+		previous.SubjectProjections = append(previous.SubjectProjections, mapped)
+	}
 	previous.Mode = nil
 	if b.Mode != "" {
 		mode := string(b.Mode)
@@ -329,7 +360,9 @@ func amendedBrief(previous plan.Brief, before compiler.Brief, b compiler.Brief) 
 		if _, duplicate := byID[a.ID]; duplicate {
 			return plan.Brief{}, refusal(500, "internal-error", "refined compiler asset identities are not unique")
 		}
-		if a.Role != prior.Role {
+		if stated, explicit := explicitRoles[a.ID]; explicit {
+			old.RoleStated = stated
+		} else if a.Role != prior.Role {
 			old.RoleStated = a.Role != ""
 		}
 		old.Role = string(a.Role)
@@ -363,4 +396,43 @@ func amendedBrief(previous plan.Brief, before compiler.Brief, b compiler.Brief) 
 		previous.Transcripts[a.SHA256] = words
 	}
 	return previous, nil
+}
+
+// A typed refinement can explicitly restate the same resolved role. Equality of
+// before/after values cannot recover that caller choice; use the host's actual
+// update record, never a lexical reading of the refinement instruction.
+func refinementRoleDeclarations(decisions [][]compiler.Decision) (map[string]bool, error) {
+	out := map[string]bool{}
+	if len(decisions) > 1 {
+		return nil, refusal(500, "internal-error", "refinement must provide one decision ledger")
+	}
+	for _, ledger := range decisions {
+		for _, d := range ledger {
+			if d.Field != "refinement" || d.Source != "typed_requested_changes" {
+				continue
+			}
+			var updates []compiler.BriefUpdate
+			if err := json.Unmarshal(d.Value, &updates); err != nil {
+				return nil, refusal(500, "internal-error", "refinement update ledger is malformed")
+			}
+			for _, update := range updates {
+				if update.Field != "asset_role" {
+					continue
+				}
+				switch update.Action {
+				case "clear":
+					out[update.AssetID] = false
+				case "set":
+					var role string
+					if err := json.Unmarshal(update.Value, &role); err != nil || role == "" {
+						return nil, refusal(500, "internal-error", "refinement role declaration is malformed")
+					}
+					out[update.AssetID] = true
+				default:
+					return nil, refusal(500, "internal-error", "refinement role declaration has an invalid action")
+				}
+			}
+		}
+	}
+	return out, nil
 }

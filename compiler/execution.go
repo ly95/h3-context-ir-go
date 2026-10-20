@@ -116,8 +116,20 @@ func executionDecision(b Brief) Decision {
 // become observed Fact records or evidence of voice, timbre, music or modality.
 func transcriptInputs(b Brief) []map[string]string {
 	var result []map[string]string
+	// The public prepare/Draft paths validate agreement before this formatter.
+	// Supplied card words and explicit caller transcripts carry the same words-only
+	// provenance; neither becomes evidence that audio was heard.
+	sources := map[string]string{}
+	for _, card := range b.Cards {
+		if card.Transcript != "" {
+			sources[card.AssetID] = card.Transcript
+		}
+	}
+	for id, text := range b.Transcripts {
+		sources[id] = text
+	}
 	for _, asset := range b.Assets {
-		if text, ok := b.Transcripts[asset.ID]; ok {
+		if text, ok := sources[asset.ID]; ok {
 			result = append(result, map[string]string{"asset_id": asset.ID, "text": text, "origin": "caller_transcript", "scope": "words_only", "note": fmt.Sprintf("No voice or acoustic observation is established for %s by this text.", asset.ID)})
 		}
 	}

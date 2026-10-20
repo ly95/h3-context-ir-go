@@ -75,6 +75,10 @@ func structureSchema(b Brief, mode contextir.Mode, maxShots int, resolved map[st
 	if b.Style != "" {
 		schema["properties"].(map[string]any)["style"] = map[string]any{"const": b.Style}
 	}
+	if hasProjectionCandidates(b) {
+		schema["properties"].(map[string]any)["subject_projections"] = subjectProjectionSchema(b.SubjectProjections)
+		schema["required"] = append(schema["required"].([]string), "subject_projections")
+	}
 	wire, _ := json.Marshal(schema)
 	return wire
 }
@@ -119,7 +123,7 @@ func (c *Compiler) structure(ctx context.Context, b Brief, target contextir.Targ
 			return Structure{}, calls, ds, invalid("assets", "Cannot construct observed-reference identity candidates.")
 		}
 		candidates := plan.BuildSubjects(manifest, cards)
-		input, _ := json.Marshal(map[string]any{"frame_preservation": actualFramePreservations(b, target), "scope_note": scopePolicy.Note(), "scope_instruction": scopePolicy.BriefInstruction(), "scope_instruction_policy": "The typed content_scope already includes the caller's explicit conflict resolution. Its allowed additions are permissions, never obligations. Extreme magnitude permits a quiet contrast beat when the requested escalation is expressed elsewhere, without changing shot pins.", "content_scope": interpreted, "reference_licence": licence, "replacement_candidates": candidates, "reference_manifest": manifest, "version": Version, "brief": safeBrief, "target": target, "mode": mode, "evidence": projectedEvidence, "director_notes": notes, "max_auto_shots": c.options.MaxAutoShots, "diagnostics": diagnostics})
+		input, _ := json.Marshal(map[string]any{"composition_facts": compositionFacts(safeBrief, motionPlan, actualFramePreservations(b, target)), "frame_preservation": actualFramePreservations(b, target), "scope_note": scopePolicy.Note(), "scope_instruction": scopePolicy.BriefInstruction(), "scope_instruction_policy": "The typed content_scope already includes the caller's explicit conflict resolution. Its allowed additions are permissions, never obligations. Extreme magnitude permits a quiet contrast beat when the requested escalation is expressed elsewhere, without changing shot pins.", "content_scope": interpreted, "reference_licence": licence, "replacement_candidates": candidates, "reference_manifest": manifest, "version": Version, "brief": safeBrief, "target": target, "mode": mode, "evidence": projectedEvidence, "director_notes": notes, "max_auto_shots": c.options.MaxAutoShots, "diagnostics": diagnostics})
 		schemaBrief := b
 		if licence.Style.Phrase != "" {
 			schemaBrief.Style = licence.Style.Phrase
@@ -148,8 +152,15 @@ func (c *Compiler) structure(ctx context.Context, b Brief, target contextir.Targ
 		var structuralInput map[string]json.RawMessage
 		_ = json.Unmarshal(input, &structuralInput)
 		structuralInput["replacement_motion_obligations"], _ = json.Marshal(motionObligations)
+		if hasProjectionCandidates(b) {
+			candidates, candidateErr := canonicalSubjects(b, motionPlan, contextir.Request{Mode: mode, Target: target}, &licence)
+			if candidateErr != nil {
+				return Structure{}, calls, ds, candidateErr
+			}
+			structuralInput["subject_projection_candidates"], _ = json.Marshal(candidates)
+		}
 		input, _ = json.Marshal(structuralInput)
-		response, callErr := c.model.Generate(ctx, contextir.ModelRequest{Stage: "structure", System: structurePrompt + "\n" + replacementMotionInstruction, Input: input, ResponseSchema: append(json.RawMessage(nil), schema...)})
+		response, callErr := c.model.Generate(ctx, contextir.ModelRequest{Stage: "structure", System: structurePromptFor(b) + "\n" + replacementMotionInstruction + "\n" + compositionBoundaryFor(mode), Input: input, ResponseSchema: append(json.RawMessage(nil), schema...)})
 		valid := !response.UsageInvalid && response.Usage.InputTokens >= 0 && response.Usage.OutputTokens >= 0
 		calls = append(calls, planner.CallUsage{Stage: "structure", Attempt: attempt, Model: response.Model, Usage: response.Usage, Valid: valid})
 		if ctx.Err() != nil {
@@ -174,9 +185,18 @@ func (c *Compiler) structure(ctx context.Context, b Brief, target contextir.Targ
 			err = strictDecode(response.JSON, &st)
 		}
 		if err == nil {
+			st.TranscriptUses = append([]TranscriptUse(nil), interpreted.TranscriptUses...)
 			st.Style = licence.Style.Phrase
 			st.MusicConstraint = interpreted.MusicConstraint
 			st, ds, err = validateStructure(b, target, st, mode, c.options.MaxAutoShots)
+		}
+		if err == nil && len(st.SubjectProjections) > 0 {
+			locked, requestErr := requestFor(b, target, st, scopeFor(b, st))
+			if requestErr != nil {
+				err = requestErr
+			} else {
+				_, err = canonicalSubjects(b, st, locked, &licence)
+			}
 		}
 		if err == nil {
 			st.ReplacementMotionObligations = motionObligations
@@ -257,6 +277,12 @@ func uniqueValue(d *json.Decoder) error {
 }
 
 func validateStructure(b Brief, target contextir.Target, st Structure, mode contextir.Mode, maxShots int) (Structure, []Decision, error) {
+	if len(b.SubjectProjections) > 0 && !sameJSON(st.SubjectProjections, b.SubjectProjections) {
+		return st, nil, invalid("subject_projections", "Preserve the caller's explicit target source projection.")
+	}
+	if len(st.SubjectProjections) > 0 && mode != contextir.ModeReference {
+		return st, nil, invalid("subject_projections", "Multi-source identity projections require reference mode.")
+	}
 	if mode != "" && st.Mode != mode {
 		return st, nil, invalid("mode", "Preserve the caller-owned or attachment-derived mode.")
 	}
@@ -289,8 +315,13 @@ func validateStructure(b Brief, target contextir.Target, st Structure, mode cont
 			return st, nil, invalid("assets.role", "Placement and replacement require an edit_source video.")
 		}
 	}
-	if len(b.Dialogue) > 0 {
-		if !sameJSON(b.Dialogue, st.Dialogue) {
+	selectedLines, selectionErr := transcriptDialogue(b, st.TranscriptUses)
+	if selectionErr != nil {
+		return st, nil, selectionErr
+	}
+	fixedLines := append(append([]Dialogue(nil), b.Dialogue...), selectedLines...)
+	if len(fixedLines) > 0 {
+		if !sameJSON(fixedLines, st.Dialogue) {
 			return st, nil, invalid("dialogue", "Copy supplied dialogue exactly; creative additions are composed separately.")
 		}
 	}

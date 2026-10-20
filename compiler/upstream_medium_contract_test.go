@@ -164,7 +164,7 @@ func loadGoMediumTape(t *testing.T) goMediumTape {
 	t.Helper()
 	var tape goMediumTape
 	readGoMediumJSON(t, "testdata/go_medium/manifest.json", &tape)
-	if tape.Revision != UpstreamRevision || tape.Recording.Binary != "972a151f8d1678681754a662d87c84c7bf0e6d7d1f18183f8f01be80dac4e865" || len(tape.Recording.Archive) != 64 {
+	if tape.Revision != UpstreamRevision || tape.Recording.Binary != "2cc6510aeccbe62991e4f6477c1591200e03098e196385841ea326ff123cc223" || len(tape.Recording.Archive) != 64 {
 		t.Fatal("recorded medium test changed its pinned source/binary provenance")
 	}
 	return tape

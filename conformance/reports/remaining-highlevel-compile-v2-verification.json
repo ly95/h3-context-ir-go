@@ -1,0 +1,834 @@
+{
+  "source_commit": "fd031e136ae3d89147324c0d1b2aa65e838c21f5",
+  "recording_executable_sha256": "71c268e45b5b268944c8cf1ae57c9b3c7048431fe2cba594d11582b02a78b55d",
+  "source_input_fixture": "conformance/fixtures/remaining_highlevel_inputs_v1.json",
+  "source_input_fixture_sha256": "486cfc54a5cdc79f0a95de041eecd95f3d86ac1cc88d0461cfa50488bb377a87",
+  "source_report": "conformance/reports/remaining-highlevel-compile-v2/report.json",
+  "source_report_sha256": "ef1bc1a446c82fc02a2412cff71674b2747de7d8f76ee3be77ca3809f6d94e55",
+  "method": "Independent post-run inspection of the original input and final native Document/Artifact. Exact word/source/identity assertions below do not certify all prose quality or actual media observation.",
+  "recording_model": "deepseek-flash",
+  "cases": [
+    {
+      "case_id": "transcript-explicit-selection",
+      "upstream_nodeid": "tests/test_reference_audio_words.py::test_the_ask_carries_the_transcribed_words_verbatim",
+      "source_call_id": "compiler-01352",
+      "input_sha256": "36e72c25a466bae905a482ee3e1b80b6c7a79a727d51869627cc6ee83979477c",
+      "original_input": {
+        "brief": {
+          "intent": "Have the man at the counter say again, word for word, the line that is on the recording.",
+          "assets": [
+            {
+              "kind": "audio",
+              "role": "voice_timbre",
+              "sha256": "wav",
+              "path": null,
+              "url": null,
+              "note": "a flat male voice, close mic",
+              "px": null,
+              "seconds": 3.0,
+              "frames": null,
+              "sizing": "match",
+              "composition": "unknown",
+              "provenance": null,
+              "paired_video_sha256": null,
+              "replaces": "",
+              "role_stated": true
+            }
+          ],
+          "seconds": 8.0,
+          "aspect": "16:9",
+          "canvas": null,
+          "megapixels": null,
+          "dialogue": [],
+          "onscreen_text": [],
+          "shots": null,
+          "loras": [],
+          "mode": "ref2va",
+          "effort": "standard",
+          "constraints": [],
+          "silent": false,
+          "creativity": "balanced",
+          "director": "",
+          "director_profile": null,
+          "transcripts": {
+            "wav": "We close at six, not half past."
+          },
+          "transcript_uses": [
+            {
+              "asset_id": "asset-1",
+              "text": "We close at six, not half past.",
+              "language": "English",
+              "speaker_hint": "the man at the counter",
+              "voiceover": false
+            }
+          ]
+        },
+        "cards": {
+          "wav": {
+            "sha256": "wav",
+            "kind": "audio",
+            "summary": "a spoken vocal reference supplying voice timbre and delivery, described by the caller as: a flat male voice, close mic (3.00s).",
+            "subjects": [],
+            "environment": "",
+            "lighting": "",
+            "palette": [],
+            "framing": "",
+            "style": "",
+            "visible_text": [],
+            "motion": "",
+            "camera": "",
+            "frames_seen": 0,
+            "characterisation": "a flat male voice, close mic",
+            "composition": "unknown",
+            "is_reference_sheet": false,
+            "transcript": "We close at six, not half past.",
+            "language": "",
+            "timbre": "",
+            "music": "",
+            "analyzer_version": "5",
+            "model_id": "none (typed metadata only)"
+          }
+        }
+      },
+      "adaptations": [
+        "Move the original function argument mode=ref2va into the public Go Brief.mode field.",
+        "Declare the already supplied per-asset role explicit at the Go public API boundary; source intent and cards are otherwise byte-for-byte values from the captured original call.",
+        "Expose the original supplied transcript unchanged as caller words, using its original SHA key; FromOriginal maps this to stable asset-1. This is supplied test metadata, not a claim of acoustic observation.",
+        "Explicit typed selection names the real source asset and its exact original utterance. Its English language and speaker hint are caller choices; the alternate case leaves selection to the scope model."
+      ],
+      "checks": {
+        "input_hash_matches_exact_fixture": true,
+        "compiled": true,
+        "reference_mode": true,
+        "target_192_frames_1344x768_8s": true,
+        "all_calls_valid_usage": true,
+        "semantic_review_passed": true,
+        "one_exact_dialogue_line": true,
+        "original_language_preserved": true,
+        "exact_utterance_once_in_final_prompt": true,
+        "exact_utterance_only_inside_d_block": true,
+        "selected_real_source": true,
+        "voice_property_not_signal_copy": true
+      },
+      "assertions_passed": true,
+      "key_final_output": {
+        "mode": "ref2va",
+        "target": {
+          "duration_ms": 8000,
+          "frame_count": 192,
+          "aspect_ratio": "16:9",
+          "fps": {
+            "numerator": 24,
+            "denominator": 1
+          },
+          "width": 1344,
+          "height": 768
+        },
+        "prompt_sha256": "0bd0165d122b76f047627de615c59d5ac18446d8b93d530f4c37ae389debfb0a",
+        "document_sha256": "73c841a0517555216c179d4eabe6852c943d0bb36fa73951dc1984a07f20beba",
+        "artifact_sha256": "fbf1432f118881c5367c31c828d30cfc4d5c24701424eb7f389d6b5ce267a38e",
+        "findings": [
+          {
+            "rule": "R5-unanalysed-subject",
+            "severity": "WARN",
+            "msg": "<Subject 1> defined but absent from retention_analysis"
+          },
+          {
+            "rule": "R5-unanalysed-subject",
+            "severity": "WARN",
+            "msg": "<Subject 2> defined but absent from retention_analysis"
+          },
+          {
+            "rule": "R5-unanalysed-subject",
+            "severity": "WARN",
+            "msg": "<Subject 3> defined but absent from retention_analysis"
+          },
+          {
+            "rule": "A2-sound-duplicated",
+            "severity": "WARN",
+            "msg": "overall_soundscape repeats content already in the description rather than a separate layer"
+          },
+          {
+            "rule": "H3-token-band",
+            "severity": "WARN",
+            "msg": "prompt is 1566 tokens, outside the 350-1400 band"
+          }
+        ],
+        "dialogue": [
+          {
+            "id": "line-1",
+            "speaker_ids": [
+              "speaker-1"
+            ],
+            "language": "English",
+            "text": "We close at six, not half past."
+          }
+        ],
+        "transcript_uses": [
+          {
+            "asset_id": "asset-1",
+            "text": "We close at six, not half past.",
+            "language": "English",
+            "speaker_hint": "the man at the counter",
+            "voiceover": false
+          }
+        ],
+        "spoken_block": "<d>[English] We close at six, not half past.</d>",
+        "utterance_occurrences": 1,
+        "qualification": "R5 unanalysed creative subjects, A2 sound duplication, H3 token-band advisories remain; model-selection additionally has P3 long-prose. Main transcript assertions pass, not a global prose-quality approval."
+      },
+      "recording_calls": [
+        {
+          "stage": "scope",
+          "model": "deepseek-flash",
+          "usage": {
+            "input_tokens": 1352,
+            "output_tokens": 368
+          }
+        },
+        {
+          "stage": "medium",
+          "model": "deepseek-flash",
+          "usage": {
+            "input_tokens": 1226,
+            "output_tokens": 241
+          }
+        },
+        {
+          "stage": "licence",
+          "model": "deepseek-flash",
+          "usage": {
+            "input_tokens": 1706,
+            "output_tokens": 521
+          }
+        },
+        {
+          "stage": "structure",
+          "model": "deepseek-flash",
+          "usage": {
+            "input_tokens": 4048,
+            "output_tokens": 1474
+          }
+        },
+        {
+          "stage": "plan",
+          "model": "deepseek-flash",
+          "usage": {
+            "input_tokens": 9523,
+            "output_tokens": 8530
+          }
+        },
+        {
+          "stage": "semantic_review",
+          "model": "deepseek-flash",
+          "usage": {
+            "input_tokens": 2779,
+            "output_tokens": 986
+          }
+        }
+      ]
+    },
+    {
+      "case_id": "transcript-model-selection",
+      "upstream_nodeid": "tests/test_reference_audio_words.py::test_the_ask_carries_the_transcribed_words_verbatim",
+      "source_call_id": "compiler-01352",
+      "input_sha256": "667a5d4272c1b5f3ced6ebd3fb7b89a865d5acff7d1b53acaef879eac4b10917",
+      "original_input": {
+        "brief": {
+          "intent": "Have the man at the counter say again, word for word, the line that is on the recording.",
+          "assets": [
+            {
+              "kind": "audio",
+              "role": "voice_timbre",
+              "sha256": "wav",
+              "path": null,
+              "url": null,
+              "note": "a flat male voice, close mic",
+              "px": null,
+              "seconds": 3.0,
+              "frames": null,
+              "sizing": "match",
+              "composition": "unknown",
+              "provenance": null,
+              "paired_video_sha256": null,
+              "replaces": "",
+              "role_stated": true
+            }
+          ],
+          "seconds": 8.0,
+          "aspect": "16:9",
+          "canvas": null,
+          "megapixels": null,
+          "dialogue": [],
+          "onscreen_text": [],
+          "shots": null,
+          "loras": [],
+          "mode": "ref2va",
+          "effort": "standard",
+          "constraints": [],
+          "silent": false,
+          "creativity": "balanced",
+          "director": "",
+          "director_profile": null,
+          "transcripts": {
+            "wav": "We close at six, not half past."
+          }
+        },
+        "cards": {
+          "wav": {
+            "sha256": "wav",
+            "kind": "audio",
+            "summary": "a spoken vocal reference supplying voice timbre and delivery, described by the caller as: a flat male voice, close mic (3.00s).",
+            "subjects": [],
+            "environment": "",
+            "lighting": "",
+            "palette": [],
+            "framing": "",
+            "style": "",
+            "visible_text": [],
+            "motion": "",
+            "camera": "",
+            "frames_seen": 0,
+            "characterisation": "a flat male voice, close mic",
+            "composition": "unknown",
+            "is_reference_sheet": false,
+            "transcript": "We close at six, not half past.",
+            "language": "",
+            "timbre": "",
+            "music": "",
+            "analyzer_version": "5",
+            "model_id": "none (typed metadata only)"
+          }
+        }
+      },
+      "adaptations": [
+        "Move the original function argument mode=ref2va into the public Go Brief.mode field.",
+        "Declare the already supplied per-asset role explicit at the Go public API boundary; source intent and cards are otherwise byte-for-byte values from the captured original call.",
+        "Expose the original supplied transcript unchanged as caller words, using its original SHA key; FromOriginal maps this to stable asset-1. This is supplied test metadata, not a claim of acoustic observation."
+      ],
+      "checks": {
+        "input_hash_matches_exact_fixture": true,
+        "compiled": true,
+        "reference_mode": true,
+        "target_192_frames_1344x768_8s": true,
+        "all_calls_valid_usage": true,
+        "semantic_review_passed": true,
+        "one_exact_dialogue_line": true,
+        "original_language_preserved": true,
+        "exact_utterance_once_in_final_prompt": true,
+        "exact_utterance_only_inside_d_block": true,
+        "selected_real_source": true,
+        "voice_property_not_signal_copy": true
+      },
+      "assertions_passed": true,
+      "key_final_output": {
+        "mode": "ref2va",
+        "target": {
+          "duration_ms": 8000,
+          "frame_count": 192,
+          "aspect_ratio": "16:9",
+          "fps": {
+            "numerator": 24,
+            "denominator": 1
+          },
+          "width": 1344,
+          "height": 768
+        },
+        "prompt_sha256": "a2362624a19e39c2222d2dd4a546a32ea8f7b4943affcc63bf12cbd0a9c8f7ab",
+        "document_sha256": "33cf70235f39ac0a6bee4117ac12a93103a29f6841397c76b160de9a4f3dfcbd",
+        "artifact_sha256": "df9518d97041520b782e6ddd44469b16aaa9d48bd535f46143fb3828925f49ba",
+        "findings": [
+          {
+            "rule": "R5-unanalysed-subject",
+            "severity": "WARN",
+            "msg": "<Subject 1> defined but absent from retention_analysis"
+          },
+          {
+            "rule": "P3-too-long",
+            "severity": "WARN",
+            "msg": "main description is 856 words; spec guidance 350-500"
+          },
+          {
+            "rule": "A2-sound-duplicated",
+            "severity": "WARN",
+            "msg": "overall_soundscape repeats content already in the description rather than a separate layer"
+          },
+          {
+            "rule": "H3-token-band",
+            "severity": "WARN",
+            "msg": "prompt is 1888 tokens, outside the 350-1400 band"
+          }
+        ],
+        "dialogue": [
+          {
+            "id": "line-1",
+            "speaker_ids": [
+              "speaker-1"
+            ],
+            "language": "English",
+            "text": "We close at six, not half past."
+          }
+        ],
+        "transcript_uses": [
+          {
+            "asset_id": "asset-1",
+            "text": "We close at six, not half past.",
+            "language": "English",
+            "speaker_hint": "man at the counter",
+            "voiceover": false
+          }
+        ],
+        "spoken_block": "<d>[English] We close at six, not half past.</d>",
+        "utterance_occurrences": 1,
+        "qualification": "R5 unanalysed creative subjects, A2 sound duplication, H3 token-band advisories remain; model-selection additionally has P3 long-prose. Main transcript assertions pass, not a global prose-quality approval."
+      },
+      "recording_calls": [
+        {
+          "stage": "scope",
+          "model": "deepseek-flash",
+          "usage": {
+            "input_tokens": 1386,
+            "output_tokens": 516
+          }
+        },
+        {
+          "stage": "medium",
+          "model": "deepseek-flash",
+          "usage": {
+            "input_tokens": 1226,
+            "output_tokens": 219
+          }
+        },
+        {
+          "stage": "licence",
+          "model": "deepseek-flash",
+          "usage": {
+            "input_tokens": 1661,
+            "output_tokens": 448
+          }
+        },
+        {
+          "stage": "structure",
+          "model": "deepseek-flash",
+          "usage": {
+            "input_tokens": 4087,
+            "output_tokens": 1037
+          }
+        },
+        {
+          "stage": "plan",
+          "model": "deepseek-flash",
+          "usage": {
+            "input_tokens": 9709,
+            "output_tokens": 9728
+          }
+        },
+        {
+          "stage": "semantic_review",
+          "model": "deepseek-flash",
+          "usage": {
+            "input_tokens": 2976,
+            "output_tokens": 1899
+          }
+        }
+      ]
+    },
+    {
+      "case_id": "single-target-model-merge",
+      "upstream_nodeid": "tests/test_retention_bookkeeping.py::test_the_ask_licenses_the_merged_definition",
+      "source_call_id": "compiler-01586",
+      "input_sha256": "7a932fd23f2cce88fd81945510739d99ed2598deed90aa00460b5effe7f529ef",
+      "original_input": {
+        "brief": {
+          "intent": "Define it once as a single subject that draws its body from the first picture and its wheels from the second.",
+          "assets": [
+            {
+              "kind": "image",
+              "role": "subject",
+              "sha256": "a",
+              "path": null,
+              "url": null,
+              "note": null,
+              "px": [
+                1024,
+                576
+              ],
+              "seconds": null,
+              "frames": null,
+              "sizing": "match",
+              "composition": "unknown",
+              "provenance": null,
+              "paired_video_sha256": null,
+              "replaces": "",
+              "role_stated": true
+            },
+            {
+              "kind": "image",
+              "role": "subject",
+              "sha256": "b",
+              "path": null,
+              "url": null,
+              "note": null,
+              "px": [
+                1024,
+                576
+              ],
+              "seconds": null,
+              "frames": null,
+              "sizing": "match",
+              "composition": "unknown",
+              "provenance": null,
+              "paired_video_sha256": null,
+              "replaces": "",
+              "role_stated": true
+            }
+          ],
+          "seconds": 8.0,
+          "aspect": "16:9",
+          "canvas": null,
+          "megapixels": null,
+          "dialogue": [],
+          "onscreen_text": [],
+          "shots": null,
+          "loras": [],
+          "mode": "ref2va",
+          "effort": "standard",
+          "constraints": [],
+          "silent": false,
+          "creativity": "balanced",
+          "director": "",
+          "director_profile": null
+        },
+        "cards": {
+          "a": {
+            "sha256": "a",
+            "kind": "image",
+            "summary": "",
+            "subjects": [
+              {
+                "kind": "object",
+                "descriptor": "the black sports car",
+                "attributes": [
+                  "carbon fibre body"
+                ]
+              }
+            ],
+            "environment": "",
+            "lighting": "",
+            "palette": [],
+            "framing": "",
+            "style": "Live-action",
+            "visible_text": [],
+            "motion": "",
+            "camera": "",
+            "frames_seen": 0,
+            "characterisation": "",
+            "composition": "unknown",
+            "is_reference_sheet": false,
+            "transcript": "",
+            "language": "",
+            "timbre": "",
+            "music": "",
+            "analyzer_version": "1",
+            "model_id": ""
+          },
+          "b": {
+            "sha256": "b",
+            "kind": "image",
+            "summary": "",
+            "subjects": [
+              {
+                "kind": "object",
+                "descriptor": "the black sports car",
+                "attributes": [
+                  "carbon fibre body"
+                ]
+              }
+            ],
+            "environment": "",
+            "lighting": "",
+            "palette": [],
+            "framing": "",
+            "style": "Live-action",
+            "visible_text": [],
+            "motion": "",
+            "camera": "",
+            "frames_seen": 0,
+            "characterisation": "",
+            "composition": "unknown",
+            "is_reference_sheet": false,
+            "transcript": "",
+            "language": "",
+            "timbre": "",
+            "music": "",
+            "analyzer_version": "1",
+            "model_id": ""
+          }
+        }
+      },
+      "adaptations": [
+        "Move the original function argument mode=ref2va into the public Go Brief.mode field.",
+        "Declare the already supplied per-asset role explicit at the Go public API boundary; source intent and cards are otherwise byte-for-byte values from the captured original call."
+      ],
+      "checks": {
+        "input_hash_matches_exact_fixture": true,
+        "compiled": true,
+        "reference_mode": true,
+        "target_192_frames_1344x768_8s": true,
+        "all_calls_valid_usage": true,
+        "semantic_review_passed": true,
+        "one_target_identity": true,
+        "sports_car_category_preserved": true,
+        "two_real_source_assets": true,
+        "exact_selected_target_characteristics": true,
+        "no_second_target_definition": true,
+        "observed_and_requested_provenance_distinguished": true,
+        "all_shots_bind_same_target": true
+      },
+      "assertions_passed": true,
+      "key_final_output": {
+        "mode": "ref2va",
+        "target": {
+          "duration_ms": 8000,
+          "frame_count": 192,
+          "aspect_ratio": "16:9",
+          "fps": {
+            "numerator": 24,
+            "denominator": 1
+          },
+          "width": 1344,
+          "height": 768
+        },
+        "prompt_sha256": "e3dce9668dca797789c49bc2d3dd1e5fd47c46e7a0309c3d259bfcef192f9f8c",
+        "document_sha256": "7dc1b1653595339ad95243aff2300437e6832acccec4d78688b3aa5d3b3161bc",
+        "artifact_sha256": "eed557ab3197e0b2dbff6c466e04662d10334cf4974d671125621554fb72988d",
+        "findings": [],
+        "subjects": [
+          {
+            "kind": "object",
+            "descriptor": "the black sports car",
+            "attributes": [
+              "carbon fibre body",
+              "wheels from the second picture"
+            ],
+            "origin": "user",
+            "id": "subject-1",
+            "description": "the black sports car; carbon fibre body, wheels from the second picture",
+            "sources": [
+              {
+                "source": {
+                  "asset_id": "asset-1",
+                  "track": "visual"
+                },
+                "role": "identity",
+                "details": "Use only these explicitly selected target characteristics: carbon fibre body. Source observations and caller-requested target claims retain their separate recorded provenance."
+              },
+              {
+                "source": {
+                  "asset_id": "asset-2",
+                  "track": "visual"
+                },
+                "role": "identity",
+                "details": "Use only these explicitly selected target characteristics: wheels from the second picture. Source observations and caller-requested target claims retain their separate recorded provenance."
+              }
+            ],
+            "retention": "partially_preserved",
+            "retention_details": "One target identity combines only the explicitly selected target characteristics from its named sources; source observations and caller-requested target claims remain separately recorded, and unrelated source appearance is not imported.",
+            "shot_ids": [
+              "shot-1",
+              "shot-2",
+              "shot-3"
+            ]
+          }
+        ],
+        "projection": [
+          {
+            "subject_id": "subject-1",
+            "descriptor": "the black sports car",
+            "sources": [
+              {
+                "subject_id": "subject-1",
+                "attributes": [
+                  "carbon fibre body"
+                ]
+              },
+              {
+                "subject_id": "subject-2",
+                "attributes": [
+                  "wheels from the second picture"
+                ]
+              }
+            ]
+          }
+        ],
+        "source_card_attributes": {
+          "a": [
+            "carbon fibre body"
+          ],
+          "b": [
+            "carbon fibre body"
+          ]
+        },
+        "licence_identity_claims": [
+          {
+            "descriptor_source": "request",
+            "target_mention": "a single subject",
+            "kind": "object",
+            "claims": [
+              {
+                "dimension": "identity",
+                "value": "single subject",
+                "quote": "Define it once as a single subject"
+              },
+              {
+                "dimension": "stable_attribute",
+                "value": "body from the first picture",
+                "quote": "draws its body from the first picture"
+              },
+              {
+                "dimension": "stable_attribute",
+                "value": "wheels from the second picture",
+                "quote": "its wheels from the second"
+              }
+            ],
+            "label": "<Subject 1>",
+            "descriptor": "a single black sports car combining the carbon fibre body from the first picture with the wheels from the second picture",
+            "retained_attributes": [
+              "carbon fibre body"
+            ],
+            "requested_attributes": [
+              "wheels from the second picture"
+            ],
+            "request_quote": "Define it once as a single subject that draws its body from the first picture and its wheels from the second.",
+            "wardrobe_attributes": []
+          },
+          {
+            "descriptor_source": "request",
+            "target_mention": "a single subject",
+            "kind": "object",
+            "claims": [
+              {
+                "dimension": "identity",
+                "value": "single subject",
+                "quote": "Define it once as a single subject"
+              },
+              {
+                "dimension": "stable_attribute",
+                "value": "body from the first picture",
+                "quote": "draws its body from the first picture"
+              },
+              {
+                "dimension": "stable_attribute",
+                "value": "wheels from the second picture",
+                "quote": "its wheels from the second"
+              }
+            ],
+            "label": "<Subject 2>",
+            "descriptor": "a single black sports car combining the carbon fibre body from the first picture with the wheels from the second picture",
+            "retained_attributes": [
+              "carbon fibre body"
+            ],
+            "requested_attributes": [
+              "wheels from the second picture"
+            ],
+            "request_quote": "Define it once as a single subject that draws its body from the first picture and its wheels from the second.",
+            "wardrobe_attributes": []
+          }
+        ],
+        "qualification": "Both original synthetic cards observe carbon-fibre body only. Wheels from the second picture is an exact caller-requested source relationship, not an observation of wheel design/material. Final prose adds permitted staging/detail and must not be treated as a measured wheel description."
+      },
+      "recording_calls": [
+        {
+          "stage": "scope",
+          "model": "deepseek-flash",
+          "usage": {
+            "input_tokens": 1123,
+            "output_tokens": 171
+          }
+        },
+        {
+          "stage": "rendering_permission",
+          "model": "deepseek-flash",
+          "usage": {
+            "input_tokens": 452,
+            "output_tokens": 153
+          }
+        },
+        {
+          "stage": "medium",
+          "model": "deepseek-flash",
+          "usage": {
+            "input_tokens": 1377,
+            "output_tokens": 458
+          }
+        },
+        {
+          "stage": "identity_requirements",
+          "model": "deepseek-flash",
+          "usage": {
+            "input_tokens": 1989,
+            "output_tokens": 5047
+          }
+        },
+        {
+          "stage": "licence",
+          "model": "deepseek-flash",
+          "usage": {
+            "input_tokens": 2591,
+            "output_tokens": 288
+          }
+        },
+        {
+          "stage": "structure",
+          "model": "deepseek-flash",
+          "usage": {
+            "input_tokens": 5716,
+            "output_tokens": 2246
+          }
+        },
+        {
+          "stage": "plan",
+          "model": "deepseek-flash",
+          "usage": {
+            "input_tokens": 10650,
+            "output_tokens": 5486
+          }
+        },
+        {
+          "stage": "semantic_review",
+          "model": "deepseek-flash",
+          "usage": {
+            "input_tokens": 2801,
+            "output_tokens": 1485
+          }
+        }
+      ]
+    }
+  ],
+  "all_primary_assertions_passed": true,
+  "total_cases": 3,
+  "total_recorded_model_calls": 20,
+  "independent_fixture": "compiler/testdata/remaining_highlevel",
+  "independent_fixture_manifest_sha256": "6eedad3ba25328b06c9b21b7c1ed838f46fa933b9f6bf8b3c2fa641e8e800dc9",
+  "native_replay": {
+    "test_file": "compiler/remaining_highlevel_replay_test.go",
+    "test_file_sha256": "01f6f5dfb7d9d9a82c15ab6f7cfe305a9dd81257e3f80a49958f903e98a19f36",
+    "test_roots": [
+      "TestRemainingHighlevelRecordedCompile",
+      "TestRemainingHighlevelReplayRejectsRequestDrift"
+    ],
+    "complete_compile_cases": 3,
+    "strict_recorded_requests": 20,
+    "request_drift_controls": 4,
+    "fixture_json_files": 45,
+    "fixture_total_bytes": 644344,
+    "focused_test_exit_code": 0,
+    "race_command": "go test -race ./compiler -run '^TestRemainingHighlevel' -count=1 -json",
+    "race_exit_code": 0,
+    "race_report": "conformance/reports/remaining-highlevel-replay-v2-native.jsonl",
+    "race_report_sha256": "46661536343e97510a29ff1ddde5ad63157d02a4cb3f0971c88522ee38873784",
+    "vet_command": "go vet ./compiler",
+    "vet_exit_code": 0,
+    "validation_boundary": "Exact stage/system plus JSON-value-equivalent full input/schema are required before replay. Every original model call is consumed, then final native Document and Artifact match recorded results. This neither invokes the provider nor substitutes fake semantic decisions."
+  }
+}

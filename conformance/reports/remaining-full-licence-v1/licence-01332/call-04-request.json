@@ -1,0 +1,323 @@
+{
+  "stage": "licence",
+  "system": "Resolve reference/request licences for each visual attribute. Return only governs and reasons matching the supplied JSON contract. Interpret the complete request semantically, without keyword lists. The separate medium_decision already settles rendering-medium permission and taxonomy: the medium owner is pinned by the schema. Host code computes the style phrase, transformation phrase/target, discrepancy and note from the accepted medium decision. Do not return those host-owned fields.\nWith no visual reference, every visual attribute is request-governed. Otherwise the reference governs every attribute the user has not actually specified. Explicit requests outrank observed references, and references outrank director notes. A director only fills unresolved space. Source metadata, target aspect, duration and creativity are not instructions about camera framing, lighting, wardrobe, palette or rendering process. A stale Asset.Description is caller commentary; actual Card observations govern reference appearance. Independent reference_readings are real supplied readings even when this analysis attaches no conditioning media.\nAction: a requested new action or performed behavior overrides a subject plate's static pose, including an explicit vocal performance or speaking action. Action authority concerns what the figure is asked to do, not only locomotion; a performance request does not need physical travel. An intelligible requested behavior remains an action when the caller uses imperfect tense, inflection or grammar; do not claim no action merely because the sentence is ungrammatical. Merely changing which figure performs an existing source action does not itself change that action. Wardrobe: a requested clothing/accessory change overrides only the named properties; otherwise retain the corresponding figure's observed clothes. Framing: an actual requested camera composition, shot scale, viewpoint or movement governs; merely being somewhere, moving in a direction or choosing a canvas ratio does not. Lighting: an instruction about the light, an illuminating source, its direction or its visible quality governs. Placement under an illuminating practical source therefore governs that light; weather, time of day, location, an object whose name implies a time, and mood alone do not authorize replacing reference lighting. Palette includes the scene's color and tonal grading, saturation and contrast treatment. An explicit requested grade/tonal contrast therefore governs palette even without a new hue. An object's incidental color does not recolor or regrade the scene.\nIn an edit, the edit_source clip owns the scene's observed appearance before incoming identity portraits. Incoming replacement/placement images supply identity; their studio lighting/backdrop must not replace the clip's world. For a non-frame content reference, sheet panels, labels, multiple views and posing are presentation, not the new scene or identity. For actual_frame sources, the entire supplied image is the target frame at its anchored instant: preserve those pixels, including their complete layout and source background. Never authorize sheet cleanup on an actual frame merely because it is a sheet. An observed pose is licensed only for an actual frame anchor, never as an identity attribute. Keep rendering restyling independent of retention relationship: changing a medium does not itself select attribute_transfer.\nTarget identities are already resolved by identity_requirements. Those are TARGET descriptors and properties after explicit caller requirements; original observed_subjects remain the SOURCE. Do not reassert a conflicting source gender/species/age/wardrobe as a request error. Neither re-author those identity decisions nor return identity fields. Resolve only the remaining attribute owners and their reasons.",
+  "input": {
+    "brief": {
+      "effort": "standard",
+      "seconds_explicit": true,
+      "aspect_explicit": true,
+      "intent": "the man sprinting across the room",
+      "assets": [
+        {
+          "id": "asset-1",
+          "kind": "image",
+          "metadata": {
+            "width": 443,
+            "height": 768,
+            "fps": {
+              "numerator": 0,
+              "denominator": 0
+            }
+          },
+          "preparation": {},
+          "composition": "unknown",
+          "sizing": "match"
+        }
+      ],
+      "seconds": 8,
+      "aspect": "16:9",
+      "canvas": [
+        1056,
+        608
+      ],
+      "creativity": "balanced",
+      "cards": [
+        {
+          "asset_id": "asset-1",
+          "subjects": [
+            {
+              "kind": "person",
+              "descriptor": "the man",
+              "attributes": [
+                "black hair shaved at the sides",
+                "a thin pale scar through the left eyebrow",
+                "charcoal technical jacket",
+                "worn black boots"
+              ],
+              "pose": [
+                "fists clenched in a fighting stance",
+                "looking toward the camera"
+              ]
+            }
+          ],
+          "style": "live-action",
+          "composition": "unknown",
+          "analyzer_version": "1",
+          "coverage": {
+            "status": "complete",
+            "tracks": [
+              "visual"
+            ]
+          }
+        }
+      ]
+    },
+    "diagnostics": null,
+    "director_notes": "",
+    "identity_requirements": [
+      {
+        "descriptor_source": "reference",
+        "kind": "person",
+        "label": "\u003cSubject 1\u003e",
+        "descriptor": "the man",
+        "retained_attributes": [
+          "black hair shaved at the sides",
+          "a thin pale scar through the left eyebrow",
+          "charcoal technical jacket",
+          "worn black boots"
+        ],
+        "requested_attributes": [],
+        "request_quote": "",
+        "wardrobe_attributes": [
+          "charcoal technical jacket",
+          "worn black boots"
+        ]
+      }
+    ],
+    "medium_decision": {
+      "rendering_permission": {
+        "kind": "preserve",
+        "disposition": "preserve",
+        "operation_quote": "",
+        "target": "",
+        "reasoning": "The request only specifies scene content and action—a man sprinting across the room—without any phrase authorizing a rendering transformation or specifying a target style/medium. Therefore, the attached visual reference's rendering must be preserved.",
+        "calls": [
+          {
+            "stage": "rendering_permission",
+            "attempt": 1,
+            "model": "deepseek-flash",
+            "usage": {
+              "input_tokens": 437,
+              "output_tokens": 133
+            },
+            "valid": true
+          }
+        ]
+      },
+      "disposition": "preserve",
+      "operation_quote": "",
+      "target": "",
+      "requested_style": "",
+      "reference_medium": "live-action",
+      "requested_medium": "",
+      "treatments": [],
+      "reasoning": "The observed visual reference is live-action. The request describes only scene content/action ('the man sprinting across the room') and provides no requested rendering medium, style phrase, or compatible treatment. The host-owned rendering permission is preserve.",
+      "calls": [
+        {
+          "stage": "rendering_permission",
+          "attempt": 1,
+          "model": "deepseek-flash",
+          "usage": {
+            "input_tokens": 437,
+            "output_tokens": 133
+          },
+          "valid": true
+        },
+        {
+          "stage": "medium",
+          "attempt": 1,
+          "model": "deepseek-flash",
+          "usage": {
+            "input_tokens": 1318,
+            "output_tokens": 417
+          },
+          "valid": true
+        }
+      ]
+    },
+    "observed_subjects": [
+      {
+        "label": "\u003cSubject 1\u003e",
+        "kind": "person",
+        "sources": [
+          "\u003cPicture 1\u003e"
+        ],
+        "descriptor": "the man",
+        "attributes": [
+          "black hair shaved at the sides",
+          "a thin pale scar through the left eyebrow",
+          "charcoal technical jacket",
+          "worn black boots"
+        ],
+        "pose": [
+          "fists clenched in a fighting stance",
+          "looking toward the camera"
+        ],
+        "pose_licensed": false,
+        "retention": "fully_preserved",
+        "retention_note": "",
+        "appears_in": [],
+        "taken_over_by": ""
+      }
+    ],
+    "reference_manifest": [
+      {
+        "slot": 0,
+        "label": "\u003cPicture 1\u003e",
+        "kind": "image",
+        "sha256": "asset-1",
+        "wiring": "ref_image_1",
+        "role": "",
+        "px": [
+          443,
+          768
+        ],
+        "seconds": null,
+        "frames": null,
+        "sizing": "match",
+        "rows": 336,
+        "paired_with": null,
+        "characterisation": "",
+        "composition": "unknown",
+        "replaces": ""
+      }
+    ],
+    "reference_permissions": {
+      "action": true,
+      "framing": true,
+      "lighting": true,
+      "medium": true,
+      "palette": true,
+      "wardrobe": true
+    },
+    "reference_readings": [
+      {
+        "id": "asset-1",
+        "kind": "image",
+        "card": {
+          "asset_id": "asset-1",
+          "subjects": [
+            {
+              "kind": "person",
+              "descriptor": "the man",
+              "attributes": [
+                "black hair shaved at the sides",
+                "a thin pale scar through the left eyebrow",
+                "charcoal technical jacket",
+                "worn black boots"
+              ],
+              "pose": [
+                "fists clenched in a fighting stance",
+                "looking toward the camera"
+              ]
+            }
+          ],
+          "style": "live-action",
+          "composition": "unknown",
+          "analyzer_version": "1",
+          "coverage": {
+            "status": "complete",
+            "tracks": [
+              "visual"
+            ]
+          }
+        }
+      }
+    ],
+    "version": "contextir/compiler/v1"
+  },
+  "response_schema": {
+    "additionalProperties": false,
+    "properties": {
+      "governs": {
+        "additionalProperties": false,
+        "properties": {
+          "action": {
+            "enum": [
+              "request",
+              "reference"
+            ],
+            "type": "string"
+          },
+          "framing": {
+            "enum": [
+              "request",
+              "reference"
+            ],
+            "type": "string"
+          },
+          "lighting": {
+            "enum": [
+              "request",
+              "reference"
+            ],
+            "type": "string"
+          },
+          "medium": {
+            "const": "reference"
+          },
+          "palette": {
+            "enum": [
+              "request",
+              "reference"
+            ],
+            "type": "string"
+          },
+          "wardrobe": {
+            "enum": [
+              "request",
+              "reference"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "action",
+          "medium",
+          "wardrobe",
+          "lighting",
+          "framing",
+          "palette"
+        ],
+        "type": "object"
+      },
+      "reasons": {
+        "additionalProperties": false,
+        "properties": {
+          "action": {
+            "type": "string"
+          },
+          "framing": {
+            "type": "string"
+          },
+          "lighting": {
+            "type": "string"
+          },
+          "medium": {
+            "type": "string"
+          },
+          "palette": {
+            "type": "string"
+          },
+          "wardrobe": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "action",
+          "medium",
+          "wardrobe",
+          "lighting",
+          "framing",
+          "palette"
+        ],
+        "type": "object"
+      }
+    },
+    "required": [
+      "governs",
+      "reasons"
+    ],
+    "type": "object"
+  }
+}

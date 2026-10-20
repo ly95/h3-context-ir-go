@@ -2,7 +2,9 @@
 
 独立的 Go package：把自然语言视频需求和真实素材观察编译成可编辑、可持久化的 IR，再从同一份 IR 生成 H3 prompt、输入绑定、预算和内容哈希。核心及适配器只使用 Go 标准库，运行时不依赖 Python、CLW Studio、数据库或队列。
 
-验收目标是 [OpenH3-IR 固定提交 fd031e1](https://github.com/ruashots/open-h3-ir/tree/fd031e136ae3d89147324c0d1b2aa65e838c21f5) 的完整功能与原始测试。原测试输入、原断言、历次失败和真实 DeepSeek 输出分别保存在 [conformance](conformance/README.md)，未把早期三个自编 smoke cases 当作功能验收。具体通过范围和剩余差异见 [验收清单](docs/UPSTREAM_TESTS.md) 与 [当前状态](docs/READINESS.md)。
+验收依据是 [OpenH3-IR 固定提交 fd031e1](https://github.com/ruashots/open-h3-ir/tree/fd031e136ae3d89147324c0d1b2aa65e838c21f5) 的完整功能与原始测试。原测试输入、原断言、历次失败和真实 DeepSeek 输出分别保存在 [conformance](conformance/README.md)，未把早期三个自编 smoke cases 当作功能验收。具体通过范围和剩余差异见 [验收清单](docs/UPSTREAM_TESTS.md) 与 [当前状态](docs/READINESS.md)。
+
+最终逐项验收覆盖原清单 **991 项中的 989 项 Go 适用要求，989 项全部通过**：672 项由未修改的原断言验证实际 Go 主输出，317 项由明确记录接口/输入调整的独立 Go 测试验证；另 2 项 Python 语法检查不适用于 Go。没有遗漏、重复计数或跳过来凑通过。原样 Python 桥接重跑仍保留 **981 passed / 10 failed**，没有改写成 991 passed。见 [完整逐项报告](conformance/reports/native-functionality-remaining-all-v2.json) 与 [差异说明](docs/UPSTREAM_TESTS.md)。
 
 这是公开协议的独立实现，没有 MiniMax 托管 Context-IR 的内部代码、训练数据或生成质量等价证据。
 
@@ -14,7 +16,7 @@
 go get github.com/ly95/contextir@v0.1.1-0.20261020092710-fe1feb7727b0
 ```
 
-以上版本已完成仓库外下载、独立构建及公共 API 重放验证，详见 [验证记录](conformance/reports/contextir-private-consumer-fe1feb7-go-adapted-v1.json)。下载包中的五组 Go 适配契约也已独立通过（8 个主测试、17 个子测试，零跳过），见 [实际 Go 测试事件](conformance/reports/private-go-adapted-tests-fe1feb7-v1.json)。后续说明与审计记录在 `codex/readiness-audit` 开发验收分支。旧标签 `v0.1.0` 不包含后续实现和修复，不会重写该标签。生产使用应固定经过自己验收的提交。
+**此安装 pin 是此前 `fe1feb7` 的分发验证版本，不是本次 989 项验收后的新发布版本。** 它已完成仓库外下载、独立构建及公共 API 重放验证，详见 [验证记录](conformance/reports/contextir-private-consumer-fe1feb7-go-adapted-v1.json)。下载包中的五组 Go 适配契约也已独立通过（8 个主测试、17 个子测试，零跳过），见 [实际 Go 测试事件](conformance/reports/private-go-adapted-tests-fe1feb7-v1.json)。当前实现、后续能力与完整验收记录在 `codex/readiness-audit` 开发验收分支；新发布与其外部消费者验证应另外固定提交。旧标签 `v0.1.0` 不包含后续实现和修复，不会重写该标签。生产使用应固定经过自己验收的提交。
 
 历史模型输出、源码快照和测试报告保存在独立的审计 module `conformance/reports`。安装 Go 库不下载这些历史文件；需要完整证据时克隆 Git 仓库。
 
@@ -64,8 +66,9 @@ if r.Status == "needs_input" {
 - 五种模式：`t2va`、`i2va`、`l2va`、`fl2va`、`ref2va`，明确区分实际首尾帧与内容参考。
 - 原项目全部 16 种素材职责；主体身份与参考姿态、参考图排版、环境、风格、视频结构分别管理。
 - 视频续写、编辑、主体放入和替换；目标不唯一时不按“剩下的人”猜测。未观察到但由用户明确命名的人物保留为 `user_symbolic`，不会伪造观察事实。
-- 同步音轨、独立音频、voice timbre、music style、beat reference、SFX；属性参考不会被误当成原信号复制。
-- 固定与生成对白、说话人、旁白、歌唱、跨镜连续分片、可见文字和复用音轨歌词 cue。
+- 同步音轨、独立音频、voice timbre、music style、beat reference、SFX；属性参考不会被误当成原信号复制。`AudioCopyModes` 明确选择 BGM 的完整/部分复制，默认部分复制；完整最终录音不能暗中混入新对白、配乐或另一个复制音轨。
+- 固定与生成对白、说话人、旁白、歌唱、跨镜连续分片、可见文字和复用音轨歌词 cue。`TranscriptUses` 只把明确选定的转写原文用于重新表演，不因拥有转写就授权说话或复制信号；禁止把台词重复写成画面文字。
+- `SubjectProjections` 通过明确来源 ID 与属性选择合并目标身份，保留观察与用户目标声明的不同来源，不把姿态、布景或不相关服装一起带入。
 - 镜头数量/切点锁定、摄影机闭集、四档创意程度、七种内置导演及自定义说明；用户与参考优先于导演。
 - LoRA 注册、权重哈希、checkpoint/尺寸/帧数/步数约束、强度和触发词管理。
 - `Document` 是产物唯一事实来源；prompt、manifest、来源元数据、输入准备指令和哈希从它派生。
@@ -82,7 +85,7 @@ if r.Status == "needs_input" {
 
 `MediaPreparation` 是绑定所需的尺寸/帧数准备指令，和原文件元数据分开；它不表示已经裁剪或转码。实际素材准备和 H3 视频生成由调用方执行。`comfy` 提供远端 ComfyUI HTTP 客户端和图修改工具，详见 [说明](comfy/README.md)。
 
-可选 [service](service/README.md) 包提供标准库 HTTP handler、公开字段/角色/限额合同、上传、编译、读取和修订。`uploads` 是独立的内容寻址、配额、在途预留、TTL/LRU 存储。核心库不自动监听网络，也不自动创建全局存储。
+可选 [service](service/README.md) 包提供标准库 HTTP handler、公开字段/角色/限额合同、上传、编译、读取和修订。公开 wire contract 为版本 3，如实公布实际拒绝码，并透传 `audio_copy_modes`、`transcript_uses`、`subject_projections`，拒绝未知字段或非法嵌套值。`uploads` 是独立的内容寻址、配额、在途预留、TTL/LRU 存储。核心库不自动监听网络，也不自动创建全局存储。
 
 ## 时间、预算与持久化
 
@@ -110,6 +113,8 @@ go test -race ./...
 go vet ./...
 ```
 
+全部适用原要求的复验入口是 `conformance/run_native_functionality.py --require-all`。它同时核查独立 Go 测试和 fresh 原断言报告中的主 Go API 调用、实际 validator 调用、不可变 bridge/runtime/fixture/录音请求来源；命令和完整前置条件见 [复验说明](conformance/README.md)。普通 Go 测试不调用付费服务，最终本地质量检查见 [记录](conformance/reports/local-final-quality-v2.json)。
+
 高层 `brief` / `draft` 及预算、token、原始 H3 校验命令的参数见 `go run ./cmd/contextir <command> -h`。付费模型验证是单独命令，不在普通单元测试中触发：
 
 ```sh
@@ -119,7 +124,7 @@ go run ./cmd/contextir-upstream-eval -kind suite \
   -base-url https://api.deepseek.com -model deepseek-flash -reasoning-effort low
 ```
 
-真实模型验收保存每个原输入、每次 request/schema/output、用量、失败和产物。`proposed`、`licence_decided` 或 JSON 结构有效并不表示原要求通过；另用独立 oracle 和原断言验证。混合 pytest 的 `991 passed` 也不等于 991 条测试全部由 Go 实现执行，具体实际触达模块逐条记录。
+真实模型验收保存每个原输入、每次 request/schema/output、用量、失败和产物。`proposed`、`licence_decided` 或 JSON 结构有效并不表示原要求通过；另用独立 oracle 和原断言验证。混合 pytest 的 `991 passed` 也不等于 991 项都验证了 Go 主行为。本轮逐项映射区分了真实主输出、仅调用辅助函数的历史记录和独立 Go 适配；真实模型的失败、重试和警告另列，不用确定性测试通过替代语义或成片质量。
 
 ## 来源
 

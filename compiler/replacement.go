@@ -86,27 +86,19 @@ func (c *Compiler) ResolveReplacements(ctx context.Context, b Brief, mode contex
 	candidates := map[string][]string{}
 	candidateSet := map[string]bool{}
 	needsModel := false
-	for _, picture := range incoming {
-		kind := ""
-		for _, s := range observed {
-			if contains(s.Sources, picture.Label) {
-				kind = s.Kind
-				break
-			}
-		}
-		for _, s := range observed {
-			if contains(s.Sources, editLabel) && s.Kind == kind {
-				candidates[picture.Label] = append(candidates[picture.Label], s.Label)
-				candidateSet[s.Label] = true
-			}
-		}
-		if kind == "" {
+	for _, inspection := range inspectReplacementReading(observed, manifest) {
+		if inspection.Incoming == nil || inspection.Incoming.Kind == "" {
 			return out, invalid("assets.replaces", "Observed incoming subject identity is required before resolving a replacement.")
 		}
-		if len(candidates[picture.Label]) > 1 {
+		for _, candidate := range inspection.Candidates {
+			candidates[inspection.Picture] = append(candidates[inspection.Picture], candidate.Label)
+			candidateSet[candidate.Label] = true
+		}
+		if len(inspection.Candidates) > 1 {
 			needsModel = true
 		}
 	}
+
 	if !needsModel {
 		taken := map[string]bool{}
 		for _, picture := range incoming {

@@ -25,9 +25,15 @@ func (c *Compiler) draft(ctx context.Context, brief Brief, known *Structure) (Re
 	if ctx.Err() != nil {
 		return r, failure(contextir.CodeCanceled, "draft", "context", "Drafting was canceled.", ctx.Err())
 	}
-	intake, err := c.ValidateIntake(ctx, brief)
+	measured, inspectionDecisions, err := c.inspectBriefAssets(ctx, brief)
+	if err != nil {
+		r.Brief = measured
+		r.Decisions = inspectionDecisions
+		return r, err
+	}
+	intake, err := c.ValidateIntake(ctx, measured)
 	r.Brief = intake.Brief
-	r.Decisions = intake.Decisions
+	r.Decisions = append(inspectionDecisions, intake.Decisions...)
 	if err != nil {
 		return r, err
 	}
@@ -54,6 +60,9 @@ func (c *Compiler) draft(ctx context.Context, brief Brief, known *Structure) (Re
 	b = mergeObservedCards(b, evidence)
 	b.Evidence = evidence
 	r.Brief = b
+	if _, transcriptErr := transcriptSources(b); transcriptErr != nil {
+		return r, transcriptErr
+	}
 	if err := validateExplicitReplacementInputs(b); err != nil {
 		return r, err
 	}
@@ -71,10 +80,21 @@ func (c *Compiler) draft(ctx context.Context, brief Brief, known *Structure) (Re
 		st.Mode = mode
 		st.Style = b.Style
 		if st.Style == "" {
-			for _, card := range b.Cards {
-				if card.Style != "" {
-					st.Style = card.Style
-					break
+			// A source edit owns the scene look; incoming identity plates do not.
+			for _, asset := range b.Assets {
+				if asset.Role == RoleEditSource || asset.Role == RoleContinuationSource || asset.Role == "" && asset.Kind == contextir.MediaVideo {
+					if card, ok := cardByID(b.Cards, asset.ID); ok && card.Style != "" {
+						st.Style = card.Style
+						break
+					}
+				}
+			}
+			if st.Style == "" {
+				for _, card := range b.Cards {
+					if card.Style != "" {
+						st.Style = card.Style
+						break
+					}
 				}
 			}
 		}
@@ -123,9 +143,15 @@ func (c *Compiler) draft(ctx context.Context, brief Brief, known *Structure) (Re
 			st.Shots = append(st.Shots, ProposedShot{Start: contextir.Time(s.StartMS), Purpose: purpose, Framing: "medium", Action: b.Intent, WhatChanges: fmt.Sprintf("Requested scene segment %d of %d", i+1, len(allocated)), Camera: rotation[i%len(rotation)]})
 		}
 
-		st.Dialogue = append([]Dialogue(nil), b.Dialogue...)
+		selectedLines, selectionErr := transcriptDialogue(b, b.TranscriptUses)
+		if selectionErr != nil {
+			return r, selectionErr
+		}
+		st.Dialogue = append(append([]Dialogue(nil), b.Dialogue...), selectedLines...)
+		st.SubjectProjections = append([]SubjectProjection(nil), b.SubjectProjections...)
+		st.TranscriptUses = append([]TranscriptUse(nil), b.TranscriptUses...)
 		st.OnscreenText = append([]string(nil), b.OnscreenText...)
-		st.Requested.Speech = len(b.Dialogue) > 0
+		st.Requested.Speech = len(st.Dialogue) > 0
 		st.Requested.OnscreenText = len(b.OnscreenText) > 0
 		st.Forbidden.Music = b.Silent
 		if !scopeFor(b, st).Music {
@@ -161,6 +187,9 @@ func (c *Compiler) draft(ctx context.Context, brief Brief, known *Structure) (Re
 	r.Request = req
 	d, err := draftDocument(b, req, st, evidence)
 	if err != nil {
+		return r, err
+	}
+	if err = verifyCompleteCopy(b, d); err != nil {
 		return r, err
 	}
 	if err = contextir.Validate(d); err != nil {
@@ -200,6 +229,9 @@ func draftDocument(b Brief, req contextir.Request, st Structure, evidence []cont
 	if req.Mode == contextir.ModeReference {
 		var subjectErr error
 		d.Subjects, subjectErr = compatibilitySubjects(b, st, d.Shots)
+		if subjectErr == nil {
+			d.Subjects, subjectErr = projectCanonicalSubjects(d.Subjects, st.SubjectProjections)
+		}
 		if subjectErr != nil {
 			return d, subjectErr
 		}

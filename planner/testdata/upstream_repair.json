@@ -1,0 +1,1770 @@
+{
+  "source_commit": "fd031e136ae3d89147324c0d1b2aa65e838c21f5",
+  "source_files_sha256": {
+    "tests/test_fix_loop.py": "bc88a24d8d2c976a2ef3146e55d00b631057c82e8321e3dfd60418d75d23c30b",
+    "tests/test_dialogue_across_a_cut.py": "6821df804aed110f1c91a633cb391990ffcf19e9c1dc92bfc4902d82103b5a80",
+    "tests/test_frame_anchors.py": "f3f61f0b18ce997c8242b1ad0e7f75e04bf3c237fb9ef4238ec0ff1be412baa7",
+    "tests/test_instruction_line.py": "098c735d45841dfef50af1183481a2450b0e9a5b8f6ee38ad8a72c7f6323eef7"
+  },
+  "constants": {
+    "GOOD": "subject_definitions:\n<Subject 1> is the man in <Picture 1>, with short dark hair and a navy t-shirt.\n\nsummary:\n[reference generation] The target video shows <Subject 1> walking down a corridor.\n\nretention_analysis:\n<Subject 1> (appears in [Shot 1]): fully_preserved - the short dark hair and navy t-shirt are retained.\n\ndetailed_description:\nThe target video is in live-action style with warm torchlight.\n[Shot 1] A wide shot holds on <Subject 1> as he walks forward. The camera pushes in with small amplitude at slow speed, and the torchlight climbs his chest.\n\noverall_soundscape:\nFootsteps echo on stone throughout.\n\nnon_diegetic_music:\nN/A\n",
+    "LINE": "If it turns halfway and stops, the pin is worn, so you change the pin and not the whole lock.",
+    "HALF_A": "If it turns halfway and stops, the pin is worn,",
+    "HALF_B": "so you change the pin and not the whole lock.",
+    "CONTINUITY": "The audio continues seamlessly across the cut.",
+    "SHOT1": "[Shot 1] Live-action, cinematic, the locksmith leans over the vice. The camera pushes in with small amplitude at slow speed as he (S1) begins to speak: ",
+    "SHOT2": "[Shot 2] At 00:06.000, the shot cuts to the heavy wooden door of the shop: ",
+    "WRITTEN": "How the reference pictures align with the target video — <Picture 1> (from [Shot 1]) aligns with the 0.00-second mark of the target video; <Picture 2> (from [Shot 2]) aligns with the 5.17-second mark of the target video.\n\nintegrated_multimodal_description: [Shot 1] Cinematic, live-action, the empty showroom shown in <Picture 1>. The camera pushes in with small amplitude at slow speed. [Shot 2] At 00:03.500, the shot cuts to the composition shown in <Picture 2>.\n\noverall_soundscape: Tyres roll over polished concrete.\n\nnon_diegetic_music: N/A\n",
+    "BODY": "[Shot 1] Live-action, cinematic, the black car waits in the empty showroom. The camera pushes in with small amplitude at slow speed as it rolls forward.",
+    "L2VA_OK": "How the reference pictures align with the target video — <Picture 1> (from [Shot 1]) aligns with the 13.67-second mark of the target video."
+  },
+  "validator_calls": [
+    {
+      "id": "validate-00136",
+      "nodeid": "tests/test_dialogue_across_a_cut.py::test_a_line_divided_at_the_cut_is_not_a_verbatim_failure",
+      "text": "integrated_multimodal_description: [Shot 1] Live-action, cinematic, the locksmith leans over the vice. The camera pushes in with small amplitude at slow speed as he (S1) begins to speak: <d>[English] If it turns halfway and stops, the pin is worn,</d> <scenetrans> The audio continues seamlessly across the cut.\n[Shot 2] At 00:06.000, the shot cuts to the heavy wooden door of the shop: <scenetrans> <d>[English] so you change the pin and not the whole lock.</d>\n\noverall_soundscape: A brass key scrapes in a vice.\n\nnon_diegetic_music: N/A\n",
+      "context": {
+        "mode": "t2va",
+        "duration_s": 12.25,
+        "n_pictures": 0,
+        "n_videos": 0,
+        "n_audios": 0,
+        "expected_dialogue": [
+          "If it turns halfway and stops, the pin is worn, so you change the pin and not the whole lock."
+        ],
+        "lora_triggers": [],
+        "onscreen_text": [],
+        "token_budget": [
+          350,
+          1400
+        ],
+        "prompt_tokens": null,
+        "require_music_na": null,
+        "generation_task": true,
+        "pinned_shots": null,
+        "task_types": [],
+        "declared_roles": [],
+        "paired_audio": [],
+        "standalone_audio": [],
+        "audio_transcripts": [],
+        "forbid_keyframe_refs": false,
+        "require_start_at_zero": true,
+        "pose_licensed": false,
+        "has_reference_sheet": false,
+        "wardrobe_terms": [],
+        "transformed_from": "",
+        "scope": null
+      },
+      "findings": []
+    },
+    {
+      "id": "validate-00137",
+      "nodeid": "tests/test_dialogue_across_a_cut.py::test_a_line_still_inside_one_block_is_untouched",
+      "text": "integrated_multimodal_description: [Shot 1] Live-action, cinematic, the locksmith leans over the vice. The camera pushes in with small amplitude at slow speed as he (S1) begins to speak: <d>[English] If it turns halfway and stops, the pin is worn, so you change the pin and not the whole lock.</d>\n\noverall_soundscape: A brass key scrapes in a vice.\n\nnon_diegetic_music: N/A\n",
+      "context": {
+        "mode": "t2va",
+        "duration_s": 12.25,
+        "n_pictures": 0,
+        "n_videos": 0,
+        "n_audios": 0,
+        "expected_dialogue": [
+          "If it turns halfway and stops, the pin is worn, so you change the pin and not the whole lock."
+        ],
+        "lora_triggers": [],
+        "onscreen_text": [],
+        "token_budget": [
+          350,
+          1400
+        ],
+        "prompt_tokens": null,
+        "require_music_na": null,
+        "generation_task": true,
+        "pinned_shots": null,
+        "task_types": [],
+        "declared_roles": [],
+        "paired_audio": [],
+        "standalone_audio": [],
+        "audio_transcripts": [],
+        "forbid_keyframe_refs": false,
+        "require_start_at_zero": true,
+        "pose_licensed": false,
+        "has_reference_sheet": false,
+        "wardrobe_terms": [],
+        "transformed_from": "",
+        "scope": null
+      },
+      "findings": []
+    },
+    {
+      "id": "validate-00138",
+      "nodeid": "tests/test_dialogue_across_a_cut.py::test_an_altered_line_is_still_rejected_however_it_is_arranged",
+      "text": "integrated_multimodal_description: [Shot 1] Live-action, cinematic, the locksmith leans over the vice. The camera pushes in with small amplitude at slow speed as he (S1) begins to speak: <d>[English] If it turns halfway and stops, the pin is worn out,</d> <scenetrans> The audio continues seamlessly across the cut.\n[Shot 2] At 00:06.000, the shot cuts to the heavy wooden door of the shop: <scenetrans> <d>[English] so you change the pin and not the whole lock.</d>\n\noverall_soundscape: A brass key scrapes in a vice.\n\nnon_diegetic_music: N/A\n",
+      "context": {
+        "mode": "t2va",
+        "duration_s": 12.25,
+        "n_pictures": 0,
+        "n_videos": 0,
+        "n_audios": 0,
+        "expected_dialogue": [
+          "If it turns halfway and stops, the pin is worn, so you change the pin and not the whole lock."
+        ],
+        "lora_triggers": [],
+        "onscreen_text": [],
+        "token_budget": [
+          350,
+          1400
+        ],
+        "prompt_tokens": null,
+        "require_music_na": null,
+        "generation_task": true,
+        "pinned_shots": null,
+        "task_types": [],
+        "declared_roles": [],
+        "paired_audio": [],
+        "standalone_audio": [],
+        "audio_transcripts": [],
+        "forbid_keyframe_refs": false,
+        "require_start_at_zero": true,
+        "pose_licensed": false,
+        "has_reference_sheet": false,
+        "wardrobe_terms": [],
+        "transformed_from": "",
+        "scope": null
+      },
+      "findings": [
+        {
+          "rule": "D4-dialogue-not-verbatim",
+          "severity": "ERROR",
+          "msg": "user line is missing or altered inside <d>: 'If it turns halfway and stops, the pin is worn, so you chang'. It may be divided across a cut, in which case the parts must join back into the caller's exact words, including punctuation"
+        }
+      ]
+    },
+    {
+      "id": "validate-00139",
+      "nodeid": "tests/test_dialogue_across_a_cut.py::test_a_dropped_comma_at_the_join_is_still_a_verbatim_failure",
+      "text": "integrated_multimodal_description: [Shot 1] Live-action, cinematic, the locksmith leans over the vice. The camera pushes in with small amplitude at slow speed as he (S1) begins to speak: <d>[English] If it turns halfway and stops, the pin is worn</d> <scenetrans> The audio continues seamlessly across the cut.\n[Shot 2] At 00:06.000, the shot cuts to the heavy wooden door of the shop: <scenetrans> <d>[English] so you change the pin and not the whole lock.</d>\n\noverall_soundscape: A brass key scrapes in a vice.\n\nnon_diegetic_music: N/A\n",
+      "context": {
+        "mode": "t2va",
+        "duration_s": 12.25,
+        "n_pictures": 0,
+        "n_videos": 0,
+        "n_audios": 0,
+        "expected_dialogue": [
+          "If it turns halfway and stops, the pin is worn, so you change the pin and not the whole lock."
+        ],
+        "lora_triggers": [],
+        "onscreen_text": [],
+        "token_budget": [
+          350,
+          1400
+        ],
+        "prompt_tokens": null,
+        "require_music_na": null,
+        "generation_task": true,
+        "pinned_shots": null,
+        "task_types": [],
+        "declared_roles": [],
+        "paired_audio": [],
+        "standalone_audio": [],
+        "audio_transcripts": [],
+        "forbid_keyframe_refs": false,
+        "require_start_at_zero": true,
+        "pose_licensed": false,
+        "has_reference_sheet": false,
+        "wardrobe_terms": [],
+        "transformed_from": "",
+        "scope": null
+      },
+      "findings": [
+        {
+          "rule": "D4-dialogue-not-verbatim",
+          "severity": "ERROR",
+          "msg": "user line is missing or altered inside <d>: 'If it turns halfway and stops, the pin is worn, so you chang'. It may be divided across a cut, in which case the parts must join back into the caller's exact words, including punctuation"
+        }
+      ]
+    },
+    {
+      "id": "validate-00140",
+      "nodeid": "tests/test_dialogue_across_a_cut.py::test_a_missing_line_is_still_an_error",
+      "text": "integrated_multimodal_description: [Shot 1] Live-action, cinematic, the locksmith leans over the vice. The camera pushes in with small amplitude at slow speed as he (S1) begins to speak: he works in silence.\n\noverall_soundscape: A brass key scrapes in a vice.\n\nnon_diegetic_music: N/A\n",
+      "context": {
+        "mode": "t2va",
+        "duration_s": 12.25,
+        "n_pictures": 0,
+        "n_videos": 0,
+        "n_audios": 0,
+        "expected_dialogue": [
+          "If it turns halfway and stops, the pin is worn, so you change the pin and not the whole lock."
+        ],
+        "lora_triggers": [],
+        "onscreen_text": [],
+        "token_budget": [
+          350,
+          1400
+        ],
+        "prompt_tokens": null,
+        "require_music_na": null,
+        "generation_task": true,
+        "pinned_shots": null,
+        "task_types": [],
+        "declared_roles": [],
+        "paired_audio": [],
+        "standalone_audio": [],
+        "audio_transcripts": [],
+        "forbid_keyframe_refs": false,
+        "require_start_at_zero": true,
+        "pose_licensed": false,
+        "has_reference_sheet": false,
+        "wardrobe_terms": [],
+        "transformed_from": "",
+        "scope": null
+      },
+      "findings": [
+        {
+          "rule": "D4-dialogue-not-verbatim",
+          "severity": "ERROR",
+          "msg": "user line is missing or altered inside <d>: 'If it turns halfway and stops, the pin is worn, so you chang'. It may be divided across a cut, in which case the parts must join back into the caller's exact words, including punctuation"
+        }
+      ]
+    },
+    {
+      "id": "validate-00141",
+      "nodeid": "tests/test_dialogue_across_a_cut.py::test_the_whole_line_on_both_sides_of_the_cut_is_an_error",
+      "text": "integrated_multimodal_description: [Shot 1] Live-action, cinematic, the locksmith leans over the vice. The camera pushes in with small amplitude at slow speed as he (S1) begins to speak: <d>[English] If it turns halfway and stops, the pin is worn, so you change the pin and not the whole lock.</d> <scenetrans> The audio continues seamlessly across the cut.\n[Shot 2] At 00:06.000, the shot cuts to the heavy wooden door of the shop: <scenetrans> <d>[English] If it turns halfway and stops, the pin is worn, so you change the pin and not the whole lock.</d>\n\noverall_soundscape: A brass key scrapes in a vice.\n\nnon_diegetic_music: N/A\n",
+      "context": {
+        "mode": "t2va",
+        "duration_s": 12.25,
+        "n_pictures": 0,
+        "n_videos": 0,
+        "n_audios": 0,
+        "expected_dialogue": [
+          "If it turns halfway and stops, the pin is worn, so you change the pin and not the whole lock."
+        ],
+        "lora_triggers": [],
+        "onscreen_text": [],
+        "token_budget": [
+          350,
+          1400
+        ],
+        "prompt_tokens": null,
+        "require_music_na": null,
+        "generation_task": true,
+        "pinned_shots": null,
+        "task_types": [],
+        "declared_roles": [],
+        "paired_audio": [],
+        "standalone_audio": [],
+        "audio_transcripts": [],
+        "forbid_keyframe_refs": false,
+        "require_start_at_zero": true,
+        "pose_licensed": false,
+        "has_reference_sheet": false,
+        "wardrobe_terms": [],
+        "transformed_from": "",
+        "scope": null
+      },
+      "findings": [
+        {
+          "rule": "D10-dialogue-line-duplicated",
+          "severity": "ERROR",
+          "msg": "the line 'If it turns halfway and stops, the pin is worn, ' appears in full inside 2 separate <d> blocks, which tells the model to speak it twice. The caller supplied it once, so it is spoken once: if it runs across a cut, divide it at the cut and mark both connecting points with <scenetrans> (base-en.txt 4.4) rather than repeating the whole line on both sides"
+        }
+      ]
+    },
+    {
+      "id": "validate-00142",
+      "nodeid": "tests/test_dialogue_across_a_cut.py::test_the_whole_line_then_a_recap_of_its_tail_is_the_same_defect",
+      "text": "integrated_multimodal_description: [Shot 1] Live-action, cinematic, the locksmith leans over the vice. The camera pushes in with small amplitude at slow speed as he (S1) begins to speak: <d>[English] If it turns halfway and stops, the pin is worn, so you change the pin and not the whole lock.</d> <scenetrans> The audio continues seamlessly across the cut.\n[Shot 2] At 00:06.000, the shot cuts to the heavy wooden door of the shop: <scenetrans> his sentence finishes: <d>[English] ...and not the whole lock.</d>\n\noverall_soundscape: A brass key scrapes in a vice.\n\nnon_diegetic_music: N/A\n",
+      "context": {
+        "mode": "t2va",
+        "duration_s": 12.25,
+        "n_pictures": 0,
+        "n_videos": 0,
+        "n_audios": 0,
+        "expected_dialogue": [
+          "If it turns halfway and stops, the pin is worn, so you change the pin and not the whole lock."
+        ],
+        "lora_triggers": [],
+        "onscreen_text": [],
+        "token_budget": [
+          350,
+          1400
+        ],
+        "prompt_tokens": null,
+        "require_music_na": null,
+        "generation_task": true,
+        "pinned_shots": null,
+        "task_types": [],
+        "declared_roles": [],
+        "paired_audio": [],
+        "standalone_audio": [],
+        "audio_transcripts": [],
+        "forbid_keyframe_refs": false,
+        "require_start_at_zero": true,
+        "pose_licensed": false,
+        "has_reference_sheet": false,
+        "wardrobe_terms": [],
+        "transformed_from": "",
+        "scope": null
+      },
+      "findings": [
+        {
+          "rule": "D7-decorative-punctuation",
+          "severity": "WARN",
+          "msg": "<d> content should carry only basic punctuation: '[English] ...and not the whole lock.'"
+        },
+        {
+          "rule": "D10-dialogue-line-duplicated",
+          "severity": "ERROR",
+          "msg": "the line 'If it turns halfway and stops, the pin i' is spoken in full in one <d> block and part of it is spoken again in another ('and not the whole'), so those words are scheduled twice. Either the line belongs to one shot and is not repeated after the cut, or it runs across the cut and is DIVIDED at it: the first part closes one <d> block, the remaining words open the next, each half appearing exactly once, with <scenetrans> at both connecting points. An ellipsis standing in for the missing half is not the construct either"
+        }
+      ]
+    },
+    {
+      "id": "validate-00143",
+      "nodeid": "tests/test_dialogue_across_a_cut.py::test_the_echo_is_repaired_into_the_split_the_spec_asks_for",
+      "text": "integrated_multimodal_description: [Shot 1] Live-action, cinematic, the locksmith leans over the vice. The camera pushes in with small amplitude at slow speed as he (S1) begins to speak: <d>[English] If it turns halfway and stops, the pin is worn, so you change the pin</d> <scenetrans> The audio continues seamlessly across the cut.\n[Shot 2] At 00:06.000, the shot cuts to the heavy wooden door of the shop: <scenetrans> he continues: <d>[English] and not the whole lock.</d>\n\noverall_soundscape: A brass key scrapes in a vice.\n\nnon_diegetic_music: N/A\n",
+      "context": {
+        "mode": "t2va",
+        "duration_s": 12.25,
+        "n_pictures": 0,
+        "n_videos": 0,
+        "n_audios": 0,
+        "expected_dialogue": [
+          "If it turns halfway and stops, the pin is worn, so you change the pin and not the whole lock."
+        ],
+        "lora_triggers": [],
+        "onscreen_text": [],
+        "token_budget": [
+          350,
+          1400
+        ],
+        "prompt_tokens": null,
+        "require_music_na": null,
+        "generation_task": true,
+        "pinned_shots": null,
+        "task_types": [],
+        "declared_roles": [],
+        "paired_audio": [],
+        "standalone_audio": [],
+        "audio_transcripts": [],
+        "forbid_keyframe_refs": false,
+        "require_start_at_zero": true,
+        "pose_licensed": false,
+        "has_reference_sheet": false,
+        "wardrobe_terms": [],
+        "transformed_from": "",
+        "scope": null
+      },
+      "findings": []
+    },
+    {
+      "id": "validate-00144",
+      "nodeid": "tests/test_dialogue_across_a_cut.py::test_the_repair_will_not_reverse_playback_order",
+      "text": "integrated_multimodal_description: [Shot 1] Live-action, cinematic, the locksmith leans over the vice. The camera pushes in with small amplitude at slow speed as he (S1) begins to speak: <d>[English] and not the whole lock.</d> <scenetrans>\n[Shot 2] At 00:06.000, the shot cuts to the heavy wooden door of the shop: <scenetrans> <d>[English] If it turns halfway and stops, the pin is worn, so you change the pin and not the whole lock.</d>\n\noverall_soundscape: A brass key scrapes in a vice.\n\nnon_diegetic_music: N/A\n",
+      "context": {
+        "mode": "t2va",
+        "duration_s": 12.25,
+        "n_pictures": 0,
+        "n_videos": 0,
+        "n_audios": 0,
+        "expected_dialogue": [
+          "If it turns halfway and stops, the pin is worn, so you change the pin and not the whole lock."
+        ],
+        "lora_triggers": [],
+        "onscreen_text": [],
+        "token_budget": [
+          350,
+          1400
+        ],
+        "prompt_tokens": null,
+        "require_music_na": null,
+        "generation_task": true,
+        "pinned_shots": null,
+        "task_types": [],
+        "declared_roles": [],
+        "paired_audio": [],
+        "standalone_audio": [],
+        "audio_transcripts": [],
+        "forbid_keyframe_refs": false,
+        "require_start_at_zero": true,
+        "pose_licensed": false,
+        "has_reference_sheet": false,
+        "wardrobe_terms": [],
+        "transformed_from": "",
+        "scope": null
+      },
+      "findings": [
+        {
+          "rule": "D10-dialogue-line-duplicated",
+          "severity": "ERROR",
+          "msg": "the line 'If it turns halfway and stops, the pin i' is spoken in full in one <d> block and part of it is spoken again in another ('and not the whole'), so those words are scheduled twice. Either the line belongs to one shot and is not repeated after the cut, or it runs across the cut and is DIVIDED at it: the first part closes one <d> block, the remaining words open the next, each half appearing exactly once, with <scenetrans> at both connecting points. An ellipsis standing in for the missing half is not the construct either"
+        }
+      ]
+    },
+    {
+      "id": "validate-00145",
+      "nodeid": "tests/test_dialogue_across_a_cut.py::test_a_second_unrelated_line_is_not_an_echo",
+      "text": "integrated_multimodal_description: [Shot 1] Live-action, cinematic, the locksmith leans over the vice. The camera pushes in with small amplitude at slow speed as he (S1) begins to speak: <d>[English] If it turns halfway and stops, the pin is worn, so you change the pin and not the whole lock.</d>\n[Shot 2] At 00:06.000, the shot cuts to the heavy wooden door of the shop: the apprentice (S2) answers: <d>[English] I will change it in the morning.</d>\n\noverall_soundscape: A brass key scrapes in a vice.\n\nnon_diegetic_music: N/A\n",
+      "context": {
+        "mode": "t2va",
+        "duration_s": 12.25,
+        "n_pictures": 0,
+        "n_videos": 0,
+        "n_audios": 0,
+        "expected_dialogue": [
+          "If it turns halfway and stops, the pin is worn, so you change the pin and not the whole lock."
+        ],
+        "lora_triggers": [],
+        "onscreen_text": [],
+        "token_budget": [
+          350,
+          1400
+        ],
+        "prompt_tokens": null,
+        "require_music_na": null,
+        "generation_task": true,
+        "pinned_shots": null,
+        "task_types": [],
+        "declared_roles": [],
+        "paired_audio": [],
+        "standalone_audio": [],
+        "audio_transcripts": [],
+        "forbid_keyframe_refs": false,
+        "require_start_at_zero": true,
+        "pose_licensed": false,
+        "has_reference_sheet": false,
+        "wardrobe_terms": [],
+        "transformed_from": "",
+        "scope": null
+      },
+      "findings": []
+    },
+    {
+      "id": "validate-00146",
+      "nodeid": "tests/test_dialogue_across_a_cut.py::test_the_duplicate_rule_only_counts_lines_the_caller_supplied",
+      "text": "integrated_multimodal_description: [Shot 1] Live-action, cinematic, the locksmith leans over the vice. The camera pushes in with small amplitude at slow speed as he (S1) begins to speak: <d>[English] Pull it! Pull it!</d>\n\noverall_soundscape: A brass key scrapes in a vice.\n\nnon_diegetic_music: N/A\n",
+      "context": {
+        "mode": "t2va",
+        "duration_s": 12.25,
+        "n_pictures": 0,
+        "n_videos": 0,
+        "n_audios": 0,
+        "expected_dialogue": [
+          "Pull it! Pull it!"
+        ],
+        "lora_triggers": [],
+        "onscreen_text": [],
+        "token_budget": [
+          350,
+          1400
+        ],
+        "prompt_tokens": null,
+        "require_music_na": null,
+        "generation_task": true,
+        "pinned_shots": null,
+        "task_types": [],
+        "declared_roles": [],
+        "paired_audio": [],
+        "standalone_audio": [],
+        "audio_transcripts": [],
+        "forbid_keyframe_refs": false,
+        "require_start_at_zero": true,
+        "pose_licensed": false,
+        "has_reference_sheet": false,
+        "wardrobe_terms": [],
+        "transformed_from": "",
+        "scope": null
+      },
+      "findings": []
+    },
+    {
+      "id": "validate-00147",
+      "nodeid": "tests/test_dialogue_across_a_cut.py::test_nothing_fires_when_the_caller_supplied_no_dialogue",
+      "text": "integrated_multimodal_description: [Shot 1] Live-action, cinematic, the locksmith leans over the vice. The camera pushes in with small amplitude at slow speed as he (S1) begins to speak: <d>[English] Anything at all.</d>\n\noverall_soundscape: A brass key scrapes in a vice.\n\nnon_diegetic_music: N/A\n",
+      "context": {
+        "mode": "t2va",
+        "duration_s": 12.25,
+        "n_pictures": 0,
+        "n_videos": 0,
+        "n_audios": 0,
+        "expected_dialogue": [],
+        "lora_triggers": [],
+        "onscreen_text": [],
+        "token_budget": [
+          350,
+          1400
+        ],
+        "prompt_tokens": null,
+        "require_music_na": null,
+        "generation_task": true,
+        "pinned_shots": null,
+        "task_types": [],
+        "declared_roles": [],
+        "paired_audio": [],
+        "standalone_audio": [],
+        "audio_transcripts": [],
+        "forbid_keyframe_refs": false,
+        "require_start_at_zero": true,
+        "pose_licensed": false,
+        "has_reference_sheet": false,
+        "wardrobe_terms": [],
+        "transformed_from": "",
+        "scope": null
+      },
+      "findings": []
+    },
+    {
+      "id": "validate-00148",
+      "nodeid": "tests/test_dialogue_across_a_cut.py::test_a_split_line_with_no_scenetrans_at_all_is_an_error",
+      "text": "integrated_multimodal_description: [Shot 1] Live-action, cinematic, the locksmith leans over the vice. The camera pushes in with small amplitude at slow speed as he (S1) begins to speak: <d>[English] If it turns halfway and stops, the pin is worn,</d> The audio continues seamlessly across the cut.\n[Shot 2] At 00:06.000, the shot cuts to the heavy wooden door of the shop: <d>[English] so you change the pin and not the whole lock.</d>\n\noverall_soundscape: A brass key scrapes in a vice.\n\nnon_diegetic_music: N/A\n",
+      "context": {
+        "mode": "t2va",
+        "duration_s": 12.25,
+        "n_pictures": 0,
+        "n_videos": 0,
+        "n_audios": 0,
+        "expected_dialogue": [
+          "If it turns halfway and stops, the pin is worn, so you change the pin and not the whole lock."
+        ],
+        "lora_triggers": [],
+        "onscreen_text": [],
+        "token_budget": [
+          350,
+          1400
+        ],
+        "prompt_tokens": null,
+        "require_music_na": null,
+        "generation_task": true,
+        "pinned_shots": null,
+        "task_types": [],
+        "declared_roles": [],
+        "paired_audio": [],
+        "standalone_audio": [],
+        "audio_transcripts": [],
+        "forbid_keyframe_refs": false,
+        "require_start_at_zero": true,
+        "pose_licensed": false,
+        "has_reference_sheet": false,
+        "wardrobe_terms": [],
+        "transformed_from": "",
+        "scope": null
+      },
+      "findings": [
+        {
+          "rule": "D11-split-line-no-scenetrans",
+          "severity": "ERROR",
+          "msg": "the line 'If it turns halfway and stops, the pin is worn, ' runs across the cut into [Shot 2] and neither side of the join is marked. base-en.txt 4.4 puts <scenetrans> at the connecting points in both parts: once after the first part's </d> and once before the second part's <d>"
+        }
+      ]
+    },
+    {
+      "id": "validate-00149",
+      "nodeid": "tests/test_dialogue_across_a_cut.py::test_a_split_line_marked_on_only_one_side_is_an_error",
+      "text": "integrated_multimodal_description: [Shot 1] Live-action, cinematic, the locksmith leans over the vice. The camera pushes in with small amplitude at slow speed as he (S1) begins to speak: <d>[English] If it turns halfway and stops, the pin is worn,</d> <scenetrans> The audio continues seamlessly across the cut.\n[Shot 2] At 00:06.000, the shot cuts to the heavy wooden door of the shop: <d>[English] so you change the pin and not the whole lock.</d>\n\noverall_soundscape: A brass key scrapes in a vice.\n\nnon_diegetic_music: N/A\n",
+      "context": {
+        "mode": "t2va",
+        "duration_s": 12.25,
+        "n_pictures": 0,
+        "n_videos": 0,
+        "n_audios": 0,
+        "expected_dialogue": [
+          "If it turns halfway and stops, the pin is worn, so you change the pin and not the whole lock."
+        ],
+        "lora_triggers": [],
+        "onscreen_text": [],
+        "token_budget": [
+          350,
+          1400
+        ],
+        "prompt_tokens": null,
+        "require_music_na": null,
+        "generation_task": true,
+        "pinned_shots": null,
+        "task_types": [],
+        "declared_roles": [],
+        "paired_audio": [],
+        "standalone_audio": [],
+        "audio_transcripts": [],
+        "forbid_keyframe_refs": false,
+        "require_start_at_zero": true,
+        "pose_licensed": false,
+        "has_reference_sheet": false,
+        "wardrobe_terms": [],
+        "transformed_from": "",
+        "scope": null
+      },
+      "findings": [
+        {
+          "rule": "D11-split-line-no-scenetrans",
+          "severity": "ERROR",
+          "msg": "the line 'If it turns halfway and stops, the pin is worn, ' runs across the cut into [Shot 2] and only one side of the join is marked. base-en.txt 4.4 puts <scenetrans> at the connecting points in both parts: once after the first part's </d> and once before the second part's <d>"
+        }
+      ]
+    },
+    {
+      "id": "validate-00150",
+      "nodeid": "tests/test_dialogue_across_a_cut.py::test_a_split_line_marked_on_only_one_side_is_an_error",
+      "text": "integrated_multimodal_description: [Shot 1] Live-action, cinematic, the locksmith leans over the vice. The camera pushes in with small amplitude at slow speed as he (S1) begins to speak: <d>[English] If it turns halfway and stops, the pin is worn,</d> The audio continues seamlessly across the cut.\n[Shot 2] At 00:06.000, the shot cuts to the heavy wooden door of the shop: <scenetrans> <d>[English] so you change the pin and not the whole lock.</d>\n\noverall_soundscape: A brass key scrapes in a vice.\n\nnon_diegetic_music: N/A\n",
+      "context": {
+        "mode": "t2va",
+        "duration_s": 12.25,
+        "n_pictures": 0,
+        "n_videos": 0,
+        "n_audios": 0,
+        "expected_dialogue": [
+          "If it turns halfway and stops, the pin is worn, so you change the pin and not the whole lock."
+        ],
+        "lora_triggers": [],
+        "onscreen_text": [],
+        "token_budget": [
+          350,
+          1400
+        ],
+        "prompt_tokens": null,
+        "require_music_na": null,
+        "generation_task": true,
+        "pinned_shots": null,
+        "task_types": [],
+        "declared_roles": [],
+        "paired_audio": [],
+        "standalone_audio": [],
+        "audio_transcripts": [],
+        "forbid_keyframe_refs": false,
+        "require_start_at_zero": true,
+        "pose_licensed": false,
+        "has_reference_sheet": false,
+        "wardrobe_terms": [],
+        "transformed_from": "",
+        "scope": null
+      },
+      "findings": [
+        {
+          "rule": "D11-split-line-no-scenetrans",
+          "severity": "ERROR",
+          "msg": "the line 'If it turns halfway and stops, the pin is worn, ' runs across the cut into [Shot 2] and only one side of the join is marked. base-en.txt 4.4 puts <scenetrans> at the connecting points in both parts: once after the first part's </d> and once before the second part's <d>"
+        }
+      ]
+    },
+    {
+      "id": "validate-00151",
+      "nodeid": "tests/test_dialogue_across_a_cut.py::test_a_split_line_with_no_continuity_statement_is_a_warning",
+      "text": "integrated_multimodal_description: [Shot 1] Live-action, cinematic, the locksmith leans over the vice. The camera pushes in with small amplitude at slow speed as he (S1) begins to speak: <d>[English] If it turns halfway and stops, the pin is worn,</d> <scenetrans>\n[Shot 2] At 00:06.000, the shot cuts to the heavy wooden door of the shop: <scenetrans> <d>[English] so you change the pin and not the whole lock.</d>\n\noverall_soundscape: A brass key scrapes in a vice.\n\nnon_diegetic_music: N/A\n",
+      "context": {
+        "mode": "t2va",
+        "duration_s": 12.25,
+        "n_pictures": 0,
+        "n_videos": 0,
+        "n_audios": 0,
+        "expected_dialogue": [
+          "If it turns halfway and stops, the pin is worn, so you change the pin and not the whole lock."
+        ],
+        "lora_triggers": [],
+        "onscreen_text": [],
+        "token_budget": [
+          350,
+          1400
+        ],
+        "prompt_tokens": null,
+        "require_music_na": null,
+        "generation_task": true,
+        "pinned_shots": null,
+        "task_types": [],
+        "declared_roles": [],
+        "paired_audio": [],
+        "standalone_audio": [],
+        "audio_transcripts": [],
+        "forbid_keyframe_refs": false,
+        "require_start_at_zero": true,
+        "pose_licensed": false,
+        "has_reference_sheet": false,
+        "wardrobe_terms": [],
+        "transformed_from": "",
+        "scope": null
+      },
+      "findings": [
+        {
+          "rule": "D12-split-line-no-continuity-statement",
+          "severity": "WARN",
+          "msg": "the join is marked but nothing states that the audio continues across it; base-en.txt 4.4 asks for it explicitly and offers `continues seamlessly across the cut`, `continues uninterrupted into the next shot`, `carries over from the previous shot` or `remains audible across the transition`"
+        }
+      ]
+    },
+    {
+      "id": "validate-00152",
+      "nodeid": "tests/test_dialogue_across_a_cut.py::test_every_continuity_phrase_the_spec_lists_satisfies_it",
+      "text": "integrated_multimodal_description: [Shot 1] Live-action, cinematic, the locksmith leans over the vice. The camera pushes in with small amplitude at slow speed as he (S1) begins to speak: <d>[English] If it turns halfway and stops, the pin is worn,</d> <scenetrans> His voice continues seamlessly across the cut.\n[Shot 2] At 00:06.000, the shot cuts to the heavy wooden door of the shop: <scenetrans> <d>[English] so you change the pin and not the whole lock.</d>\n\noverall_soundscape: A brass key scrapes in a vice.\n\nnon_diegetic_music: N/A\n",
+      "context": {
+        "mode": "t2va",
+        "duration_s": 12.25,
+        "n_pictures": 0,
+        "n_videos": 0,
+        "n_audios": 0,
+        "expected_dialogue": [
+          "If it turns halfway and stops, the pin is worn, so you change the pin and not the whole lock."
+        ],
+        "lora_triggers": [],
+        "onscreen_text": [],
+        "token_budget": [
+          350,
+          1400
+        ],
+        "prompt_tokens": null,
+        "require_music_na": null,
+        "generation_task": true,
+        "pinned_shots": null,
+        "task_types": [],
+        "declared_roles": [],
+        "paired_audio": [],
+        "standalone_audio": [],
+        "audio_transcripts": [],
+        "forbid_keyframe_refs": false,
+        "require_start_at_zero": true,
+        "pose_licensed": false,
+        "has_reference_sheet": false,
+        "wardrobe_terms": [],
+        "transformed_from": "",
+        "scope": null
+      },
+      "findings": []
+    },
+    {
+      "id": "validate-00153",
+      "nodeid": "tests/test_dialogue_across_a_cut.py::test_every_continuity_phrase_the_spec_lists_satisfies_it",
+      "text": "integrated_multimodal_description: [Shot 1] Live-action, cinematic, the locksmith leans over the vice. The camera pushes in with small amplitude at slow speed as he (S1) begins to speak: <d>[English] If it turns halfway and stops, the pin is worn,</d> <scenetrans> His voice continues uninterrupted into the next shot.\n[Shot 2] At 00:06.000, the shot cuts to the heavy wooden door of the shop: <scenetrans> <d>[English] so you change the pin and not the whole lock.</d>\n\noverall_soundscape: A brass key scrapes in a vice.\n\nnon_diegetic_music: N/A\n",
+      "context": {
+        "mode": "t2va",
+        "duration_s": 12.25,
+        "n_pictures": 0,
+        "n_videos": 0,
+        "n_audios": 0,
+        "expected_dialogue": [
+          "If it turns halfway and stops, the pin is worn, so you change the pin and not the whole lock."
+        ],
+        "lora_triggers": [],
+        "onscreen_text": [],
+        "token_budget": [
+          350,
+          1400
+        ],
+        "prompt_tokens": null,
+        "require_music_na": null,
+        "generation_task": true,
+        "pinned_shots": null,
+        "task_types": [],
+        "declared_roles": [],
+        "paired_audio": [],
+        "standalone_audio": [],
+        "audio_transcripts": [],
+        "forbid_keyframe_refs": false,
+        "require_start_at_zero": true,
+        "pose_licensed": false,
+        "has_reference_sheet": false,
+        "wardrobe_terms": [],
+        "transformed_from": "",
+        "scope": null
+      },
+      "findings": []
+    },
+    {
+      "id": "validate-00154",
+      "nodeid": "tests/test_dialogue_across_a_cut.py::test_every_continuity_phrase_the_spec_lists_satisfies_it",
+      "text": "integrated_multimodal_description: [Shot 1] Live-action, cinematic, the locksmith leans over the vice. The camera pushes in with small amplitude at slow speed as he (S1) begins to speak: <d>[English] If it turns halfway and stops, the pin is worn,</d> <scenetrans> His voice carries over from the previous shot.\n[Shot 2] At 00:06.000, the shot cuts to the heavy wooden door of the shop: <scenetrans> <d>[English] so you change the pin and not the whole lock.</d>\n\noverall_soundscape: A brass key scrapes in a vice.\n\nnon_diegetic_music: N/A\n",
+      "context": {
+        "mode": "t2va",
+        "duration_s": 12.25,
+        "n_pictures": 0,
+        "n_videos": 0,
+        "n_audios": 0,
+        "expected_dialogue": [
+          "If it turns halfway and stops, the pin is worn, so you change the pin and not the whole lock."
+        ],
+        "lora_triggers": [],
+        "onscreen_text": [],
+        "token_budget": [
+          350,
+          1400
+        ],
+        "prompt_tokens": null,
+        "require_music_na": null,
+        "generation_task": true,
+        "pinned_shots": null,
+        "task_types": [],
+        "declared_roles": [],
+        "paired_audio": [],
+        "standalone_audio": [],
+        "audio_transcripts": [],
+        "forbid_keyframe_refs": false,
+        "require_start_at_zero": true,
+        "pose_licensed": false,
+        "has_reference_sheet": false,
+        "wardrobe_terms": [],
+        "transformed_from": "",
+        "scope": null
+      },
+      "findings": []
+    },
+    {
+      "id": "validate-00155",
+      "nodeid": "tests/test_dialogue_across_a_cut.py::test_every_continuity_phrase_the_spec_lists_satisfies_it",
+      "text": "integrated_multimodal_description: [Shot 1] Live-action, cinematic, the locksmith leans over the vice. The camera pushes in with small amplitude at slow speed as he (S1) begins to speak: <d>[English] If it turns halfway and stops, the pin is worn,</d> <scenetrans> His voice remains audible across the transition.\n[Shot 2] At 00:06.000, the shot cuts to the heavy wooden door of the shop: <scenetrans> <d>[English] so you change the pin and not the whole lock.</d>\n\noverall_soundscape: A brass key scrapes in a vice.\n\nnon_diegetic_music: N/A\n",
+      "context": {
+        "mode": "t2va",
+        "duration_s": 12.25,
+        "n_pictures": 0,
+        "n_videos": 0,
+        "n_audios": 0,
+        "expected_dialogue": [
+          "If it turns halfway and stops, the pin is worn, so you change the pin and not the whole lock."
+        ],
+        "lora_triggers": [],
+        "onscreen_text": [],
+        "token_budget": [
+          350,
+          1400
+        ],
+        "prompt_tokens": null,
+        "require_music_na": null,
+        "generation_task": true,
+        "pinned_shots": null,
+        "task_types": [],
+        "declared_roles": [],
+        "paired_audio": [],
+        "standalone_audio": [],
+        "audio_transcripts": [],
+        "forbid_keyframe_refs": false,
+        "require_start_at_zero": true,
+        "pose_licensed": false,
+        "has_reference_sheet": false,
+        "wardrobe_terms": [],
+        "transformed_from": "",
+        "scope": null
+      },
+      "findings": []
+    },
+    {
+      "id": "validate-00156",
+      "nodeid": "tests/test_dialogue_across_a_cut.py::test_a_line_broken_inside_one_shot_is_an_error_of_its_own",
+      "text": "integrated_multimodal_description: [Shot 1] Live-action, cinematic, the locksmith leans over the vice. The camera pushes in with small amplitude at slow speed as he (S1) begins to speak: <d>[English] If it turns halfway and stops, the pin is worn,</d> he pauses, then adds: <d>[English] so you change the pin and not the whole lock.</d>\n\noverall_soundscape: A brass key scrapes in a vice.\n\nnon_diegetic_music: N/A\n",
+      "context": {
+        "mode": "t2va",
+        "duration_s": 12.25,
+        "n_pictures": 0,
+        "n_videos": 0,
+        "n_audios": 0,
+        "expected_dialogue": [
+          "If it turns halfway and stops, the pin is worn, so you change the pin and not the whole lock."
+        ],
+        "lora_triggers": [],
+        "onscreen_text": [],
+        "token_budget": [
+          350,
+          1400
+        ],
+        "prompt_tokens": null,
+        "require_music_na": null,
+        "generation_task": true,
+        "pinned_shots": null,
+        "task_types": [],
+        "declared_roles": [],
+        "paired_audio": [],
+        "standalone_audio": [],
+        "audio_transcripts": [],
+        "forbid_keyframe_refs": false,
+        "require_start_at_zero": true,
+        "pose_licensed": false,
+        "has_reference_sheet": false,
+        "wardrobe_terms": [],
+        "transformed_from": "",
+        "scope": null
+      },
+      "findings": [
+        {
+          "rule": "D13-line-split-without-a-cut",
+          "severity": "ERROR",
+          "msg": "the line 'If it turns halfway and stops, the pin is worn, ' is divided into separate <d> blocks with no cut between them, so a continuity marker is not the remedy: inside one shot a supplied line is spoken once, in one block"
+        }
+      ]
+    },
+    {
+      "id": "validate-00157",
+      "nodeid": "tests/test_dialogue_across_a_cut.py::test_the_marker_at_the_start_of_the_second_part_does_not_hide_the_cut_time",
+      "text": "integrated_multimodal_description: [Shot 1] Live-action, cinematic, the locksmith leans over the vice. The camera pushes in with small amplitude at slow speed as he (S1) begins to speak: <d>[English] If it turns halfway and stops, the pin is worn,</d> <scenetrans> The audio continues seamlessly across the cut.\n[Shot 2] <scenetrans> At 00:06.000, the camera cuts to a medium shot of the shop door as the locksmith's voice continues from off-screen: <d>[English] so you change the pin and not the whole lock.</d>\n\noverall_soundscape: A brass key scrapes in a vice.\n\nnon_diegetic_music: N/A\n",
+      "context": {
+        "mode": "t2va",
+        "duration_s": 12.25,
+        "n_pictures": 0,
+        "n_videos": 0,
+        "n_audios": 0,
+        "expected_dialogue": [
+          "If it turns halfway and stops, the pin is worn, so you change the pin and not the whole lock."
+        ],
+        "lora_triggers": [],
+        "onscreen_text": [],
+        "token_budget": [
+          350,
+          1400
+        ],
+        "prompt_tokens": null,
+        "require_music_na": null,
+        "generation_task": true,
+        "pinned_shots": null,
+        "task_types": [],
+        "declared_roles": [],
+        "paired_audio": [],
+        "standalone_audio": [],
+        "audio_transcripts": [],
+        "forbid_keyframe_refs": false,
+        "require_start_at_zero": true,
+        "pose_licensed": false,
+        "has_reference_sheet": false,
+        "wardrobe_terms": [],
+        "transformed_from": "",
+        "scope": null
+      },
+      "findings": []
+    },
+    {
+      "id": "validate-00158",
+      "nodeid": "tests/test_dialogue_across_a_cut.py::test_a_shot_with_a_marker_and_no_time_at_all_is_still_an_error",
+      "text": "integrated_multimodal_description: [Shot 1] Live-action, cinematic, the locksmith leans over the vice. The camera pushes in with small amplitude at slow speed as he (S1) begins to speak: <d>[English] If it turns halfway and stops, the pin is worn,</d> <scenetrans> The audio continues seamlessly across the cut.\n[Shot 2] <scenetrans> the camera cuts to the shop door: <d>[English] so you change the pin and not the whole lock.</d>\n\noverall_soundscape: A brass key scrapes in a vice.\n\nnon_diegetic_music: N/A\n",
+      "context": {
+        "mode": "t2va",
+        "duration_s": 12.25,
+        "n_pictures": 0,
+        "n_videos": 0,
+        "n_audios": 0,
+        "expected_dialogue": [
+          "If it turns halfway and stops, the pin is worn, so you change the pin and not the whole lock."
+        ],
+        "lora_triggers": [],
+        "onscreen_text": [],
+        "token_budget": [
+          350,
+          1400
+        ],
+        "prompt_tokens": null,
+        "require_music_na": null,
+        "generation_task": true,
+        "pinned_shots": null,
+        "task_types": [],
+        "declared_roles": [],
+        "paired_audio": [],
+        "standalone_audio": [],
+        "audio_transcripts": [],
+        "forbid_keyframe_refs": false,
+        "require_start_at_zero": true,
+        "pose_licensed": false,
+        "has_reference_sheet": false,
+        "wardrobe_terms": [],
+        "transformed_from": "",
+        "scope": null
+      },
+      "findings": [
+        {
+          "rule": "T4-missing-cut-time",
+          "severity": "ERROR",
+          "msg": "[Shot 2] has no 'At MM:SS.mmm' cut time"
+        }
+      ]
+    },
+    {
+      "id": "validate-00159",
+      "nodeid": "tests/test_dialogue_across_a_cut.py::test_a_marker_does_not_license_a_timestamp_on_the_first_shot",
+      "text": "integrated_multimodal_description: [Shot 1] <scenetrans> At 00:00.000, the locksmith leans over the vice. The camera holds a static shot as he says: <d>[English] If it turns halfway and stops, the pin is worn, so you change the pin and not the whole lock.</d>\n\noverall_soundscape: A brass key scrapes in a vice.\n\nnon_diegetic_music: N/A\n",
+      "context": {
+        "mode": "t2va",
+        "duration_s": 12.25,
+        "n_pictures": 0,
+        "n_videos": 0,
+        "n_audios": 0,
+        "expected_dialogue": [
+          "If it turns halfway and stops, the pin is worn, so you change the pin and not the whole lock."
+        ],
+        "lora_triggers": [],
+        "onscreen_text": [],
+        "token_budget": [
+          350,
+          1400
+        ],
+        "prompt_tokens": null,
+        "require_music_na": null,
+        "generation_task": true,
+        "pinned_shots": null,
+        "task_types": [],
+        "declared_roles": [],
+        "paired_audio": [],
+        "standalone_audio": [],
+        "audio_transcripts": [],
+        "forbid_keyframe_refs": false,
+        "require_start_at_zero": true,
+        "pose_licensed": false,
+        "has_reference_sheet": false,
+        "wardrobe_terms": [],
+        "transformed_from": "",
+        "scope": null
+      },
+      "findings": [
+        {
+          "rule": "T2-shot1-timestamp",
+          "severity": "ERROR",
+          "msg": "[Shot 1] must not carry a timestamp"
+        },
+        {
+          "rule": "P5b-camera-no-amplitude",
+          "severity": "INFO",
+          "msg": "a motion type appears but without the 'with <small|large> amplitude at <slow|fast> speed' idiom the spec defines"
+        }
+      ]
+    },
+    {
+      "id": "validate-00160",
+      "nodeid": "tests/test_dialogue_across_a_cut.py::test_a_line_split_across_three_shots_needs_the_marker_at_both_joins",
+      "text": "integrated_multimodal_description: [Shot 1] Live-action, cinematic, the locksmith leans over the vice. The camera pushes in with small amplitude at slow speed as he (S1) begins to speak: <d>[English] If it turns halfway and stops,</d> <scenetrans> The audio continues seamlessly across the cut.\n[Shot 2] At 00:04.000, the shot cuts to the apprentice as the voice carries over from the previous shot: <scenetrans> <d>[English] the pin is worn,</d> <scenetrans> The audio continues seamlessly across the cut.\n[Shot 3] At 00:08.000, the shot cuts to the shop door and the voice remains audible across the transition: <scenetrans> <d>[English] so you change the pin and not the whole lock.</d>\n\noverall_soundscape: A brass key scrapes in a vice.\n\nnon_diegetic_music: N/A\n",
+      "context": {
+        "mode": "t2va",
+        "duration_s": 12.25,
+        "n_pictures": 0,
+        "n_videos": 0,
+        "n_audios": 0,
+        "expected_dialogue": [
+          "If it turns halfway and stops, the pin is worn, so you change the pin and not the whole lock."
+        ],
+        "lora_triggers": [],
+        "onscreen_text": [],
+        "token_budget": [
+          350,
+          1400
+        ],
+        "prompt_tokens": null,
+        "require_music_na": null,
+        "generation_task": true,
+        "pinned_shots": null,
+        "task_types": [],
+        "declared_roles": [],
+        "paired_audio": [],
+        "standalone_audio": [],
+        "audio_transcripts": [],
+        "forbid_keyframe_refs": false,
+        "require_start_at_zero": true,
+        "pose_licensed": false,
+        "has_reference_sheet": false,
+        "wardrobe_terms": [],
+        "transformed_from": "",
+        "scope": null
+      },
+      "findings": []
+    },
+    {
+      "id": "validate-00161",
+      "nodeid": "tests/test_dialogue_across_a_cut.py::test_a_line_split_across_three_shots_needs_the_marker_at_both_joins",
+      "text": "integrated_multimodal_description: [Shot 1] Live-action, cinematic, the locksmith leans over the vice. The camera pushes in with small amplitude at slow speed as he (S1) begins to speak: <d>[English] If it turns halfway and stops,</d> <scenetrans> The audio continues seamlessly across the cut.\n[Shot 2] At 00:04.000, the shot cuts to the apprentice as the voice carries over from the previous shot: <d>[English] the pin is worn,</d> <scenetrans> The audio continues seamlessly across the cut.\n[Shot 3] At 00:08.000, the shot cuts to the shop door and the voice remains audible across the transition: <scenetrans> <d>[English] so you change the pin and not the whole lock.</d>\n\noverall_soundscape: A brass key scrapes in a vice.\n\nnon_diegetic_music: N/A\n",
+      "context": {
+        "mode": "t2va",
+        "duration_s": 12.25,
+        "n_pictures": 0,
+        "n_videos": 0,
+        "n_audios": 0,
+        "expected_dialogue": [
+          "If it turns halfway and stops, the pin is worn, so you change the pin and not the whole lock."
+        ],
+        "lora_triggers": [],
+        "onscreen_text": [],
+        "token_budget": [
+          350,
+          1400
+        ],
+        "prompt_tokens": null,
+        "require_music_na": null,
+        "generation_task": true,
+        "pinned_shots": null,
+        "task_types": [],
+        "declared_roles": [],
+        "paired_audio": [],
+        "standalone_audio": [],
+        "audio_transcripts": [],
+        "forbid_keyframe_refs": false,
+        "require_start_at_zero": true,
+        "pose_licensed": false,
+        "has_reference_sheet": false,
+        "wardrobe_terms": [],
+        "transformed_from": "",
+        "scope": null
+      },
+      "findings": [
+        {
+          "rule": "D11-split-line-no-scenetrans",
+          "severity": "ERROR",
+          "msg": "the line 'If it turns halfway and stops, the pin is worn, ' runs across the cut into [Shot 2] and only one side of the join is marked. base-en.txt 4.4 puts <scenetrans> at the connecting points in both parts: once after the first part's </d> and once before the second part's <d>"
+        }
+      ]
+    },
+    {
+      "id": "validate-00181",
+      "nodeid": "tests/test_fix_loop.py::test_a_broken_brief_converges_in_one_round",
+      "text": "Here is your brief:\n\nsubject_definitions:\n<Subject 1> is the man in <Picture 1>, with short dark hair and a navy t-shirt.\n\nsummary:\n[reference generation] The target video shows <Subject 1> walking down a corridor.\n\nretention_analysis:\n<Subject 1> (appears in [Shot 1]): fully_preserved - the short dark hair and navy t-shirt are retained.\n\ndetailed_description:\nThe target video is in live-action style with warm torchlight.\n[Shot 1] At 00:00.000, A wide shot holds on <Subject 1> as he walks forward. The camera pushes in with small amplitude at slow speed, and the torchlight climbs his chest.\n\noverall_soundscape:\nFootsteps echo on stone throughout.\n\nnon_diegetic_music:\nN/A\n",
+      "context": {
+        "mode": "ref2va",
+        "duration_s": 8.0,
+        "n_pictures": 1,
+        "n_videos": 0,
+        "n_audios": 0,
+        "expected_dialogue": [],
+        "lora_triggers": [],
+        "onscreen_text": [],
+        "token_budget": [
+          350,
+          1400
+        ],
+        "prompt_tokens": null,
+        "require_music_na": null,
+        "generation_task": true,
+        "pinned_shots": null,
+        "task_types": [],
+        "declared_roles": [],
+        "paired_audio": [],
+        "standalone_audio": [],
+        "audio_transcripts": [],
+        "forbid_keyframe_refs": false,
+        "require_start_at_zero": true,
+        "pose_licensed": false,
+        "has_reference_sheet": false,
+        "wardrobe_terms": [],
+        "transformed_from": "",
+        "scope": null
+      },
+      "findings": [
+        {
+          "rule": "S3-preamble",
+          "severity": "ERROR",
+          "msg": "brief must begin with 'subject_definitions:'"
+        },
+        {
+          "rule": "T2-shot1-timestamp",
+          "severity": "ERROR",
+          "msg": "[Shot 1] must not carry a timestamp"
+        },
+        {
+          "rule": "P2-too-short",
+          "severity": "WARN",
+          "msg": "detailed_description is 43 words; spec guidance 350-500, official example 336"
+        }
+      ]
+    },
+    {
+      "id": "validate-00182",
+      "nodeid": "tests/test_fix_loop.py::test_a_broken_brief_converges_in_one_round",
+      "text": "Here is your brief:\n\nsubject_definitions:\n<Subject 1> is the man in <Picture 1>, with short dark hair and a navy t-shirt.\n\nsummary:\n[reference generation] The target video shows <Subject 1> walking down a corridor.\n\nretention_analysis:\n<Subject 1> (appears in [Shot 1]): fully_preserved - the short dark hair and navy t-shirt are retained.\n\ndetailed_description:\nThe target video is in live-action style with warm torchlight.\n[Shot 1] At 00:00.000, A wide shot holds on <Subject 1> as he walks forward. The camera pushes in with small amplitude at slow speed, and the torchlight climbs his chest.\n\noverall_soundscape:\nFootsteps echo on stone throughout.\n\nnon_diegetic_music:\nN/A\n",
+      "context": {
+        "mode": "ref2va",
+        "duration_s": 8.0,
+        "n_pictures": 1,
+        "n_videos": 0,
+        "n_audios": 0,
+        "expected_dialogue": [],
+        "lora_triggers": [],
+        "onscreen_text": [],
+        "token_budget": [
+          350,
+          1400
+        ],
+        "prompt_tokens": null,
+        "require_music_na": null,
+        "generation_task": true,
+        "pinned_shots": null,
+        "task_types": [],
+        "declared_roles": [],
+        "paired_audio": [],
+        "standalone_audio": [],
+        "audio_transcripts": [],
+        "forbid_keyframe_refs": false,
+        "require_start_at_zero": true,
+        "pose_licensed": false,
+        "has_reference_sheet": false,
+        "wardrobe_terms": [],
+        "transformed_from": "",
+        "scope": null
+      },
+      "findings": [
+        {
+          "rule": "S3-preamble",
+          "severity": "ERROR",
+          "msg": "brief must begin with 'subject_definitions:'"
+        },
+        {
+          "rule": "T2-shot1-timestamp",
+          "severity": "ERROR",
+          "msg": "[Shot 1] must not carry a timestamp"
+        },
+        {
+          "rule": "P2-too-short",
+          "severity": "WARN",
+          "msg": "detailed_description is 43 words; spec guidance 350-500, official example 336"
+        }
+      ]
+    },
+    {
+      "id": "validate-00183",
+      "nodeid": "tests/test_fix_loop.py::test_a_broken_brief_converges_in_one_round",
+      "text": "subject_definitions:\n<Subject 1> is the man in <Picture 1>, with short dark hair and a navy t-shirt.\n\nsummary:\n[reference generation] The target video shows <Subject 1> walking down a corridor.\n\nretention_analysis:\n<Subject 1> (appears in [Shot 1]): fully_preserved - the short dark hair and navy t-shirt are retained.\n\ndetailed_description:\nThe target video is in live-action style with warm torchlight.\n[Shot 1] A wide shot holds on <Subject 1> as he walks forward. The camera pushes in with small amplitude at slow speed, and the torchlight climbs his chest.\n\noverall_soundscape:\nFootsteps echo on stone throughout.\n\nnon_diegetic_music:\nN/A",
+      "context": {
+        "mode": "ref2va",
+        "duration_s": 8.0,
+        "n_pictures": 1,
+        "n_videos": 0,
+        "n_audios": 0,
+        "expected_dialogue": [],
+        "lora_triggers": [],
+        "onscreen_text": [],
+        "token_budget": [
+          350,
+          1400
+        ],
+        "prompt_tokens": null,
+        "require_music_na": null,
+        "generation_task": true,
+        "pinned_shots": null,
+        "task_types": [],
+        "declared_roles": [],
+        "paired_audio": [],
+        "standalone_audio": [],
+        "audio_transcripts": [],
+        "forbid_keyframe_refs": false,
+        "require_start_at_zero": true,
+        "pose_licensed": false,
+        "has_reference_sheet": false,
+        "wardrobe_terms": [],
+        "transformed_from": "",
+        "scope": null
+      },
+      "findings": [
+        {
+          "rule": "P2-too-short",
+          "severity": "WARN",
+          "msg": "detailed_description is 39 words; spec guidance 350-500, official example 336"
+        }
+      ]
+    },
+    {
+      "id": "validate-00184",
+      "nodeid": "tests/test_fix_loop.py::test_a_finding_that_survives_is_recorded_as_a_signal_about_the_rule",
+      "text": "subject_definitions:\n<Subject 9> is the man in <Picture 1>, with short dark hair and a navy t-shirt.\n\nsummary:\n[reference generation] The target video shows <Subject 1> walking down a corridor.\n\nretention_analysis:\n<Subject 1> (appears in [Shot 1]): fully_preserved - the short dark hair and navy t-shirt are retained.\n\ndetailed_description:\nThe target video is in live-action style with warm torchlight.\n[Shot 1] A wide shot holds on <Subject 1> as he walks forward. The camera pushes in with small amplitude at slow speed, and the torchlight climbs his chest.\n\noverall_soundscape:\nFootsteps echo on stone throughout.\n\nnon_diegetic_music:\nN/A\n",
+      "context": {
+        "mode": "ref2va",
+        "duration_s": 8.0,
+        "n_pictures": 1,
+        "n_videos": 0,
+        "n_audios": 0,
+        "expected_dialogue": [],
+        "lora_triggers": [],
+        "onscreen_text": [],
+        "token_budget": [
+          350,
+          1400
+        ],
+        "prompt_tokens": null,
+        "require_music_na": null,
+        "generation_task": true,
+        "pinned_shots": null,
+        "task_types": [],
+        "declared_roles": [],
+        "paired_audio": [],
+        "standalone_audio": [],
+        "audio_transcripts": [],
+        "forbid_keyframe_refs": false,
+        "require_start_at_zero": true,
+        "pose_licensed": false,
+        "has_reference_sheet": false,
+        "wardrobe_terms": [],
+        "transformed_from": "",
+        "scope": null
+      },
+      "findings": [
+        {
+          "rule": "L2-undefined-subject",
+          "severity": "ERROR",
+          "msg": "<Subject 1> is used but never defined with '<Subject 1> is ...' in subject_definitions (a colon form does not register as a definition)"
+        },
+        {
+          "rule": "M4-new-label-in-summary",
+          "severity": "ERROR",
+          "msg": "summary introduces undefined label(s): ['<Subject 1>']"
+        },
+        {
+          "rule": "R5-unanalysed-subject",
+          "severity": "WARN",
+          "msg": "<Subject 9> defined but absent from retention_analysis"
+        },
+        {
+          "rule": "P2-too-short",
+          "severity": "WARN",
+          "msg": "detailed_description is 39 words; spec guidance 350-500, official example 336"
+        }
+      ]
+    },
+    {
+      "id": "validate-00185",
+      "nodeid": "tests/test_fix_loop.py::test_a_finding_that_survives_is_recorded_as_a_signal_about_the_rule",
+      "text": "subject_definitions:\n<Subject 9> is the man in <Picture 1>, with short dark hair and a navy t-shirt.\n\nsummary:\n[reference generation] The target video shows <Subject 1> walking down a corridor.\n\nretention_analysis:\n<Subject 1> (appears in [Shot 1]): fully_preserved - the short dark hair and navy t-shirt are retained.\n\ndetailed_description:\nThe target video is in live-action style with warm torchlight.\n[Shot 1] A wide shot holds on <Subject 1> as he walks forward. The camera pushes in with small amplitude at slow speed, and the torchlight climbs his chest.\n\noverall_soundscape:\nFootsteps echo on stone throughout.\n\nnon_diegetic_music:\nN/A",
+      "context": {
+        "mode": "ref2va",
+        "duration_s": 8.0,
+        "n_pictures": 1,
+        "n_videos": 0,
+        "n_audios": 0,
+        "expected_dialogue": [],
+        "lora_triggers": [],
+        "onscreen_text": [],
+        "token_budget": [
+          350,
+          1400
+        ],
+        "prompt_tokens": null,
+        "require_music_na": null,
+        "generation_task": true,
+        "pinned_shots": null,
+        "task_types": [],
+        "declared_roles": [],
+        "paired_audio": [],
+        "standalone_audio": [],
+        "audio_transcripts": [],
+        "forbid_keyframe_refs": false,
+        "require_start_at_zero": true,
+        "pose_licensed": false,
+        "has_reference_sheet": false,
+        "wardrobe_terms": [],
+        "transformed_from": "",
+        "scope": null
+      },
+      "findings": [
+        {
+          "rule": "L2-undefined-subject",
+          "severity": "ERROR",
+          "msg": "<Subject 1> is used but never defined with '<Subject 1> is ...' in subject_definitions (a colon form does not register as a definition)"
+        },
+        {
+          "rule": "M4-new-label-in-summary",
+          "severity": "ERROR",
+          "msg": "summary introduces undefined label(s): ['<Subject 1>']"
+        },
+        {
+          "rule": "R5-unanalysed-subject",
+          "severity": "WARN",
+          "msg": "<Subject 9> defined but absent from retention_analysis"
+        },
+        {
+          "rule": "P2-too-short",
+          "severity": "WARN",
+          "msg": "detailed_description is 39 words; spec guidance 350-500, official example 336"
+        }
+      ]
+    },
+    {
+      "id": "validate-00186",
+      "nodeid": "tests/test_fix_loop.py::test_only_errors_reach_the_model",
+      "text": "subject_definitions:\n<Subject 1> is the man in <Picture 1>, with short dark hair and a navy t-shirt.\n\nsummary:\n[reference generation] The target video shows <Subject 1> walking down a corridor.\n\nretention_analysis:\n<Subject 1> (appears in [Shot 1]): fully_preserved - the short dark hair and navy t-shirt are retained.\n\ndetailed_description:\nThe target video is in live-action style with warm torchlight.\n[Shot 1] A wide shot holds on <Subject 1> as he walks forward. The camera pushes in with small amplitude at slow speed, and the torchlight climbs his chest.\n\noverall_soundscape:\nFootsteps echo on stone throughout.\n\nnon_diegetic_music:\nN/A\n",
+      "context": {
+        "mode": "ref2va",
+        "duration_s": 8.0,
+        "n_pictures": 1,
+        "n_videos": 0,
+        "n_audios": 0,
+        "expected_dialogue": [],
+        "lora_triggers": [],
+        "onscreen_text": [],
+        "token_budget": [
+          350,
+          1400
+        ],
+        "prompt_tokens": null,
+        "require_music_na": null,
+        "generation_task": true,
+        "pinned_shots": null,
+        "task_types": [],
+        "declared_roles": [],
+        "paired_audio": [],
+        "standalone_audio": [],
+        "audio_transcripts": [],
+        "forbid_keyframe_refs": false,
+        "require_start_at_zero": true,
+        "pose_licensed": false,
+        "has_reference_sheet": false,
+        "wardrobe_terms": [],
+        "transformed_from": "",
+        "scope": null
+      },
+      "findings": [
+        {
+          "rule": "P2-too-short",
+          "severity": "WARN",
+          "msg": "detailed_description is 39 words; spec guidance 350-500, official example 336"
+        }
+      ]
+    },
+    {
+      "id": "validate-00187",
+      "nodeid": "tests/test_fix_loop.py::test_code_no_longer_writes_prose_sections",
+      "text": "subject_definitions:\n<Subject 1> is the man in <Picture 1>, with short dark hair and a navy t-shirt.\n\nsummary:\n[reference generation] The target video shows <Subject 1> walking down a corridor.\n\ndetailed_description:\nThe target video is in live-action style with warm torchlight.\n[Shot 1] A wide shot holds on <Subject 1> as he walks forward. The camera pushes in with small amplitude at slow speed, and the torchlight climbs his chest.\n\noverall_soundscape:\nFootsteps echo on stone throughout.\n\nnon_diegetic_music:\nN/A\n",
+      "context": {
+        "mode": "ref2va",
+        "duration_s": 8.0,
+        "n_pictures": 1,
+        "n_videos": 0,
+        "n_audios": 0,
+        "expected_dialogue": [],
+        "lora_triggers": [],
+        "onscreen_text": [],
+        "token_budget": [
+          350,
+          1400
+        ],
+        "prompt_tokens": null,
+        "require_music_na": null,
+        "generation_task": true,
+        "pinned_shots": null,
+        "task_types": [],
+        "declared_roles": [],
+        "paired_audio": [],
+        "standalone_audio": [],
+        "audio_transcripts": [],
+        "forbid_keyframe_refs": false,
+        "require_start_at_zero": true,
+        "pose_licensed": false,
+        "has_reference_sheet": false,
+        "wardrobe_terms": [],
+        "transformed_from": "",
+        "scope": null
+      },
+      "findings": [
+        {
+          "rule": "S1-missing-section",
+          "severity": "ERROR",
+          "msg": "'retention_analysis:' is absent"
+        },
+        {
+          "rule": "R5-unanalysed-subject",
+          "severity": "WARN",
+          "msg": "<Subject 1> defined but absent from retention_analysis"
+        },
+        {
+          "rule": "P2-too-short",
+          "severity": "WARN",
+          "msg": "detailed_description is 39 words; spec guidance 350-500, official example 336"
+        }
+      ]
+    },
+    {
+      "id": "validate-00188",
+      "nodeid": "tests/test_fix_loop.py::test_the_pinned_failure_is_a_real_failure",
+      "text": "subject_definitions: N/A\n\nsummary: [reference generation] The target video depicts a knight in battered plate armour riding a huge black dragon low over a burning battlefield in a cinematic style. The sequence follows a continuous flight path with a single cut to emphasize the knight's command and the dragon's maneuver.\n\nretention_analysis: N/A\n\ndetailed_description: The target video uses a cinematic, high-contrast fantasy style with volumetric smoke, intense orange firelight, and deep shadow.\n[Shot 1] A low-angle tracking shot follows the knight in battered plate armour seated atop a huge black dragon as they glide just above the burning battlefield. The camera moves forward at a steady pace, keeping the dragon's leathery wings and the knight's scarred helmet centred in the frame. Embers drift upward past the lens, and the heat haze shimmers above the ruined structures below. The dragon's massive wings beat slowly, pushing against the thick smoke, while the knight's gloved hands grip the reins tightly. At 00:05.000, the shot cuts to a closer medium view as the dragon banks sharply to the right.\n[Shot 2] At 00:05.000, the camera pushes in slowly with small amplitude, tightening the frame on the knight's face and the dragon's scaled neck. The knight (S1) turns his head toward the advancing front line, his jaw tightening as he shouts, <d>[English] Hold the line!</d> The dragon responds by flaring its wings and diving slightly, its claws scraping against a burning wooden barricade below. Sparks cascade upward, catching on the knight's dented breastplate. The camera holds steady as the dragon levels out, carrying the knight forward into the thick smoke, and the shot ends on the dragon's powerful wingbeat silhouetted against the roaring flames at 00:10.125.\n\noverall_soundscape: Continuous low-frequency rumble of the dragon's wingbeats, the crackle and roar of the burning battlefield, and the metallic clink of the knight's battered plate armour against the saddle. Wind rushes past the camera throughout the sequence.\n\nnon_diegetic_music: A sweeping orchestral score with heavy brass and low strings enters at the start, building in intensity as the dragon banks. The music swells during the knight's command, then drops to a sustained, tense chord as the dragon dives, leaving the final two seconds with only the ambient fire and wing sounds.",
+      "context": {
+        "mode": "t2va",
+        "duration_s": 10.125,
+        "n_pictures": null,
+        "n_videos": 0,
+        "n_audios": 0,
+        "expected_dialogue": [],
+        "lora_triggers": [],
+        "onscreen_text": [],
+        "token_budget": [
+          350,
+          1400
+        ],
+        "prompt_tokens": null,
+        "require_music_na": null,
+        "generation_task": true,
+        "pinned_shots": null,
+        "task_types": [],
+        "declared_roles": [],
+        "paired_audio": [],
+        "standalone_audio": [],
+        "audio_transcripts": [],
+        "forbid_keyframe_refs": false,
+        "require_start_at_zero": true,
+        "pose_licensed": false,
+        "has_reference_sheet": false,
+        "wardrobe_terms": [],
+        "transformed_from": "",
+        "scope": null
+      },
+      "findings": [
+        {
+          "rule": "S1-missing-section",
+          "severity": "ERROR",
+          "msg": "'integrated_multimodal_description:' is absent"
+        },
+        {
+          "rule": "S5-mode-field-crossed",
+          "severity": "ERROR",
+          "msg": "'detailed_description' is the other mode's field name; t2va uses 'integrated_multimodal_description'"
+        },
+        {
+          "rule": "T1-no-shot",
+          "severity": "ERROR",
+          "msg": "integrated_multimodal_description has no [Shot N] marker"
+        },
+        {
+          "rule": "P4-no-camera-at-all",
+          "severity": "ERROR",
+          "msg": "the camera is never described; H3 drifts and reframes on its own when it is unspecified, so an unstated camera is a defect rather than a stylistic choice"
+        },
+        {
+          "rule": "A5-music-no-tempo",
+          "severity": "INFO",
+          "msg": "non_diegetic_music should state instrumentation, tempo and dynamics"
+        },
+        {
+          "rule": "A8-music-mood-word",
+          "severity": "WARN",
+          "msg": "non_diegetic_music states the score's mood or emotional function rather than its sound: 'tense'. base-en.txt 4.7 asks for instrumentation, speed, rhythm and dynamic change and rules those out explicitly. Name what is playing and what it does across the duration instead"
+        }
+      ]
+    },
+    {
+      "id": "validate-00189",
+      "nodeid": "tests/test_fix_loop.py::test_the_loop_fires_on_it_and_is_told_what_it_needs",
+      "text": "subject_definitions: N/A\n\nsummary: [reference generation] The target video depicts a knight in battered plate armour riding a huge black dragon low over a burning battlefield in a cinematic style. The sequence follows a continuous flight path with a single cut to emphasize the knight's command and the dragon's maneuver.\n\nretention_analysis: N/A\n\ndetailed_description: The target video uses a cinematic, high-contrast fantasy style with volumetric smoke, intense orange firelight, and deep shadow.\n[Shot 1] A low-angle tracking shot follows the knight in battered plate armour seated atop a huge black dragon as they glide just above the burning battlefield. The camera moves forward at a steady pace, keeping the dragon's leathery wings and the knight's scarred helmet centred in the frame. Embers drift upward past the lens, and the heat haze shimmers above the ruined structures below. The dragon's massive wings beat slowly, pushing against the thick smoke, while the knight's gloved hands grip the reins tightly. At 00:05.000, the shot cuts to a closer medium view as the dragon banks sharply to the right.\n[Shot 2] At 00:05.000, the camera pushes in slowly with small amplitude, tightening the frame on the knight's face and the dragon's scaled neck. The knight (S1) turns his head toward the advancing front line, his jaw tightening as he shouts, <d>[English] Hold the line!</d> The dragon responds by flaring its wings and diving slightly, its claws scraping against a burning wooden barricade below. Sparks cascade upward, catching on the knight's dented breastplate. The camera holds steady as the dragon levels out, carrying the knight forward into the thick smoke, and the shot ends on the dragon's powerful wingbeat silhouetted against the roaring flames at 00:10.125.\n\noverall_soundscape: Continuous low-frequency rumble of the dragon's wingbeats, the crackle and roar of the burning battlefield, and the metallic clink of the knight's battered plate armour against the saddle. Wind rushes past the camera throughout the sequence.\n\nnon_diegetic_music: A sweeping orchestral score with heavy brass and low strings enters at the start, building in intensity as the dragon banks. The music swells during the knight's command, then drops to a sustained, tense chord as the dragon dives, leaving the final two seconds with only the ambient fire and wing sounds.",
+      "context": {
+        "mode": "t2va",
+        "duration_s": 10.125,
+        "n_pictures": null,
+        "n_videos": 0,
+        "n_audios": 0,
+        "expected_dialogue": [],
+        "lora_triggers": [],
+        "onscreen_text": [],
+        "token_budget": [
+          350,
+          1400
+        ],
+        "prompt_tokens": null,
+        "require_music_na": null,
+        "generation_task": true,
+        "pinned_shots": null,
+        "task_types": [],
+        "declared_roles": [],
+        "paired_audio": [],
+        "standalone_audio": [],
+        "audio_transcripts": [],
+        "forbid_keyframe_refs": false,
+        "require_start_at_zero": true,
+        "pose_licensed": false,
+        "has_reference_sheet": false,
+        "wardrobe_terms": [],
+        "transformed_from": "",
+        "scope": null
+      },
+      "findings": [
+        {
+          "rule": "S1-missing-section",
+          "severity": "ERROR",
+          "msg": "'integrated_multimodal_description:' is absent"
+        },
+        {
+          "rule": "S5-mode-field-crossed",
+          "severity": "ERROR",
+          "msg": "'detailed_description' is the other mode's field name; t2va uses 'integrated_multimodal_description'"
+        },
+        {
+          "rule": "T1-no-shot",
+          "severity": "ERROR",
+          "msg": "integrated_multimodal_description has no [Shot N] marker"
+        },
+        {
+          "rule": "P4-no-camera-at-all",
+          "severity": "ERROR",
+          "msg": "the camera is never described; H3 drifts and reframes on its own when it is unspecified, so an unstated camera is a defect rather than a stylistic choice"
+        },
+        {
+          "rule": "A5-music-no-tempo",
+          "severity": "INFO",
+          "msg": "non_diegetic_music should state instrumentation, tempo and dynamics"
+        },
+        {
+          "rule": "A8-music-mood-word",
+          "severity": "WARN",
+          "msg": "non_diegetic_music states the score's mood or emotional function rather than its sound: 'tense'. base-en.txt 4.7 asks for instrumentation, speed, rhythm and dynamic change and rules those out explicitly. Name what is playing and what it does across the duration instead"
+        }
+      ]
+    },
+    {
+      "id": "validate-00190",
+      "nodeid": "tests/test_fix_loop.py::test_the_rule_behind_it_catches_a_prefix_that_disagrees_with_the_wiring",
+      "text": "subject_definitions:\n<Subject 1> is the man in <Picture 1>, with short dark hair and a navy t-shirt.\n\nsummary:\n[video editing + audio reuse] The target video shows <Subject 1> walking down a corridor.\n\nretention_analysis:\n<Subject 1> (appears in [Shot 1]): fully_preserved - the short dark hair and navy t-shirt are retained.\n\ndetailed_description:\nThe target video is in live-action style with warm torchlight.\n[Shot 1] A wide shot holds on <Subject 1> as he walks forward. The camera pushes in with small amplitude at slow speed, and the torchlight climbs his chest.\n\noverall_soundscape:\nFootsteps echo on stone throughout.\n\nnon_diegetic_music:\nN/A\n",
+      "context": {
+        "mode": "ref2va",
+        "duration_s": null,
+        "n_pictures": 1,
+        "n_videos": 1,
+        "n_audios": 1,
+        "expected_dialogue": [],
+        "lora_triggers": [],
+        "onscreen_text": [],
+        "token_budget": [
+          350,
+          1400
+        ],
+        "prompt_tokens": null,
+        "require_music_na": null,
+        "generation_task": true,
+        "pinned_shots": null,
+        "task_types": [
+          "reference generation",
+          "video editing",
+          "audio reuse"
+        ],
+        "declared_roles": [],
+        "paired_audio": [],
+        "standalone_audio": [],
+        "audio_transcripts": [],
+        "forbid_keyframe_refs": false,
+        "require_start_at_zero": true,
+        "pose_licensed": false,
+        "has_reference_sheet": false,
+        "wardrobe_terms": [],
+        "transformed_from": "",
+        "scope": null
+      },
+      "findings": [
+        {
+          "rule": "L4-unused-media",
+          "severity": "ERROR",
+          "msg": "attached video(s) [1] never referenced — they cost rows on every sampling step for no effect"
+        },
+        {
+          "rule": "L4-unused-media",
+          "severity": "ERROR",
+          "msg": "attached audio(s) [1] never referenced — they cost rows on every sampling step for no effect"
+        },
+        {
+          "rule": "M16-task-prefix-not-derived",
+          "severity": "ERROR",
+          "msg": "the summary claims [video editing + audio reuse] and what is attached derives [reference generation + video editing + audio reuse]. The task types are read off the roles of the attachments, never from how the request reads, so this is not a judgement the writing gets to make: write the prefix as [reference generation + video editing + audio reuse]"
+        },
+        {
+          "rule": "M5-editing-without-video",
+          "severity": "ERROR",
+          "msg": "'video editing' claimed but no <Video N> is referenced"
+        },
+        {
+          "rule": "M7-audio-reuse-without-audio",
+          "severity": "ERROR",
+          "msg": "the summary claims 'audio reuse' and no <Audio N> is attached. A source video's soundtrack is not an <Audio N> unless it is wired as one (ref-en.txt 2.5), so nothing here can be reused and this render generates the target video's audio instead. Delete 'audio reuse' from the task-type prefix, and say what the audio should sound like in overall_soundscape rather than claiming the original is reused."
+        },
+        {
+          "rule": "P2-too-short",
+          "severity": "WARN",
+          "msg": "detailed_description is 39 words; spec guidance 350-500, official example 336"
+        }
+      ]
+    },
+    {
+      "id": "validate-00191",
+      "nodeid": "tests/test_fix_loop.py::test_the_rule_abstains_when_the_wiring_did_not_say",
+      "text": "subject_definitions:\n<Subject 1> is the man in <Picture 1>, with short dark hair and a navy t-shirt.\n\nsummary:\n[video editing] The target video shows <Subject 1> walking down a corridor.\n\nretention_analysis:\n<Subject 1> (appears in [Shot 1]): fully_preserved - the short dark hair and navy t-shirt are retained.\n\ndetailed_description:\nThe target video is in live-action style with warm torchlight.\n[Shot 1] A wide shot holds on <Subject 1> as he walks forward. The camera pushes in with small amplitude at slow speed, and the torchlight climbs his chest.\n\noverall_soundscape:\nFootsteps echo on stone throughout.\n\nnon_diegetic_music:\nN/A\n",
+      "context": {
+        "mode": "ref2va",
+        "duration_s": null,
+        "n_pictures": 1,
+        "n_videos": 0,
+        "n_audios": 0,
+        "expected_dialogue": [],
+        "lora_triggers": [],
+        "onscreen_text": [],
+        "token_budget": [
+          350,
+          1400
+        ],
+        "prompt_tokens": null,
+        "require_music_na": null,
+        "generation_task": true,
+        "pinned_shots": null,
+        "task_types": [],
+        "declared_roles": [],
+        "paired_audio": [],
+        "standalone_audio": [],
+        "audio_transcripts": [],
+        "forbid_keyframe_refs": false,
+        "require_start_at_zero": true,
+        "pose_licensed": false,
+        "has_reference_sheet": false,
+        "wardrobe_terms": [],
+        "transformed_from": "",
+        "scope": null
+      },
+      "findings": [
+        {
+          "rule": "M5-editing-without-video",
+          "severity": "ERROR",
+          "msg": "'video editing' claimed but no <Video N> is referenced"
+        },
+        {
+          "rule": "P2-too-short",
+          "severity": "WARN",
+          "msg": "detailed_description is 39 words; spec guidance 350-500, official example 336"
+        }
+      ]
+    },
+    {
+      "id": "validate-00192",
+      "nodeid": "tests/test_fix_loop.py::test_a_reordered_prefix_is_not_a_defect",
+      "text": "subject_definitions:\n<Subject 1> is the man in <Picture 1>, with short dark hair and a navy t-shirt.\n\nsummary:\n[video editing + reference generation] The target video shows <Subject 1> walking down a corridor.\n\nretention_analysis:\n<Subject 1> (appears in [Shot 1]): fully_preserved - the short dark hair and navy t-shirt are retained.\n\ndetailed_description:\nThe target video is in live-action style with warm torchlight.\n[Shot 1] A wide shot holds on <Subject 1> as he walks forward. The camera pushes in with small amplitude at slow speed, and the torchlight climbs his chest.\n\noverall_soundscape:\nFootsteps echo on stone throughout.\n\nnon_diegetic_music:\nN/A\n",
+      "context": {
+        "mode": "ref2va",
+        "duration_s": null,
+        "n_pictures": 1,
+        "n_videos": 1,
+        "n_audios": 1,
+        "expected_dialogue": [],
+        "lora_triggers": [],
+        "onscreen_text": [],
+        "token_budget": [
+          350,
+          1400
+        ],
+        "prompt_tokens": null,
+        "require_music_na": null,
+        "generation_task": true,
+        "pinned_shots": null,
+        "task_types": [
+          "reference generation",
+          "video editing"
+        ],
+        "declared_roles": [],
+        "paired_audio": [],
+        "standalone_audio": [],
+        "audio_transcripts": [],
+        "forbid_keyframe_refs": false,
+        "require_start_at_zero": true,
+        "pose_licensed": false,
+        "has_reference_sheet": false,
+        "wardrobe_terms": [],
+        "transformed_from": "",
+        "scope": null
+      },
+      "findings": [
+        {
+          "rule": "L4-unused-media",
+          "severity": "ERROR",
+          "msg": "attached video(s) [1] never referenced — they cost rows on every sampling step for no effect"
+        },
+        {
+          "rule": "L4-unused-media",
+          "severity": "ERROR",
+          "msg": "attached audio(s) [1] never referenced — they cost rows on every sampling step for no effect"
+        },
+        {
+          "rule": "M5-editing-without-video",
+          "severity": "ERROR",
+          "msg": "'video editing' claimed but no <Video N> is referenced"
+        },
+        {
+          "rule": "P2-too-short",
+          "severity": "WARN",
+          "msg": "detailed_description is 39 words; spec guidance 350-500, official example 336"
+        }
+      ]
+    }
+  ],
+  "note": "Original actual validator inputs/findings; Python repair output is not used as proof of native repair. Native repair success is separately exercised through Planner and h3.Compile."
+}

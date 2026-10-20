@@ -144,9 +144,15 @@ func (c *Compiler) prepare(ctx context.Context, brief Brief, requireEvidence boo
 	if err := ctx.Err(); err != nil {
 		return r, failure(contextir.CodeCanceled, "compile", "context", "The compile operation was canceled.", err)
 	}
-	intake, err := c.ValidateIntake(ctx, brief)
+	measured, inspectionDecisions, err := c.inspectBriefAssets(ctx, brief)
+	if err != nil {
+		r.Brief = measured
+		r.Decisions = inspectionDecisions
+		return r, err
+	}
+	intake, err := c.ValidateIntake(ctx, measured)
 	r.Brief = intake.Brief
-	r.Decisions = intake.Decisions
+	r.Decisions = append(inspectionDecisions, intake.Decisions...)
 	if err != nil {
 		return r, err
 	}
@@ -180,6 +186,9 @@ func (c *Compiler) prepare(ctx context.Context, brief Brief, requireEvidence boo
 		r.Decisions = append(r.Decisions, decision("perception", "readonly_interpretation", "unobserved", "Propose interprets caller intent and attachment metadata without claiming media observation. Compile still requires perception before publication."))
 	}
 
+	if _, transcriptErr := transcriptSources(b); transcriptErr != nil {
+		return r, transcriptErr
+	}
 	if err := validateExplicitReplacementInputs(b); err != nil {
 		return r, err
 	}
@@ -194,6 +203,7 @@ func (c *Compiler) prepare(ctx context.Context, brief Brief, requireEvidence boo
 	modeDecision.ClarificationPolicy = c.options.ClarificationPolicy
 	r.ClarificationPolicy = c.options.ClarificationPolicy
 	r.ModeDecision = &modeDecision
+	r.Findings = append(r.Findings, modeInterpretationFindings(modeDecision)...)
 	if modeDecision.NeedsClarification && len(modeDecision.Questions) > 0 && c.options.ClarificationPolicy == ClarificationContinue {
 		r.Decisions = append(r.Decisions, decision("clarification_policy", "explicit_continue_policy", modeDecision, "The caller explicitly permits publication using the recorded mode despite the unresolved geometry/question; no mode or aspect was changed."))
 		r.Findings = append(r.Findings, h3check.Finding{Rule: "compiler-clarification-continued", Severity: "WARN", Msg: "The caller explicitly selected continue_with_recorded_choice; unresolved frame/reference questions and any aspect mismatch remain in ModeDecision."})
@@ -726,26 +736,49 @@ func (m controlledModel) Generate(ctx context.Context, req contextir.ModelReques
 	if m.director != nil {
 		notes = DirectorInstruction(m.director, m.scope.Music)
 	}
-	wordTarget := map[contextir.Mode]int{contextir.ModeReference: 400, contextir.ModeText: 330, contextir.ModeFirstFrame: 460, contextir.ModeFirstLastFrame: 380, contextir.ModeLastFrame: 380}[m.structure.Mode]
+	prose := prosePolicy(m.structure)
 	phrases := make([]string, len(m.structure.Shots))
 	for i, s := range m.structure.Shots {
 		phrases[i] = cameraPhrase(s.Camera)
 	}
-	control, _ := json.Marshal(map[string]any{"replacement_motion_obligations": m.structure.ReplacementMotionObligations, "frame_preservation": m.frames, "caller_transcripts": m.transcripts, "canonical_subjects": writerCanonical, "reference_licence": m.licence, "main_prose_word_target": wordTarget, "camera_phrases": phrases, "structure": writerStructure, "fixed_dialogue_slots": slots, "scope": m.scope, "director_notes": notes, "precedence": []string{"explicit_request", "observed_reference", "director_notes"}})
+	control, _ := json.Marshal(map[string]any{"replacement_motion_obligations": m.structure.ReplacementMotionObligations, "frame_preservation": m.frames, "caller_transcripts": m.transcripts, "canonical_subjects": writerCanonical, "reference_licence": m.licence, "prose_length_policy": prose, "camera_phrases": phrases, "structure": writerStructure, "fixed_dialogue_slots": slots, "scope": m.scope, "director_notes": notes, "precedence": []string{"explicit_request", "observed_reference", "director_notes"}})
+	if prose.TargetWords > 0 {
+		var controls map[string]json.RawMessage
+		_ = json.Unmarshal(control, &controls)
+		controls["main_prose_word_target"], _ = json.Marshal(prose.TargetWords)
+		control, _ = json.Marshal(controls)
+	}
 	input["compiler_controls"] = control
+	var boundaryBrief Brief
+	for _, asset := range original.Assets {
+		boundaryBrief.Assets = append(boundaryBrief.Assets, Asset{Asset: asset})
+	}
+	var boundaryEvidence []contextir.Evidence
+	_ = json.Unmarshal(input["evidence"], &boundaryEvidence)
+	for _, observed := range boundaryEvidence {
+		if observed.Card != nil {
+			boundaryBrief.Cards = append(boundaryBrief.Cards, *observed.Card)
+		}
+	}
+	input["composition_facts"], _ = json.Marshal(compositionFacts(boundaryBrief, m.structure, m.frames))
 	if m.references != nil {
 		if err := m.references.projectWriterInput(input); err != nil {
 			return contextir.ModelResponse{}, err
 		}
 	}
 	req.Input, _ = json.Marshal(input)
-	req.System += "\nCompiler structural controls and reference_licence bind this composition. The attribute licence explicitly settles which request or reference governs action, medium, wardrobe, lighting, framing and palette. Caller transcripts establish only exact words; they do not establish that the model heard audio, voice/timbre/music characteristics, or complete acoustic coverage. Only reuse transcript words through the explicit reference role. The host canonical_subjects own all referenced subject IDs, definitions, sources, target attribute permissions and replacements: preserve them exactly and reference their IDs. You may create unsourced new requested/creative subjects when permitted. For content-reference identity plates, poses and sheet layout/labels/studio lights are excluded presentation, never identity. Actual frame anchors have the opposite frame-content obligation: frame_preservation requires the ENTIRE supplied image at its exact instant, including all existing panels, labels, background and positions. Do not isolate a hero panel, remove the grid or invent a cropped/prepared source. Moving a depicted figure later does not erase the whole starting frame. Existing lettering inside that source frame is inherited pixels, not a request to add new typography. Medium restyling changes the style opening, never by itself an attribute_transfer retention marker. Preserve each shot ID, start/end, semantic action, camera vocabulary and what_changes. The host inserts all canonical camera events after prose; do not return camera events or competing camera prose. Fixed dialogue slots are also host-owned: omit every fixed line from Document.dialogue and omit its dialogue events. The host restores the exact words, speaker IDs, language and continuity from those slots. You may write additional dialogue only when writerRequest.allow_generated_dialogue explicitly allows it. Create speakers matching the fixed slot speaker IDs and hints if their identity is known; never guess a new fixed utterance. Exact words, replacement relationships and permissions are mandatory. Only the director NOTES steer unresolved visual/sound choices; explicit caller and observed asset facts outrank them. Director names are withheld. Do not copy template dialogue or locations. Write visual descriptions in English while preserving every dialogue and on-screen word in its original language. Develop the full main_prose_word_target across shot descriptions and visible/audible events: physical setting, spatial relationships, light/material detail, performance and meaningful changes. This is the complete H3 scene brief, not a one-sentence outline. Avoid repeated facts, padding, unobservable emotion labels, invented media attributes, or a detached technical commentary. The requested creativity magnitude describes values, never shot count. For maximal magnitude use explicit large amplitude or fast speed where compatible with the request; quiet contrast remains permitted."
+	req.System += "\nCompiler structural controls and reference_licence bind this composition. The attribute licence explicitly settles which request or reference governs action, medium, wardrobe, lighting, framing and palette. Caller transcripts establish only exact words; they do not establish that the model heard audio, voice/timbre/music characteristics, or complete acoustic coverage. Only reuse transcript words through the explicit reference role. The host canonical_subjects own all referenced subject IDs, definitions, sources, target attribute permissions and replacements: preserve them exactly and reference their IDs. You may create unsourced new requested/creative subjects when permitted. For content-reference identity plates, poses and sheet layout/labels/studio lights are excluded presentation, never identity. Actual frame anchors have the opposite frame-content obligation: frame_preservation requires the ENTIRE supplied image at its exact instant, including all existing panels, labels, background and positions. Do not isolate a hero panel, remove the grid or invent a cropped/prepared source. Moving a depicted figure later does not erase the whole starting frame. Existing lettering inside that source frame is inherited pixels, not a request to add new typography. Medium restyling changes the style opening, never by itself an attribute_transfer retention marker. Preserve each shot ID, start/end, semantic action, camera vocabulary and what_changes. The host inserts all canonical camera events after prose; do not return camera events or competing camera prose. Fixed dialogue slots are also host-owned: omit every fixed line from Document.dialogue and omit its dialogue events. The host restores the exact words, speaker IDs, language and continuity from those slots. You may write additional dialogue only when writerRequest.allow_generated_dialogue explicitly allows it. Create speakers matching the fixed slot speaker IDs and hints if their identity is known; never guess a new fixed utterance. Exact words, replacement relationships and permissions are mandatory. Only the director NOTES steer unresolved visual/sound choices; explicit caller and observed asset facts outrank them. Director names are withheld. Do not copy template dialogue or locations. Write visual descriptions in English while preserving every dialogue and on-screen word in its original language. Develop substantive shot descriptions and visible/audible events: physical setting, spatial relationships, light/material detail, performance and meaningful changes. This is the complete H3 scene brief, not a one-sentence outline. Avoid repeated facts, padding, unobservable emotion labels, invented media attributes, or a detached technical commentary. The requested creativity magnitude describes values, never shot count. For maximal magnitude use explicit large amplitude or fast speed where compatible with the request; quiet contrast remains permitted."
 	if original.Mode != contextir.ModeReference {
 		req.System += "\nThis is a base mode: every narrative RichText span must contain literal text only. Write natural complete sentences with the necessary subject identity/appearance in the prose itself. Do not return subject_id or reference_id spans: base formats would insert full definition sentences inline and break the grammar. Return subjects=[] and omit speaker subject_id links; source observations remain available separately as Evidence."
 	}
 	req.System += "\nDocument.style is HOST-OWNED and deliberately absent from your response schema: OMIT the style field entirely. Compose using compiler_controls.structure.style as the resolved look; host assembly inserts that exact canonical style after your strict wire response is accepted. Never author a replacement style during initial writing or repair."
 	req.System += "\ncanonical_subjects describe the TARGET after accepted caller identity requirements, while raw observed evidence describes the SOURCE. Explicit target identity claims have already been resolved. Do not reassert conflicting source gender, species, age, clothes or props, and never dismiss the caller's target as a labeling mistake. Keep the canonical target identity consistent in every description, pronoun and action. For content references only, reference-sheet layout/panels/turnaround labels are excluded presentation. The actual frame anchors in frame_preservation retain those same elements as required frame pixels."
 	req.System += "\nDocument.references and Speaker.voice_reference_id are HOST-OWNED: omit them entirely. canonical_references and canonical_voice_bindings specify their exact relationships for composition. Property audio is not recorded signal copying; only a BGM copy responsibility reuses its signal. Structure/storyboard references supply their named planning properties, never scene actors or setting. A placed or replacement identity must be used in a real shot/action, not merely in metadata."
+	if len(m.transcripts) > 0 {
+		req.System += "\n" + transcriptWriterInstruction
+	}
+	req.System += "\n" + compositionBoundaryFor(original.Mode)
+	req.System += "\n" + proseLengthInstruction(prose)
 	req.System += "\n" + replacementMotionInstruction
 	req.System += "\nSubject shot_ids are HOST-OWNED: omit them. Bind referenced identities and environments by subject_id in the actual shot/event descriptions where they contribute; merely listing a source definition does not place it in every shot. An actor which leaves need not remain in later shots. Unsourced new targets should also use actual structural bindings in reference mode. In base modes return no subject metadata: all identities belong in natural literal narrative, while actual source-frame observations remain Evidence."
 	response, err := m.inner.Generate(ctx, req)
@@ -796,11 +829,17 @@ func (m controlledModel) Generate(ctx context.Context, req contextir.ModelReques
 	if encodeErr != nil {
 		return response, failure(contextir.CodeInvalid, "compose", "subjects.shot_ids", "Host-derived subject appearances could not be encoded.", encodeErr)
 	}
+	if err := verifyTranscriptLiteralPlacement(projected, m.structure.TranscriptUses, m.structure.OnscreenText); err != nil {
+		return response, err
+	}
 	response.JSON = encoded
 	return response, nil
 }
 
 func checkDocumentControls(b Brief, st Structure, scope Scope, d contextir.Document) error {
+	if err := verifyCompleteCopy(b, d); err != nil {
+		return err
+	}
 	if d.Style != st.Style {
 		return failure(contextir.CodeModelOutput, "compose", "style", "Preserve the structurally resolved visual style.", nil)
 	}
@@ -808,6 +847,13 @@ func checkDocumentControls(b Brief, st Structure, scope Scope, d contextir.Docum
 		return failure(contextir.CodeModelOutput, "compose", "shots", "Preserve the structural shot plan.", nil)
 	}
 	for i, s := range d.Shots {
+		if i > 0 {
+			switch s.Transition {
+			case "", "cut", "the camera cuts to", "the shot cuts to", "the shot transitions to", "the shot changes to", "the shot switches to":
+			default:
+				return failure(contextir.CodeModelOutput, "compose", "shots.transition", "Use a transition from the closed H3 cut vocabulary.", nil)
+			}
+		}
 		end := d.Target.Duration
 		if i+1 < len(st.Shots) {
 			end = st.Shots[i+1].Start

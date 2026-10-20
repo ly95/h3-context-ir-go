@@ -23,6 +23,8 @@ type semanticTape struct {
 	VerifiedRequests int
 }
 type semanticResponse struct {
+	RecordedError   *contextir.Error        `json:"recorded_error,omitempty"`
+	RejectedOutput  string                  `json:"rejected_output,omitempty"`
 	Stage           string                  `json:"stage"`
 	Response        contextir.ModelResponse `json:"response"`
 	RecordedRequest *contextir.ModelRequest `json:"recorded_request,omitempty"`
@@ -44,6 +46,10 @@ func (t *semanticTape) Generate(ctx context.Context, request contextir.ModelRequ
 	}
 	response := t.Responses[t.Next].Response
 	t.Next++
+	response.RejectedOutput = t.Responses[t.Next-1].RejectedOutput
+	if t.Responses[t.Next-1].RecordedError != nil {
+		return response, t.Responses[t.Next-1].RecordedError
+	}
 	return response, nil
 }
 

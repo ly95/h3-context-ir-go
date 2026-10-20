@@ -19,6 +19,7 @@ def main():
     parser.add_argument('--binary',type=Path,required=True)
     parser.add_argument('--label',required=True)
     parser.add_argument('--plugin',choices=('pytest_go_core','pytest_go_plan','pytest_go_scope','pytest_go_scope_legacy','pytest_go_combined','pytest_go_draft'),default='pytest_go_core')
+    parser.add_argument('--licence-resolutions',type=Path,help='One explicit complete fresh licence replay index; historical supplement indexes are not loaded.')
     parser.add_argument('--bridge-provenance',type=Path,help='Verified immutable-source bridge build record; its binary hash must match --binary.')
     args=parser.parse_args()
     if not re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9_-]*',args.label):raise SystemExit('label must be one plain filename component')
@@ -44,6 +45,17 @@ def main():
     env.update(CONTEXTIR_GO_VALIDATOR=str(binary),CONTEXTIR_CAPTURE_PATH=str(report),
         PYTHONPATH=str(ROOT/'conformance')+os.pathsep+str(source),
         H3IR_STATE_DIR='/tmp/contextir-upstream-go-core-state')
+    replay_hashes={}
+    if args.licence_resolutions:
+        selected=args.licence_resolutions.resolve()
+        if not selected.is_file():raise SystemExit('Explicit licence replay index does not exist')
+        if not selected.is_relative_to(ROOT):raise SystemExit('Replay index must be archived inside this repository')
+        index=json.loads(selected.read_text())
+        replay_hashes={x['path']:x['sha256'] for x in index.get('files',[])}
+        replay_hashes.update({x['report']:x['report_sha256'] for x in index.get('recordings',[])})
+        for name,sha in replay_hashes.items():
+            if not (ROOT/name).is_file() or hashlib.sha256((ROOT/name).read_bytes()).hexdigest()!=sha:raise SystemExit('Explicit licence recorded bytes differ: '+name)
+        env['CONTEXTIR_LICENCE_RESOLUTIONS']=str(selected)
     result=subprocess.run([sys.executable,'-m','pytest','-q','-p',args.plugin],cwd=source,env=env,capture_output=True,text=True)
     report.with_suffix('.txt').write_text(result.stdout+result.stderr,encoding='utf-8')
     if not report.exists():raise SystemExit('pytest did not produce the report; inspect the retained text output')
@@ -53,12 +65,13 @@ def main():
     baseline=json.loads((ROOT/'conformance/reports/upstream-pytest.json').read_text(encoding='utf-8'))
     data['collection_matches_baseline']={i['nodeid'] for i in data['collected']}=={i['nodeid'] for i in baseline['collected']}
     report.write_text(json.dumps(data,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
-    unchanged=all(path.is_file() and hashlib.sha256(path.read_bytes()).hexdigest()==digest for relative,digest in {**adapter_hashes,**fixture_hashes}.items() for path in (ROOT/relative,))
+    unchanged=all(path.is_file() and hashlib.sha256(path.read_bytes()).hexdigest()==digest for relative,digest in {**adapter_hashes,**fixture_hashes,**replay_hashes}.items() for path in (ROOT/relative,))
     provenance.write_text(json.dumps({'report':str(report.relative_to(ROOT)),'report_sha256':hashlib.sha256(report.read_bytes()).hexdigest(),
         'bridge_binary_sha256':binary_hash,'verified_bridge_build_record':str(args.bridge_provenance.resolve()) if args.bridge_provenance else None,
         'verified_bridge_build':bridge_build,'source_snapshot_verified':bridge_build is not None,
         'adapter_source_archive':str(adapter_archive.relative_to(ROOT)),'adapter_source_archive_sha256':hashlib.sha256(adapter_archive.read_bytes()).hexdigest(),
-        'adapter_source_sha256':adapter_hashes,'external_fixture_sha256':fixture_hashes,'adapter_and_fixture_files_unchanged_during_run':unchanged,
+        'adapter_source_sha256':adapter_hashes,'external_fixture_sha256':fixture_hashes,'licence_recorded_file_sha256':replay_hashes,'adapter_and_fixture_files_unchanged_during_run':unchanged,
+        'licence_resolutions':str(args.licence_resolutions.resolve()) if args.licence_resolutions else None,'licence_resolutions_sha256':hashlib.sha256(args.licence_resolutions.read_bytes()).hexdigest() if args.licence_resolutions else None,
         'scope':'Original source tests remain pinned and unchanged. Python adapter sources are archived; external fixture hashes and exact native binary are recorded. Unmatched source snapshots and failing assertions remain explicit.'},ensure_ascii=False,indent=2)+'\n')
     if not data['collection_matches_baseline']:raise SystemExit('Original nodeid collection changed; report retained but no parity claim is permitted')
     if not unchanged:raise SystemExit('Adapter or fixture changed during the run; all evidence retained but no stable-input acceptance claim is permitted')

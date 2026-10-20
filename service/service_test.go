@@ -58,10 +58,33 @@ func call(t *testing.T, s *Service, method, path string, body []byte) (int, map[
 // These eight values are the unchanged original test_contract.py PINNED table.
 func TestUpstreamContractDigests(t *testing.T) {
 	want := map[string]string{"asset_fields": "38190799fcfb6cf1", "brief_fields": "cf2fb5307dd7d72f", "dialogue_fields": "a63047779f907e58", "error_codes": "19906fa6afaf0a20", "roles": "4b85814fed5254ab", "directors": "8e50d53980fd8777", "camera_moves": "e0ebdca0a4dcaea8", "limits": "78554cef21934947"}
-	for k, w := range want {
-		if g := Digests()[k]; g != w {
-			t.Errorf("%s: %s != %s", k, g, w)
+	// Native v3 adds an explicit BGM-copy field and publishes actual extra
+	// refusals. The frozen source-v2 digests remain an independent subset
+	// oracle; they do not describe the actual native contract.
+	legacy := contractSections()
+	fields := []string{}
+	for _, field := range fieldNames(BriefIn{}) {
+		if field != "audio_copy_modes" && field != "transcript_uses" && field != "subject_projections" {
+			fields = append(fields, field)
 		}
+	}
+	legacy["brief_fields"] = fields
+	codes := map[string]map[string]any{}
+	for code, spec := range errorSpecs {
+		if code == "internal-error" {
+			continue
+		}
+		codes[code] = map[string]any{"status": spec["status"], "on": spec["on"]}
+	}
+	codes["malformed-request"]["on"] = []string{"briefs"}
+	legacy["error_codes"] = codes
+	for k, w := range want {
+		if g, err := Digest(legacy[k]); err != nil || g != w {
+			t.Errorf("source-v2 %s: %s != %s (%v)", k, g, w, err)
+		}
+	}
+	if ContractVersion != 3 || len(errorSpecs) != 31 || Digests()["error_codes"] == want["error_codes"] || Digests()["brief_fields"] == want["brief_fields"] {
+		t.Fatal("native version3 additions were hidden behind the source-v2 oracle")
 	}
 }
 

@@ -47,12 +47,21 @@ func (c *Compiler) Refine(ctx context.Context, previous Result, change string) (
 	if err := contextir.Validate(previous.Document); err != nil {
 		return r, err
 	}
+	frozen, err := freezePublishedChoices(previous)
+	if err != nil {
+		return r, err
+	}
+	// The published result, including choices originally interpreted by a model,
+	// is the refinement baseline. Do not mutate the historical Result or leave a
+	// previously fixed performance/source selection open to reinterpretation.
+	previous.Brief = frozen
+	r.Brief = frozen
 	if isNil(c.model) {
 		return r, failure(contextir.CodeModel, "refine", "model", "Refinement requires a model adapter.", nil)
 	}
-	fields := []string{"intent", "style", "seconds", "aspect", "canvas", "megapixels", "frame_count", "mode", "shots", "cuts_ms", "creativity", "director", "director_profile", "silent", "silence_all", "dialogue", "onscreen_text", "constraints", "frame_anchors", "voice_bindings", "loras", "seed", "effort", "transcripts", "asset_role", "asset_replaces", "asset_remove"}
+	fields := []string{"intent", "style", "seconds", "aspect", "canvas", "megapixels", "frame_count", "mode", "shots", "cuts_ms", "creativity", "director", "director_profile", "silent", "silence_all", "dialogue", "onscreen_text", "constraints", "frame_anchors", "voice_bindings", "audio_copy_modes", "transcript_uses", "subject_projections", "replacement_targets", "loras", "seed", "effort", "transcripts", "asset_role", "asset_replaces", "asset_remove"}
 	schema, _ := json.Marshal(map[string]any{"type": "object", "additionalProperties": false, "required": []string{"updates", "reasoning"}, "properties": map[string]any{"reasoning": map[string]any{"type": "string"}, "updates": map[string]any{"type": "array", "minItems": 1, "items": map[string]any{"type": "object", "additionalProperties": false, "required": []string{"field", "asset_id", "action", "quote", "value"}, "properties": map[string]any{"field": map[string]any{"type": "string", "enum": fields}, "asset_id": map[string]any{"type": "string"}, "action": map[string]any{"type": "string", "enum": []string{"set", "clear", "remove"}}, "quote": map[string]any{"type": "string"}, "value": map[string]any{}}}}}})
-	const system = `Interpret a refinement of an existing video brief as explicit typed updates. Preserve every prior asset locator/hash, observed evidence, fixed dialogue, onscreen words, target, role and constraint unless the new instruction expressly authorizes changing that field. Never replace the original request by merely concatenating the new instruction. For intent, return the complete revised intent preserving every unaffected requirement. Do not rewrite observations or Asset.Description to simulate a target appearance change: express the target change in intent. New media cannot be invented or fetched; ask for an explicitly supplied resource through a caller-visible failure. Each update must quote the exact portion of the NEW instruction that authorizes it. Empty asset_id denotes a Brief field; asset_role, asset_replaces and asset_remove identify an existing asset. set supplies a correctly typed JSON value, clear removes an optional value, asset_remove uses remove. Do not remove an asset or dialogue merely because it is omitted from the edit request. Dialogue values use the public Dialogue shape and preserve exact new words. Return only the schema.`
+	const system = `Interpret a refinement of an existing video brief as explicit typed updates. Preserve every prior asset locator/hash, observed evidence, fixed dialogue, onscreen words, target, role and constraint unless the new instruction expressly authorizes changing that field. Never replace the original request by merely concatenating the new instruction. For intent, return the complete revised intent preserving every unaffected requirement. Do not rewrite observations or Asset.Description to simulate a target appearance change: express the target change in intent. New media cannot be invented or fetched; ask for an explicitly supplied resource through a caller-visible failure. Each update must quote the exact portion of the NEW instruction that authorizes it. Empty asset_id denotes a Brief field; asset_role, asset_replaces and asset_remove identify an existing asset. set supplies a correctly typed JSON value, clear removes an optional value, asset_remove uses remove. Do not remove an asset or dialogue merely because it is omitted from the edit request. Dialogue values use the public Dialogue shape and preserve exact new words. Explicit transcript_uses, subject_projections and replacement_targets are independently editable fields. Preserve fixed selected performances and source identities unless the new instruction authorizes changing them. Removing a selected source requires an explicit update/clear of the dependent choice in the same patch; never delete its performance merely to make the asset removal compile. New explicit subject selectors identify the amended graph; unchanged selectors are mechanically remapped by the host to their same observed source identity. Return only the schema.`
 	var diagnostics []contextir.Issue
 	for attempt := 1; attempt <= c.options.MaxStructureRetries+1; attempt++ {
 		if ctx.Err() != nil {
@@ -113,7 +122,9 @@ func (c *Compiler) Refine(ctx context.Context, previous Result, change string) (
 			amended.Evidence = kept
 			next, compileErr := c.Compile(ctx, amended)
 			next.Calls = append(r.Calls, next.Calls...)
-			next.Decisions = append([]Decision{decision("refinement", "typed_requested_changes", reply.Updates, "Only explicitly interpreted fields change; observations and all unaffected caller choices are preserved.")}, next.Decisions...)
+			refinementDecisions := []Decision{decision("refinement", "typed_requested_changes", reply.Updates, "Only explicitly interpreted fields change; observations and all unaffected caller choices are preserved.")}
+			refinementDecisions = append(refinementDecisions, refinementGraphDecisions(previous.Brief, amended, reply.Updates)...)
+			next.Decisions = append(refinementDecisions, next.Decisions...)
 			return next, compileErr
 		}
 		diagnostics = repairDiagnostics(err, "updates", "Return valid typed updates, one per field/asset; quote the new instruction exactly and preserve all other fields.")
@@ -288,6 +299,30 @@ func applyBriefUpdates(previous Brief, change string, updates []BriefUpdate) (Br
 			} else {
 				err = set(&out.Transcripts)
 			}
+		case "transcript_uses":
+			if update.Action == "clear" {
+				out.TranscriptUses = nil
+			} else {
+				err = set(&out.TranscriptUses)
+			}
+		case "subject_projections":
+			if update.Action == "clear" {
+				out.SubjectProjections = nil
+			} else {
+				err = set(&out.SubjectProjections)
+			}
+		case "replacement_targets":
+			if update.Action == "clear" {
+				out.ReplacementTargets = nil
+			} else {
+				err = set(&out.ReplacementTargets)
+			}
+		case "audio_copy_modes":
+			if update.Action == "clear" {
+				out.AudioCopyModes = nil
+			} else {
+				err = set(&out.AudioCopyModes)
+			}
 		case "voice_bindings":
 			if update.Action == "clear" {
 				out.VoiceBindings = nil
@@ -312,6 +347,7 @@ func applyBriefUpdates(previous Brief, change string, updates []BriefUpdate) (Br
 				out.Assets = append(out.Assets[:index], out.Assets[index+1:]...)
 				delete(out.Transcripts, update.AssetID)
 				delete(out.VoiceBindings, update.AssetID)
+				delete(out.AudioCopyModes, update.AssetID)
 				anchors := []FrameAnchor{}
 				for _, anchor := range out.FrameAnchors {
 					if anchor.AssetID != update.AssetID {
@@ -334,6 +370,14 @@ func applyBriefUpdates(previous Brief, change string, updates []BriefUpdate) (Br
 		if err != nil {
 			return out, err
 		}
+	}
+	for _, use := range out.TranscriptUses {
+		if _, exists := assetID(out.Assets, use.AssetID); !exists {
+			return out, invalid("updates.transcript_uses", "An audio source used by a fixed selected performance was removed. Explicitly update/clear transcript_uses and preserve any still-requested words as dialogue in the same refinement; a source removal cannot silently remove that performance.")
+		}
+	}
+	if err := preserveRefinedGraphChoices(previous, &out, seen); err != nil {
+		return out, err
 	}
 	return out, nil
 }

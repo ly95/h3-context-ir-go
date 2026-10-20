@@ -1,0 +1,227 @@
+{
+  "source_commit": "fd031e136ae3d89147324c0d1b2aa65e838c21f5",
+  "cases": [
+    {
+      "upstream_nodeid": "tests/test_contract.py::test_the_contract_names_exactly_the_fields_the_wire_models_take[asset_fields-AssetIn]",
+      "go_package": "./service",
+      "go_test": "TestRemainingSurfaceContractAssetFields",
+      "assertion_intent": "The ordered published asset fields equal the actual wire model and JSON keys.",
+      "adaptation": "Go reflection and actual JSON encoding replace Python pydantic introspection.",
+      "source_test_file_sha256": "23fffd5f04758326b6e7653e3f07620642c211859cf4d3e2aeef25ce4bc6abfb",
+      "coverage_basis": "Independent native Go assertion port; original frozen pytest results are unchanged."
+    },
+    {
+      "upstream_nodeid": "tests/test_contract.py::test_the_contract_names_exactly_the_fields_the_wire_models_take[brief_fields-BriefIn]",
+      "go_package": "./service",
+      "go_test": "TestRemainingSurfaceContractBriefFields",
+      "assertion_intent": "The ordered published brief fields equal the actual wire model and JSON keys.",
+      "adaptation": "Native v3 explicitly includes audio_copy_modes; source-v2 subset digest is retained separately, never presented as the live native contract.",
+      "source_test_file_sha256": "23fffd5f04758326b6e7653e3f07620642c211859cf4d3e2aeef25ce4bc6abfb",
+      "coverage_basis": "Independent native Go assertion port; original frozen pytest results are unchanged."
+    },
+    {
+      "upstream_nodeid": "tests/test_contract.py::test_the_contract_names_exactly_the_fields_the_wire_models_take[dialogue_fields-DialogueIn]",
+      "go_package": "./service",
+      "go_test": "TestRemainingSurfaceContractDialogueFields",
+      "assertion_intent": "The ordered published dialogue fields equal the actual wire model and JSON keys.",
+      "adaptation": "Go reflection and actual JSON encoding replace pydantic introspection.",
+      "source_test_file_sha256": "23fffd5f04758326b6e7653e3f07620642c211859cf4d3e2aeef25ce4bc6abfb",
+      "coverage_basis": "Independent native Go assertion port; original frozen pytest results are unchanged."
+    },
+    {
+      "upstream_nodeid": "tests/test_contract.py::test_every_role_belongs_to_at_least_one_kind",
+      "go_package": "./service",
+      "go_test": "TestRemainingSurfaceEveryRoleHasKind",
+      "assertion_intent": "Every native public role is assigned to at least one published media kind.",
+      "adaptation": "Compare compiler.Roles against actual service.RolesByKind.",
+      "source_test_file_sha256": "23fffd5f04758326b6e7653e3f07620642c211859cf4d3e2aeef25ce4bc6abfb",
+      "coverage_basis": "Independent native Go assertion port; original frozen pytest results are unchanged."
+    },
+    {
+      "upstream_nodeid": "tests/test_contract.py::test_no_kind_claims_a_role_that_is_not_a_role",
+      "go_package": "./service",
+      "go_test": "TestRemainingSurfaceKindsOnlyClaimKnownRoles",
+      "assertion_intent": "Each kind contains only known roles without duplicates.",
+      "adaptation": "Native enum and actual contract table; no model or user text classification.",
+      "source_test_file_sha256": "23fffd5f04758326b6e7653e3f07620642c211859cf4d3e2aeef25ce4bc6abfb",
+      "coverage_basis": "Independent native Go assertion port; original frozen pytest results are unchanged."
+    },
+    {
+      "upstream_nodeid": "tests/test_contract.py::test_the_contract_lists_every_refusal_the_service_can_raise",
+      "go_package": "./service",
+      "go_test": "TestRemainingSurfacePublishedRefusalsCoverNativeEmitters",
+      "assertion_intent": "Real production Go error constructors are all published; published typed errors survive the real writer; native extensions are verified through HTTP.",
+      "adaptation": "Go AST replaces source regex. Native internal-error and PUT-assets malformed-request route were missing and are now explicit contract v3 additions. Original source compiler refusal codes remain accepted through the explicit typed Compile adapter port.",
+      "source_test_file_sha256": "23fffd5f04758326b6e7653e3f07620642c211859cf4d3e2aeef25ce4bc6abfb",
+      "coverage_basis": "Independent native Go assertion port; original frozen pytest results are unchanged."
+    },
+    {
+      "upstream_nodeid": "tests/test_contract.py::test_every_published_refusal_states_a_status_and_a_route",
+      "go_package": "./service",
+      "go_test": "TestRemainingSurfacePublishedRefusalStatusAndRoute",
+      "assertion_intent": "Every actual native refusal states a 4xx/5xx integer status and nonempty known routes.",
+      "adaptation": "Tests actual native metadata including version3 extensions.",
+      "source_test_file_sha256": "23fffd5f04758326b6e7653e3f07620642c211859cf4d3e2aeef25ce4bc6abfb",
+      "coverage_basis": "Independent native Go assertion port; original frozen pytest results are unchanged."
+    },
+    {
+      "upstream_nodeid": "tests/test_endpoint_portability.py::test_the_vision_check_failure_is_a_backend_error_callers_already_catch",
+      "go_package": "./chatcompat",
+      "go_test": "TestRemainingSurfaceVisionRefusalIsBackendError",
+      "assertion_intent": "An actual refused vision request remains catchable as a backend error after wrapping.",
+      "adaptation": "Python subclass relation becomes errors.As on *chatcompat.Error; local httptest endpoint returns HTTP415.",
+      "source_test_file_sha256": "4a5f9f30948fffee6b9b81a9b25fd3fd7af3818b7bbe5bd82d6c9d5f7a3b580a",
+      "coverage_basis": "Independent native Go assertion port; original frozen pytest results are unchanged."
+    },
+    {
+      "upstream_nodeid": "tests/test_every_role_renders.py::test_every_role_in_the_enum_has_a_case_here",
+      "go_package": "./service",
+      "go_test": "TestRemainingSurfaceOriginalRoleCaseCompleteness",
+      "assertion_intent": "The independent original ROLE_CASES table covers exactly the native role enum.",
+      "adaptation": "16 original tuples extracted from pinned Python AST into hash-pinned testdata; no runtime Python or reports dependency.",
+      "source_test_file_sha256": "d3017934fb8b93ed621df40049f90393e8933ff769d2ed0a79e772a37189f0d6",
+      "coverage_basis": "Independent native Go assertion port; original frozen pytest results are unchanged."
+    },
+    {
+      "upstream_nodeid": "tests/test_frame_anchors.py::test_the_published_fl2va_example_is_the_spec_text_byte_for_byte",
+      "go_package": "./h3",
+      "go_test": "TestRemainingSurfacePublishedFL2VASpecBytes",
+      "assertion_intent": "The original golden is an exact contiguous substring of the actual published spec example.",
+      "adaptation": "Unmodified golden and base-en.txt are vendored with independently pinned source SHA256 values; no render paraphrase replaces the byte oracle.",
+      "source_test_file_sha256": "f3f61f0b18ce997c8242b1ad0e7f75e04bf3c237fb9ef4238ec0ff1be412baa7",
+      "coverage_basis": "Independent native Go assertion port; original frozen pytest results are unchanged."
+    },
+    {
+      "upstream_nodeid": "tests/test_golden_asset_geometry.py::test_the_reference_assets_are_pngs_and_present",
+      "go_package": "./media",
+      "go_test": "TestRemainingSurfaceGoldenAssetsAreRealPNGs",
+      "assertion_intent": "Both original PNGs exist, match source hashes, start with PNG/IHDR and have positive native dimensions.",
+      "adaptation": "Missing resources fail rather than skip; actual native ReadHeader is compared to binary IHDR fields.",
+      "source_test_file_sha256": "f89c2da6c135b81eea2a5d8f152da923698fd5250c5269506ba33913e449ba3a",
+      "coverage_basis": "Independent native Go assertion port; original frozen pytest results are unchanged."
+    },
+    {
+      "upstream_nodeid": "tests/test_golden_asset_geometry.py::test_declared_dimensions_match_the_file_on_disk",
+      "go_package": "./media",
+      "go_test": "TestRemainingSurfaceEveryDeclaredGeometryMatchesBytes",
+      "assertion_intent": "Every original suite asset declaration equals the actual PNG header.",
+      "adaptation": "All three declarations are retained as a list, including repeated ref1.png; fixture is hash-pinned to independent source capture.",
+      "source_test_file_sha256": "f89c2da6c135b81eea2a5d8f152da923698fd5250c5269506ba33913e449ba3a",
+      "coverage_basis": "Independent native Go assertion port; original frozen pytest results are unchanged."
+    },
+    {
+      "upstream_nodeid": "tests/test_deterministic.py::test_sound_is_partitioned_not_copied",
+      "go_package": "./plan",
+      "go_test": "TestRemainingSurfaceSoundPartition",
+      "assertion_intent": "Original wingbeat and distant-fire inputs partition into disjoint synchronized and ambient tracks.",
+      "adaptation": "Direct public plan.SplitSound; original literal inputs/expected output unchanged.",
+      "source_test_file_sha256": "0a9beff629b7a6915aa4db6312121f0ad87a9b96da86eedd31c3f8948d596827",
+      "coverage_basis": "Independent native Go assertion port; original frozen pytest results are unchanged."
+    },
+    {
+      "upstream_nodeid": "tests/test_deterministic.py::test_a_retention_note_does_not_double_the_article",
+      "go_package": "./plan",
+      "go_test": "TestRemainingSurfaceRetentionArticle",
+      "assertion_intent": "Original corridor attributes retain one leading article.",
+      "adaptation": "Direct public plan.RetentionNote with unchanged source SubjectPlan.",
+      "source_test_file_sha256": "0a9beff629b7a6915aa4db6312121f0ad87a9b96da86eedd31c3f8948d596827",
+      "coverage_basis": "Independent native Go assertion port; original frozen pytest results are unchanged."
+    },
+    {
+      "upstream_nodeid": "tests/test_deterministic.py::test_continuation_case_lowercases_safely_only",
+      "go_package": "./h3",
+      "go_test": "TestRemainingSurfaceContinuationCase",
+      "assertion_intent": "Original determiner and repeated-word continuation lowers safely while Sarah stays capitalized.",
+      "adaptation": "New explicit h3.ContinueCase prose formatter; no automatic authoritative Document rewrite.",
+      "source_test_file_sha256": "0a9beff629b7a6915aa4db6312121f0ad87a9b96da86eedd31c3f8948d596827",
+      "coverage_basis": "Independent native Go assertion port; original frozen pytest results are unchanged."
+    },
+    {
+      "upstream_nodeid": "tests/test_deterministic.py::test_hazard_characters_are_replaced_but_the_em_dash_survives",
+      "go_package": "./h3",
+      "go_test": "TestRemainingSurfaceHazardCharacters",
+      "assertion_intent": "Original apostrophe/quotes/space hygiene normalizes while official em dash remains.",
+      "adaptation": "New opt-in NormalizeGeneratedProse returns Text+Changed; test also compiles literal curly text and proves it is not implicitly changed.",
+      "source_test_file_sha256": "0a9beff629b7a6915aa4db6312121f0ad87a9b96da86eedd31c3f8948d596827",
+      "coverage_basis": "Independent native Go assertion port; original frozen pytest results are unchanged."
+    },
+    {
+      "upstream_nodeid": "tests/test_deterministic.py::test_sound_events_render_as_prose",
+      "go_package": "./h3",
+      "go_test": "TestRemainingSurfaceSoundEventsRenderAsProse",
+      "assertion_intent": "Original low-wind/distant-fire clauses form exactly capitalized sentences in the shipped soundscape.",
+      "adaptation": "Explicit GeneratedSoundSentences; actual Document to h3.Compile artifact is verified.",
+      "source_test_file_sha256": "0a9beff629b7a6915aa4db6312121f0ad87a9b96da86eedd31c3f8948d596827",
+      "coverage_basis": "Independent native Go assertion port; original frozen pytest results are unchanged."
+    },
+    {
+      "upstream_nodeid": "tests/test_deterministic.py::test_no_rule_id_carries_two_meanings",
+      "go_package": "./evaluate",
+      "go_test": "TestRemainingSurfaceRuleIDSemanticUniqueness",
+      "assertion_intent": "Every production Go rule prefix/number has one semantic suffix across namespaces.",
+      "adaptation": "Reuses actual Go AST scanner, with non-vacuous discovery guard; no Python scan.",
+      "source_test_file_sha256": "0a9beff629b7a6915aa4db6312121f0ad87a9b96da86eedd31c3f8948d596827",
+      "coverage_basis": "Independent native Go assertion port; original frozen pytest results are unchanged."
+    },
+    {
+      "upstream_nodeid": "tests/test_video_reference.py::test_a_video_with_no_path_raises_instead_of_returning_an_empty_card",
+      "go_package": "./media",
+      "go_test": "TestRemainingSurfaceVideoWithoutPathFailsBeforeObservation",
+      "assertion_intent": "An empty resolved video path returns typed failure, no card/facts/ledger/model invocation.",
+      "adaptation": "Source AssetAnalysisError becomes Go CodeInvalid at path boundary; no ffmpeg/model needed for this precondition.",
+      "source_test_file_sha256": "5905a2fe87f4b44310749e58d2c223eb291585720c3b5738d56e28b45af2ddab",
+      "coverage_basis": "Independent native Go assertion port; original frozen pytest results are unchanged."
+    },
+    {
+      "upstream_nodeid": "tests/test_video_reference.py::test_the_analyzer_version_moves_when_the_card_contract_does",
+      "go_package": "./media",
+      "go_test": "TestRemainingSurfaceAnalyzerContractInvalidatesOldCards",
+      "assertion_intent": "Old analyzer/schema cache identities cannot replay cards into the current pose/frames/characterisation contract.",
+      "adaptation": "Go has its own contextir-media/vN namespace instead of source integer>=4. Real cache hit/miss controls separately prove analyzer-version and contract-SHA invalidation, and current native fields survive storage.",
+      "source_test_file_sha256": "5905a2fe87f4b44310749e58d2c223eb291585720c3b5738d56e28b45af2ddab",
+      "coverage_basis": "Independent native Go assertion port; original frozen pytest results are unchanged."
+    },
+    {
+      "upstream_nodeid": "tests/test_contract.py::test_the_service_publishes_one_statement_of_the_lists_it_shares_with_the_contract",
+      "go_package": "./service",
+      "go_test": "TestRemainingSurfaceContractVersionAndCapabilities",
+      "assertion_intent": "The actual native contract and capability endpoint share explicit version3 after the real field/refusal additions.",
+      "adaptation": "Additional source-v2 constant comparison difference is explicitly mapped; native v3 is not presented as original contract v2. Legacy source digests remain independently verified by TestUpstreamContractDigests.",
+      "source_test_file_sha256": "23fffd5f04758326b6e7653e3f07620642c211859cf4d3e2aeef25ce4bc6abfb",
+      "coverage_basis": "Additional protocol-version mapping, outside the assigned 20 historical gaps."
+    },
+    {
+      "upstream_nodeid": "tests/test_contract.py::test_the_version_moves_when_any_part_of_the_contract_moves",
+      "go_package": "./service",
+      "go_test": "TestRemainingSurfaceContractVersionAndCapabilities",
+      "assertion_intent": "The actual native contract and capability endpoint share explicit version3 after the real field/refusal additions.",
+      "adaptation": "Additional source-v2 constant comparison difference is explicitly mapped; native v3 is not presented as original contract v2. Legacy source digests remain independently verified by TestUpstreamContractDigests.",
+      "source_test_file_sha256": "23fffd5f04758326b6e7653e3f07620642c211859cf4d3e2aeef25ce4bc6abfb",
+      "coverage_basis": "Additional protocol-version mapping, outside the assigned 20 historical gaps."
+    }
+  ],
+  "assigned_gap_count": 20,
+  "additional_protocol_version_mappings": 2,
+  "supplementary_native_tests": [
+    {
+      "go_package": "./service",
+      "go_test": "TestRemainingSurfaceAudioCopyModeWireRoundTrip",
+      "purpose": "Actual HTTP/PrepareRequest/FromOriginal/amendedBrief propagate native explicit BGM copy choices; invalid null/modes/IDs fail."
+    }
+  ],
+  "new_public_helpers": {
+    "package": "h3",
+    "functions": [
+      "ContinueCase",
+      "NormalizeGeneratedProse",
+      "GeneratedSoundSentences"
+    ],
+    "automatic_document_normalization": false
+  },
+  "fixture_provenance": {
+    "manifest": "third_party/open-h3-ir/testdata/surface_manifest.json",
+    "sha256": "9e4519f4c9f1d246c0fac4a19db21de30fb9a00638ceb8b17a9de29ab03d0195"
+  },
+  "runtime_reports_dependency": false,
+  "provider_calls": 0
+}

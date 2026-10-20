@@ -132,6 +132,15 @@ func canonicalReferenceContract(b Brief, st Structure, req contextir.Request, su
 				return out, invalid("bindings.role", "This reference responsibility has no host composition contract.")
 			}
 		}
+		if role == RoleBGM {
+			if marker, explicit := b.AudioCopyModes[a.ID]; explicit {
+				r.Retention = marker
+				if marker == contextir.FullyCopy {
+					r.Description = "The supplied recording is the complete final audio track."
+					r.RetentionDetails = "Copy the complete original signal with nothing added, removed or laid over it."
+				}
+			}
+		}
 		if role == RoleContinuationSource {
 			r.Retention = contextir.PartiallyPreserved
 		}

@@ -115,7 +115,10 @@ func (p *ImagePerceiver) PerceiveWithUsage(ctx context.Context, asset contextir.
 		result, err = p.perceiveOnce(ctx, asset, diagnostics)
 		attempts = append(attempts, result.Attempts...)
 		result.Attempts = append([]PerceptionCall(nil), attempts...)
-		if err == nil || !result.Called || !repairableObservation(err) || ctx.Err() != nil {
+		// Repair only rejected content with valid usage evidence. A usage-contract
+		// failure is not permission to issue another billable model request.
+		validUsage := !result.Response.UsageInvalid && result.Response.Usage.InputTokens >= 0 && result.Response.Usage.OutputTokens >= 0
+		if err == nil || !result.Called || !validUsage || !repairableObservation(err) || ctx.Err() != nil {
 			return result, err
 		}
 		var typed *contextir.Error

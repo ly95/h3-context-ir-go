@@ -91,32 +91,35 @@ type FrameAnchor struct {
 }
 
 type Brief struct {
+	TranscriptUses     []TranscriptUse     `json:"transcript_uses,omitempty"`
+	SubjectProjections []SubjectProjection `json:"subject_projections,omitempty"`
 	// ReplacementTargets chooses target graph identities explicitly. Keys are
 	// incoming attachment IDs; values are subject-N IDs in the unbound source
 	// reading, or empty for a caller-described unobserved figure. When supplied,
 	// the map must cover every replacement attachment.
-	ReplacementTargets map[string]string `json:"replacement_targets,omitempty"`
-	VoiceBindings      map[string]string `json:"voice_bindings,omitempty"`
-	Seed               *int64            `json:"seed,omitempty"`
-	Effort             string            `json:"effort,omitempty"`
-	Transcripts        map[string]string `json:"transcripts,omitempty"`
-	SecondsExplicit    bool              `json:"seconds_explicit,omitempty"`
-	AspectExplicit     bool              `json:"aspect_explicit,omitempty"`
-	LoRAs              []lora.Request    `json:"loras,omitempty"`
-	Style              string            `json:"style,omitempty"`
-	Intent             string            `json:"intent"`
-	Assets             []Asset           `json:"assets,omitempty"`
-	Seconds            float64           `json:"seconds,omitempty"`
-	Aspect             string            `json:"aspect,omitempty"`
-	Canvas             *[2]int           `json:"canvas,omitempty"`
-	Megapixels         *float64          `json:"megapixels,omitempty"`
-	FrameCount         int64             `json:"frame_count,omitempty"`
-	Dialogue           []Dialogue        `json:"dialogue,omitempty"`
-	OnscreenText       []string          `json:"onscreen_text,omitempty"`
-	Shots              *int              `json:"shots,omitempty"`
-	Cuts               []contextir.Time  `json:"cuts_ms,omitempty"`
-	Mode               contextir.Mode    `json:"mode,omitempty"`
-	Constraints        []string          `json:"constraints,omitempty"`
+	ReplacementTargets map[string]string              `json:"replacement_targets,omitempty"`
+	AudioCopyModes     map[string]contextir.Retention `json:"audio_copy_modes,omitempty"`
+	VoiceBindings      map[string]string              `json:"voice_bindings,omitempty"`
+	Seed               *int64                         `json:"seed,omitempty"`
+	Effort             string                         `json:"effort,omitempty"`
+	Transcripts        map[string]string              `json:"transcripts,omitempty"`
+	SecondsExplicit    bool                           `json:"seconds_explicit,omitempty"`
+	AspectExplicit     bool                           `json:"aspect_explicit,omitempty"`
+	LoRAs              []lora.Request                 `json:"loras,omitempty"`
+	Style              string                         `json:"style,omitempty"`
+	Intent             string                         `json:"intent"`
+	Assets             []Asset                        `json:"assets,omitempty"`
+	Seconds            float64                        `json:"seconds,omitempty"`
+	Aspect             string                         `json:"aspect,omitempty"`
+	Canvas             *[2]int                        `json:"canvas,omitempty"`
+	Megapixels         *float64                       `json:"megapixels,omitempty"`
+	FrameCount         int64                          `json:"frame_count,omitempty"`
+	Dialogue           []Dialogue                     `json:"dialogue,omitempty"`
+	OnscreenText       []string                       `json:"onscreen_text,omitempty"`
+	Shots              *int                           `json:"shots,omitempty"`
+	Cuts               []contextir.Time               `json:"cuts_ms,omitempty"`
+	Mode               contextir.Mode                 `json:"mode,omitempty"`
+	Constraints        []string                       `json:"constraints,omitempty"`
 	// Silent matches the upstream Brief: prohibit added score. SilenceAll also
 	// prohibits ambience and speech, and never silently deletes supplied dialogue.
 	Silent          bool                 `json:"silent,omitempty"`
@@ -151,6 +154,7 @@ const (
 )
 
 type Options struct {
+	AssetInspector      AssetInspector
 	ScopeConflictPolicy ScopeConflictPolicy
 	ClarificationPolicy ClarificationPolicy
 	ConfigureExecution  ConfigureExecution
@@ -201,6 +205,8 @@ type StructuralAsset struct {
 }
 
 type Structure struct {
+	TranscriptUses               []TranscriptUse               `json:"transcript_uses,omitempty"`
+	SubjectProjections           []SubjectProjection           `json:"subject_projections,omitempty"`
 	ReplacementMotionObligations []ReplacementMotionObligation `json:"replacement_motion_obligations,omitempty"`
 	MusicConstraint              contextir.ConstraintKind      `json:"music_constraint,omitempty"`
 	DialoguePlacements           []DialoguePlacement           `json:"dialogue_placements,omitempty"`

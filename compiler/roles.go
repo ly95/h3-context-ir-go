@@ -7,12 +7,14 @@ import (
 func validRole(r Role) bool { return contains(Roles, r) }
 func roleAccepts(r Role, k contextir.MediaKind) bool {
 	switch r {
-	case RoleFirstFrame, RoleLastFrame, RoleSubject, RoleEnvironment, RoleStyle, RoleStoryboard, RolePlacedSubject, RoleReplacementSubject:
+	case RoleFirstFrame, RoleLastFrame, RolePlacedSubject, RoleReplacementSubject:
 		return k == contextir.MediaImage
+	case RoleSubject, RoleEnvironment, RoleStyle, RoleStoryboard:
+		return k == contextir.MediaImage || k == contextir.MediaVideo
 	case RoleStructure, RoleEditSource, RoleContinuationSource:
 		return k == contextir.MediaVideo
 	case RoleVoiceTimbre, RoleBGM, RoleMusicStyle, RoleBeatReference, RoleSFX:
-		return k == contextir.MediaAudio || k == contextir.MediaVideo
+		return k == contextir.MediaAudio
 	}
 	return false
 }

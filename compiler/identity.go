@@ -105,7 +105,7 @@ func canonicalSubjects(b Brief, st Structure, req contextir.Request, licence *Li
 			}
 		}
 	}
-	return subjects, nil
+	return projectCanonicalSubjects(subjects, st.SubjectProjections)
 }
 
 func lockSubjectSchema(raw json.RawMessage, subjects []contextir.Subject) (json.RawMessage, error) {

@@ -166,6 +166,9 @@ func normalizeBrief(b Brief, opts Options) (Brief, error) {
 	if b.Effort != "" && b.Effort != "fast" && b.Effort != "standard" && b.Effort != "max" {
 		return b, invalid("effort", "Choose fast, standard or max.")
 	}
+	if err := validateAudioCopyModes(b); err != nil {
+		return b, err
+	}
 	if err := validateTranscripts(b); err != nil {
 		return b, err
 	}

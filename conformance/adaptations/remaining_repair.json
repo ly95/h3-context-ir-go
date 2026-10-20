@@ -1,0 +1,1014 @@
+{
+  "source_commit": "fd031e136ae3d89147324c0d1b2aa65e838c21f5",
+  "schema": "contextir-native-adaptations/v1",
+  "cases": [
+    {
+      "upstream_nodeid": "tests/test_fix_loop.py::test_the_findings_are_sent_and_the_spec_is_not",
+      "go_package": "./planner",
+      "go_test": "TestRemainingRepairFixLoop/test_the_findings_are_sent_and_the_spec_is_not",
+      "assertion_intent": "The spec is already in the composing call's system prompt. Resending it invites a wholesale\nrewrite instead of a surgical fix, and wastes the context.",
+      "adaptation": "Native strict Document boundary and bounded planner retry replace Python free-text rewriting. Original request/evidence/schema remain authoritative; every failed attempt is metered and only a valid final Document can compile. Explicit controlled model responses test the actual production pipeline without a provider.",
+      "source_file_sha256": "bc88a24d8d2c976a2ef3146e55d00b631057c82e8321e3dfd60418d75d23c30b",
+      "source_line": 58,
+      "original_assertions": [
+        "assert \"S3-preamble\" in sent and \"T2-shot1-timestamp\" in sent, \"findings must be quoted\"",
+        "assert \"brief must begin with\" in sent, \"the message, not just the rule id\"",
+        "assert \"Reference Labels and Definitions\" not in sent, \"the spec must NOT be resent\"",
+        "assert len(sent) < 12000, \"a correction pass should not carry the whole specification\"",
+        "assert \"change nothing else\" in sent.lower()",
+        "assert out.strip().startswith(\"subject_definitions:\")"
+      ],
+      "fixture_file": "planner/testdata/upstream_repair.json",
+      "fixture_case_ids": [],
+      "oracle": "Pinned source literals and source finding rule/severity outputs; real native root validation/planner retry/H3 Artifact assertions. No Python product execution and no provider calls."
+    },
+    {
+      "upstream_nodeid": "tests/test_fix_loop.py::test_a_broken_brief_converges_in_one_round",
+      "go_package": "./planner",
+      "go_test": "TestRemainingRepairFixLoop/test_a_broken_brief_converges_in_one_round",
+      "assertion_intent": "assert MAX_FIX_ROUNDS == 2, \"capped, like the truncation ladder\"; assert before, \"the fixture must actually be broken\"; assert not after, after",
+      "adaptation": "Native strict Document boundary and bounded planner retry replace Python free-text rewriting. Original request/evidence/schema remain authoritative; every failed attempt is metered and only a valid final Document can compile. Explicit controlled model responses test the actual production pipeline without a provider.",
+      "source_file_sha256": "bc88a24d8d2c976a2ef3146e55d00b631057c82e8321e3dfd60418d75d23c30b",
+      "source_line": 83,
+      "original_assertions": [
+        "assert MAX_FIX_ROUNDS == 2, \"capped, like the truncation ladder\"",
+        "assert before, \"the fixture must actually be broken\"",
+        "assert not after, after"
+      ],
+      "fixture_file": "planner/testdata/upstream_repair.json",
+      "fixture_case_ids": [
+        "validate-00181",
+        "validate-00182",
+        "validate-00183"
+      ],
+      "oracle": "Pinned source literals and source finding rule/severity outputs; real native root validation/planner retry/H3 Artifact assertions. No Python product execution and no provider calls."
+    },
+    {
+      "upstream_nodeid": "tests/test_fix_loop.py::test_a_finding_that_survives_is_recorded_as_a_signal_about_the_rule",
+      "go_package": "./planner",
+      "go_test": "TestRemainingRepairFixLoop/test_a_finding_that_survives_is_recorded_as_a_signal_about_the_rule",
+      "assertion_intent": "If the model cannot fix a finding after being told plainly, either the message is unclear or\nthe rule is wrong. That case is worth its own record, not just another retry.",
+      "adaptation": "Native strict Document boundary and bounded planner retry replace Python free-text rewriting. Original request/evidence/schema remain authoritative; every failed attempt is metered and only a valid final Document can compile. Explicit controlled model responses test the actual production pipeline without a provider.",
+      "source_file_sha256": "bc88a24d8d2c976a2ef3146e55d00b631057c82e8321e3dfd60418d75d23c30b",
+      "source_line": 100,
+      "original_assertions": [
+        "assert errs",
+        "assert still == {f.rule for f in errs}, \"unchanged output means the finding survived\""
+      ],
+      "fixture_file": "planner/testdata/upstream_repair.json",
+      "fixture_case_ids": [
+        "validate-00184",
+        "validate-00185"
+      ],
+      "oracle": "Pinned source literals and source finding rule/severity outputs; real native root validation/planner retry/H3 Artifact assertions. No Python product execution and no provider calls."
+    },
+    {
+      "upstream_nodeid": "tests/test_fix_loop.py::test_only_errors_reach_the_model",
+      "go_package": "./planner",
+      "go_test": "TestRemainingRepairFixLoop/test_only_errors_reach_the_model",
+      "assertion_intent": "The boundary the rule audit turned on. An ERROR is a decidable fact; a WARN may be a\njudgement a competent director would argue with, and the fix loop is an instruction to change\nthe writing. A WARN that reached here would have the model rewrite legitimate work.",
+      "adaptation": "Original GOOD really carries WARN and no ERROR under native h3check. Real planner ValidateDocument callback compiles and validates the final H3; only actual ERROR becomes a retry Issue. WARN does not trigger a second call.",
+      "source_file_sha256": "bc88a24d8d2c976a2ef3146e55d00b631057c82e8321e3dfd60418d75d23c30b",
+      "source_line": 115,
+      "original_assertions": [
+        "assert assigns, \"the fix loop no longer builds `errors` the way this test assumes\"",
+        "assert set(assigns) == {\"ERROR\"}, assigns",
+        "assert not [f for f in found if f.severity == \"ERROR\"], [str(f) for f in found]",
+        "assert [f for f in found if f.severity == \"WARN\"], \"the fixture must carry warnings to prove it\""
+      ],
+      "fixture_file": "planner/testdata/upstream_repair.json",
+      "fixture_case_ids": [
+        "validate-00186"
+      ],
+      "oracle": "Pinned source literals and source finding rule/severity outputs; real native root validation/planner retry/H3 Artifact assertions. No Python product execution and no provider calls."
+    },
+    {
+      "upstream_nodeid": "tests/test_fix_loop.py::test_code_still_owns_the_label_namespace",
+      "go_package": "./planner",
+      "go_test": "TestRemainingRepairFixLoop/test_code_still_owns_the_label_namespace",
+      "assertion_intent": "Only the wiring knows socket order, so this cannot be delegated to the model.",
+      "adaptation": "Native strict Document boundary and bounded planner retry replace Python free-text rewriting. Original request/evidence/schema remain authoritative; every failed attempt is metered and only a valid final Document can compile. Explicit controlled model responses test the actual production pipeline without a provider. Go rejects unknown stable asset/source IDs and requests a corrected typed Document rather than guessing which ordinal an invented free-text label meant; actual final manifest must contain the real binding.",
+      "source_file_sha256": "bc88a24d8d2c976a2ef3146e55d00b631057c82e8321e3dfd60418d75d23c30b",
+      "source_line": 140,
+      "original_assertions": [
+        "assert \"<Picture 1>\" in res.text and \"<Image 1>\" not in res.text",
+        "assert any(\"pointed at nothing\" in r for r in res.repairs)"
+      ],
+      "fixture_file": "planner/testdata/upstream_repair.json",
+      "fixture_case_ids": [],
+      "oracle": "Pinned source literals and source finding rule/severity outputs; real native root validation/planner retry/H3 Artifact assertions. No Python product execution and no provider calls."
+    },
+    {
+      "upstream_nodeid": "tests/test_fix_loop.py::test_code_still_owns_the_callers_dialogue",
+      "go_package": "./planner",
+      "go_test": "TestRemainingRepairFixLoop/test_code_still_owns_the_callers_dialogue",
+      "assertion_intent": "Their words are never round-tripped through a model.",
+      "adaptation": "Native strict Document boundary and bounded planner retry replace Python free-text rewriting. Original request/evidence/schema remain authoritative; every failed attempt is metered and only a valid final Document can compile. Explicit controlled model responses test the actual production pipeline without a provider.",
+      "source_file_sha256": "bc88a24d8d2c976a2ef3146e55d00b631057c82e8321e3dfd60418d75d23c30b",
+      "source_line": 148,
+      "original_assertions": [
+        "assert \"<d>[English] Something's been down here a long time.</d>\" in res.text",
+        "assert any(\"exact line\" in r for r in res.repairs)"
+      ],
+      "fixture_file": "planner/testdata/upstream_repair.json",
+      "fixture_case_ids": [],
+      "oracle": "Pinned source literals and source finding rule/severity outputs; real native root validation/planner retry/H3 Artifact assertions. No Python product execution and no provider calls."
+    },
+    {
+      "upstream_nodeid": "tests/test_fix_loop.py::test_code_still_owns_unicode",
+      "go_package": "./planner",
+      "go_test": "TestRemainingRepairFixLoop/test_code_still_owns_unicode",
+      "assertion_intent": "assert \"’\" not in res.text; assert any(\"normalised\" in r for r in res.repairs)",
+      "adaptation": "Explicit opt-in NormalizeGeneratedProse reports its change; actual Document->Artifact contains the normalized generated prose. Original input bytes remain intact; authoritative literals are never silently normalized.",
+      "source_file_sha256": "bc88a24d8d2c976a2ef3146e55d00b631057c82e8321e3dfd60418d75d23c30b",
+      "source_line": 159,
+      "original_assertions": [
+        "assert \"’\" not in res.text",
+        "assert any(\"normalised\" in r for r in res.repairs)"
+      ],
+      "fixture_file": "planner/testdata/upstream_repair.json",
+      "fixture_case_ids": [],
+      "oracle": "Pinned source literals and source finding rule/severity outputs; real native root validation/planner retry/H3 Artifact assertions. No Python product execution and no provider calls."
+    },
+    {
+      "upstream_nodeid": "tests/test_fix_loop.py::test_code_no_longer_writes_prose_sections",
+      "go_package": "./planner",
+      "go_test": "TestRemainingRepairFixLoop/test_code_no_longer_writes_prose_sections",
+      "assertion_intent": "The bespoke synthesisers are gone. A brief missing retention_analysis is now the model's to\nfix, because inventing it in code was the thing that only ever handled anticipated shapes.",
+      "adaptation": "Native strict Document boundary and bounded planner retry replace Python free-text rewriting. Original request/evidence/schema remain authoritative; every failed attempt is metered and only a valid final Document can compile. Explicit controlled model responses test the actual production pipeline without a provider.",
+      "source_file_sha256": "bc88a24d8d2c976a2ef3146e55d00b631057c82e8321e3dfd60418d75d23c30b",
+      "source_line": 166,
+      "original_assertions": [
+        "assert \"retention_analysis:\" not in res.text, \"code must not invent the section any more\"",
+        "assert \"S1-missing-section\" in errs, \"it is reported so the model can fix it\""
+      ],
+      "fixture_file": "planner/testdata/upstream_repair.json",
+      "fixture_case_ids": [
+        "validate-00187"
+      ],
+      "oracle": "Pinned source literals and source finding rule/severity outputs; real native root validation/planner retry/H3 Artifact assertions. No Python product execution and no provider calls."
+    },
+    {
+      "upstream_nodeid": "tests/test_fix_loop.py::test_the_fix_ask_carries_the_label_inventory_and_the_right_section_count",
+      "go_package": "./planner",
+      "go_test": "TestRemainingRepairFixLoop/test_the_fix_ask_carries_the_label_inventory_and_the_right_section_count",
+      "assertion_intent": "Both were missing and both cost whole briefs.\n\nThe first eval run of this loop fell back on five of six suite briefs. Every failure was a\nBINDING fault surviving both rounds -- an invented `<Subject 3>`, a `<Picture 4>` that does not\nexist -- and the fix call was being asked to repair a binding with the binding table removed.\n\"<Subject 3> is used but never defined\" is satisfiable by deleting it OR by defining it, and\nnothing said which labels are real. Separately the ask said \"output the corrected six sections\"\nunconditionally, which pushed a three-section base brief toward the full-reference format during\nthe pass meant to correct it.",
+      "adaptation": "Native strict Document boundary and bounded planner retry replace Python free-text rewriting. Original request/evidence/schema remain authoritative; every failed attempt is metered and only a valid final Document can compile. Explicit controlled model responses test the actual production pipeline without a provider.",
+      "source_file_sha256": "bc88a24d8d2c976a2ef3146e55d00b631057c82e8321e3dfd60418d75d23c30b",
+      "source_line": 181,
+      "original_assertions": [
+        "assert \"<Picture 1>\" in sent and \"<Subject 1>\" in sent, \"the label inventory must be resent\"",
+        "assert \"never to define it\" in sent, \"the inventory must say which direction to fix in\"",
+        "assert \"3 sections\" in sent and \"integrated_multimodal_description\" in sent",
+        "assert \"six sections\" not in sent, \"a base-mode fix must not be told to emit six sections\"",
+        "assert \"Reference Labels and Definitions\" not in sent",
+        "assert len(sent) < 12000"
+      ],
+      "fixture_file": "planner/testdata/upstream_repair.json",
+      "fixture_case_ids": [],
+      "oracle": "Pinned source literals and source finding rule/severity outputs; real native root validation/planner retry/H3 Artifact assertions. No Python product execution and no provider calls."
+    },
+    {
+      "upstream_nodeid": "tests/test_fix_loop.py::test_the_composer_is_chosen_by_mode",
+      "go_package": "./planner",
+      "go_test": "TestRemainingRepairFixLoop/test_the_composer_is_chosen_by_mode",
+      "assertion_intent": "One composer for both modes was the root cause of a 0.167 clean rate: every base-mode brief\nwas handed the full-reference guide, which teaches `<Subject N>`, and then failed L2 for using\nit. Five of six suite briefs fell back, and the sixth -- the only ref2va one -- passed clean.",
+      "adaptation": "Native strict Document boundary and bounded planner retry replace Python free-text rewriting. Original request/evidence/schema remain authoritative; every failed attempt is metered and only a valid final Document can compile. Explicit controlled model responses test the actual production pipeline without a provider.",
+      "source_file_sha256": "bc88a24d8d2c976a2ef3146e55d00b631057c82e8321e3dfd60418d75d23c30b",
+      "source_line": 215,
+      "original_assertions": [
+        "assert len(_sections_for(Mode.REF2VA)) == 6",
+        "assert len(_sections_for(Mode.T2VA)) == 3",
+        "assert len(_sections_for(Mode.I2VA)) == 3",
+        "assert \"Full-Reference Mode\" in ref",
+        "assert \"Full-Reference Mode\" not in base.split(\"=== END SPECIFICATION ===\")[0]",
+        "assert \"there are no `<subject n>` labels in this mode\" in base.lower()",
+        "assert \"subject_definitions\" in ref",
+        "assert \"No `subject_definitions`\" in body"
+      ],
+      "fixture_file": "planner/testdata/upstream_repair.json",
+      "fixture_case_ids": [],
+      "oracle": "Pinned source literals and source finding rule/severity outputs; real native root validation/planner retry/H3 Artifact assertions. No Python product execution and no provider calls."
+    },
+    {
+      "upstream_nodeid": "tests/test_fix_loop.py::test_a_base_mode_written_brief_keeps_its_description",
+      "go_package": "./planner",
+      "go_test": "TestRemainingRepairFixLoop/test_a_base_mode_written_brief_keeps_its_description",
+      "assertion_intent": "The section split searched only the six-section names, so a base-mode brief came back with no\n`integrated_multimodal_description` at all. Silent, because the validator reads the prompt text\nrather than this dict, and invisible until the base composer stopped every base brief from\nfalling back to the draft. The eval reported 0 words on four briefs that were written correctly.",
+      "adaptation": "Native strict Document boundary and bounded planner retry replace Python free-text rewriting. Original request/evidence/schema remain authoritative; every failed attempt is metered and only a valid final Document can compile. Explicit controlled model responses test the actual production pipeline without a provider.",
+      "source_file_sha256": "bc88a24d8d2c976a2ef3146e55d00b631057c82e8321e3dfd60418d75d23c30b",
+      "source_line": 238,
+      "original_assertions": [
+        "assert \"integrated_multimodal_description\" in out, out.keys()",
+        "assert \"[Shot 1]\" in out[\"integrated_multimodal_description\"]",
+        "assert out[\"non_diegetic_music\"].strip() == \"N/A\"",
+        "assert set(ref) == {\"subject_definitions\", \"summary\", \"retention_analysis\",\n                        \"detailed_description\", \"overall_soundscape\", \"non_diegetic_music\"}",
+        "assert \"[Shot 1]\" in ref[\"detailed_description\"]"
+      ],
+      "fixture_file": "planner/testdata/upstream_repair.json",
+      "fixture_case_ids": [],
+      "oracle": "Pinned source literals and source finding rule/severity outputs; real native root validation/planner retry/H3 Artifact assertions. No Python product execution and no provider calls."
+    },
+    {
+      "upstream_nodeid": "tests/test_fix_loop.py::test_a_base_mode_with_an_image_is_not_told_nothing_is_attached",
+      "go_package": "./planner",
+      "go_test": "TestRemainingRepairFixLoop/test_a_base_mode_with_an_image_is_not_told_nothing_is_attached",
+      "assertion_intent": "An i2va brief has a real `<Picture 1>` and no definition lines. Keying the message off the\ndefinition lines announced \"nothing is attached\" over a live reference.",
+      "adaptation": "Native strict Document boundary and bounded planner retry replace Python free-text rewriting. Original request/evidence/schema remain authoritative; every failed attempt is metered and only a valid final Document can compile. Explicit controlled model responses test the actual production pipeline without a provider.",
+      "source_file_sha256": "bc88a24d8d2c976a2ef3146e55d00b631057c82e8321e3dfd60418d75d23c30b",
+      "source_line": 261,
+      "original_assertions": [
+        "assert \"<Picture 1>\" in sent",
+        "assert \"nothing is attached\" not in sent"
+      ],
+      "fixture_file": "planner/testdata/upstream_repair.json",
+      "fixture_case_ids": [],
+      "oracle": "Pinned source literals and source finding rule/severity outputs; real native root validation/planner retry/H3 Artifact assertions. No Python product execution and no provider calls."
+    },
+    {
+      "upstream_nodeid": "tests/test_fix_loop.py::test_the_eval_harness_does_not_override_the_mode_split",
+      "go_package": "./planner",
+      "go_test": "TestRemainingRepairFixLoop/test_the_eval_harness_does_not_override_the_mode_split",
+      "assertion_intent": "RunConfig.compose_prompt defaulted to an explicit \"compose.v2.txt\", which forced the\nsix-section full-reference composer onto every base-mode brief -- so the harness built to verify\nthe mode split measured the exact bug the split had just fixed, and reported clean_rate 0.167\nwhen the shipping configuration is 1.000.\n\nFifth instance of one family: a harness measuring something other than what ships.",
+      "adaptation": "Actual native evaluate.Config default ComposePrompt and Creativity are nil, preserving production mode/dial selection.",
+      "source_file_sha256": "bc88a24d8d2c976a2ef3146e55d00b631057c82e8321e3dfd60418d75d23c30b",
+      "source_line": 288,
+      "original_assertions": [
+        "assert RunConfig().compose_prompt is None, \\\n        \"the suite must let compile_brief pick the composer by mode, as production does\"",
+        "assert RunConfig().creativity is None, \"same for the dial: no forced position by default\""
+      ],
+      "fixture_file": "planner/testdata/upstream_repair.json",
+      "fixture_case_ids": [],
+      "oracle": "Pinned source literals and source finding rule/severity outputs; real native root validation/planner retry/H3 Artifact assertions. No Python product execution and no provider calls."
+    },
+    {
+      "upstream_nodeid": "tests/test_fix_loop.py::test_the_pinned_failure_is_a_real_failure",
+      "go_package": "./planner",
+      "go_test": "TestRemainingRepairFixLoop/test_the_pinned_failure_is_a_real_failure",
+      "assertion_intent": "A genuine model output, not a constructed one: `t2va_battle` composed against the\nfull-reference guide, which is the misconfiguration that actually happened tonight. It came back\nin the six-section shape with `subject_definitions: N/A` — so the base-mode field is missing, the\nref-mode field is present, and there is no shot in the field the validator reads.\n\nThe repeated-shot brief the owner rejected CANNOT serve this purpose: the taste audit made it\nmechanically clean, so the loop has nothing to fire on. A safety net needs a fixture that still\nfails.",
+      "adaptation": "Original captured raw prompt and Context are run directly through native h3check; complete finding rule/severity multiset must match the source oracle. Messages retain required actionable substrings but need not match all explanatory wording.",
+      "source_file_sha256": "bc88a24d8d2c976a2ef3146e55d00b631057c82e8321e3dfd60418d75d23c30b",
+      "source_line": 313,
+      "original_assertions": [
+        "assert errs == {\"S1-missing-section\", \"S5-mode-field-crossed\", \"T1-no-shot\",\n                    \"P4-no-camera-at-all\"}, errs"
+      ],
+      "fixture_file": "planner/testdata/upstream_repair.json",
+      "fixture_case_ids": [
+        "validate-00188"
+      ],
+      "oracle": "Pinned source literals and source finding rule/severity outputs; real native root validation/planner retry/H3 Artifact assertions. No Python product execution and no provider calls."
+    },
+    {
+      "upstream_nodeid": "tests/test_fix_loop.py::test_the_loop_fires_on_it_and_is_told_what_it_needs",
+      "go_package": "./planner",
+      "go_test": "TestRemainingRepairFixLoop/test_the_loop_fires_on_it_and_is_told_what_it_needs",
+      "assertion_intent": "The wiring is the part that rots — a signature change, a dropped inventory, a WARN slipping\ninto the list. The model's ability to repair does not rot from our edits, so this asserts the\nask is complete and correct; the live repair is recorded in the design doc and re-runnable.",
+      "adaptation": "Native strict Document boundary and bounded planner retry replace Python free-text rewriting. Original request/evidence/schema remain authoritative; every failed attempt is metered and only a valid final Document can compile. Explicit controlled model responses test the actual production pipeline without a provider.",
+      "source_file_sha256": "bc88a24d8d2c976a2ef3146e55d00b631057c82e8321e3dfd60418d75d23c30b",
+      "source_line": 328,
+      "original_assertions": [
+        "assert \"integrated_multimodal_description\" in sent and \"3 sections\" in sent",
+        "assert \"six sections\" not in sent",
+        "assert \"change nothing else\" in sent.lower()",
+        "assert \"Hold the line!\" in sent",
+        "assert rule in sent, rule"
+      ],
+      "fixture_file": "planner/testdata/upstream_repair.json",
+      "fixture_case_ids": [
+        "validate-00189"
+      ],
+      "oracle": "Pinned source literals and source finding rule/severity outputs; real native root validation/planner retry/H3 Artifact assertions. No Python product execution and no provider calls."
+    },
+    {
+      "upstream_nodeid": "tests/test_fix_loop.py::test_the_shipped_prefix_is_the_one_the_wiring_derives",
+      "go_package": "./h3",
+      "go_test": "TestRemainingRepairTaskPrefix/test_the_shipped_prefix_is_the_one_the_wiring_derives",
+      "assertion_intent": "Rule 1: structure is computed, never chosen by a model. Measured on two live renders with\nthe same wiring shape -- a replacement picture, an edit_source clip and its paired soundtrack --\nwhere one shipped all three derived types and the other dropped `reference generation`, the one\nthe picture is the whole reason for. Nothing compared the two.",
+      "adaptation": "Explicit opt-in h3.RepairTaskPrefix accepts only already-derived typed task names, returns observable changes, touches only the summary opening tag and is never run automatically over authoritative Dialogue/VisibleText/RichText.",
+      "source_file_sha256": "bc88a24d8d2c976a2ef3146e55d00b631057c82e8321e3dfd60418d75d23c30b",
+      "source_line": 365,
+      "original_assertions": [
+        "assert \"[reference generation + video editing + audio reuse]\" in res.text",
+        "assert \"[video editing + audio reuse]\" not in res.text.replace(\n        \"[reference generation + video editing + audio reuse]\", \"\")",
+        "assert any(\"task-type prefix\" in r for r in res.repairs), res.repairs"
+      ],
+      "fixture_file": "planner/testdata/upstream_repair.json",
+      "fixture_case_ids": [],
+      "oracle": "Pinned source literals and source finding rule/severity outputs; real native root validation/planner retry/H3 Artifact assertions. No Python product execution and no provider calls."
+    },
+    {
+      "upstream_nodeid": "tests/test_fix_loop.py::test_a_summary_that_forgot_the_prefix_is_given_the_derived_one",
+      "go_package": "./h3",
+      "go_test": "TestRemainingRepairTaskPrefix/test_a_summary_that_forgot_the_prefix_is_given_the_derived_one",
+      "assertion_intent": "Rather than spending a fix-loop round on M1 to be told something the code already knows.",
+      "adaptation": "Explicit opt-in h3.RepairTaskPrefix accepts only already-derived typed task names, returns observable changes, touches only the summary opening tag and is never run automatically over authoritative Dialogue/VisibleText/RichText.",
+      "source_file_sha256": "bc88a24d8d2c976a2ef3146e55d00b631057c82e8321e3dfd60418d75d23c30b",
+      "source_line": 377,
+      "original_assertions": [
+        "assert res.text.count(\"[reference generation + video editing + audio reuse] The target\") == 1",
+        "assert any(\"added the task-type prefix\" in r for r in res.repairs), res.repairs"
+      ],
+      "fixture_file": "planner/testdata/upstream_repair.json",
+      "fixture_case_ids": [],
+      "oracle": "Pinned source literals and source finding rule/severity outputs; real native root validation/planner retry/H3 Artifact assertions. No Python product execution and no provider calls."
+    },
+    {
+      "upstream_nodeid": "tests/test_fix_loop.py::test_a_prefix_that_already_agrees_is_left_alone_and_reported_as_nothing",
+      "go_package": "./h3",
+      "go_test": "TestRemainingRepairTaskPrefix/test_a_prefix_that_already_agrees_is_left_alone_and_reported_as_nothing",
+      "assertion_intent": "A repair line for a repair that did not happen is a report nobody can trust.",
+      "adaptation": "Explicit opt-in h3.RepairTaskPrefix accepts only already-derived typed task names, returns observable changes, touches only the summary opening tag and is never run automatically over authoritative Dialogue/VisibleText/RichText.",
+      "source_file_sha256": "bc88a24d8d2c976a2ef3146e55d00b631057c82e8321e3dfd60418d75d23c30b",
+      "source_line": 384,
+      "original_assertions": [
+        "assert res.text.count(\"[reference generation]\") == 1",
+        "assert not [r for r in res.repairs if \"task-type\" in r], res.repairs"
+      ],
+      "fixture_file": "planner/testdata/upstream_repair.json",
+      "fixture_case_ids": [],
+      "oracle": "Pinned source literals and source finding rule/severity outputs; real native root validation/planner retry/H3 Artifact assertions. No Python product execution and no provider calls."
+    },
+    {
+      "upstream_nodeid": "tests/test_fix_loop.py::test_the_prefix_is_replaced_on_either_layout_of_the_section",
+      "go_package": "./h3",
+      "go_test": "TestRemainingRepairTaskPrefix/test_the_prefix_is_replaced_on_either_layout_of_the_section",
+      "assertion_intent": "Both shapes come back from the writer: the prefix on the colon's line and on the next.",
+      "adaptation": "Explicit opt-in h3.RepairTaskPrefix accepts only already-derived typed task names, returns observable changes, touches only the summary opening tag and is never run automatically over authoritative Dialogue/VisibleText/RichText.",
+      "source_file_sha256": "bc88a24d8d2c976a2ef3146e55d00b631057c82e8321e3dfd60418d75d23c30b",
+      "source_line": 391,
+      "original_assertions": [
+        "assert \"[reference generation] The target\" in res.text, head"
+      ],
+      "fixture_file": "planner/testdata/upstream_repair.json",
+      "fixture_case_ids": [],
+      "oracle": "Pinned source literals and source finding rule/severity outputs; real native root validation/planner retry/H3 Artifact assertions. No Python product execution and no provider calls."
+    },
+    {
+      "upstream_nodeid": "tests/test_fix_loop.py::test_only_the_opening_prefix_is_touched",
+      "go_package": "./h3",
+      "go_test": "TestRemainingRepairTaskPrefix/test_only_the_opening_prefix_is_touched",
+      "assertion_intent": "A second bracket group inside the summary is M9's business, and an editor that reached for\nit would take the evidence away from the rule that reports it.\n\nThe fixture opens with PROSE and carries the bracket group later, which is the one input that\ntells the two readings apart. Written the obvious way -- a wrong prefix in front and a group\nbehind it -- both a match-at-the-start and a search-anywhere pass, and the test proved nothing:\nit survived that mutation the first time it was run against one.",
+      "adaptation": "Explicit opt-in h3.RepairTaskPrefix accepts only already-derived typed task names, returns observable changes, touches only the summary opening tag and is never run automatically over authoritative Dialogue/VisibleText/RichText.",
+      "source_file_sha256": "bc88a24d8d2c976a2ef3146e55d00b631057c82e8321e3dfd60418d75d23c30b",
+      "source_line": 399,
+      "original_assertions": [
+        "assert res.text.count(\"[reference generation]\") == 2, res.text",
+        "assert body.startswith(\"[reference generation] The target video shows\"), body"
+      ],
+      "fixture_file": "planner/testdata/upstream_repair.json",
+      "fixture_case_ids": [],
+      "oracle": "Pinned source literals and source finding rule/severity outputs; real native root validation/planner retry/H3 Artifact assertions. No Python product execution and no provider calls."
+    },
+    {
+      "upstream_nodeid": "tests/test_fix_loop.py::test_no_derived_types_means_the_prefix_is_left_exactly_as_written",
+      "go_package": "./h3",
+      "go_test": "TestRemainingRepairTaskPrefix/test_no_derived_types_means_the_prefix_is_left_exactly_as_written",
+      "assertion_intent": "Every caller that predates this passes nothing, and gets what it always got.",
+      "adaptation": "Explicit opt-in h3.RepairTaskPrefix accepts only already-derived typed task names, returns observable changes, touches only the summary opening tag and is never run automatically over authoritative Dialogue/VisibleText/RichText.",
+      "source_file_sha256": "bc88a24d8d2c976a2ef3146e55d00b631057c82e8321e3dfd60418d75d23c30b",
+      "source_line": 416,
+      "original_assertions": [
+        "assert \"[video editing]\" in res.text",
+        "assert not [r for r in res.repairs if \"task-type\" in r]"
+      ],
+      "fixture_file": "planner/testdata/upstream_repair.json",
+      "fixture_case_ids": [],
+      "oracle": "Pinned source literals and source finding rule/severity outputs; real native root validation/planner retry/H3 Artifact assertions. No Python product execution and no provider calls."
+    },
+    {
+      "upstream_nodeid": "tests/test_fix_loop.py::test_the_rule_behind_it_catches_a_prefix_that_disagrees_with_the_wiring",
+      "go_package": "./planner",
+      "go_test": "TestRemainingRepairFixLoop/test_the_rule_behind_it_catches_a_prefix_that_disagrees_with_the_wiring",
+      "assertion_intent": "assert \"M16-task-prefix-not-derived\" in [f.rule for f in validate(bad, ctx)]",
+      "adaptation": "Original captured raw prompt and Context are run directly through native h3check; complete finding rule/severity multiset must match the source oracle. Messages retain required actionable substrings but need not match all explanatory wording.",
+      "source_file_sha256": "bc88a24d8d2c976a2ef3146e55d00b631057c82e8321e3dfd60418d75d23c30b",
+      "source_line": 423,
+      "original_assertions": [
+        "assert \"M16-task-prefix-not-derived\" in [f.rule for f in validate(bad, ctx)]"
+      ],
+      "fixture_file": "planner/testdata/upstream_repair.json",
+      "fixture_case_ids": [
+        "validate-00190"
+      ],
+      "oracle": "Pinned source literals and source finding rule/severity outputs; real native root validation/planner retry/H3 Artifact assertions. No Python product execution and no provider calls."
+    },
+    {
+      "upstream_nodeid": "tests/test_fix_loop.py::test_the_rule_abstains_when_the_wiring_did_not_say",
+      "go_package": "./planner",
+      "go_test": "TestRemainingRepairFixLoop/test_the_rule_abstains_when_the_wiring_did_not_say",
+      "assertion_intent": "assert \"M16-task-prefix-not-derived\" not in [f.rule for f in validate(bad, ctx)]",
+      "adaptation": "Original captured raw prompt and Context are run directly through native h3check; complete finding rule/severity multiset must match the source oracle. Messages retain required actionable substrings but need not match all explanatory wording.",
+      "source_file_sha256": "bc88a24d8d2c976a2ef3146e55d00b631057c82e8321e3dfd60418d75d23c30b",
+      "source_line": 430,
+      "original_assertions": [
+        "assert \"M16-task-prefix-not-derived\" not in [f.rule for f in validate(bad, ctx)]"
+      ],
+      "fixture_file": "planner/testdata/upstream_repair.json",
+      "fixture_case_ids": [
+        "validate-00191"
+      ],
+      "oracle": "Pinned source literals and source finding rule/severity outputs; real native root validation/planner retry/H3 Artifact assertions. No Python product execution and no provider calls."
+    },
+    {
+      "upstream_nodeid": "tests/test_fix_loop.py::test_a_reordered_prefix_is_not_a_defect",
+      "go_package": "./planner",
+      "go_test": "TestRemainingRepairFixLoop/test_a_reordered_prefix_is_not_a_defect",
+      "assertion_intent": "The input that must NOT trip it. Which types apply is decidable from the roles; the order\nthey print in is this pack's convention and not something the spec constrains.",
+      "adaptation": "Original captured raw prompt and Context are run directly through native h3check; complete finding rule/severity multiset must match the source oracle. Messages retain required actionable substrings but need not match all explanatory wording.",
+      "source_file_sha256": "bc88a24d8d2c976a2ef3146e55d00b631057c82e8321e3dfd60418d75d23c30b",
+      "source_line": 436,
+      "original_assertions": [
+        "assert \"M16-task-prefix-not-derived\" not in [f.rule for f in validate(text, ctx)]"
+      ],
+      "fixture_file": "planner/testdata/upstream_repair.json",
+      "fixture_case_ids": [
+        "validate-00192"
+      ],
+      "oracle": "Pinned source literals and source finding rule/severity outputs; real native root validation/planner retry/H3 Artifact assertions. No Python product execution and no provider calls."
+    },
+    {
+      "upstream_nodeid": "tests/test_dialogue_across_a_cut.py::test_a_line_divided_at_the_cut_is_not_a_verbatim_failure",
+      "go_package": "./planner",
+      "go_test": "TestRemainingRepairDialogue/test_a_line_divided_at_the_cut_is_not_a_verbatim_failure",
+      "assertion_intent": "The exact arm that used to fail. Neither half matches the whole line, so D4 fired on the\nconstruct base-en.txt 4.4 mandates.",
+      "adaptation": "Original raw prompt/Context/findings are executed by native h3check where captured. A genuine typed Document->h3 Artifact positive path preserves the complete caller line, speaker/language, legal half-open shot timing and paired continuation flags. Parts retain the original separator space rather than the Python validator joining stripped blocks with an inserted space.",
+      "source_file_sha256": "6821df804aed110f1c91a633cb391990ffcf19e9c1dc92bfc4902d82103b5a80",
+      "source_line": 68,
+      "original_assertions": [
+        "assert \"D4-dialogue-not-verbatim\" not in {f.rule for f in found}, [str(f) for f in found]",
+        "assert not [f for f in found if f.severity == \"ERROR\"], [str(f) for f in found]"
+      ],
+      "fixture_file": "planner/testdata/upstream_repair.json",
+      "fixture_case_ids": [
+        "validate-00136"
+      ],
+      "oracle": "Pinned source literals and source finding rule/severity outputs; real native root validation/planner retry/H3 Artifact assertions. No Python product execution and no provider calls."
+    },
+    {
+      "upstream_nodeid": "tests/test_dialogue_across_a_cut.py::test_a_line_still_inside_one_block_is_untouched",
+      "go_package": "./planner",
+      "go_test": "TestRemainingRepairDialogue/test_a_line_still_inside_one_block_is_untouched",
+      "assertion_intent": "assert not [f for f in found if f.severity == \"ERROR\"], [str(f) for f in found]",
+      "adaptation": "Original raw prompt/Context/findings are executed by native h3check where captured. A genuine typed Document->h3 Artifact positive path preserves the complete caller line, speaker/language, legal half-open shot timing and paired continuation flags. Parts retain the original separator space rather than the Python validator joining stripped blocks with an inserted space.",
+      "source_file_sha256": "6821df804aed110f1c91a633cb391990ffcf19e9c1dc92bfc4902d82103b5a80",
+      "source_line": 76,
+      "original_assertions": [
+        "assert not [f for f in found if f.severity == \"ERROR\"], [str(f) for f in found]"
+      ],
+      "fixture_file": "planner/testdata/upstream_repair.json",
+      "fixture_case_ids": [
+        "validate-00137"
+      ],
+      "oracle": "Pinned source literals and source finding rule/severity outputs; real native root validation/planner retry/H3 Artifact assertions. No Python product execution and no provider calls."
+    },
+    {
+      "upstream_nodeid": "tests/test_dialogue_across_a_cut.py::test_an_altered_line_is_still_rejected_however_it_is_arranged",
+      "go_package": "./planner",
+      "go_test": "TestRemainingRepairDialogue/test_an_altered_line_is_still_rejected_however_it_is_arranged",
+      "assertion_intent": "The relaxation must not become a hole. Splitting is legal; rewording is not, in either half,\nand the concatenation is compared to the caller's words including their punctuation.",
+      "adaptation": "Original raw prompt/Context/findings are executed by native h3check where captured. A genuine typed Document->h3 Artifact positive path preserves the complete caller line, speaker/language, legal half-open shot timing and paired continuation flags. Parts retain the original separator space rather than the Python validator joining stripped blocks with an inserted space.",
+      "source_file_sha256": "6821df804aed110f1c91a633cb391990ffcf19e9c1dc92bfc4902d82103b5a80",
+      "source_line": 81,
+      "original_assertions": [
+        "assert \"D4-dialogue-not-verbatim\" in errs, errs"
+      ],
+      "fixture_file": "planner/testdata/upstream_repair.json",
+      "fixture_case_ids": [
+        "validate-00138"
+      ],
+      "oracle": "Pinned source literals and source finding rule/severity outputs; real native root validation/planner retry/H3 Artifact assertions. No Python product execution and no provider calls."
+    },
+    {
+      "upstream_nodeid": "tests/test_dialogue_across_a_cut.py::test_a_dropped_comma_at_the_join_is_still_a_verbatim_failure",
+      "go_package": "./planner",
+      "go_test": "TestRemainingRepairDialogue/test_a_dropped_comma_at_the_join_is_still_a_verbatim_failure",
+      "assertion_intent": "base-en.txt 4.4: \"Preserve every original word and punctuation mark verbatim\". The comma at\nthe split point is the caller's.",
+      "adaptation": "Original raw prompt/Context/findings are executed by native h3check where captured. A genuine typed Document->h3 Artifact positive path preserves the complete caller line, speaker/language, legal half-open shot timing and paired continuation flags. Parts retain the original separator space rather than the Python validator joining stripped blocks with an inserted space.",
+      "source_file_sha256": "6821df804aed110f1c91a633cb391990ffcf19e9c1dc92bfc4902d82103b5a80",
+      "source_line": 89,
+      "original_assertions": [
+        "assert \"D4-dialogue-not-verbatim\" in errs, errs"
+      ],
+      "fixture_file": "planner/testdata/upstream_repair.json",
+      "fixture_case_ids": [
+        "validate-00139"
+      ],
+      "oracle": "Pinned source literals and source finding rule/severity outputs; real native root validation/planner retry/H3 Artifact assertions. No Python product execution and no provider calls."
+    },
+    {
+      "upstream_nodeid": "tests/test_dialogue_across_a_cut.py::test_a_missing_line_is_still_an_error",
+      "go_package": "./planner",
+      "go_test": "TestRemainingRepairDialogue/test_a_missing_line_is_still_an_error",
+      "assertion_intent": "assert \"D4-dialogue-not-verbatim\" in errs, errs",
+      "adaptation": "Original raw prompt/Context/findings are executed by native h3check where captured. A genuine typed Document->h3 Artifact positive path preserves the complete caller line, speaker/language, legal half-open shot timing and paired continuation flags. Parts retain the original separator space rather than the Python validator joining stripped blocks with an inserted space.",
+      "source_file_sha256": "6821df804aed110f1c91a633cb391990ffcf19e9c1dc92bfc4902d82103b5a80",
+      "source_line": 97,
+      "original_assertions": [
+        "assert \"D4-dialogue-not-verbatim\" in errs, errs"
+      ],
+      "fixture_file": "planner/testdata/upstream_repair.json",
+      "fixture_case_ids": [
+        "validate-00140"
+      ],
+      "oracle": "Pinned source literals and source finding rule/severity outputs; real native root validation/planner retry/H3 Artifact assertions. No Python product execution and no provider calls."
+    },
+    {
+      "upstream_nodeid": "tests/test_dialogue_across_a_cut.py::test_the_whole_line_on_both_sides_of_the_cut_is_an_error",
+      "go_package": "./planner",
+      "go_test": "TestRemainingRepairDialogue/test_the_whole_line_on_both_sides_of_the_cut_is_an_error",
+      "assertion_intent": "What shipped 7 of 7 on `X1-scenetrans-explicit`: as conditioning it instructs the model to\nspeak the whole line twice.",
+      "adaptation": "Original raw prompt/Context/findings are executed by native h3check where captured. A genuine typed Document->h3 Artifact positive path preserves the complete caller line, speaker/language, legal half-open shot timing and paired continuation flags. Parts retain the original separator space rather than the Python validator joining stripped blocks with an inserted space.",
+      "source_file_sha256": "6821df804aed110f1c91a633cb391990ffcf19e9c1dc92bfc4902d82103b5a80",
+      "source_line": 105,
+      "original_assertions": [
+        "assert [f.rule for f in errs] == [\"D10-dialogue-line-duplicated\"], [str(f) for f in errs]",
+        "assert \"twice\" in errs[0].msg"
+      ],
+      "fixture_file": "planner/testdata/upstream_repair.json",
+      "fixture_case_ids": [
+        "validate-00141"
+      ],
+      "oracle": "Pinned source literals and source finding rule/severity outputs; real native root validation/planner retry/H3 Artifact assertions. No Python product execution and no provider calls."
+    },
+    {
+      "upstream_nodeid": "tests/test_dialogue_across_a_cut.py::test_the_whole_line_then_a_recap_of_its_tail_is_the_same_defect",
+      "go_package": "./planner",
+      "go_test": "TestRemainingRepairDialogue/test_the_whole_line_then_a_recap_of_its_tail_is_the_same_defect",
+      "assertion_intent": "The shape the writer moved to once the whole-line duplicate was rejected, measured live:\nthe complete line in [Shot 1], then \"<d>[English] ...and not the whole lock.</d>\" after the cut.\nFewer words duplicated, same instruction to say them twice.",
+      "adaptation": "Original raw prompt/Context/findings are executed by native h3check where captured. A genuine typed Document->h3 Artifact positive path preserves the complete caller line, speaker/language, legal half-open shot timing and paired continuation flags. Parts retain the original separator space rather than the Python validator joining stripped blocks with an inserted space.",
+      "source_file_sha256": "6821df804aed110f1c91a633cb391990ffcf19e9c1dc92bfc4902d82103b5a80",
+      "source_line": 115,
+      "original_assertions": [
+        "assert [f.rule for f in errs] == [\"D10-dialogue-line-duplicated\"], [str(f) for f in errs]",
+        "assert \"again\" in errs[0].msg and \"ellipsis\" in errs[0].msg"
+      ],
+      "fixture_file": "planner/testdata/upstream_repair.json",
+      "fixture_case_ids": [
+        "validate-00142"
+      ],
+      "oracle": "Pinned source literals and source finding rule/severity outputs; real native root validation/planner retry/H3 Artifact assertions. No Python product execution and no provider calls."
+    },
+    {
+      "upstream_nodeid": "tests/test_dialogue_across_a_cut.py::test_the_echo_is_repaired_into_the_split_the_spec_asks_for",
+      "go_package": "./planner",
+      "go_test": "TestRemainingRepairDialogue/test_the_echo_is_repaired_into_the_split_the_spec_asks_for",
+      "assertion_intent": "Measured, not guessed: with the echo made an ERROR, the writer did not converge. Five of\nseven M8 runs came back on the same shape after both correction rounds and lost the whole\nwritten brief to the draft, and a finding that survives being stated plainly is a signal about\nthe finding rather than about the model.\n\nThe construct it was reaching for is derivable, so it is a substitution rather than a re-roll:\nthe caller's line is a fact this layer holds, the echoed fragment is a suffix of it, and the\nwriter has already chosen where the cut falls and marked both sides. Removing the duplicated\nwords from the first block leaves exactly base-en.txt 4.4's construct, in the caller's own words,\neach half spoken once.",
+      "adaptation": "Original raw prompt/Context/findings are executed by native h3check where captured. A genuine typed Document->h3 Artifact positive path preserves the complete caller line, speaker/language, legal half-open shot timing and paired continuation flags. Parts retain the original separator space rather than the Python validator joining stripped blocks with an inserted space. Invalid duplication/ellipsis/unrelated words/reversed playback fail closed with retries disabled; explicit one-retry planning must successfully produce a complete byte-exact split. No automatic deletion, paraphrase or reordering of caller text.",
+      "source_file_sha256": "6821df804aed110f1c91a633cb391990ffcf19e9c1dc92bfc4902d82103b5a80",
+      "source_line": 127,
+      "original_assertions": [
+        "assert blocks == [\"[English] If it turns halfway and stops, the pin is worn, so you change \"\n                      \"the pin\", \"[English] and not the whole lock.\"], blocks",
+        "assert any(\"divided\" in r for r in out.repairs), out.repairs",
+        "assert not [f for f in validate(out.text, _ctx()) if f.severity == \"ERROR\"], \\\n        [str(f) for f in validate(out.text, _ctx())]"
+      ],
+      "fixture_file": "planner/testdata/upstream_repair.json",
+      "fixture_case_ids": [
+        "validate-00143"
+      ],
+      "oracle": "Pinned source literals and source finding rule/severity outputs; real native root validation/planner retry/H3 Artifact assertions. No Python product execution and no provider calls."
+    },
+    {
+      "upstream_nodeid": "tests/test_dialogue_across_a_cut.py::test_the_repair_keeps_an_ellipsis_out_of_the_words",
+      "go_package": "./planner",
+      "go_test": "TestRemainingRepairDialogue/test_the_repair_keeps_an_ellipsis_out_of_the_words",
+      "assertion_intent": "The other form the echo arrived in: \"<d>[English] ...and not the whole lock.</d>\".",
+      "adaptation": "Original raw prompt/Context/findings are executed by native h3check where captured. A genuine typed Document->h3 Artifact positive path preserves the complete caller line, speaker/language, legal half-open shot timing and paired continuation flags. Parts retain the original separator space rather than the Python validator joining stripped blocks with an inserted space. Invalid duplication/ellipsis/unrelated words/reversed playback fail closed with retries disabled; explicit one-retry planning must successfully produce a complete byte-exact split. No automatic deletion, paraphrase or reordering of caller text.",
+      "source_file_sha256": "6821df804aed110f1c91a633cb391990ffcf19e9c1dc92bfc4902d82103b5a80",
+      "source_line": 155,
+      "original_assertions": [
+        "assert \"...\" not in out.text",
+        "assert \"<d>[English] and not the whole lock.</d>\" in out.text"
+      ],
+      "fixture_file": "planner/testdata/upstream_repair.json",
+      "fixture_case_ids": [],
+      "oracle": "Pinned source literals and source finding rule/severity outputs; real native root validation/planner retry/H3 Artifact assertions. No Python product execution and no provider calls."
+    },
+    {
+      "upstream_nodeid": "tests/test_dialogue_across_a_cut.py::test_the_repair_refuses_a_fragment_that_is_not_part_of_the_line",
+      "go_package": "./planner",
+      "go_test": "TestRemainingRepairDialogue/test_the_repair_refuses_a_fragment_that_is_not_part_of_the_line",
+      "assertion_intent": "It carries out the writer's own construct with the caller's words; it does not invent a\nsplit. A second block that is not a tail of the line is left for the rule to report.",
+      "adaptation": "Original raw prompt/Context/findings are executed by native h3check where captured. A genuine typed Document->h3 Artifact positive path preserves the complete caller line, speaker/language, legal half-open shot timing and paired continuation flags. Parts retain the original separator space rather than the Python validator joining stripped blocks with an inserted space. Invalid duplication/ellipsis/unrelated words/reversed playback fail closed with retries disabled; explicit one-retry planning must successfully produce a complete byte-exact split. No automatic deletion, paraphrase or reordering of caller text.",
+      "source_file_sha256": "6821df804aed110f1c91a633cb391990ffcf19e9c1dc92bfc4902d82103b5a80",
+      "source_line": 167,
+      "original_assertions": [
+        "assert not [r for r in out.repairs if \"divided\" in r], out.repairs"
+      ],
+      "fixture_file": "planner/testdata/upstream_repair.json",
+      "fixture_case_ids": [],
+      "oracle": "Pinned source literals and source finding rule/severity outputs; real native root validation/planner retry/H3 Artifact assertions. No Python product execution and no provider calls."
+    },
+    {
+      "upstream_nodeid": "tests/test_dialogue_across_a_cut.py::test_the_repair_will_not_reverse_playback_order",
+      "go_package": "./planner",
+      "go_test": "TestRemainingRepairDialogue/test_the_repair_will_not_reverse_playback_order",
+      "assertion_intent": "A fragment BEFORE the block holding the whole line is not the construct: the words would be\nspoken after they had already been spoken. Reported, not rearranged.",
+      "adaptation": "Original raw prompt/Context/findings are executed by native h3check where captured. A genuine typed Document->h3 Artifact positive path preserves the complete caller line, speaker/language, legal half-open shot timing and paired continuation flags. Parts retain the original separator space rather than the Python validator joining stripped blocks with an inserted space. Invalid duplication/ellipsis/unrelated words/reversed playback fail closed with retries disabled; explicit one-retry planning must successfully produce a complete byte-exact split. No automatic deletion, paraphrase or reordering of caller text.",
+      "source_file_sha256": "6821df804aed110f1c91a633cb391990ffcf19e9c1dc92bfc4902d82103b5a80",
+      "source_line": 179,
+      "original_assertions": [
+        "assert not [r for r in out.repairs if \"divided\" in r], out.repairs",
+        "assert \"D10-dialogue-line-duplicated\" in {f.rule for f in validate(out.text, _ctx())}"
+      ],
+      "fixture_file": "planner/testdata/upstream_repair.json",
+      "fixture_case_ids": [
+        "validate-00144"
+      ],
+      "oracle": "Pinned source literals and source finding rule/severity outputs; real native root validation/planner retry/H3 Artifact assertions. No Python product execution and no provider calls."
+    },
+    {
+      "upstream_nodeid": "tests/test_dialogue_across_a_cut.py::test_a_second_unrelated_line_is_not_an_echo",
+      "go_package": "./planner",
+      "go_test": "TestRemainingRepairDialogue/test_a_second_unrelated_line_is_not_an_echo",
+      "assertion_intent": "The threshold is four consecutive words of the caller's own line, which two different\nutterances do not share by accident.",
+      "adaptation": "Original raw prompt/Context/findings are executed by native h3check where captured. A genuine typed Document->h3 Artifact positive path preserves the complete caller line, speaker/language, legal half-open shot timing and paired continuation flags. Parts retain the original separator space rather than the Python validator joining stripped blocks with an inserted space.",
+      "source_file_sha256": "6821df804aed110f1c91a633cb391990ffcf19e9c1dc92bfc4902d82103b5a80",
+      "source_line": 192,
+      "original_assertions": [
+        "assert not [f for f in validate(text, _ctx()) if f.severity == \"ERROR\"], \\\n        [str(f) for f in validate(text, _ctx())]"
+      ],
+      "fixture_file": "planner/testdata/upstream_repair.json",
+      "fixture_case_ids": [
+        "validate-00145"
+      ],
+      "oracle": "Pinned source literals and source finding rule/severity outputs; real native root validation/planner retry/H3 Artifact assertions. No Python product execution and no provider calls."
+    },
+    {
+      "upstream_nodeid": "tests/test_dialogue_across_a_cut.py::test_the_duplicate_rule_only_counts_lines_the_caller_supplied",
+      "go_package": "./planner",
+      "go_test": "TestRemainingRepairDialogue/test_the_duplicate_rule_only_counts_lines_the_caller_supplied",
+      "assertion_intent": "A repeated shout the caller wrote as one line (\"Pull it! Pull it!\") lives inside one block\nand is none of this rule's business.",
+      "adaptation": "Original raw prompt/Context/findings are executed by native h3check where captured. A genuine typed Document->h3 Artifact positive path preserves the complete caller line, speaker/language, legal half-open shot timing and paired continuation flags. Parts retain the original separator space rather than the Python validator joining stripped blocks with an inserted space.",
+      "source_file_sha256": "6821df804aed110f1c91a633cb391990ffcf19e9c1dc92bfc4902d82103b5a80",
+      "source_line": 201,
+      "original_assertions": [
+        "assert \"D10-dialogue-line-duplicated\" not in {f.rule for f in found}"
+      ],
+      "fixture_file": "planner/testdata/upstream_repair.json",
+      "fixture_case_ids": [
+        "validate-00146"
+      ],
+      "oracle": "Pinned source literals and source finding rule/severity outputs; real native root validation/planner retry/H3 Artifact assertions. No Python product execution and no provider calls."
+    },
+    {
+      "upstream_nodeid": "tests/test_dialogue_across_a_cut.py::test_nothing_fires_when_the_caller_supplied_no_dialogue",
+      "go_package": "./planner",
+      "go_test": "TestRemainingRepairDialogue/test_nothing_fires_when_the_caller_supplied_no_dialogue",
+      "assertion_intent": "assert not [f for f in found if f.rule.startswith(\"D1\")], [str(f) for f in found]",
+      "adaptation": "Original raw prompt/Context/findings are executed by native h3check where captured. A genuine typed Document->h3 Artifact positive path preserves the complete caller line, speaker/language, legal half-open shot timing and paired continuation flags. Parts retain the original separator space rather than the Python validator joining stripped blocks with an inserted space.",
+      "source_file_sha256": "6821df804aed110f1c91a633cb391990ffcf19e9c1dc92bfc4902d82103b5a80",
+      "source_line": 209,
+      "original_assertions": [
+        "assert not [f for f in found if f.rule.startswith(\"D1\")], [str(f) for f in found]"
+      ],
+      "fixture_file": "planner/testdata/upstream_repair.json",
+      "fixture_case_ids": [
+        "validate-00147"
+      ],
+      "oracle": "Pinned source literals and source finding rule/severity outputs; real native root validation/planner retry/H3 Artifact assertions. No Python product execution and no provider calls."
+    },
+    {
+      "upstream_nodeid": "tests/test_dialogue_across_a_cut.py::test_a_split_line_with_no_scenetrans_at_all_is_an_error",
+      "go_package": "./planner",
+      "go_test": "TestRemainingRepairDialogue/test_a_split_line_with_no_scenetrans_at_all_is_an_error",
+      "assertion_intent": "assert [f.rule for f in errs] == [\"D11-split-line-no-scenetrans\"], [str(f) for f in errs]; assert \"<scenetrans>\" in errs[0].msg",
+      "adaptation": "Original raw prompt/Context/findings are executed by native h3check where captured. A genuine typed Document->h3 Artifact positive path preserves the complete caller line, speaker/language, legal half-open shot timing and paired continuation flags. Parts retain the original separator space rather than the Python validator joining stripped blocks with an inserted space.",
+      "source_file_sha256": "6821df804aed110f1c91a633cb391990ffcf19e9c1dc92bfc4902d82103b5a80",
+      "source_line": 216,
+      "original_assertions": [
+        "assert [f.rule for f in errs] == [\"D11-split-line-no-scenetrans\"], [str(f) for f in errs]",
+        "assert \"<scenetrans>\" in errs[0].msg"
+      ],
+      "fixture_file": "planner/testdata/upstream_repair.json",
+      "fixture_case_ids": [
+        "validate-00148"
+      ],
+      "oracle": "Pinned source literals and source finding rule/severity outputs; real native root validation/planner retry/H3 Artifact assertions. No Python product execution and no provider calls."
+    },
+    {
+      "upstream_nodeid": "tests/test_dialogue_across_a_cut.py::test_a_split_line_marked_on_only_one_side_is_an_error",
+      "go_package": "./planner",
+      "go_test": "TestRemainingRepairDialogue/test_a_split_line_marked_on_only_one_side_is_an_error",
+      "assertion_intent": "\"at the connecting points in both parts\" is two markers: the end of the first part and the\nstart of the second.",
+      "adaptation": "Original raw prompt/Context/findings are executed by native h3check where captured. A genuine typed Document->h3 Artifact positive path preserves the complete caller line, speaker/language, legal half-open shot timing and paired continuation flags. Parts retain the original separator space rather than the Python validator joining stripped blocks with an inserted space.",
+      "source_file_sha256": "6821df804aed110f1c91a633cb391990ffcf19e9c1dc92bfc4902d82103b5a80",
+      "source_line": 223,
+      "original_assertions": [
+        "assert [f.rule for f in errs] == [\"D11-split-line-no-scenetrans\"], (before, after, errs)",
+        "assert \"one side\" in errs[0].msg, errs[0].msg"
+      ],
+      "fixture_file": "planner/testdata/upstream_repair.json",
+      "fixture_case_ids": [
+        "validate-00149",
+        "validate-00150"
+      ],
+      "oracle": "Pinned source literals and source finding rule/severity outputs; real native root validation/planner retry/H3 Artifact assertions. No Python product execution and no provider calls."
+    },
+    {
+      "upstream_nodeid": "tests/test_dialogue_across_a_cut.py::test_a_split_line_with_no_continuity_statement_is_a_warning",
+      "go_package": "./planner",
+      "go_test": "TestRemainingRepairDialogue/test_a_split_line_with_no_continuity_statement_is_a_warning",
+      "assertion_intent": "The spec mandates the statement and offers four phrasings for it, so the wording is open and\nthe absence is reportable rather than a gate.",
+      "adaptation": "Original raw prompt/Context/findings are executed by native h3check where captured. A genuine typed Document->h3 Artifact positive path preserves the complete caller line, speaker/language, legal half-open shot timing and paired continuation flags. Parts retain the original separator space rather than the Python validator joining stripped blocks with an inserted space.",
+      "source_file_sha256": "6821df804aed110f1c91a633cb391990ffcf19e9c1dc92bfc4902d82103b5a80",
+      "source_line": 233,
+      "original_assertions": [
+        "assert not [f for f in found if f.severity == \"ERROR\"], [str(f) for f in found]",
+        "assert warns and warns[0].severity == \"WARN\", [str(f) for f in found]"
+      ],
+      "fixture_file": "planner/testdata/upstream_repair.json",
+      "fixture_case_ids": [
+        "validate-00151"
+      ],
+      "oracle": "Pinned source literals and source finding rule/severity outputs; real native root validation/planner retry/H3 Artifact assertions. No Python product execution and no provider calls."
+    },
+    {
+      "upstream_nodeid": "tests/test_dialogue_across_a_cut.py::test_every_continuity_phrase_the_spec_lists_satisfies_it",
+      "go_package": "./planner",
+      "go_test": "TestRemainingRepairDialogue/test_every_continuity_phrase_the_spec_lists_satisfies_it",
+      "assertion_intent": "assert not found, (phrase, [str(f) for f in found])",
+      "adaptation": "Original raw prompt/Context/findings are executed by native h3check where captured. A genuine typed Document->h3 Artifact positive path preserves the complete caller line, speaker/language, legal half-open shot timing and paired continuation flags. Parts retain the original separator space rather than the Python validator joining stripped blocks with an inserted space.",
+      "source_file_sha256": "6821df804aed110f1c91a633cb391990ffcf19e9c1dc92bfc4902d82103b5a80",
+      "source_line": 242,
+      "original_assertions": [
+        "assert not found, (phrase, [str(f) for f in found])"
+      ],
+      "fixture_file": "planner/testdata/upstream_repair.json",
+      "fixture_case_ids": [
+        "validate-00152",
+        "validate-00153",
+        "validate-00154",
+        "validate-00155"
+      ],
+      "oracle": "Pinned source literals and source finding rule/severity outputs; real native root validation/planner retry/H3 Artifact assertions. No Python product execution and no provider calls."
+    },
+    {
+      "upstream_nodeid": "tests/test_dialogue_across_a_cut.py::test_a_line_broken_inside_one_shot_is_an_error_of_its_own",
+      "go_package": "./planner",
+      "go_test": "TestRemainingRepairDialogue/test_a_line_broken_inside_one_shot_is_an_error_of_its_own",
+      "assertion_intent": "No cut between the halves, so `<scenetrans>` is not the remedy: the line is simply broken in\ntwo for no reason, and one supplied line is spoken once.",
+      "adaptation": "Original raw prompt/Context/findings are executed by native h3check where captured. A genuine typed Document->h3 Artifact positive path preserves the complete caller line, speaker/language, legal half-open shot timing and paired continuation flags. Parts retain the original separator space rather than the Python validator joining stripped blocks with an inserted space.",
+      "source_file_sha256": "6821df804aed110f1c91a633cb391990ffcf19e9c1dc92bfc4902d82103b5a80",
+      "source_line": 254,
+      "original_assertions": [
+        "assert [f.rule for f in errs] == [\"D13-line-split-without-a-cut\"], [str(f) for f in errs]"
+      ],
+      "fixture_file": "planner/testdata/upstream_repair.json",
+      "fixture_case_ids": [
+        "validate-00156"
+      ],
+      "oracle": "Pinned source literals and source finding rule/severity outputs; real native root validation/planner retry/H3 Artifact assertions. No Python product execution and no provider calls."
+    },
+    {
+      "upstream_nodeid": "tests/test_dialogue_across_a_cut.py::test_the_marker_at_the_start_of_the_second_part_does_not_hide_the_cut_time",
+      "go_package": "./planner",
+      "go_test": "TestRemainingRepairDialogue/test_the_marker_at_the_start_of_the_second_part_does_not_hide_the_cut_time",
+      "assertion_intent": "Real output from the live service, trimmed. The writer put the marker where base-en.txt 4.4\nsays the second part's connecting point is -- immediately after `[Shot 2]` -- and\n`T4-missing-cut-time` read the cut time as absent, so the one request that asked for the join to\nbe marked on both sides lost its whole written brief to the draft after two correction passes.\n\nThe time is present and the reading is unambiguous, so this was the check being stricter than the\nspec rather than the text being wrong.",
+      "adaptation": "Original raw prompt/Context/findings are executed by native h3check where captured. A genuine typed Document->h3 Artifact positive path preserves the complete caller line, speaker/language, legal half-open shot timing and paired continuation flags. Parts retain the original separator space rather than the Python validator joining stripped blocks with an inserted space.",
+      "source_file_sha256": "6821df804aed110f1c91a633cb391990ffcf19e9c1dc92bfc4902d82103b5a80",
+      "source_line": 263,
+      "original_assertions": [
+        "assert not [f for f in found if f.severity == \"ERROR\"], [str(f) for f in found]"
+      ],
+      "fixture_file": "planner/testdata/upstream_repair.json",
+      "fixture_case_ids": [
+        "validate-00157"
+      ],
+      "oracle": "Pinned source literals and source finding rule/severity outputs; real native root validation/planner retry/H3 Artifact assertions. No Python product execution and no provider calls."
+    },
+    {
+      "upstream_nodeid": "tests/test_dialogue_across_a_cut.py::test_a_shot_with_a_marker_and_no_time_at_all_is_still_an_error",
+      "go_package": "./planner",
+      "go_test": "TestRemainingRepairDialogue/test_a_shot_with_a_marker_and_no_time_at_all_is_still_an_error",
+      "assertion_intent": "Skipping the marker must not skip the requirement behind it.",
+      "adaptation": "Original raw prompt/Context/findings are executed by native h3check where captured. A genuine typed Document->h3 Artifact positive path preserves the complete caller line, speaker/language, legal half-open shot timing and paired continuation flags. Parts retain the original separator space rather than the Python validator joining stripped blocks with an inserted space.",
+      "source_file_sha256": "6821df804aed110f1c91a633cb391990ffcf19e9c1dc92bfc4902d82103b5a80",
+      "source_line": 280,
+      "original_assertions": [
+        "assert \"T4-missing-cut-time\" in {f.rule for f in validate(text, _ctx())\n                                     if f.severity == \"ERROR\"}"
+      ],
+      "fixture_file": "planner/testdata/upstream_repair.json",
+      "fixture_case_ids": [
+        "validate-00158"
+      ],
+      "oracle": "Pinned source literals and source finding rule/severity outputs; real native root validation/planner retry/H3 Artifact assertions. No Python product execution and no provider calls."
+    },
+    {
+      "upstream_nodeid": "tests/test_dialogue_across_a_cut.py::test_a_marker_does_not_license_a_timestamp_on_the_first_shot",
+      "go_package": "./planner",
+      "go_test": "TestRemainingRepairDialogue/test_a_marker_does_not_license_a_timestamp_on_the_first_shot",
+      "assertion_intent": "assert \"T2-shot1-timestamp\" in {f.rule for f in validate(text, _ctx())\n                                    if f.severity == \"ERROR\"}",
+      "adaptation": "Original raw prompt/Context/findings are executed by native h3check where captured. A genuine typed Document->h3 Artifact positive path preserves the complete caller line, speaker/language, legal half-open shot timing and paired continuation flags. Parts retain the original separator space rather than the Python validator joining stripped blocks with an inserted space.",
+      "source_file_sha256": "6821df804aed110f1c91a633cb391990ffcf19e9c1dc92bfc4902d82103b5a80",
+      "source_line": 289,
+      "original_assertions": [
+        "assert \"T2-shot1-timestamp\" in {f.rule for f in validate(text, _ctx())\n                                    if f.severity == \"ERROR\"}"
+      ],
+      "fixture_file": "planner/testdata/upstream_repair.json",
+      "fixture_case_ids": [
+        "validate-00159"
+      ],
+      "oracle": "Pinned source literals and source finding rule/severity outputs; real native root validation/planner retry/H3 Artifact assertions. No Python product execution and no provider calls."
+    },
+    {
+      "upstream_nodeid": "tests/test_dialogue_across_a_cut.py::test_a_line_split_across_three_shots_needs_the_marker_at_both_joins",
+      "go_package": "./planner",
+      "go_test": "TestRemainingRepairDialogue/test_a_line_split_across_three_shots_needs_the_marker_at_both_joins",
+      "assertion_intent": "The construct generalises: every join the line crosses is a connecting point.",
+      "adaptation": "Original raw prompt/Context/findings are executed by native h3check where captured. A genuine typed Document->h3 Artifact positive path preserves the complete caller line, speaker/language, legal half-open shot timing and paired continuation flags. Parts retain the original separator space rather than the Python validator joining stripped blocks with an inserted space.",
+      "source_file_sha256": "6821df804aed110f1c91a633cb391990ffcf19e9c1dc92bfc4902d82103b5a80",
+      "source_line": 296,
+      "original_assertions": [
+        "assert not [f for f in validate(good, _ctx()) if f.severity == \"ERROR\"], \\\n        [str(f) for f in validate(good, _ctx())]",
+        "assert \"D11-split-line-no-scenetrans\" in errs, errs"
+      ],
+      "fixture_file": "planner/testdata/upstream_repair.json",
+      "fixture_case_ids": [
+        "validate-00160",
+        "validate-00161"
+      ],
+      "oracle": "Pinned source literals and source finding rule/severity outputs; real native root validation/planner retry/H3 Artifact assertions. No Python product execution and no provider calls."
+    },
+    {
+      "upstream_nodeid": "tests/test_dialogue_across_a_cut.py::test_the_ask_states_how_a_line_crossing_a_cut_is_written",
+      "go_package": "./planner",
+      "go_test": "TestRemainingRepairDialogue/test_the_ask_states_how_a_line_crossing_a_cut_is_written",
+      "assertion_intent": "`<scenetrans>` appeared in 0 of 7 natural requests and `<cutoff>` in 0 of 7. Both markers\nexisted only as one line of spec text inside a long system prompt; the ask never mentioned them\nbeside the lines the writer is placing. This asserts the rule of the format is stated there.\nWhether it lands is measured against the live service.",
+      "adaptation": "Original raw prompt/Context/findings are executed by native h3check where captured. A genuine typed Document->h3 Artifact positive path preserves the complete caller line, speaker/language, legal half-open shot timing and paired continuation flags. Parts retain the original separator space rather than the Python validator joining stripped blocks with an inserted space. The actual versioned planner System carries byte-exact/paired continuation/no-repeat rules; typed cut_off schema produces the actual <cutoff> marker. Go does not send the Python free-text compose ask.",
+      "source_file_sha256": "6821df804aed110f1c91a633cb391990ffcf19e9c1dc92bfc4902d82103b5a80",
+      "source_line": 315,
+      "original_assertions": [
+        "assert \"spoken once\" in ask.lower()",
+        "assert \"<scenetrans>\" in ask",
+        "assert \"<cutoff>\" in ask",
+        "assert \"no word appears in both\" in ask",
+        "assert \"says them\" in ask, \"the consequence of a repeat has to be stated, not just forbidden\""
+      ],
+      "fixture_file": "planner/testdata/upstream_repair.json",
+      "fixture_case_ids": [],
+      "oracle": "Pinned source literals and source finding rule/severity outputs; real native root validation/planner retry/H3 Artifact assertions. No Python product execution and no provider calls."
+    },
+    {
+      "upstream_nodeid": "tests/test_dialogue_across_a_cut.py::test_a_brief_with_no_dialogue_is_not_given_the_dialogue_rules",
+      "go_package": "./planner",
+      "go_test": "TestRemainingRepairDialogue/test_a_brief_with_no_dialogue_is_not_given_the_dialogue_rules",
+      "assertion_intent": "assert \"<scenetrans>\" not in backend.asks[0]",
+      "adaptation": "Original raw prompt/Context/findings are executed by native h3check where captured. A genuine typed Document->h3 Artifact positive path preserves the complete caller line, speaker/language, legal half-open shot timing and paired continuation flags. Parts retain the original separator space rather than the Python validator joining stripped blocks with an inserted space. The actual per-request Input has empty dialogue and no dialogue-only markers; the shared System still describes the general schema. Final Artifact must contain no phantom dialogue.",
+      "source_file_sha256": "6821df804aed110f1c91a633cb391990ffcf19e9c1dc92bfc4902d82103b5a80",
+      "source_line": 355,
+      "original_assertions": [
+        "assert \"<scenetrans>\" not in backend.asks[0]"
+      ],
+      "fixture_file": "planner/testdata/upstream_repair.json",
+      "fixture_case_ids": [],
+      "oracle": "Pinned source literals and source finding rule/severity outputs; real native root validation/planner retry/H3 Artifact assertions. No Python product execution and no provider calls."
+    },
+    {
+      "upstream_nodeid": "tests/test_frame_anchors.py::test_the_written_path_gets_the_notation_the_renderer_already_uses",
+      "go_package": "./h3",
+      "go_test": "TestRemainingRepairFrameAnchors/test_the_written_path_gets_the_notation_the_renderer_already_uses",
+      "assertion_intent": "Real output from the live endpoint, trimmed. The model is handed the mandated FL2VA line\nverbatim in its system prompt and wrote the bracketed form anyway — so the same mode shipped\nthe spec's notation when the draft won and a bracketed near-miss when the model won.",
+      "adaptation": "Original WRITTEN bytes and exact mandated notation exercised by explicit h3.RepairInstructionLine with typed mode/actual final shot/effective duration. Native h3check validates the repaired output; actual Document->Artifact verifies both concrete frame manifest bindings. Bracket modes remain byte-for-byte unchanged.",
+      "source_file_sha256": "f3f61f0b18ce997c8242b1ad0e7f75e04bf3c237fb9ef4238ec0ff1be412baa7",
+      "source_line": 239,
+      "original_assertions": [
+        "assert out.text.startswith(\"How the reference pictures align with the target video — Picture 1 \"\n                               \"(from Shot 1) aligns with the 0.00-second mark\")",
+        "assert \"Picture 2 (from Shot 2) aligns with the 5.17-second mark\" in out.text",
+        "assert \"<Picture\" not in out.text",
+        "assert any(\"bare spec form\" in r for r in out.repairs), out.repairs",
+        "assert \"[Shot 1] Cinematic\" in out.text and \"[Shot 2] At 00:03.500\" in out.text"
+      ],
+      "fixture_file": "planner/testdata/upstream_repair.json",
+      "fixture_case_ids": [],
+      "oracle": "Pinned source literals and source finding rule/severity outputs; real native root validation/planner retry/H3 Artifact assertions. No Python product execution and no provider calls."
+    },
+    {
+      "upstream_nodeid": "tests/test_frame_anchors.py::test_the_repaired_brief_still_binds_both_pictures",
+      "go_package": "./h3",
+      "go_test": "TestRemainingRepairFrameAnchors/test_the_repaired_brief_still_binds_both_pictures",
+      "assertion_intent": "The repair and the binding check have to agree, or normalising the notation would trade one\nfailure for another.",
+      "adaptation": "Original WRITTEN bytes and exact mandated notation exercised by explicit h3.RepairInstructionLine with typed mode/actual final shot/effective duration. Native h3check validates the repaired output; actual Document->Artifact verifies both concrete frame manifest bindings. Bracket modes remain byte-for-byte unchanged.",
+      "source_file_sha256": "f3f61f0b18ce997c8242b1ad0e7f75e04bf3c237fb9ef4238ec0ff1be412baa7",
+      "source_line": 256,
+      "original_assertions": [
+        "assert not [f for f in found if f.severity == \"ERROR\"], [str(f) for f in found]"
+      ],
+      "fixture_file": "planner/testdata/upstream_repair.json",
+      "fixture_case_ids": [],
+      "oracle": "Pinned source literals and source finding rule/severity outputs; real native root validation/planner retry/H3 Artifact assertions. No Python product execution and no provider calls."
+    },
+    {
+      "upstream_nodeid": "tests/test_frame_anchors.py::test_the_modes_that_bracket_are_left_alone",
+      "go_package": "./h3",
+      "go_test": "TestRemainingRepairFrameAnchors/test_the_modes_that_bracket_are_left_alone",
+      "assertion_intent": "i2va and l2va bracket their labels in the spec, so their briefs must come back untouched.",
+      "adaptation": "Original WRITTEN bytes and exact mandated notation exercised by explicit h3.RepairInstructionLine with typed mode/actual final shot/effective duration. Native h3check validates the repaired output; actual Document->Artifact verifies both concrete frame manifest bindings. Bracket modes remain byte-for-byte unchanged.",
+      "source_file_sha256": "f3f61f0b18ce997c8242b1ad0e7f75e04bf3c237fb9ef4238ec0ff1be412baa7",
+      "source_line": 267,
+      "original_assertions": [
+        "assert out.text == i2va",
+        "assert not out.repairs, out.repairs"
+      ],
+      "fixture_file": "planner/testdata/upstream_repair.json",
+      "fixture_case_ids": [],
+      "oracle": "Pinned source literals and source finding rule/severity outputs; real native root validation/planner retry/H3 Artifact assertions. No Python product execution and no provider calls."
+    },
+    {
+      "upstream_nodeid": "tests/test_instruction_line.py::test_the_repair_rewrites_a_three_decimal_line_from_the_wiring",
+      "go_package": "./h3",
+      "go_test": "TestRemainingRepairInstructionLine/test_the_repair_rewrites_a_three_decimal_line_from_the_wiring",
+      "assertion_intent": "The number is a fact this layer holds, so it is a substitution and not a reason to re-roll:\nthe same class as the label namespace and fl2va's bare notation.",
+      "adaptation": "Original BODY/L2VA_OK exact source constants exercise explicit typed-wiring header repair, two-decimal effective duration, blank line, unchanged correct output and no line in non-anchor modes. Native h3check validates the resulting prompt; no model or intent inference.",
+      "source_file_sha256": "098c735d45841dfef50af1183481a2450b0e9a5b8f6ee38ad8a72c7f6323eef7",
+      "source_line": 161,
+      "original_assertions": [
+        "assert \"13.67-second mark\" in out.text",
+        "assert \"13.667\" not in out.text",
+        "assert any(\"instruction line\" in r for r in out.repairs), out.repairs",
+        "assert not [f for f in validate(out.text, Context(mode=\"l2va\", n_pictures=1,\n                                                      duration_s=328 / 24))\n                if f.severity == \"ERROR\"]"
+      ],
+      "fixture_file": "planner/testdata/upstream_repair.json",
+      "fixture_case_ids": [],
+      "oracle": "Pinned source literals and source finding rule/severity outputs; real native root validation/planner retry/H3 Artifact assertions. No Python product execution and no provider calls."
+    },
+    {
+      "upstream_nodeid": "tests/test_instruction_line.py::test_the_repair_adds_the_line_when_the_model_omitted_it_entirely",
+      "go_package": "./h3",
+      "go_test": "TestRemainingRepairInstructionLine/test_the_repair_adds_the_line_when_the_model_omitted_it_entirely",
+      "assertion_intent": "assert out.text.startswith(\"For the target video, at 0.00 seconds into the target video, \"\n                               \"<Picture 1> (from [Shot 1]) is fully referenced.\\n\\n\"); assert any(\"instruction line\" in r for r in out.repairs), out.repairs",
+      "adaptation": "Original BODY/L2VA_OK exact source constants exercise explicit typed-wiring header repair, two-decimal effective duration, blank line, unchanged correct output and no line in non-anchor modes. Native h3check validates the resulting prompt; no model or intent inference.",
+      "source_file_sha256": "098c735d45841dfef50af1183481a2450b0e9a5b8f6ee38ad8a72c7f6323eef7",
+      "source_line": 174,
+      "original_assertions": [
+        "assert out.text.startswith(\"For the target video, at 0.00 seconds into the target video, \"\n                               \"<Picture 1> (from [Shot 1]) is fully referenced.\\n\\n\")",
+        "assert any(\"instruction line\" in r for r in out.repairs), out.repairs"
+      ],
+      "fixture_file": "planner/testdata/upstream_repair.json",
+      "fixture_case_ids": [],
+      "oracle": "Pinned source literals and source finding rule/severity outputs; real native root validation/planner retry/H3 Artifact assertions. No Python product execution and no provider calls."
+    },
+    {
+      "upstream_nodeid": "tests/test_instruction_line.py::test_the_repair_leaves_a_correct_line_untouched",
+      "go_package": "./h3",
+      "go_test": "TestRemainingRepairInstructionLine/test_the_repair_leaves_a_correct_line_untouched",
+      "assertion_intent": "assert out.text == good; assert not out.repairs, out.repairs",
+      "adaptation": "Original BODY/L2VA_OK exact source constants exercise explicit typed-wiring header repair, two-decimal effective duration, blank line, unchanged correct output and no line in non-anchor modes. Native h3check validates the resulting prompt; no model or intent inference.",
+      "source_file_sha256": "098c735d45841dfef50af1183481a2450b0e9a5b8f6ee38ad8a72c7f6323eef7",
+      "source_line": 182,
+      "original_assertions": [
+        "assert out.text == good",
+        "assert not out.repairs, out.repairs"
+      ],
+      "fixture_file": "planner/testdata/upstream_repair.json",
+      "fixture_case_ids": [],
+      "oracle": "Pinned source literals and source finding rule/severity outputs; real native root validation/planner retry/H3 Artifact assertions. No Python product execution and no provider calls."
+    },
+    {
+      "upstream_nodeid": "tests/test_instruction_line.py::test_the_repair_does_not_invent_a_line_for_t2va_or_ref2va",
+      "go_package": "./h3",
+      "go_test": "TestRemainingRepairInstructionLine/test_the_repair_does_not_invent_a_line_for_t2va_or_ref2va",
+      "assertion_intent": "assert \"second mark\" not in out.text; assert \"fully referenced\" not in out.text",
+      "adaptation": "Original BODY/L2VA_OK exact source constants exercise explicit typed-wiring header repair, two-decimal effective duration, blank line, unchanged correct output and no line in non-anchor modes. Native h3check validates the resulting prompt; no model or intent inference.",
+      "source_file_sha256": "098c735d45841dfef50af1183481a2450b0e9a5b8f6ee38ad8a72c7f6323eef7",
+      "source_line": 189,
+      "original_assertions": [
+        "assert \"second mark\" not in out.text",
+        "assert \"fully referenced\" not in out.text"
+      ],
+      "fixture_file": "planner/testdata/upstream_repair.json",
+      "fixture_case_ids": [],
+      "oracle": "Pinned source literals and source finding rule/severity outputs; real native root validation/planner retry/H3 Artifact assertions. No Python product execution and no provider calls."
+    },
+    {
+      "upstream_nodeid": "tests/test_swap_roles.py::test_the_wiring_that_shipped_two_prefixes_now_derives_and_writes_one",
+      "go_package": "./h3",
+      "go_test": "TestRemainingRepairSwapTaskTypes",
+      "assertion_intent": "The measured case, tied to `derive_task_types` rather than restating its answer.\n\nTwo live renders through the node pack, same wiring shape: a `replacement_subject` picture, an\n`edit_source` clip, and the clip's soundtrack sent along as `bgm`. It derives three task types.\nOne render shipped all three; the other shipped `[video editing + audio reuse]`, dropping the\none the picture is the entire reason for, and no rule fired on either.",
+      "adaptation": "Actual authoritative native Subject/Reference/paired soundtrack relationships derive h3.TaskTypes and the shipping Artifact prefix. Explicit repair of the missing relationship must restore the entire Artifact byte-for-byte; native conventional task ordering differs from the source list order without changing membership.",
+      "source_file_sha256": "47e079d10bc86d98c84d92b1a17d2f4e4e1438e1bfe95bdd498c1b361e1fd351",
+      "source_line": 814,
+      "original_assertions": [
+        "assert set(plan.task_types) == {\"reference generation\", \"video editing\", \"audio reuse\"}",
+        "assert set(p.strip() for p in prefix.strip(\"[]\").split(\"+\")) == set(plan.task_types), prefix",
+        "assert \"reference generation\" in prefix"
+      ],
+      "fixture_file": "planner/testdata/upstream_repair.json",
+      "fixture_case_ids": [],
+      "oracle": "Pinned source literals and source finding rule/severity outputs; real native root validation/planner retry/H3 Artifact assertions. No Python product execution and no provider calls."
+    }
+  ],
+  "supplementary_tests": [
+    {
+      "go_package": "./h3",
+      "go_test": "TestRemainingRepairLiteralSafety",
+      "purpose": "Protect dialogue/quoted/header-shaped literal bytes; reject unknown typed tasks and missing explicit anchor wiring."
+    },
+    {
+      "go_package": "./planner",
+      "go_test": "TestRemainingRepairUserChineseTwoFourSecondShots",
+      "purpose": "User-requested original Chinese voiceover 我们明天见，好吗？ across exact [0,4000)/[4000,8000) shots, no additional dialogue/music, actual bounded Planner retry and final H3 Artifact. Not an upstream nodeid and not counted among 989."
+    }
+  ],
+  "original_validator_calls": 38,
+  "scope_note": "Source Python free-text repair and prompt names are adapted to native strict structured output and explicit protocol formatter APIs. A validation-only captured post-Python-repair call is never counted as proof of native repair; four dialogue repair nodes independently execute successful and rejecting native planner paths."
+}

@@ -132,7 +132,7 @@ func ParseBrief(data []byte) (BriefIn, error) {
 		}
 		return b, malformed(path, e.Error())
 	}
-	for _, k := range []string{"intent", "assets", "seconds", "aspect", "dialogue", "onscreen_text", "loras", "silent", "constraints", "creativity", "director", "effort", "transcripts"} {
+	for _, k := range []string{"intent", "assets", "seconds", "aspect", "dialogue", "onscreen_text", "loras", "silent", "constraints", "creativity", "director", "effort", "transcripts", "audio_copy_modes", "transcript_uses", "subject_projections"} {
 		if raw, ok := obj[k]; ok && bytes.Equal(bytes.TrimSpace(raw), []byte("null")) {
 			return b, malformed(k, "Input cannot be null")
 		}
@@ -159,6 +159,14 @@ func ParseBrief(data []byte) (BriefIn, error) {
 		if answer != "opening_frame" && answer != "appears_in" {
 			return b, malformed("answer."+id, "Input should be opening_frame or appears_in")
 		}
+	}
+	for id, mode := range b.AudioCopyModes {
+		if strings.TrimSpace(id) == "" || mode != "fully_copy" && mode != "partially_copy" {
+			return b, malformed("audio_copy_modes", "Each asset-N key requires fully_copy or partially_copy")
+		}
+	}
+	if e = validateWireChoices(obj, b); e != nil {
+		return b, e
 	}
 	var assets []json.RawMessage
 	if raw, ok := obj["assets"]; ok {
@@ -313,7 +321,7 @@ func (s *Service) PrepareBrief(payload []byte) (plan.Brief, error) {
 	if len(missing) > 0 {
 		return out, &Error{Status: 422, Code: "asset-not-uploaded", Message: fmt.Sprintf("this service does not hold %d of the attachments this request names. Send the bytes to PUT /v1/assets/{sha256} and ask again. An upload is kept for a while and then dropped, so one that worked an hour ago can need sending a second time.", len(missing)), Missing: missing}
 	}
-	out = plan.Brief{Intent: b.Intent, Seconds: b.Seconds, Aspect: b.Aspect, Megapixels: b.Megapixels, Assets: []plan.AssetRef{}, Dialogue: []plan.DialogueLine{}, OnscreenText: b.OnscreenText, Shots: b.Shots, LoRAs: b.LoRAs, Constraints: b.Constraints, Silent: b.Silent, Creativity: b.Creativity, Director: b.Director, DirectorProfile: b.DirectorProfile, Effort: b.Effort, Seed: b.Seed, Transcripts: b.Transcripts}
+	out = plan.Brief{Intent: b.Intent, Seconds: b.Seconds, Aspect: b.Aspect, Megapixels: b.Megapixels, Assets: []plan.AssetRef{}, Dialogue: []plan.DialogueLine{}, OnscreenText: b.OnscreenText, Shots: b.Shots, LoRAs: b.LoRAs, Constraints: b.Constraints, Silent: b.Silent, Creativity: b.Creativity, Director: b.Director, DirectorProfile: b.DirectorProfile, Effort: b.Effort, Seed: b.Seed, Transcripts: b.Transcripts, AudioCopyModes: b.AudioCopyModes, TranscriptUses: b.TranscriptUses, SubjectProjections: b.SubjectProjections}
 	for _, a := range b.Assets {
 		p, sha, er := s.source(a)
 		if er != nil {
@@ -352,6 +360,28 @@ func (s *Service) PrepareBrief(payload []byte) (plan.Brief, error) {
 			}
 		}
 		out.Assets = append(out.Assets, plan.AssetRef{Kind: a.Kind, Role: role, SHA256: sha, Path: &p, Note: a.Note, Seconds: a.Seconds, Frames: a.Frames, Sizing: a.Sizing, Composition: "unknown", Provenance: a.Provenance, PairedVideoSHA256: paired, Replaces: strings.TrimSpace(value(a.Replaces)), RoleStated: stated})
+	}
+	for id := range b.AudioCopyModes {
+		valid := false
+		for i, a := range out.Assets {
+			if id == fmt.Sprintf("asset-%d", i+1) && a.Kind == "audio" && a.Role == "bgm" {
+				valid = true
+			}
+		}
+		if !valid {
+			return out, malformed("audio_copy_modes", "Copy choices must identify an attached BGM audio as asset-1, asset-2, and so on")
+		}
+	}
+	for _, use := range b.TranscriptUses {
+		valid := false
+		for i, asset := range out.Assets {
+			if use.AssetID == fmt.Sprintf("asset-%d", i+1) && asset.Kind == "audio" {
+				valid = true
+			}
+		}
+		if !valid {
+			return out, malformed("transcript_uses.asset_id", "A transcript use must identify an attached audio as an exact asset-N ID")
+		}
 	}
 	for _, d := range b.Dialogue {
 		out.Dialogue = append(out.Dialogue, plan.DialogueLine{Text: d.Text, Language: d.Language, SpeakerHint: d.Speaker, Voiceover: d.Voiceover})
