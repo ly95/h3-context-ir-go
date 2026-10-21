@@ -4,7 +4,9 @@
 
 验收依据是 [OpenH3-IR 固定提交 fd031e1](https://github.com/ruashots/open-h3-ir/tree/fd031e136ae3d89147324c0d1b2aa65e838c21f5) 的完整功能与原始测试。原测试输入、原断言、历次失败和真实 DeepSeek 输出分别保存在 [conformance](conformance/README.md)，未把早期三个自编 smoke cases 当作功能验收。具体通过范围和剩余差异见 [验收清单](docs/UPSTREAM_TESTS.md) 与 [当前状态](docs/READINESS.md)。
 
-最终逐项验收覆盖原清单 **991 项中的 989 项 Go 适用要求，989 项全部通过**：672 项由未修改的原断言验证实际 Go 主输出，317 项由明确记录接口/输入调整的独立 Go 测试验证；另 2 项 Python 语法检查不适用于 Go。没有遗漏、重复计数或跳过来凑通过。原样 Python 桥接重跑仍保留 **981 passed / 10 failed**，没有改写成 991 passed。见 [完整逐项报告](conformance/reports/native-functionality-remaining-all-v3.json) 与 [差异说明](docs/UPSTREAM_TESTS.md)。
+最终逐项验收覆盖原清单 **991/991 项，全部通过**：672 项由未修改的原断言验证实际 Go 主输出，319 项由明确记录接口/输入调整的独立 Go 测试验证；两项语言兼容要求已按 Go 实现，N/A 为 0。没有遗漏、重复计数或跳过来凑通过。原样 Python 桥接重跑仍保留 **981 passed / 10 failed**，没有改写成 991 passed。见 [完整逐项报告](conformance/reports/native-functionality-go-compatibility-v1.json) 与 [差异说明](docs/UPSTREAM_TESTS.md)。
+
+真实最低 Go 1.25.0 的全库测试与 vet 已通过，见 [兼容性证据](conformance/reports/go-minimum-compatibility-v1.json)。旧 989 项通过、2 项 N/A 的报告作为历史保留。
 
 这是公开协议的独立实现，没有 MiniMax 托管 Context-IR 的内部代码、训练数据或生成质量等价证据。
 
@@ -13,12 +15,12 @@
 需要 Go 1.25+。私有仓库调用方需要相应 GitHub 访问权限，可按环境设置 `GOPRIVATE=github.com/ly95/*`，不要把凭据放进 module URL。
 
 ```sh
-go get github.com/ly95/contextir@v0.1.1-0.20261020120832-874c5ee273bc
+go get github.com/ly95/contextir@v0.1.1-0.20261021024005-84c82a35fe9f
 ```
 
-此版本固定产品提交 `874c5ee273bc406e122ca4a59db64c4c743f3820`，已从 GitHub 私有远端下载验证，ZIP 为 9,371,622 字节。仓库外的独立消费者构建、IR/H3/哈希/评分重放通过；下载包内完整 Go 测试 **370 个主测试、7806 个子测试全部通过，0 失败、0 跳过**，没有 `replace`、工作区源码或历史报告依赖。见 [消费者验证](conformance/reports/private-consumer-remaining-final-v4.json)、[下载包完整测试](conformance/reports/private-native-remaining-final-v4.json) 与 [汇总证据](conformance/reports/completion-remaining-v3.json)。
+当前版本固定产品提交 `84c82a35fe9f84b9179522f3925ff1d1d7e15324`，已从 GitHub 私有远端下载验证，ZIP 为 9,385,184 字节。独立消费者构建、IR/H3/哈希/评分重放，以及下载包内完整 Go 测试 **372 个主测试、7813 个子测试全部通过，0 失败、0 跳过**。没有 `replace`、工作区源码或历史报告依赖；下载源码逐项匹配真实 Go 1.25.0 最低版本测试的输入。见 [消费者验证](conformance/reports/private-consumer-go-compatibility-v4.json)、[下载包完整测试](conformance/reports/private-native-go-compatibility-v1.json) 与 [汇总证据](conformance/reports/completion-go-compatibility-v1.json)。
 
-当前实现与证据位于 `codex/readiness-audit` 分支。`v0.1.0` 是旧标签，不包含后续实现；旧标签和历史测试记录保持不变。
+当前实现与证据位于 `codex/readiness-audit` 分支。此前 `874c5ee` 的 989/2 N/A 验收和分发记录作为历史保留；旧标签 `v0.1.0` 不包含后续实现。
 
 历史模型输出、源码快照和测试报告保存在独立的审计 module `conformance/reports`。安装 Go 库不下载这些历史文件；需要完整证据时克隆 Git 仓库。
 
@@ -115,7 +117,7 @@ go test -race ./...
 go vet ./...
 ```
 
-全部适用原要求的复验入口是 `conformance/run_native_functionality.py --require-all`。它同时核查独立 Go 测试和 fresh 原断言报告中的主 Go API 调用、实际 validator 调用、不可变 bridge/runtime/fixture/录音请求来源；命令和完整前置条件见 [复验说明](conformance/README.md)。普通 Go 测试不调用付费服务，最终本地质量检查见 [记录](conformance/reports/local-final-quality-v3.json)。
+全部适用原要求的复验入口是 `conformance/run_native_functionality.py --require-all --go-compatibility-report <最低版本报告>`。它同时核查独立 Go 测试和 fresh 原断言报告中的主 Go API 调用、实际 validator 调用、不可变 bridge/runtime/fixture/录音请求来源；命令和完整前置条件见 [复验说明](conformance/README.md)。普通 Go 测试不调用付费服务，最终本地质量检查见 [记录](conformance/reports/local-quality-go-compatibility-v1.json)。
 
 高层 `brief` / `draft` 及预算、token、原始 H3 校验命令的参数见 `go run ./cmd/contextir <command> -h`。付费模型验证是单独命令，不在普通单元测试中触发：
 

@@ -8,16 +8,17 @@ replace this corpus.
 
 ## Current acceptance
 
-[The final native functionality report](reports/native-functionality-remaining-all-v3.json)
-verifies **989/989 Go-applicable requirements**: **672 unchanged original assertions
-consume actual native primary output; 317 have separately executed Go API/input
-adaptations**. Two Python grammar checks are not applicable and are not Go passes.
+[The final native functionality report](reports/native-functionality-go-compatibility-v1.json)
+verifies **991/991 requirements**: **672 unchanged original assertions
+consume actual native primary output; 319 have separately executed Go API/input
+adaptations**. The two source-parse/minimum-language-version requirements now
+have native Go checks and real minimum-toolchain evidence; there are no N/A cases.
 There are no duplicate/missing original nodeids, failed or skipped Go test events.
-[Whole-repository race/vet/format and harness gates](reports/local-final-quality-v3.json)
+[Whole-repository race/vet/format and harness gates](reports/local-quality-go-compatibility-v1.json)
 also pass. The earlier aggregate v1 and every failing historical run remain intact.
 
 This is not a claim that every unchanged Python assertion passes. The current
-[raw original-assert run](reports/go-draft-pytest-remaining-final-v1.json) is
+[raw original-assert run](reports/go-draft-pytest-go-compatibility-v1.json) is
 **981 passed / 10 failed, zero skipped**. Five failures preserve the earlier
 entry/evidence/profile/taxonomy differences; five reflect native contract v3 and
 actual Go CLI regeneration interfaces. Each requirement has a passing explicit
@@ -29,9 +30,9 @@ entries require the source call phase to pass and every named primary operation
 (and validator when needed) to execute for that exact nodeid. The runner verifies
 an immutable bridge, current runtime sources, adapters, fixtures and complete
 recorded request provenance. It does not invent Go test leaves for these entries.
-The 317 independent mappings name actual Go test leaves, source assertion intent,
+The 319 independent mappings name actual Go test leaves, source assertion intent,
 explicit input/API adjustments and positive/negative output controls. They include
-124 formerly Python-only applicable requirements and 193 previously Go-touched
+all 126 formerly Python-only requirements and 193 previously Go-touched
 nodes whose main behavior needed independent verification.
 
 All exact mappings are in `adaptations/remaining_*.json`.
@@ -39,6 +40,28 @@ All exact mappings are in `adaptations/remaining_*.json`.
 and per-node `native_primary_verification`; historic `pending` and touch counts
 remain historic evidence. Neither historical coverage unions nor corpus call
 counts imply whole-pipeline equivalence.
+
+## Native source and minimum language compatibility
+
+`TestGoCompatibilityEverySourceParses` parses actual native source;
+`TestGoCompatibilityDeclaredLanguageVersion` guards language and standard-library
+API versions, with newer-syntax/API negative controls. The original Python
+f-string rule is not claimed to be a statement-by-statement Go grammar mapping.
+The [real minimum Go 1.25.0 full tests and vet](reports/go-minimum-compatibility-v1.json)
+passed with automatic upgrades/workspaces disabled and fresh caches. A newer
+compiler is not accepted in place of the exact declared minimum.
+
+The aggregator requires `--go-compatibility-report` and verifies current native
+source/tests/embedded inputs, actual toolchain, unfiltered JSON events and both
+native tests, with no skipped tests or changed evidence. The old
+[989-pass / 2-N/A report](reports/native-functionality-remaining-all-v3.json) remains
+unchanged as historical evidence.
+
+```sh
+python3 conformance/verify_go_compatibility.py \
+  --toolchain /absolute/path/to/go1.25.0/bin/go \
+  --report /tmp/a-new-minimum-go-report.json
+```
 
 ## Reproduce the complete current acceptance
 
@@ -50,7 +73,8 @@ go test ./...
 go test -race ./...
 go vet ./...
 python3 conformance/run_native_functionality.py --require-all \
-  --original-report conformance/reports/go-draft-pytest-remaining-final-v1.json \
+  --original-report conformance/reports/go-draft-pytest-go-compatibility-v1.json \
+  --go-compatibility-report conformance/reports/go-minimum-compatibility-v1.json \
   --label a-new-native-round
 ```
 
@@ -89,7 +113,7 @@ fresh directory with the recorded Go toolchain/OS/architecture. Each source run
 archives adapters, records fixture and consumed recording hashes before/after,
 and preserves all original nodeids/assertions. The current raw report's bridge
 SHA is `8e7cd974c82d81a3f912529b42359d09c64ca2d9652dd841d315822715dc32cd`;
-[its provenance](reports/go-draft-pytest-remaining-final-v1-provenance.json)
+[its provenance](reports/go-draft-pytest-go-compatibility-v1-provenance.json)
 contains the exact build record. Historical `.sources.json` hashes alone cannot
 reconstruct old sources; later `reports/builds` archives can.
 
@@ -164,10 +188,10 @@ environment as a new run.
 
 | Artifact | Establishes |
 | --- | --- |
-| `reports/native-functionality-remaining-all-v3.json` | All 989 applicable requirements, exact verification class/leaf or original primary operation, raw Go events and immutable source hashes. |
-| `reports/local-final-quality-v3.json` | Actual full-repository race, vet, gofmt, diff and harness gates. |
-| `adaptations/remaining_*.json` | One unique mapping per applicable original nodeid; source assertion intent, Go API/input adjustments and real execution evidence. |
-| `reports/go-draft-pytest-remaining-final-v1.json` | Unmodified original assertions; 981 passed/10 failed, 865 Go-touched/126 Python-only. Touch alone is not current primary verification. |
+| `reports/native-functionality-go-compatibility-v1.json` | All 991 requirements, exact verification class/leaf or original primary operation, raw Go events and immutable source hashes. |
+| `reports/local-quality-go-compatibility-v1.json` | Actual full-repository race, vet, gofmt, diff and harness gates. |
+| `adaptations/remaining_*.json` | One unique mapping per original nodeid; source assertion intent, Go API/input adjustments and real execution evidence. |
+| `reports/go-draft-pytest-go-compatibility-v1.json` | Unmodified original assertions; 981 passed/10 failed, 865 Go-touched/126 Python-only. Touch alone is not current primary verification. |
 | `reports/upstream-pytest.json` | Original Python 991-test baseline and collected assert sources; no Go claim. |
 | `fixtures/controls.json`, `validator_calls.json` | 23 named controls and 386 actual source validator calls, complete text/Context/findings, across 295 source nodes. |
 | `fixtures/compiler_calls.json` | 1,952 original plan/mode/helper calls with exact original inputs, mutation states, results/errors and nodeids. |
@@ -231,17 +255,21 @@ not reports; a repository clone is needed to reproduce this complete audit.
 Ordinary corpus tests write only `t.TempDir`; `CONTEXTIR_PLAN_CORPUS_REPORT` is an
 explicit opt-in destination for retained reports.
 
-The published product commit is `874c5ee273bc406e122ca4a59db64c4c743f3820`, pinned as
-`v0.1.1-0.20261020120832-874c5ee273bc`. The verified private remote ZIP contains 9,371,622
-bytes. [The consumer](reports/private-consumer-remaining-final-v4.json) built and
-ran without replacement/workspace resolution. [The complete downloaded native
-suite](reports/private-native-remaining-final-v4.json) passed 370 root tests
-and 7806 subtests with no failed/skipped test events, no provider credentials,
-no reports directory, and no cache-source changes.
+The current product commit is `84c82a35fe9f84b9179522f3925ff1d1d7e15324`, pinned as
+`v0.1.1-0.20261021024005-84c82a35fe9f`. The actual private remote ZIP contains 9,385,184
+bytes. [The independent consumer](reports/private-consumer-go-compatibility-v4.json)
+and [downloaded native suite](reports/private-native-go-compatibility-v1.json)
+passed 372 root tests and 7813 subtests with no failed/skipped test events.
+The ZIP has no reports directory; it uses no local replace/workspace resolution,
+and its native source hashes match the actual Go 1.25.0 minimum-toolchain run.
+[The current receipt](reports/completion-go-compatibility-v1.json) retains the
+three TLS download failures and the same-repository canonical origin used only
+in the task-owned external VCS cache. No worktree source or overlay was substituted.
+The prior `874c5ee` distribution evidence remains historical.
 
 The [first external failure](reports/private-native-remaining-final-v2.json) is
 retained: one test incorrectly required checkout Git metadata. Its Go adaptation
 now verifies explicit caller provenance and unknown defaults in a directory
-without Git. The complete v3 local/native/external results are indexed in
+without Git. The prior full-implementation v3 local/native/external results are indexed in
 [the completion receipt](reports/completion-remaining-v3.json); previous `fe1feb7`
 distribution evidence and all historical source outcomes remain unchanged.

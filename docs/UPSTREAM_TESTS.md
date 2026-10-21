@@ -1,24 +1,30 @@
 # 上游完整行为验收
 
-固定上游原清单的 **989 项 Go 适用要求全部通过**；另外 2 项 Python 语法检查不适用，未计入通过数。来源是 42 文件、991 个原 nodeid，不以自编示例代替原要求。
+固定上游原清单的 **991/991 项要求全部通过，N/A 为 0**；原两项语言兼容要求已按 Go 解析/声明最低版本可用的原意实现。来源是 42 文件、991 个原 nodeid，不以自编示例代替原要求。
 
-本版已发布并从 GitHub 私有远端独立下载：`v0.1.1-0.20261020120832-874c5ee273bc`。下载包内 370 个主测试、7806 个子测试全部通过且无跳过，见 [外部全套证据](../conformance/reports/private-native-remaining-final-v4.json) 与 [最终汇总](../conformance/reports/completion-remaining-v3.json)。
+本轮版本已从 GitHub 私有远端独立下载：`v0.1.1-0.20261021024005-84c82a35fe9f`。下载包内 **372 个主测试、7813 个子测试全部通过且无跳过**，包括新增的两个兼容性测试；其原生源码与真实 Go 1.25.0 最低版本测试的输入一致。见 [外部全套证据](../conformance/reports/private-native-go-compatibility-v1.json) 与 [最终汇总](../conformance/reports/completion-go-compatibility-v1.json)。
 
-[最终逐项报告](../conformance/reports/native-functionality-remaining-all-v3.json) 对每个要求保存实际验证入口、原断言意图、输入调整和证据：**672 项由未修改的原断言检查实际 Go 主输出，317 项用独立 Go 接口测试适配**。没有遗漏、重复、跳过或把辅助函数触达当作主功能通过。独立 Go 测试与原断言使用同一生产实现；受控模型候选和严格录音回放不需要付费服务。
+[最终逐项报告](../conformance/reports/native-functionality-go-compatibility-v1.json) 对每个要求保存实际验证入口、原断言意图、输入调整和证据：**672 项由未修改的原断言检查实际 Go 主输出，319 项用独立 Go 接口测试适配**。没有遗漏、重复、跳过或把辅助函数触达当作主功能通过。独立 Go 测试与原断言使用同一生产实现；受控模型候选和严格录音回放不需要付费服务。
 
-原样 Python 断言重跑依然是 **981 passed / 10 failed，0 skipped**，见 [完整原报告](../conformance/reports/go-draft-pytest-remaining-final-v1.json)。这不是“991 原断言全部通过”。十项 Go 接口差异另有实际正反例验证，原失败保持红色。此前 986/5 和其他所有历史轮次继续保留。
+原样 Python 断言重跑依然是 **981 passed / 10 failed，0 skipped**，见 [完整原报告](../conformance/reports/go-draft-pytest-go-compatibility-v1.json)。这不是“991 原断言全部通过”。十项 Go 接口差异另有实际正反例验证，原失败保持红色。此前 986/5 和其他所有历史轮次继续保留。
 
 ## 证据怎样计数
 
 | 验证入口 | 原 nodeid 数 | 通过条件 |
 | --- | ---: | --- |
 | `original_go_primary` | 672 | 原 call phase 通过；该 nodeid 要求的主 Go operations 全部实际执行；需要的 validator 调用确实发生；不可变 bridge、当前 runtime、适配器、fixture 与真实录音请求来源核验通过 |
-| `go_test` | 317 | 原要求映射到实际执行并通过的 Go 测试叶；按 Go 接口明确记录合法模式、观察依赖、类型化输入或版本差异；配套失败/越权/保真对照 |
-| `not_applicable_go` | 2 | Python 模块语法、f-string 语法；Go 编译和 vet 单独检查，不能计作这两条原断言通过 |
+| `go_test` | 319 | 原要求映射到实际执行并通过的 Go 测试叶；按 Go 接口明确记录合法模式、观察依赖、类型化输入或版本差异；配套失败/越权/保真对照 |
+| N/A | 0 | 无免除项；两项源码/声明版本兼容要求已按 Go 实现，并核验真实最低工具链全包测试 |
 
-317 项包含旧 126 个 Python-only 节点中的 124 个适用要求，以及 193 个此前已经触达 Go、但主断言仍需独立验证或接口适配的节点。672 项没有虚构独立 Go test leaf：入口仍是原 source nodeid 与实际 native operation。逐项 [适配清单](../conformance/adaptations/remaining_existing_native.json) 与其他 `remaining_*.json` 列出原断言、来源 SHA、边界和精确测试/fixture IDs。
+319 项包含旧 126 个 Python-only 节点的全部 126 个要求，以及 193 个此前已经触达 Go、但主断言仍需独立验证或接口适配的节点。672 项没有虚构独立 Go test leaf：入口仍是原 source nodeid 与实际 native operation。逐项 [适配清单](../conformance/adaptations/remaining_existing_native.json) 与其他 `remaining_*.json` 列出原断言、来源 SHA、边界和精确测试/fixture IDs。
 
-[最终本地质量检查](../conformance/reports/local-final-quality-v3.json) 的全仓 race、vet、gofmt、diff 与 conformance 门卫全部通过。最终聚合也执行全部 Go 测试并核验运行期间源文件不变；原始 Go JSON events、源码归档和 hash 在报告中。首轮 [v1](../conformance/reports/native-functionality-remaining-all-v1.json) 保持不变，不把两轮事件数相加。
+[最终本地质量检查](../conformance/reports/local-quality-go-compatibility-v1.json) 的全仓 race、vet、gofmt、diff 与 conformance 门卫全部通过。最终聚合也执行全部 Go 测试并核验运行期间源文件不变；原始 Go JSON events、源码归档和 hash 在报告中。首轮 [v1](../conformance/reports/native-functionality-remaining-all-v1.json) 保持不变，不把两轮事件数相加。
+
+## Go 源码与最低版本兼容性
+
+原两项 Python 语法测试的原意已按 Go 实现，不再列 N/A：`TestGoCompatibilityEverySourceParses` 解析实际 Go 源码，`TestGoCompatibilityDeclaredLanguageVersion` 检查 `go.mod` 声明版本对应的语言与标准库 API。负例包括当前编译器能读、较低语言版本拒绝的语法，以及较新标准库 API；原 Python f-string 规则没有伪称逐句翻译为 Go。
+
+更强的 [真实最低 Go 1.25.0 全包测试与 vet](../conformance/reports/go-minimum-compatibility-v1.json) 已通过，关闭自动升级与工作区，使用新缓存且未读取模型凭据。聚合门卫核对真实工具链、所有 Go/test/embedded 输入 hash、完整 JSON 事件、两项实际测试和运行期间证据不变；用 Go 1.27 或 Go 1.25.1 代替最低版本、筛选测试、跳过、篡改来源或日志均被拒绝。映射见 [remaining_go_compatibility.json](../conformance/adaptations/remaining_go_compatibility.json)。旧 989 项通过 / 2 项 N/A 的 [历史报告](../conformance/reports/native-functionality-remaining-all-v3.json) 保持原样。
 
 ## 原样重跑保留的十项差异
 
@@ -43,13 +49,13 @@
 
 [57 项修复/跨镜映射](../conformance/adaptations/remaining_repair.json) 覆盖原 fix-loop、跨镜对白、帧表示、指令行和前缀修复。测试真正走 Go Planner 的有限 schema/协议修复与实际 H3 Artifact，同时验证顽固错误耗尽预算、逐次用量和失败；生成稿格式 helper 必须显式调用，并返回修改记录，不自动改写用户字面内容。
 
-用户提出的中文回归另列为补充测试 `TestRemainingRepairUserChineseTwoFourSecondShots`，不占原 989 项：原文“我们明天见，好吗？”，两镜分别 `[0,4000)` / `[4000,8000)` ms；合法片段“我们明天见，”与“好吗？”逐字节拼接一致，两个连续标记配对，同一说话人、没有额外对白或配乐。测试先拒绝重复整句候选，再验证真实 Planner/H3 产物。它证明这些结构证据成立，不是新 DeepSeek 或视频质量测量，见 [运行记录](../conformance/reports/go-remaining-repair-v2.json)。
+用户提出的中文回归另列为补充测试 `TestRemainingRepairUserChineseTwoFourSecondShots`，不占原 991 项：原文“我们明天见，好吗？”，两镜分别 `[0,4000)` / `[4000,8000)` ms；合法片段“我们明天见，”与“好吗？”逐字节拼接一致，两个连续标记配对，同一说话人、没有额外对白或配乐。测试先拒绝重复整句候选，再验证真实 Planner/H3 产物。它证明这些结构证据成立，不是新 DeepSeek 或视频质量测量，见 [运行记录](../conformance/reports/go-remaining-repair-v2.json)。
 
 ## 当前模型录音与真实高层编译
 
 当前合同的许可录音主批次为 437 entries / 228 unique，其中 1 unique（14 个复用 entries）失败；[主报告](../conformance/reports/remaining-full-licence-v1/report.json) 保持原失败。同合同 [显式重试](../conformance/reports/remaining-full-licence-retry-v1/report.json) 14 entries / 1 unique 成功，另有 [10 unique 补录](../conformance/reports/remaining-full-licence-supplement-v1/report.json)。新索引保留 461 条记录、238 个完整输入，按 namespace 保留 reuse chains，不混入旧 System 合同的补充录音。
 
-本次原断言重放的 423 次 licence/style 调用，对全部 **1,422 次实际 recorded Stage/System/Input/Schema** 在 Go 中核验后才消费。真实非法 JSON、其用量与后续修复请求也按原错误重放；没有删掉坏响应或把未验证历史结果当当前运行。fresh bridge SHA 为 `8e7cd974c82d…`，[完整来源证明](../conformance/reports/go-draft-pytest-remaining-final-v1-provenance.json) 记录 source archive、当前 runtime、适配器、fixture 和录音文件 hash。
+本次原断言重放的 423 次 licence/style 调用，对全部 **1,422 次实际 recorded Stage/System/Input/Schema** 在 Go 中核验后才消费。真实非法 JSON、其用量与后续修复请求也按原错误重放；没有删掉坏响应或把未验证历史结果当当前运行。fresh bridge SHA 为 `8e7cd974c82d…`，[完整来源证明](../conformance/reports/go-draft-pytest-go-compatibility-v1-provenance.json) 记录 source archive、当前 runtime、适配器、fixture 和录音文件 hash。
 
 [最新三例高层 Compile 独立验读](../conformance/reports/remaining-highlevel-compile-v2-verification.json) 全部 compiled 并通过各自主要要求：两例转写“`We close at six, not half past.`”各恰有一条同语言固定对白和一次最终 prompt；身份组合得到一个 sports car，两个真实来源，明确区分观察到的 carbon fibre body 与用户要求的 wheels 属性。自包含 20 次阶段请求严格回放及 drift 负例纳入 Go 测试；转写例仍有 R5/A2/token-band 等 WARN，模型选择例还有 P3，不称全面质量通过。
 
@@ -65,7 +71,8 @@ go test ./...
 go test -race ./...
 go vet ./...
 python3 conformance/run_native_functionality.py --require-all \
-  --original-report conformance/reports/go-draft-pytest-remaining-final-v1.json \
+  --original-report conformance/reports/go-draft-pytest-go-compatibility-v1.json \
+  --go-compatibility-report conformance/reports/go-minimum-compatibility-v1.json \
   --label a-new-native-round
 ```
 
@@ -85,7 +92,7 @@ python3 conformance/run_native_functionality.py --require-all \
 | [full plan round3](../conformance/reports/go-plan-pytest-round3.json) | 991 passed | 312 次 native plan.Build，mode 仍由 Python 决定 |
 | [972a 组合](../conformance/reports/go-combined-pytest-972a-supplement-complete.json) | 990 passed / 1 failed | 857 触达 Go，尚未替换完整 Draft |
 | [wholeDraft 旧五差异轮](../conformance/reports/go-draft-pytest-go-adapted-contracts-v1.json) | 986 passed / 5 failed | 865 触达，126 Python-only，不等于主行为全部 native |
-| [当前原样重跑](../conformance/reports/go-draft-pytest-remaining-final-v1.json) | 981 passed / 10 failed | 原结果保持；当前全部要求另按 672 + 317 + 2 分类 |
+| [当前原样重跑](../conformance/reports/go-draft-pytest-go-compatibility-v1.json) | 981 passed / 10 failed | 原结果保持；当前全部要求另按 672 + 319 分类，N/A 0 |
 
 `matrix.json` 采用 additive 更新：旧 pending、触达数和历史状态原样保留，当前结论位于 `current_native_primary_verification` 与每项 `native_primary_verification`。不能把旧覆盖并集、回放历史结果和当前原生主输出混算。
 
@@ -132,9 +139,9 @@ python3 conformance/run_native_functionality.py --require-all \
 | `tests/test_storyboard_role.py` | 5 | 3 | 2 | 0 | 5 / 0 |
 | `tests/test_structure_role.py` | 5 | 3 | 2 | 0 | 5 / 0 |
 | `tests/test_style_role.py` | 5 | 3 | 2 | 0 | 5 / 0 |
-| `tests/test_supported_python_versions.py` | 2 | 0 | 0 | 2 | 2 / 0 |
+| `tests/test_supported_python_versions.py` | 2 | 0 | 2 | 0 | 2 / 0 |
 | `tests/test_swap_roles.py` | 59 | 15 | 44 | 0 | 59 / 0 |
 | `tests/test_upload_endpoint.py` | 38 | 38 | 0 | 0 | 38 / 0 |
 | `tests/test_upload_store.py` | 31 | 31 | 0 | 0 | 31 / 0 |
 | `tests/test_video_reference.py` | 10 | 5 | 5 | 0 | 10 / 0 |
-| **合计** | **991** | **672** | **317** | **2** | **981 / 10** |
+| **合计** | **991** | **672** | **319** | **0** | **981 / 10** |

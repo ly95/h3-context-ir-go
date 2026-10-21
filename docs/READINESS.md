@@ -1,22 +1,28 @@
 # 实现与验收状态
 
-更新日期：2026-10-20。当前发布版本以独立 Go package 实现公开的 Brief → ContextIR → H3 流程，运行时仅使用 Go 标准库，不依赖 Python、CLW、数据库或队列。它不包含 MiniMax 托管 Context-IR 的内部代码，也没有托管服务或成片质量等价证据。
+更新日期：2026-10-21。当前实现以独立 Go package 实现公开的 Brief → ContextIR → H3 流程，运行时仅使用 Go 标准库，不依赖 Python、CLW、数据库或队列。它不包含 MiniMax 托管 Context-IR 的内部代码，也没有托管服务或成片质量等价证据。
 
 ## 当前验收结论
 
-固定上游 `fd031e136ae3d89147324c0d1b2aa65e838c21f5` 的原清单有 **42 文件、991 项**。本轮 **989/989 项 Go 适用要求通过**，另 2 项 Python 语法检查单列不适用，没有计入通过数。完整结果见 [最终逐项报告](../conformance/reports/native-functionality-remaining-all-v3.json)、[映射矩阵](../conformance/matrix.json) 与 [验收说明](UPSTREAM_TESTS.md)。
+固定上游 `fd031e136ae3d89147324c0d1b2aa65e838c21f5` 的原清单有 **42 文件、991 项**。本轮 **991/991 项全部通过**，分为 672 项原断言验证 Go 主输出与 319 项独立 Go 适配，N/A 为 0。两项语言兼容要求按 Go 原意实现，并有真实最低 Go 1.25.0 全包构建、测试和 vet 证据。完整结果见 [最终逐项报告](../conformance/reports/native-functionality-go-compatibility-v1.json)、[映射矩阵](../conformance/matrix.json) 与 [验收说明](UPSTREAM_TESTS.md)。
 
 | 证据类型 | 项数 | 实际验证的内容 |
 | --- | ---: | --- |
 | 未修改的原断言验证 Go 主输出 | 672 | 每个原 nodeid 的 call phase 通过，要求的主 Go operation/validator 确实执行；不可变 bridge、当前 runtime、测试适配器、fixture、录音请求来源均核验 |
-| 独立 Go 接口/输入适配 | 317 | 原要求对应实际 Go API、成品和错误负例；明确记录合法模式、依赖注入、结构化输入或版本差异，不以辅助函数触达代替主行为 |
-| Python 语法不适用 | 2 | Python 模块解析与 f-string 语法；Go 构建和 vet 独立执行，不宣称这两项 Go 通过 |
+| 独立 Go 接口/输入适配 | 319 | 原要求对应实际 Go API、成品和错误负例；明确记录合法模式、依赖注入、结构化输入或版本差异，不以辅助函数触达代替主行为 |
+| 免除 / N/A | 0 | 原 Python 语法测试的源码解析/声明最低版本可用要求，按 Go 兼容性契约实际验证 |
 
-317 项包括原先 126 个 Python-only nodeid 中的 124 个适用要求，以及 193 个此前虽然调用过 Go、但主行为或接口尚需独立验证的节点。完整映射没有遗漏或重复。普通 `go test`、原断言桥接和付费模型运行各自保存原始结果，不把它们的通过数相加。
+319 项包括原先 126 个 Python-only nodeid 的全部 126 个要求，以及 193 个此前虽然调用过 Go、但主行为或接口尚需独立验证的节点。完整映射没有遗漏或重复。普通 `go test`、原断言桥接和付费模型运行各自保存原始结果，不把它们的通过数相加。
 
-最新未修改原断言重跑仍是 **981 passed / 10 failed，0 skipped**，见 [原报告](../conformance/reports/go-draft-pytest-remaining-final-v1.json)。十项失败分别是五项既有合法入口/观察/后端/分类差异，加上 native wire contract v3 与真实 Go CLI 的五项版本/再生接口差异；对应 Go 要求已独立验证，原失败没有被豁免、删掉或改成原断言通过。逐项说明见 [UPSTREAM_TESTS](UPSTREAM_TESTS.md#原样重跑保留的十项差异)。旧 986/5、953/38 和其他失败轮次继续保留。
+最新未修改原断言重跑仍是 **981 passed / 10 failed，0 skipped**，见 [原报告](../conformance/reports/go-draft-pytest-go-compatibility-v1.json)。十项失败分别是五项既有合法入口/观察/后端/分类差异，加上 native wire contract v3 与真实 Go CLI 的五项版本/再生接口差异；对应 Go 要求已独立验证，原失败没有被豁免、删掉或改成原断言通过。逐项说明见 [UPSTREAM_TESTS](UPSTREAM_TESTS.md#原样重跑保留的十项差异)。旧 986/5、953/38 和其他失败轮次继续保留。
 
-最终全仓 Go 测试、race、vet、格式与 diff 检查以 [local-final-quality-v3.json](../conformance/reports/local-final-quality-v3.json) 的实际命令/结果为准。原 989 聚合首轮 [v1](../conformance/reports/native-functionality-remaining-all-v1.json) 也保持不变；最终 v3 另外纳入最新真实高层编译录音的严格回放测试，不把补充测试再算作新的上游节点。
+最终全仓 Go 测试、race、vet、格式与 diff 检查以 [local-quality-go-compatibility-v1.json](../conformance/reports/local-quality-go-compatibility-v1.json) 的实际命令/结果为准。原 989 聚合首轮 [v1](../conformance/reports/native-functionality-remaining-all-v1.json) 也保持不变；当前兼容性轮另纳入 Go 源码和声明最低语言版本测试，既有真实高层编译录音的严格回放测试也继续执行，不把补充测试再算作新的上游节点。
+
+## Go 源码与最低版本兼容性
+
+原两项 Python 语法测试的原意已按 Go 实现，不再列 N/A：`TestGoCompatibilityEverySourceParses` 解析实际 Go 源码，`TestGoCompatibilityDeclaredLanguageVersion` 检查 `go.mod` 声明版本对应的语言与标准库 API。负例包括当前编译器能读、较低语言版本拒绝的语法，以及较新标准库 API；原 Python f-string 规则没有伪称逐句翻译为 Go。
+
+更强的 [真实最低 Go 1.25.0 全包测试与 vet](../conformance/reports/go-minimum-compatibility-v1.json) 已通过，关闭自动升级与工作区，使用新缓存且未读取模型凭据。聚合门卫核对真实工具链、所有 Go/test/embedded 输入 hash、完整 JSON 事件、两项实际测试和运行期间证据不变；用 Go 1.27 或 Go 1.25.1 代替最低版本、筛选测试、跳过、篡改来源或日志均被拒绝。映射见 [remaining_go_compatibility.json](../conformance/adaptations/remaining_go_compatibility.json)。旧 989 项通过 / 2 项 N/A 的 [历史报告](../conformance/reports/native-functionality-remaining-all-v3.json) 保持原样。
 
 ## 实际提供的能力
 
@@ -60,9 +66,11 @@
 
 ## 发布与外部验证
 
-当前固定产品提交 `874c5ee273bc406e122ca4a59db64c4c743f3820`，安装版本 `v0.1.1-0.20261020120832-874c5ee273bc`。已从 GitHub 私有远端真实下载 9,371,622 字节 ZIP；无 `replace` 或工作区源码引用，独立消费者 build/run、IR/H3/哈希/评分重放通过，见 [消费者报告](../conformance/reports/private-consumer-remaining-final-v4.json)。
+当前产品提交 `84c82a35fe9f84b9179522f3925ff1d1d7e15324`，安装版本 `v0.1.1-0.20261021024005-84c82a35fe9f`，已从 GitHub 私有远端真实下载 9,385,184 字节 ZIP。独立消费者 build/run、IR/H3/哈希/评分重放通过，见 [消费者报告](../conformance/reports/private-consumer-go-compatibility-v4.json)。
 
-从同一实际下载目录、关闭工作区与模块网络、移除提供商凭据，完整执行 `go test -json -count=1 -timeout=240s ./...`：**370 主测试、7806 子测试，全部通过且无测试跳过**。测试前后源码与 ZIP 逐文件一致，ZIP 不包含 `conformance/reports`，证明包内测试不依赖历史报告。见 [外部完整测试](../conformance/reports/private-native-remaining-final-v4.json) 和 [最终汇总](../conformance/reports/completion-remaining-v3.json)。
+下载包内执行完整 Go 测试：**372 主测试、7813 子测试全部通过，0 失败、0 跳过**，包含本轮新增的两个 Go 原生兼容性检查。源码与 ZIP 逐文件一致，下载源码 hash 也与真实 Go 1.25.0 最低版本全库验证一致；无 `replace`、工作区源码、模型凭据或 `conformance/reports` 依赖。见 [实际下载包测试](../conformance/reports/private-native-go-compatibility-v1.json) 与 [最终汇总](../conformance/reports/completion-go-compatibility-v1.json)。
+
+三次下载安装因 GitHub TLS 连接中断失败，原记录全部保留。只对任务专用外部 Go VCS 缓存采用同一 GitHub 仓库的规范 `.git` URL 后，远端下载与全包验证通过；没有以工作树、overlay 或本地 replace 替代远端源码。此前 `874c5ee` 的分发证据继续保留。
 
 首轮外部测试在 `dc2731a` 发现一项测试错误依赖 checkout 的 Git HEAD，记录保留在 [原失败报告](../conformance/reports/private-native-remaining-final-v2.json)。现按 Go 契约验证调用方传入的短/完整 commit、缺省未知状态和完整持久化，不要求模块目录存在 Git；修正后重跑逐项验收、全仓 race/vet 与上述外部全套。此前 `fe1feb7` 的旧分发证据和旧标签继续保留。
 
