@@ -2,9 +2,9 @@
 
 The complete audit, including failed historical runs, model requests/responses,
 source snapshots and reproduction tools, is preserved at
-[`e2d022c9714a7e5aa43cdb633dce83fd62a9eede`](https://github.com/ly95/contextir/tree/e2d022c9714a7e5aa43cdb633dce83fd62a9eede)
+[`b8f24802ac310089eabf7918d5beeb5721d58d62`](https://github.com/ly95/contextir/tree/b8f24802ac310089eabf7918d5beeb5721d58d62)
 and the `codex/conformance-evidence` branch. The latest release proof is indexed
-in [release-index.json](release-index.json).
+in [release-index.json](https://github.com/ly95/contextir/blob/main/conformance/reports/release-index.json).
 
 This release tree retains the four baseline files and eight complete recording
 directories needed by the existing CI, byte-for-byte: 2,262 files / 37,030,618 bytes.

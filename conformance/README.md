@@ -23,19 +23,19 @@ git clone --single-branch --branch codex/conformance-evidence https://github.com
 cd /tmp/contextir-audit
 ```
 
-The [release index](reports/release-index.json) pins the exact immutable audit
+The [release index](https://github.com/ly95/contextir/blob/main/conformance/reports/release-index.json) pins the exact immutable audit
 commit and report hashes for the released version. Reports are not silently
 fetched by the library or substituted when absent.
 
 ## Current acceptance
 
-[The current native functionality report](https://github.com/ly95/contextir/blob/e2d022c9714a7e5aa43cdb633dce83fd62a9eede/conformance/reports/native-functionality-release-v1.json)
+[The current native functionality report](https://github.com/ly95/contextir/blob/b8f24802ac310089eabf7918d5beeb5721d58d62/conformance/reports/native-functionality-release-v2.json)
 verifies **991/991 requirements**: **672 unchanged original assertions
 consume actual native primary output; 319 have separately executed Go API/input
 adaptations**. The two source-parse/minimum-language-version requirements now
 have native Go checks and real minimum-toolchain evidence; there are no N/A cases.
 There are no duplicate/missing original nodeids, failed or skipped Go test events.
-[Whole-repository race/vet/format and harness gates](https://github.com/ly95/contextir/blob/e2d022c9714a7e5aa43cdb633dce83fd62a9eede/conformance/reports/local-quality-release-v1.json)
+[Whole-repository race/vet/source-format checks](https://github.com/ly95/contextir/blob/b8f24802ac310089eabf7918d5beeb5721d58d62/conformance/reports/local-quality-release-v1.json)
 also pass: **442 root tests and 7957 subtests, zero failed/skipped tests**.
 This release changes runtime behavior as well as tests. It fixes dialogue/display
 placement, audio-property recipients, source/identity boundaries, explicit-sheet
@@ -43,7 +43,7 @@ qualification and integer-millisecond timeline validation. Every failing
 historical run remains intact.
 
 This is not a claim that every unchanged Python assertion passes. The current
-[raw original-assert run](https://github.com/ly95/contextir/blob/e2d022c9714a7e5aa43cdb633dce83fd62a9eede/conformance/reports/go-draft-pytest-release-final-primary-v7.json) is
+[raw original-assert run](https://github.com/ly95/contextir/blob/b8f24802ac310089eabf7918d5beeb5721d58d62/conformance/reports/go-draft-pytest-release-final-primary-v8.json) is
 **981 passed / 10 failed, zero skipped**. Five failures preserve the earlier
 entry/evidence/profile/taxonomy differences; five reflect native contract v3 and
 actual Go CLI regeneration interfaces. Each requirement has a passing explicit
@@ -64,7 +64,7 @@ All exact mappings are in `adaptations/remaining_*.json`.
 `matrix.json` preserves historical aggregate fields, pending states and touch
 counts. Current source/evidence hashes are in `current_release_evidence`,
 `current_source_primary_verification` and per-node mapping fields. The final
-executed verdict is the release-v1 aggregate; a pending marker in its input
+executed verdict is the release-v2 aggregate; a pending marker in its input
 snapshot describes capture time, not a failed or skipped final test. Historical
 coverage unions and corpus call counts do not imply whole-pipeline equivalence.
 
@@ -92,14 +92,14 @@ native acceptance verdict.
 `TestGoCompatibilityDeclaredLanguageVersion` guards language and standard-library
 API versions, with newer-syntax/API negative controls. The original Python
 f-string rule is not claimed to be a statement-by-statement Go grammar mapping.
-The [real minimum Go 1.25.0 full tests and vet](https://github.com/ly95/contextir/blob/e2d022c9714a7e5aa43cdb633dce83fd62a9eede/conformance/reports/go-minimum-release-v1.json)
+The [real minimum Go 1.25.0 full tests and vet](https://github.com/ly95/contextir/blob/b8f24802ac310089eabf7918d5beeb5721d58d62/conformance/reports/go-minimum-release-v1.json)
 passed with automatic upgrades/workspaces disabled and fresh caches. A newer
 compiler is not accepted in place of the exact declared minimum.
 
 The aggregator requires `--go-compatibility-report` and verifies current native
 source/tests/embedded inputs, actual toolchain, unfiltered JSON events and both
 native tests, with no skipped tests or changed evidence. The old
-[989-pass / 2-N/A report](https://github.com/ly95/contextir/blob/e2d022c9714a7e5aa43cdb633dce83fd62a9eede/conformance/reports/native-functionality-remaining-all-v3.json) remains
+[989-pass / 2-N/A report](https://github.com/ly95/contextir/blob/b8f24802ac310089eabf7918d5beeb5721d58d62/conformance/reports/native-functionality-remaining-all-v3.json) remains
 unchanged as historical evidence.
 
 ```sh
@@ -118,7 +118,7 @@ go test ./...
 go test -race ./...
 go vet ./...
 python3 conformance/run_native_functionality.py --require-all \
-  --original-report conformance/reports/go-draft-pytest-release-final-primary-v7.json \
+  --original-report conformance/reports/go-draft-pytest-release-final-primary-v8.json \
   --go-compatibility-report conformance/reports/go-minimum-release-v1.json \
   --label a-new-native-round
 ```
@@ -158,7 +158,7 @@ fresh directory with the recorded Go toolchain/OS/architecture. Each source run
 archives adapters, records fixture and consumed recording hashes before/after,
 and preserves all original nodeids/assertions. The current raw report's bridge
 SHA is `2ebf2758652df6caa7c680fc1e15475268f459c95f9ac92ed313e1871bf2b667`;
-[its provenance](https://github.com/ly95/contextir/blob/e2d022c9714a7e5aa43cdb633dce83fd62a9eede/conformance/reports/go-draft-pytest-release-final-primary-v7-provenance.json)
+[its provenance](https://github.com/ly95/contextir/blob/b8f24802ac310089eabf7918d5beeb5721d58d62/conformance/reports/go-draft-pytest-release-final-primary-v8-provenance.json)
 contains the exact build record. Historical `.sources.json` hashes alone cannot
 reconstruct old sources; later `reports/builds` archives can.
 
@@ -173,15 +173,15 @@ The selected index is
 [`release_final_licence_replay_resolutions_v2.json`](fixtures/release_final_licence_replay_resolutions_v2.json):
 **463 namespaced entries / 238 complete inputs**, preserving the 461-entry
 historical base and adding two precisely selected original DecideLicence API
-refreshes. The original main failure, [retry](https://github.com/ly95/contextir/blob/e2d022c9714a7e5aa43cdb633dce83fd62a9eede/conformance/reports/remaining-full-licence-retry-v1/report.json)
-and [supplement](https://github.com/ly95/contextir/blob/e2d022c9714a7e5aa43cdb633dce83fd62a9eede/conformance/reports/remaining-full-licence-supplement-v1/report.json) are
-retained. The [two-case refresh](https://github.com/ly95/contextir/blob/e2d022c9714a7e5aa43cdb633dce83fd62a9eede/conformance/reports/release-helper-refresh-v1/report.json)
+refreshes. The original main failure, [retry](https://github.com/ly95/contextir/blob/b8f24802ac310089eabf7918d5beeb5721d58d62/conformance/reports/remaining-full-licence-retry-v1/report.json)
+and [supplement](https://github.com/ly95/contextir/blob/b8f24802ac310089eabf7918d5beeb5721d58d62/conformance/reports/remaining-full-licence-supplement-v1/report.json) are
+retained. The [two-case refresh](https://github.com/ly95/contextir/blob/b8f24802ac310089eabf7918d5beeb5721d58d62/conformance/reports/release-helper-refresh-v1/report.json)
 used a separate **v9 helper binary `ff97523c…`, eight calls, output cap 12288**.
 It is not the v10 main binary `2b348690…`, and its calls are not part of the
 main run's 277. `extend_licence_replay.py` preserves per-recording source builds
 and exact input-key selection rather than overwriting historical responses.
 
-[Fresh source-primary v7](https://github.com/ly95/contextir/blob/e2d022c9714a7e5aa43cdb633dce83fd62a9eede/conformance/reports/release-final-primary-v7-verification.json)
+[Fresh source-primary v8](https://github.com/ly95/contextir/blob/b8f24802ac310089eabf7918d5beeb5721d58d62/conformance/reports/release-final-primary-v8-verification.json)
 verifies the current immutable bridge/runtime and supporting source hashes,
 including the corrected independent checker. Raw source tests still report
 981/10; all 672 primary mappings passed their exact required operations. Earlier
@@ -232,10 +232,10 @@ environment as a new run.
 
 | Artifact | Establishes |
 | --- | --- |
-| `reports/native-functionality-release-v1.json` | Current 991/991 requirements (672+319), exact verification class/leaf or original primary operation, raw Go events and immutable source hashes. |
+| `reports/native-functionality-release-v2.json` | Current 991/991 requirements (672+319), exact verification class/leaf or original primary operation, raw Go events and immutable source hashes. |
 | `reports/local-quality-release-v1.json` | Actual full-repository race/vet and source format/diff checks. |
 | `adaptations/remaining_*.json` | One unique mapping per original nodeid; source assertion intent, Go API/input adjustments and real execution evidence. |
-| `reports/go-draft-pytest-release-final-primary-v7.json` | Unmodified original assertions; 981 passed/10 failed, 865 Go-touched/126 Python-only. Touch alone is not current primary verification. |
+| `reports/go-draft-pytest-release-final-primary-v8.json` | Unmodified original assertions; 981 passed/10 failed, 865 Go-touched/126 Python-only. Touch alone is not current primary verification. |
 | `reports/upstream-pytest.json` | Original Python 991-test baseline and collected assert sources; no Go claim. |
 | `fixtures/controls.json`, `validator_calls.json` | 23 named controls and 386 actual source validator calls, complete text/Context/findings, across 295 source nodes. |
 | `fixtures/compiler_calls.json` | 1,952 original plan/mode/helper calls with exact original inputs, mutation states, results/errors and nodeids. |
@@ -265,7 +265,7 @@ report. No shared green helper upgrades an unexecuted primary requirement.
 
 ## Live compilation and limits
 
-The latest unified [release-live-round6](https://github.com/ly95/contextir/blob/e2d022c9714a7e5aa43cdb633dce83fd62a9eede/conformance/reports/release-live-round6/report.json)
+The latest unified [release-live-round6](https://github.com/ly95/contextir/blob/b8f24802ac310089eabf7918d5beeb5721d58d62/conformance/reports/release-live-round6/report.json)
 executes **35 Compile + 5 Refine = 40 operations** from one frozen runtime:
 `a9f84ef09bc0c662bd8b0c52afac380a1ce10dc4`, composition-review/v10, binary SHA-256
 `2b34869092e0110606f3a071c18af4f6183e565e4237b8612d28c455d91b7bfa`.
@@ -275,16 +275,16 @@ while retaining dependent words. A rejected input is not a compiled success.
 
 Settings were deepseek-flash / low / output cap 16384 / parallel 3. Original
 34 Compile cases explicitly use OfficialProfile and 3/3 repair limits; the
-wardrobe original explicitly uses ComfyUIProfile and 1/1. [All call records](https://github.com/ly95/contextir/blob/e2d022c9714a7e5aa43cdb633dce83fd62a9eede/conformance/reports/release-live-round6-recording-inventory.json)
+wardrobe original explicitly uses ComfyUIProfile and 1/1. [All call records](https://github.com/ly95/contextir/blob/b8f24802ac310089eabf7918d5beeb5721d58d62/conformance/reports/release-live-round6-recording-inventory.json)
 retain **277 actual calls, 921356 input and 538309 output tokens**. Fourteen
 followups comprise 12 host-structured, one provider-protocol and one semantic
 review followup. Three Refine followups end in the expected refusal, not a
 successful repair. Repeated Result.Calls ledgers are not additional calls.
 
-The [independent publication checker](https://github.com/ly95/contextir/blob/e2d022c9714a7e5aa43cdb633dce83fd62a9eede/conformance/reports/release-live-round6-verification.json)
-passes 40/40. New artifact reviews cover [21 core operations](https://github.com/ly95/contextir/blob/e2d022c9714a7e5aa43cdb633dce83fd62a9eede/conformance/reports/release-live-round6-semantic-core-review.json),
-[16 roles](https://github.com/ly95/contextir/blob/e2d022c9714a7e5aa43cdb633dce83fd62a9eede/conformance/reports/release-live-round6-semantic-role-review.json) and
-[three invalid boundaries](https://github.com/ly95/contextir/blob/e2d022c9714a7e5aa43cdb633dce83fd62a9eede/conformance/reports/release-live-round6-semantic-boundary-review.json).
+The [independent publication checker](https://github.com/ly95/contextir/blob/b8f24802ac310089eabf7918d5beeb5721d58d62/conformance/reports/release-live-round6-verification.json)
+passes 40/40. New artifact reviews cover [21 core operations](https://github.com/ly95/contextir/blob/b8f24802ac310089eabf7918d5beeb5721d58d62/conformance/reports/release-live-round6-semantic-core-review.json),
+[16 roles](https://github.com/ly95/contextir/blob/b8f24802ac310089eabf7918d5beeb5721d58d62/conformance/reports/release-live-round6-semantic-role-review.json) and
+[three invalid boundaries](https://github.com/ly95/contextir/blob/b8f24802ac310089eabf7918d5beeb5721d58d62/conformance/reports/release-live-round6-semantic-boundary-review.json).
 Reviewer kind is coding_agent_independent_artifact_review, not human signoff or
 proof of universal semantics. Real PNG perception applies to ref2 two-subject,
 i2 animation and paired endpoints. Other media observations are explicitly
@@ -308,14 +308,14 @@ not claim all prose is unambiguous or rendered-video source fidelity established
 
 Visible lettering is checked by exact bytes, typed display count/shot and actual
 prose semantics; repeating a description of the same prop is not automatically
-a second physical display. [The prior oracle correction](https://github.com/ly95/contextir/blob/e2d022c9714a7e5aa43cdb633dce83fd62a9eede/conformance/reports/release-live-round5-visible-text-oracle-correction.json)
+a second physical display. [The prior oracle correction](https://github.com/ly95/contextir/blob/b8f24802ac310089eabf7918d5beeb5721d58d62/conformance/reports/release-live-round5-visible-text-oracle-correction.json)
 preserves old frozen failures. Two distinct signs, unauthorized readable carry
-or extra words still fail semantic review. The [checker implementation fix](https://github.com/ly95/contextir/blob/e2d022c9714a7e5aa43cdb633dce83fd62a9eede/conformance/reports/release-live-round6-checker-tool-correction.json)
+or extra words still fail semantic review. The [checker implementation fix](https://github.com/ly95/contextir/blob/b8f24802ac310089eabf7918d5beeb5721d58d62/conformance/reports/release-live-round6-checker-tool-correction.json)
 retains the original NameError/source snapshot and corrected execution SHA;
 the old tool was not falsely reported as successful.
 
 Historical suite/role batches, later single-case repairs, invalid JSON, semantic
-failures, WARNs and separate binaries remain intact. The [old role API adaptation](https://github.com/ly95/contextir/blob/e2d022c9714a7e5aa43cdb633dce83fd62a9eede/conformance/reports/roles-compile-contract.json)
+failures, WARNs and separate binaries remain intact. The [old role API adaptation](https://github.com/ly95/contextir/blob/b8f24802ac310089eabf7918d5beeb5721d58d62/conformance/reports/roles-compile-contract.json)
 is not silently renamed into an identical Draft contract. Fixed transcript words
 authorize a new performance independently of copying the original audio signal;
 voice properties alone never grant speech. No real H3 video inference occurred,
@@ -341,27 +341,23 @@ not reports; a repository clone is needed to reproduce this complete audit.
 Ordinary corpus tests write only `t.TempDir`; `CONTEXTIR_PLAN_CORPUS_REPORT` is an
 explicit opt-in destination for retained reports.
 
-**v0.2.0 publication/install proof is pending.** Fill only after execution:
-`[PENDING: actual tag commit]`, `[PENDING: private remote ZIP hash/size]`,
-`[PENDING: independent consumer and downloaded full-suite reports]`.
-Current local/source/live acceptance does not claim that this tag is already
-installed or that its remote download succeeded.
+The candidate commit `38393570e2c87365c26be278d0550dae3cd389b7` was installed from the actual private remote: the ZIP contained 10,835,560 bytes, all 442 root tests and 7957 subtests passed, and all 40 Compile/Refine operations and 277 attempts replayed strictly. The final exact `v0.2.0` tag's Origin.Hash, ZIP and post-installation test/replay receipts are recorded separately in the [main release index](https://github.com/ly95/contextir/blob/main/conformance/reports/release-index.json). That index reports the actual execution state for the exact tag.
 
 The historical product commit was `84c82a35fe9f84b9179522f3925ff1d1d7e15324`, pinned as
 `v0.1.1-0.20261021024005-84c82a35fe9f`. Its actual private remote ZIP contained 9,385,184
-bytes. [The independent consumer](https://github.com/ly95/contextir/blob/e2d022c9714a7e5aa43cdb633dce83fd62a9eede/conformance/reports/private-consumer-go-compatibility-v4.json)
-and [downloaded native suite](https://github.com/ly95/contextir/blob/e2d022c9714a7e5aa43cdb633dce83fd62a9eede/conformance/reports/private-native-go-compatibility-v1.json)
+bytes. [The independent consumer](https://github.com/ly95/contextir/blob/b8f24802ac310089eabf7918d5beeb5721d58d62/conformance/reports/private-consumer-go-compatibility-v4.json)
+and [downloaded native suite](https://github.com/ly95/contextir/blob/b8f24802ac310089eabf7918d5beeb5721d58d62/conformance/reports/private-native-go-compatibility-v1.json)
 passed 372 root tests and 7813 subtests with no failed/skipped test events.
 The ZIP has no reports directory; it uses no local replace/workspace resolution,
 and its native source hashes match the actual Go 1.25.0 minimum-toolchain run.
-[That historical receipt](https://github.com/ly95/contextir/blob/e2d022c9714a7e5aa43cdb633dce83fd62a9eede/conformance/reports/completion-go-compatibility-v1.json) retains the
+[That historical receipt](https://github.com/ly95/contextir/blob/b8f24802ac310089eabf7918d5beeb5721d58d62/conformance/reports/completion-go-compatibility-v1.json) retains the
 three TLS download failures and the same-repository canonical origin used only
 in the task-owned external VCS cache. No worktree source or overlay was substituted.
 The prior `874c5ee` distribution evidence remains historical.
 
-The [first external failure](https://github.com/ly95/contextir/blob/e2d022c9714a7e5aa43cdb633dce83fd62a9eede/conformance/reports/private-native-remaining-final-v2.json) is
+The [first external failure](https://github.com/ly95/contextir/blob/b8f24802ac310089eabf7918d5beeb5721d58d62/conformance/reports/private-native-remaining-final-v2.json) is
 retained: one test incorrectly required checkout Git metadata. Its Go adaptation
 now verifies explicit caller provenance and unknown defaults in a directory
 without Git. The prior full-implementation v3 local/native/external results are indexed in
-[the completion receipt](https://github.com/ly95/contextir/blob/e2d022c9714a7e5aa43cdb633dce83fd62a9eede/conformance/reports/completion-remaining-v3.json); previous `fe1feb7`
+[the completion receipt](https://github.com/ly95/contextir/blob/b8f24802ac310089eabf7918d5beeb5721d58d62/conformance/reports/completion-remaining-v3.json); previous `fe1feb7`
 distribution evidence and all historical source outcomes remain unchanged.
