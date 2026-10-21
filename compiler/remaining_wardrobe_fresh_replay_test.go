@@ -18,9 +18,11 @@ import (
 	"github.com/ly95/contextir/planner"
 )
 
-// Filled only after a complete, independently reviewed frozen live run ends.
-// The prior DecideLicence recording stays preserved in its original directory.
-const remainingWardrobeFreshManifestSHA256 = "a367581a8d0f07b82852d5727536e203ea000c9356ab159aa2c7667d075fb227"
+// Pin a complete, independently reviewed frozen live run. Publication-only
+// receipt redaction never changes recorded requests or responses. The prior
+// DecideLicence recording stays preserved in its original directory.
+// Publication-only receipt redaction is described in testdata/PUBLICATION.md.
+const remainingWardrobeFreshManifestSHA256 = "da9808fb5340fa4b659d9052d6682e42a56e618c01de1f433f6ff088685a379d"
 
 func remainingCompleteRecordingInventory(t *testing.T, tape remainingSemanticTape) {
 	t.Helper()

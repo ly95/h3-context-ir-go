@@ -48,9 +48,10 @@ compiler does not retrieve, crop or decode media. Base frame modes use the real
 `ref_image_N`, `ref_video_N`, `ref_video_audio_N`, and `ref_audio_N`. The checked-in
 [factual schema fixture](testdata/contracts/comfyui_inputs.json) was extracted from
 the pinned official ComfyUI source with its SHA-256 recorded. Target-frame and
-canvas-grid limits are checked against that source too. Its sibling Python
-AST script regenerates the fixture without executing or copying the upstream
-implementation. The ComfyUI profile requires segments to be prepared first and refuses exact frame anchors in Ref2VA.
+canvas-grid limits are checked against that source too. Updating this fixture
+requires reviewing the pinned source and recording its new digest alongside
+the changed contract. The ComfyUI profile requires segments to be prepared first
+and refuses exact frame anchors in Ref2VA.
 
 Audio references carry concrete shot intervals in `Manifest.Media[].TargetUses`,
 and their applications are written into both the corresponding shot and retention
@@ -96,5 +97,6 @@ OpenH3-IR identifies its code as Copyright 2026 Ruashots, Apache-2.0; its upstre
 records further provenance. MiniMax owns the published protocol and trademarks;
 model weights and service terms are separate. Formatting tests compare all 250
 captured original style/summary calls with their unchanged outputs. Additional
-tests assert protocol invariants and actual native artifact behavior; no
-third-party video media is bundled.
+tests assert protocol invariants and actual native artifact behavior. Media
+fixtures bundled elsewhere in the module retain their source manifests and
+third-party attribution.

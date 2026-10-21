@@ -1,72 +1,56 @@
 name: Go
+
 on:
   push:
   pull_request:
   workflow_dispatch:
+
 permissions:
   contents: read
+
+env:
+  GOTOOLCHAIN: local
+  GOWORK: 'off'
+
 jobs:
   test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v7.0.1
-      - uses: actions/setup-go@v7.0.0
-        with:
-          go-version-file: go.mod
-          cache: false
-      - run: test -z "$(gofmt -l .)"
-      - run: go vet ./...
-      - run: go test -race -coverprofile=coverage.out ./...
-      - run: go test -run=^$ -fuzz=FuzzDecode -fuzztime=10s .
-  upstream-conformance:
+    name: Go ${{ matrix.go }}
     runs-on: ubuntu-24.04
     timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # Keep the exact minimum toolchain in sync with go.mod.
+          - go: '1.25.0'
+            extended: false
+          - go: stable
+            extended: true
     steps:
       - uses: actions/checkout@v7.0.1
         with:
           persist-credentials: false
-      - name: Check out unchanged pinned upstream
-        uses: actions/checkout@v7.0.1
-        with:
-          repository: ruashots/open-h3-ir
-          ref: fd031e136ae3d89147324c0d1b2aa65e838c21f5
-          path: .ci/upstream
-          persist-credentials: false
       - uses: actions/setup-go@v7.0.0
         with:
-          go-version-file: go.mod
+          go-version: ${{ matrix.go }}
+          check-latest: true
           cache: false
-      - name: Install isolated Python dependencies and actual media tools
+      - name: Install media integration prerequisites
         run: |
           sudo apt-get update
-          sudo apt-get install --yes ffmpeg python3-venv iproute2 util-linux
-          python3 -m venv "$RUNNER_TEMP/contextir-python"
-          "$RUNNER_TEMP/contextir-python/bin/python" -m pip install --disable-pip-version-check -r conformance/requirements.lock
+          sudo apt-get install --yes ffmpeg
           ffmpeg -version
           ffprobe -version
-      - name: Build native assertion bridge and media integration tests
-        run: |
-          go build -o "$RUNNER_TEMP/contextir-go-bridge" ./conformance/bridge
-          go test -c -o "$RUNNER_TEMP/contextir-media.test" ./media
-      - name: Run all original assertions with no external network or credentials
-        run: |
-          sudo unshare --net -- bash -euo pipefail -c '
-            ip link set lo up
-            tool_path="$1"
-            runner_uid="$2"
-            runner_gid="$3"
-            shift 3
-            exec setpriv --reuid "$runner_uid" --regid "$runner_gid" --clear-groups env -i PATH="$tool_path" "$@"
-          ' -- "$PATH" "$(id -u)" "$(id -g)" "$RUNNER_TEMP/contextir-python/bin/python" "$GITHUB_WORKSPACE/ci/run_upstream.py" \
-            --source "$GITHUB_WORKSPACE/.ci/upstream" \
-            --binary "$RUNNER_TEMP/contextir-go-bridge" \
-            --media-binary "$RUNNER_TEMP/contextir-media.test" \
-            --output "$RUNNER_TEMP/contextir-conformance-evidence"
-      - name: Keep success and failure evidence
-        if: always()
-        uses: actions/upload-artifact@v7
-        with:
-          name: upstream-conformance-${{ github.run_id }}-${{ github.run_attempt }}
-          path: ${{ runner.temp }}/contextir-conformance-evidence
-          if-no-files-found: error
-          retention-days: 14
+      - name: Check formatting
+        if: matrix.extended
+        run: make check-format
+      - name: Vet every package
+        run: make vet
+      - name: Run all native tests and media integrations
+        run: make test
+      - name: Run all native tests with the race detector
+        if: matrix.extended
+        run: make test-race
+      - name: Fuzz document and evidence decoding
+        if: matrix.extended
+        run: make fuzz

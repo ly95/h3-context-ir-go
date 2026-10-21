@@ -1,5 +1,5 @@
-// Command bridge is a test-only JSON Lines process for running the original
-// upstream pytest assertions against the native Go H3 text validator.
+// Command bridge exposes native conformance operations over JSON Lines.
+// It is a development tool; library consumers use the Go packages directly.
 package main
 
 import (

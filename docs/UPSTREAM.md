@@ -1,24 +1,32 @@
-# 来源记录
+# 来源与实现选择
 
-研究与实现日期：2026-10-20。通过 GitHub API 再次核对时，原仓库 `main` 仍为 `fd031e136ae3d89147324c0d1b2aa65e838c21f5`。
+## 固定上游
 
-## 官方格式
+ContextIR 参考 [ruashots/open-h3-ir](https://github.com/ruashots/open-h3-ir/tree/fd031e136ae3d89147324c0d1b2aa65e838c21f5)，固定提交为 `fd031e136ae3d89147324c0d1b2aa65e838c21f5`，对应 Python 包版本 0.4.1。固定提交用于稳定格式、算法和测试来源，不表示以后自动跟随其 `main`。
+
+原项目的确定性计划、素材编号与音轨配对、帧与画布网格、latent rows、完整词表 BPE、H3 校验规则、LoRA 合同、ComfyUI 远端操作、HTTP 请求合同和上传存储已实现为原生 Go 能力。高层 `compiler` 将自然语言和结构化观察编译进统一 `Document`，随后由 `h3` 确定性渲染。
+
+来源文件、固定 SHA-256 和不可变上游 URL 记录在 [source_manifest.json](../conformance/source_manifest.json)。原始需求清单和 Go 测试映射见 [测试说明](UPSTREAM_TESTS.md)。来源清单是静态追溯信息，不是当前源码的一次测试执行报告。
+
+## 公开格式资料
 
 - [MiniMax H3 基础提示词指南](https://huggingface.co/MiniMaxAI/MiniMax-H3/blob/main/docs/VIDEO_PROMPT_WRITING_GUIDE_base_en.md)
 - [MiniMax H3 全参考提示词指南](https://huggingface.co/MiniMaxAI/MiniMax-H3/blob/main/docs/VIDEO_PROMPT_WRITING_GUIDE_ref_en.md)
 - [官方 H3 提示词 Skill](https://github.com/MiniMax-AI/MiniMax-H3/blob/main/skills/h3-prompt-writing/SKILL.md)
 - [托管 Context-IR API 文档](https://platform.minimax.io/docs/api-reference/video-generation-v2-h3-context-ir)
 
-这些资料说明公开的提示词字段、引用、音频、对白和关键帧。我们没有取得 MiniMax 托管系统的内部实现、训练数据或模型。
+这些资料描述公开的提示词字段、引用、音频、对白和关键帧。ContextIR 没有取得 MiniMax 托管系统的内部代码、训练数据或模型，也不宣称其内部实现或生成质量等价。
 
-## OpenH3-IR
+## Go 实现的明确差异
 
-参考：[ruashots/open-h3-ir](https://github.com/ruashots/open-h3-ir/tree/fd031e136ae3d89147324c0d1b2aa65e838c21f5)，固定提交 `fd031e136ae3d89147324c0d1b2aa65e838c21f5`，Python 包版本 0.4.1。
+- 用户意图由显式结构化输入或注入模型的类型化合同解释，不复制上游依赖词表的意图分类机制。
+- 观察、用户要求与创意补充分别记录来源；部分视频观察与 ASR 转写不会被表述为完整音视频理解。
+- 固定对白、镜头边界、摄影机闭集、素材绑定与不可变文字由宿主管理。
+- 失败、有限修复、草稿政策、澄清和时长对齐均显式可见，调用方选择不会被偷偷替换。
+- 公共 HTTP 合同使用 ContextIR 的版本与 IR 表示；命令行采用 Go 的实际接口。兼容原业务能力不要求复刻 Python 命令、内部常量或 dataclass。
 
-已将其确定性计划、素材编号/音轨配对、帧与画布网格、latent rows、完整词表 BPE、H3 校验规则、LoRA 合同、ComfyUI 远端操作、HTTP 请求合同和上传存储转换为原生 Go 能力。`compiler` 将自然语言与多模态读数通过类型化决策编译进统一 `Document`，再确定性渲染。
+## 许可证与保留素材
 
-有意改变的机制是：用户意图不通过词法规则分类，改由注入模型的结构化合同解释；所有失败、有限重试、草稿政策和时长对齐均明确可见；部分观察不冒充完整媒体理解；固定对白和身份/替换/摄影机等不可变结构由宿主管理。命名不同的 Go 内部类型不被当成已经通过功能验收的证据。
+OpenH3-IR 使用 Apache-2.0，其原有 [LICENSE](../third_party/open-h3-ir/LICENSE) 与 [NOTICE](../third_party/open-h3-ir/NOTICE) 保留原文。`third_party/open-h3-ir/testdata` 保留其九份 golden prompt、两张参考图片及公开格式测试输入；其他原始媒体 fixture 的路径和哈希见各自 manifest。
 
-验收直接运行原仓库的 991 个测试、23 个 controls，另保存实际函数输入与输出、原断言来源，以及六个原始模型评测需求和完整许可/创意语义语料。原文件来源、哈希、调用与覆盖矩阵在 [conformance](../conformance/README.md)。Python 只用于对照测试工具，不是 Go 包运行依赖；混合测试总通过数与实际执行 Go 的原节点数分别报告。
-
-原项目采用 Apache-2.0。其 LICENSE/NOTICE 位于 [third_party/open-h3-ir](../third_party/open-h3-ir/NOTICE)，复制的 9 个 golden prompt 和 2 张原图保留字节哈希。完整 Qwen2.5 词表内嵌于 `tokens/data/vocab.json`，来源与许可证另在 [third_party/qwen25-tokenizer](../third_party/qwen25-tokenizer/NOTICE)。这些许可不额外授予 MiniMax 权重或其它上游素材的权利。
+完整 Qwen2.5 词表内嵌于 `tokens/data/vocab.json`，其 [来源声明](../third_party/qwen25-tokenizer/NOTICE) 与 [许可证](../third_party/qwen25-tokenizer/LICENSE) 单独保留。模型权重、托管服务和调用方媒体的许可不由本库的 Apache-2.0 授予。完整分类见 [第三方说明](../THIRD_PARTY_NOTICES.md)。

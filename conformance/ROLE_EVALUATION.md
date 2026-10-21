@@ -1,33 +1,55 @@
-# Independent role structure evaluation
+# Reference-role behavior
 
-`evaluate_roles.py` reads `fixtures/role_briefs.json`, the separate held-out `fixtures/role_expectations.json`, and an archived complete role run's `report.json`. It makes no provider calls. Original inputs and expected fields are never supplied to a model by this evaluator.
+`fixtures/role_briefs.json` preserves the original sixteen role Brief/card inputs;
+`fixtures/role_expectations.json` stores their separate expected fields. Cards
+are synthetic source test observations. They do not establish real audio/video
+perception or actual rendering quality.
 
-The live runs exercise **an additional production Compile path**. The original `test_every_role_renders.py` calls `deterministic_draft(brief, mode, cards, opts)`, including a separate explicit mode argument. The live fixture preserves the original Brief/cards, whose `brief.mode` is normally unset, but omits that separate draft argument. Reports version 3 and later record both entrypoints and this omitted argument. A resulting mode difference is an exact field difference, not proof that a replayed original assertion failed. This evaluator does not execute or replace the original draft assertion; the original-entrypoint bridge is separately required.
+Run native role and binding tests with:
 
 ```sh
-python conformance/evaluate_roles.py \
-  --run conformance/reports/live-roles-round1 \
-  --label unique-attempt
-python -m unittest discover -s conformance -p test_evaluate_roles.py
+go test ./compiler ./plan ./h3
 ```
 
-The output is a new `conformance/reports/roles-heldout-<label>.json`. Existing reports cannot be overwritten. The default `--gate original` exits unsuccessfully if any original field differs, including a documented adapter difference. `--gate native` is an explicit alternative that permits only individually recorded representation corrections; it still rejects every mode, role, retention, copy/property, missing placement/use and binding difference. Neither gate proves prose semantics or video/audio fidelity.
+`compiler/upstream_test.go` exercises all source roles through the native Draft
+entrypoint. The compiler's contract and integration tests additionally exercise
+public Compile behavior with typed decisions, authoritative Documents and final
+Artifacts. Expected fields belong only to assertions; they must never be sent to
+a writing or interpretation model.
 
-Each result separates:
+## Keep entrypoints explicit
 
-- `actual_status`: the compiler lifecycle result, including failed cases without artifacts.
-- `original_field_status`: exact equality with the independent original fields.
-- `native_contract_status`: structural checks after separately recording permitted representation changes.
-- `semantic_status`: always `not_determined_by_structural_evaluator`; independent human review is still required.
+The source `test_every_role_renders.py` calls deterministic Draft with a separate
+explicit mode argument. A high-level Compile request with `Brief.Mode` unset asks
+the model's typed mode boundary to select a mode. These are different inputs.
+A fresh model run must record the actual entrypoint and explicit mode rather than
+silently treating them as the same original assertion.
 
-The checks include the prepared versus final target/assets, exact frame/canvas/fps, timeline endpoints, each source responsibility and retention, waveform copying versus property reference, socket, anchor and containing shot, reciprocal voice binding, and complete Document-to-Artifact target-use records. It rejects camera/storyboard IDs used as narrative locations and observed actors imported from property sources. It verifies that preserved or placed subjects have actual typed narrative/event/speaker uses in their required shots; declaring `shot_ids` or naming someone in literal prose does not count. A replaced figure contributes transfer metadata and must not reappear as its former visible actor.
+The source's automatic shot allocation also does not pin a new model-generated
+cut list. Final appearance scope must agree with actual typed narrative, event
+and speaker uses; listing `ShotIDs` alone does not prove a subject appears.
 
-The original automatic shot count may differ from the production model's unpinned allocation. Version4 keeps the original all-shot scope versus final scope as an exact original-field comparison, and separately checks that final scope agrees with actual typed uses. An original automatic cut allocation is not an instruction to show every source actor in every new unpinned shot. Neither difference is silently erased. The evaluator does not keyword-match text to infer actor identity or action meaning. For example, a typed environment used grammatically as a moving car still needs human semantic review even if the IDs and appearances are structurally valid.
+## Structural checks
 
-Three adapter representations are kept explicit, with the original check still marked unequal:
+The relevant native tests inspect:
 
-- `frame_duration_floor_to_nearest`: source truncation at 5166 ms versus native frame-derived rounding at 5167 ms. The native value must match the exact calculation; there is no general ±1 ms tolerance.
-- `base_checkpoint_socket_correction`: an explicitly requested original base anchor was wired to `ref_image_N`; the native base checkpoint requires `first_frame` or `last_frame`. An unexpected mode or role change cannot use this exception.
-- `base_identity_carried_by_actual_frame`: a fully preserved actual base-frame anchor carries source identity/pose instead of a separate source-subject definition. This does not establish that literal prose or a generated frame depicts that identity correctly.
+- Prepared and final targets: frame count, canvas, FPS and timeline endpoints.
+- Each source role, retention, binding, socket, frame anchor and target interval.
+- Signal copying versus property reference and reciprocal voice bindings.
+- Placed/retained subjects' actual shot uses and replacement transfer scope.
+- The complete Document-to-Artifact manifest, without inventing bindings from
+  literal prose or treating storyboard/environment references as actors.
 
-The sixteen source role Cards are synthetic upstream test inputs. These runs do not demonstrate real video/audio observation or actual rendering. The ca28 historical run's `compiled` cases still contain semantic failures and ambiguities documented separately in `manual-semantic-review-20261020T060925Z-ca28d6982f84.md`.
+Three representation differences need explicit handling when comparing source
+fields:
+
+| Difference | Native contract |
+| --- | --- |
+| Frame-derived millisecond rounding | A 124-frame, 24-FPS target uses the nearest integer millisecond, 5167 ms, with exact rational duration retained. It is not a general ±1 ms tolerance. |
+| Base-frame checkpoint sockets | Actual base frame anchors use `first_frame` / `last_frame`, rather than a reference-mode image socket. A mode or role change cannot be hidden as a socket correction. |
+| Base identity carried by actual frame | Full frame preservation carries source identity/pose; it need not invent a separate visible source-subject definition. |
+
+A source field difference remains a difference even when the native representation
+is valid. Structured binding checks do not prove the prose depicts the correct
+identity, action or recipient. Final semantic review and actual rendered-video
+assessment remain separate.
