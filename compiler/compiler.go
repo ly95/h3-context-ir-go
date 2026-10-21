@@ -755,6 +755,13 @@ func (m controlledModel) Generate(ctx context.Context, req contextir.ModelReques
 		phrases[i] = cameraPhrase(s.Camera)
 	}
 	control, _ := json.Marshal(map[string]any{"replacement_motion_obligations": m.structure.ReplacementMotionObligations, "frame_preservation": m.frames, "caller_transcripts": m.transcripts, "canonical_subjects": writerCanonical, "reference_licence": m.licence, "prose_length_policy": prose, "camera_phrases": phrases, "structure": writerStructure, "fixed_dialogue_slots": slots, "scope": m.scope, "director_notes": notes, "precedence": []string{"explicit_request", "observed_reference", "director_notes"}})
+	appearances := projectionRequiredSubjectAppearances(m.identities, m.structure.SubjectProjections)
+	if len(appearances) > 0 {
+		var controls map[string]json.RawMessage
+		_ = json.Unmarshal(control, &controls)
+		controls["required_subject_appearances"], _ = json.Marshal(appearances)
+		control, _ = json.Marshal(controls)
+	}
 	if prose.TargetWords > 0 {
 		var controls map[string]json.RawMessage
 		_ = json.Unmarshal(control, &controls)
@@ -801,6 +808,9 @@ func (m controlledModel) Generate(ctx context.Context, req contextir.ModelReques
 		req.System += "\n" + visibleTextPerformanceInstruction
 	}
 	req.System += "\nSubject shot_ids are HOST-OWNED: omit them. Bind referenced identities and environments by subject_id in the actual shot/event descriptions where they contribute; merely listing a source definition does not place it in every shot. An actor which leaves need not remain in later shots. Unsourced new targets should also use actual structural bindings in reference mode. In base modes return no subject metadata: all identities belong in natural literal narrative, while actual source-frame observations remain Evidence."
+	if len(appearances) > 0 {
+		req.System += "\n" + requiredSubjectAppearanceInstruction
+	}
 	response, err := m.inner.Generate(ctx, req)
 	if m.observePlanCall != nil {
 		m.observePlanCall(response)

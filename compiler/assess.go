@@ -220,7 +220,16 @@ func ReferenceWardrobeTerms(licence LicenceDecision) []string {
 	}
 	var out []string
 	for _, identity := range licence.Identity {
-		out = append(out, identity.WardrobeAttributes...)
+		for _, garment := range identity.WardrobeAttributes {
+			target := garment
+			for _, adjustment := range identity.AdjustedAttributes {
+				if adjustment.Source == garment && (adjustment.Kind == "presentation_cleanup" || adjustment.Kind == "target_identity_alignment") {
+					target = adjustment.Target
+					break
+				}
+			}
+			out = append(out, target)
+		}
 	}
 	return out
 }

@@ -1,0 +1,545 @@
+........................................................................ [  7%]
+........FF.....F.FF..................................................... [ 14%]
+........................................................................ [ 21%]
+.....................................................................F.. [ 29%]
+........................................................................ [ 36%]
+........................................................................ [ 43%]
+..........................................................F............. [ 50%]
+........................................................................ [ 58%]
+..........................F............................................. [ 65%]
+...................FF................................................... [ 72%]
+............................F........................................... [ 79%]
+........................................................................ [ 87%]
+.........................................FF............................. [ 94%]
+.......................................................                  [100%]
+=================================== FAILURES ===================================
+_ test_the_service_publishes_one_statement_of_the_lists_it_shares_with_the_contract _
+
+    def test_the_service_publishes_one_statement_of_the_lists_it_shares_with_the_contract():
+        """`/v1/capabilities` used to hold its own copy of the aspects and the languages, beside the
+        node pack's copy and the contract's. Three statements of one list."""
+        caps = TestClient(app).get("/v1/capabilities").json()
+        assert caps["aspects"] == list(C.ASPECTS)
+        assert caps["dialogue_languages"] == list(C.DIALOGUE_LANGUAGES)
+        assert caps["output"]["fps"] == C.snapshot()["limits"]["fps"]
+>       assert caps["contract"]["version"] == C.CONTRACT_VERSION, \
+            "capabilities names a contract version that is not this build's"
+E       AssertionError: capabilities names a contract version that is not this build's
+E       assert 3 == 2
+E        +  where 2 = C.CONTRACT_VERSION
+
+tests/test_contract.py:204: AssertionError
+__________ test_the_version_moves_when_any_part_of_the_contract_moves __________
+
+    def test_the_version_moves_when_any_part_of_the_contract_moves():
+        """The gate that stops `CONTRACT_VERSION` becoming a number nobody maintains.
+    
+        A failure here is not a defect. It means something crossing the boundary changed, which is
+        allowed and expected -- and the contract has to SAY so, because a client compares the number
+        before it compares anything else. Bump the version, paste the new digest above, and the two
+        facts stay attached to each other.
+        """
+        live = C.digests()
+        moved = {name: (PINNED[name], live[name]) for name in PINNED if PINNED[name] != live[name]}
+        added = sorted(set(live) - set(PINNED))
+        if moved or added:
+>           assert C.CONTRACT_VERSION > PINNED_VERSION, (
+                f"the contract changed and its version did not. Moved: {moved}. New sections: "
+                f"{added}. Bump CONTRACT_VERSION and update PINNED in this file.")
+E           AssertionError: the contract changed and its version did not. Moved: {'brief_fields': ('cf2fb5307dd7d72f', '48d4a080ffdf5ce2'), 'error_codes': ('19906fa6afaf0a20', '62e393e774f5f23f')}. New sections: []. Bump CONTRACT_VERSION and update PINNED in this file.
+E           assert 2 > 2
+E            +  where 2 = C.CONTRACT_VERSION
+
+tests/test_contract.py:222: AssertionError
+________________ test_the_command_prints_what_the_module_builds ________________
+
+    def test_the_command_prints_what_the_module_builds():
+        """`h3ir contract` is how the node pack's copy gets regenerated, so it has to be the same bytes
+        the module produces and not a rendering of them."""
+        for args, expected in ((["contract"], C.as_json()), (["contract", "--js"], C.as_js())):
+            out = subprocess.run([sys.executable, "-m", "h3ir.cli", *args], cwd=REPO,
+                                 capture_output=True, text=True)
+            assert out.returncode == 0, out.stderr
+>           assert out.stdout == expected, f"`h3ir {' '.join(args)}` printed something else"
+E           AssertionError: `h3ir contract` printed something else
+E           assert '{\n  "contra...47"\n  }\n}\n' == '{\n  "contra...47"\n  }\n}\n'
+E             
+E               {
+E             -   "contract_version": 3,
+E             ?                       ^
+E             +   "contract_version": 2,
+E             ?                       ^
+E                 "field_lists_describe": "the keys of a POST /v1/briefs request. Not the fields of h3ir.models.Brief and h3ir.models.AssetRef, which carry more and are the compiler's own, not a caller's.",...
+E             
+E             ...Full output truncated (393 lines hidden), use '-vv' to show
+
+tests/test_contract.py:293: AssertionError
+___________ test_the_generated_module_carries_the_moves_and_the_cap ____________
+
+    def test_the_generated_module_carries_the_moves_and_the_cap():
+        js = C.as_js()
+        block = js[js.index("export const CAMERA_MOVES = ["):js.index("export const DIRECTORS = [")]
+        assert tuple(json.loads(m) for m in re.findall(r'("(?:[^"\\]|\\.)*")', block)) == D.CAMERA_MOVES
+        assert re.search(rf"^export const MAX_NOTES = {D.MAX_NOTES_CHARS};$", js, re.MULTILINE)
+>       assert re.search(rf"^export const CONTRACT_VERSION = {C.CONTRACT_VERSION};$", js, re.MULTILINE)
+E       assert None
+E        +  where None = <function search at 0x101119440>('^export const CONTRACT_VERSION = 2;$', '/* GENERATED by `contextir contract -js`. Do not edit.\n *\n * The seven directions, the twenty camera moves H3 has n...ic line on strings or a solo horn, which plays through in full at least once, rises, and lands resolved.",\n  },\n];\n', re.MULTILINE)
+E        +    where <function search at 0x101119440> = re.search
+E        +    and   re.MULTILINE = re.MULTILINE
+
+tests/test_contract.py:323: AssertionError
+___ test_the_generated_module_says_it_is_generated_and_how_to_regenerate_it ____
+
+    def test_the_generated_module_says_it_is_generated_and_how_to_regenerate_it():
+        """It sits in a repository beside hand-written files. Somebody will open it to fix a typo in a
+        profile, and the file has to tell them where the typo actually lives."""
+        js = C.as_js()
+>       assert "GENERATED by `h3ir contract --js`" in js
+E       assert 'GENERATED by `h3ir contract --js`' in '/* GENERATED by `contextir contract -js`. Do not edit.\n *\n * The seven directions, the twenty camera moves H3 has n...ic line on strings or a solo horn, which plays through in full at least once, rises, and lands resolved.",\n  },\n];\n'
+
+tests/test_contract.py:332: AssertionError
+__________ test_direction_cannot_move_a_shot_count_the_caller_pinned ___________
+
+    def test_direction_cannot_move_a_shot_count_the_caller_pinned():
+        """Rule 1, and the answer the creativity dial already gives. A pinned count is the caller's
+        contract: it is stated in the ask and T11-shot-count-pinned is an ERROR if the document
+        disagrees. A profile is prose in the same ask and reaches neither."""
+>       ask = _ask("a man walks a corridor", shots=2,
+                   notes="Cut every two seconds and use exactly three shots.")
+
+tests/test_director.py:277: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_director.py:250: in _ask
+    plan = deterministic_draft(brief, Mode.REF2VA, cards, opts=ProfileOptions())
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/Users/linyang/Code/contextir/conformance/draft_bridge.py:51: in native_draft
+    packet=native_operation('h3ir.draft.deterministic_draft',data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+qualified = 'h3ir.draft.deterministic_draft'
+arguments = {'brief': Brief(intent='a man walks a corridor', assets=[], seconds=8.0, aspect='16:9', canvas=None, megapixels=None, ...=None, seconds_per_shot=3.4, max_shots=4, include_summary=True, include_retention=True, trigger_repeat_default=1), ...}
+
+    def native_operation(qualified,arguments):
+        request={'operation':qualified,'arguments':cap.plain(arguments)}
+        observed_callbacks=[]
+        p=validator.PROCESS
+        p.stdin.write(json.dumps(request,ensure_ascii=False)+'\n');p.stdin.flush()
+        while True:
+            line=p.stdout.readline()
+            if not line:raise RuntimeError('Go core bridge stopped before responding')
+            result=json.loads(line)
+            if 'callback' not in result:break
+            import callbacks
+            reply=callbacks.dispatch(result['callback'],result.get('payload'))
+            observed_callbacks.append({'name':result['callback'],'payload':result.get('payload'),'reply':reply})
+            p.stdin.write(json.dumps(reply,ensure_ascii=False)+'\n');p.stdin.flush()
+        def redacted(value):
+            if isinstance(value,dict):return {k:('[redacted]' if k in ('api_key','llm_key','authorization','Authorization','access_token','refresh_token','password','bearer_token') else redacted(v)) for k,v in value.items()}
+            if isinstance(value,list):return [redacted(v) for v in value]
+            return value
+        record={'nodeid':cap.CURRENT,'function':qualified,'arguments':redacted(request['arguments'])}
+        if observed_callbacks:record['injected_test_callbacks']=redacted(observed_callbacks)
+        CORE_CALLS.append(record)
+        if result.get('error'):
+            record.update(raised='ValueError',error=result['error'])
+            if result.get('value') is not None:record['failed_native_value']=redacted(result['value'])
+>           raise GoOperationError(result['error'],result.get('error_code'))
+E           pytest_go_core.GoOperationError: contextir: invalid_document at request (1 issues)
+
+/Users/linyang/Code/contextir/conformance/pytest_go_core.py:47: GoOperationError
+_________ test_every_label_in_the_text_has_a_manifest_entry_behind_it __________
+
+    def test_every_label_in_the_text_has_a_manifest_entry_behind_it():
+        """The other direction, and the one L3-phantom-media covers in the validator. Asserted here on the
+        manifest itself so the two halves cannot drift apart."""
+        from h3ir.analyse import sha256_file
+        from h3ir.config import get_config
+        from h3ir.draft import deterministic_draft
+        from h3ir.models import AssetKind, AssetRef, Brief, Mode, Role
+        from h3ir.plan import ProfileOptions
+        from h3ir.render import render_ir
+    
+        p = get_config().paths.golden_dir / "assets" / "ref1.png"
+        if not p.exists():
+            pytest.skip("golden asset missing")
+        brief = Brief(intent="the man walks down the corridor", seconds=8.0,
+                      assets=[AssetRef(kind=AssetKind.IMAGE, role=Role.SUBJECT,
+                                       sha256=sha256_file(p), path=str(p), note="the woman",
+                                       px=(733, 1100))])
+>       plan = deterministic_draft(brief, Mode.REF2VA, {})
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_hardening.py:458: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/Users/linyang/Code/contextir/conformance/draft_bridge.py:51: in native_draft
+    packet=native_operation('h3ir.draft.deterministic_draft',data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+qualified = 'h3ir.draft.deterministic_draft'
+arguments = {'brief': Brief(intent='the man walks down the corridor', assets=[AssetRef(kind=<AssetKind.IMAGE: 'image'>, role=<Role...ivity='balanced', director='', director_profile=None), 'mode': <Mode.REF2VA: 'ref2va'>, 'cards': {}, 'opts': None, ...}
+
+    def native_operation(qualified,arguments):
+        request={'operation':qualified,'arguments':cap.plain(arguments)}
+        observed_callbacks=[]
+        p=validator.PROCESS
+        p.stdin.write(json.dumps(request,ensure_ascii=False)+'\n');p.stdin.flush()
+        while True:
+            line=p.stdout.readline()
+            if not line:raise RuntimeError('Go core bridge stopped before responding')
+            result=json.loads(line)
+            if 'callback' not in result:break
+            import callbacks
+            reply=callbacks.dispatch(result['callback'],result.get('payload'))
+            observed_callbacks.append({'name':result['callback'],'payload':result.get('payload'),'reply':reply})
+            p.stdin.write(json.dumps(reply,ensure_ascii=False)+'\n');p.stdin.flush()
+        def redacted(value):
+            if isinstance(value,dict):return {k:('[redacted]' if k in ('api_key','llm_key','authorization','Authorization','access_token','refresh_token','password','bearer_token') else redacted(v)) for k,v in value.items()}
+            if isinstance(value,list):return [redacted(v) for v in value]
+            return value
+        record={'nodeid':cap.CURRENT,'function':qualified,'arguments':redacted(request['arguments'])}
+        if observed_callbacks:record['injected_test_callbacks']=redacted(observed_callbacks)
+        CORE_CALLS.append(record)
+        if result.get('error'):
+            record.update(raised='ValueError',error=result['error'])
+            if result.get('value') is not None:record['failed_native_value']=redacted(result['value'])
+>           raise GoOperationError(result['error'],result.get('error_code'))
+E           pytest_go_core.GoOperationError: contextir: perception_failed at perception (1 issues)
+
+/Users/linyang/Code/contextir/conformance/pytest_go_core.py:47: GoOperationError
+__________________ test_a_frame_anchor_DOES_licence_its_pose ___________________
+
+    def test_a_frame_anchor_DOES_licence_its_pose():
+        """The exception, and the reason it is principled: when the plate is frame 0 of the video,
+        its pose IS the video's opening pose. Suppressing it there would lose real information."""
+>       plan = _plan(role=Role.FRAME_ANCHOR_FIRST)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_reference_licence.py:78: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_reference_licence.py:56: in _plan
+    return deterministic_draft(b, Mode.REF2VA, cards or {"char": _character_card()},
+/Users/linyang/Code/contextir/conformance/draft_bridge.py:51: in native_draft
+    packet=native_operation('h3ir.draft.deterministic_draft',data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+qualified = 'h3ir.draft.deterministic_draft'
+arguments = {'brief': Brief(intent='the man walks forward down the stone corridor', assets=[AssetRef(kind=<AssetKind.IMAGE: 'image...=None, seconds_per_shot=3.4, max_shots=4, include_summary=True, include_retention=True, trigger_repeat_default=1), ...}
+
+    def native_operation(qualified,arguments):
+        request={'operation':qualified,'arguments':cap.plain(arguments)}
+        observed_callbacks=[]
+        p=validator.PROCESS
+        p.stdin.write(json.dumps(request,ensure_ascii=False)+'\n');p.stdin.flush()
+        while True:
+            line=p.stdout.readline()
+            if not line:raise RuntimeError('Go core bridge stopped before responding')
+            result=json.loads(line)
+            if 'callback' not in result:break
+            import callbacks
+            reply=callbacks.dispatch(result['callback'],result.get('payload'))
+            observed_callbacks.append({'name':result['callback'],'payload':result.get('payload'),'reply':reply})
+            p.stdin.write(json.dumps(reply,ensure_ascii=False)+'\n');p.stdin.flush()
+        def redacted(value):
+            if isinstance(value,dict):return {k:('[redacted]' if k in ('api_key','llm_key','authorization','Authorization','access_token','refresh_token','password','bearer_token') else redacted(v)) for k,v in value.items()}
+            if isinstance(value,list):return [redacted(v) for v in value]
+            return value
+        record={'nodeid':cap.CURRENT,'function':qualified,'arguments':redacted(request['arguments'])}
+        if observed_callbacks:record['injected_test_callbacks']=redacted(observed_callbacks)
+        CORE_CALLS.append(record)
+        if result.get('error'):
+            record.update(raised='ValueError',error=result['error'])
+            if result.get('value') is not None:record['failed_native_value']=redacted(result['value'])
+>           raise GoOperationError(result['error'],result.get('error_code'))
+E           pytest_go_core.GoOperationError: contextir: unsupported_capability at compiler (1 issues)
+
+/Users/linyang/Code/contextir/conformance/pytest_go_core.py:47: GoOperationError
+____________ test_the_wardrobe_guard_defers_to_who_governs_wardrobe ____________
+
+    def test_the_wardrobe_guard_defers_to_who_governs_wardrobe():
+        """`R15-wardrobe-not-restated` fired on a brief whose entire purpose was "change the shirt on the
+        man in this video", telling it to keep restating the reference's navy t-shirt. Holding onto the
+        garment the caller asked to replace is not drift protection, it is the opposite.
+    
+        `licence.governs[WARDROBE]` is already the settled answer to who owns that attribute, so the guard
+        defers to it rather than forming a second opinion about the request.
+    
+        A reference must be attached for the question to mean anything: with no plate, every attribute is
+        request-governed trivially, and `_wardrobe_terms` is empty anyway because the garment words come
+        from the plate's own card.
+        """
+        from h3ir.compile import _wardrobe_terms
+        from h3ir.licence import WARDROBE, resolve_licence
+    
+        card = AssetCard(sha256="i1", kind=AssetKind.IMAGE, style="live-action",
+                         subjects=[{"kind": "person", "descriptor": "the man",
+                                    "attributes": ["navy blue t-shirt", "dark blue jeans"]}])
+        ref = AssetRef(kind=AssetKind.IMAGE, role=Role.SUBJECT, sha256="i1", px=(700, 500))
+    
+        class _Plan:
+            subjects = [SubjectPlan(label="<Subject 1>", descriptor="the man", kind="person",
+                                    attributes=["navy blue t-shirt", "dark blue jeans"], sources=[])]
+    
+        keep = Brief(intent="the man walks down the stone corridor", seconds=8.0, assets=[ref])
+        change = Brief(intent="change the shirt on the man to a mossy grey-green", seconds=8.0,
+                       assets=[ref])
+    
+        assert resolve_licence(keep, {"i1": card}).governs.get(WARDROBE) == "reference"
+>       assert resolve_licence(change, {"i1": card}).governs.get(WARDROBE) == "request"
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_reference_licence.py:534: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/Users/linyang/Code/contextir/conformance/licence_bridge.py:98: in invoke
+    output=native_operation(function,{**arguments,'responses':responses,'actual_case_id':item['case_id'],'actual_report':result['run_report'],**provenance})['decision']
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+qualified = 'h3ir.licence.resolve_licence'
+arguments = {'brief': {'intent': 'change the shirt on the man to a mossy grey-green', 'assets': [{'kind': 'image', 'role': 'subjec...: {'input_tokens': 1923, 'output_tokens': 313}, 'usage_invalid': False}}], 'actual_case_id': 'main:licence-01112', ...}
+
+    def native_operation(qualified,arguments):
+        request={'operation':qualified,'arguments':cap.plain(arguments)}
+        observed_callbacks=[]
+        p=validator.PROCESS
+        p.stdin.write(json.dumps(request,ensure_ascii=False)+'\n');p.stdin.flush()
+        while True:
+            line=p.stdout.readline()
+            if not line:raise RuntimeError('Go core bridge stopped before responding')
+            result=json.loads(line)
+            if 'callback' not in result:break
+            import callbacks
+            reply=callbacks.dispatch(result['callback'],result.get('payload'))
+            observed_callbacks.append({'name':result['callback'],'payload':result.get('payload'),'reply':reply})
+            p.stdin.write(json.dumps(reply,ensure_ascii=False)+'\n');p.stdin.flush()
+        def redacted(value):
+            if isinstance(value,dict):return {k:('[redacted]' if k in ('api_key','llm_key','authorization','Authorization','access_token','refresh_token','password','bearer_token') else redacted(v)) for k,v in value.items()}
+            if isinstance(value,list):return [redacted(v) for v in value]
+            return value
+        record={'nodeid':cap.CURRENT,'function':qualified,'arguments':redacted(request['arguments'])}
+        if observed_callbacks:record['injected_test_callbacks']=redacted(observed_callbacks)
+        CORE_CALLS.append(record)
+        if result.get('error'):
+            record.update(raised='ValueError',error=result['error'])
+            if result.get('value') is not None:record['failed_native_value']=redacted(result['value'])
+>           raise GoOperationError(result['error'],result.get('error_code'))
+E           pytest_go_core.GoOperationError: contextir: model_failed at identity_requirements (1 issues)
+
+/Users/linyang/Code/contextir/conformance/pytest_go_core.py:47: GoOperationError
+__________ test_a_frame_anchor_is_exempt_from_a_transformation_marker __________
+
+    def test_a_frame_anchor_is_exempt_from_a_transformation_marker():
+        """The exposure check the lead asked for on the preservation-flavoured rules, and it found a real
+        contradiction — resolved in the OPPOSITE direction from R15's.
+    
+        A frame anchor is a conditioning latent that is never denoised, so its own pixels cannot be
+        transformed; the transformation applies to the rest of the video. `marker_for_plate` handed
+        `attribute_transfer` to every plate including that one, so R6 (an anchor must be fully_preserved)
+        and R7 (a Picture cannot transfer) both fired on a perfectly coherent request — "start from this
+        frame and reimagine the rest as anime". The compiler contradicted itself and the model could not
+        fix it.
+    
+        R15's collision was fixed by deferring to the REQUEST, because the caller owns wardrobe. This one
+        defers to the MECHANISM, because nothing owns a latent that is never denoised. "Who owns the
+        attribute" does not always answer "the request".
+    
+        **§43 makes the exemption moot and keeps this test as the stronger guard.** The collision existed
+        only because a transformation overrode the marker at all, and that override was a misreading of
+        `attribute_transfer`. With it deleted, NO plate's marker depends on the licence — anchor or not —
+        so R6 and R7 can never be tripped by us. Asserted for both roles, which is what the exemption was
+        protecting, and it now also fails if anyone re-introduces the override.
+        """
+        from h3ir.licence import resolve_licence
+    
+        card = AssetCard(sha256="i1", kind=AssetKind.IMAGE, style="live-action photo",
+                         subjects=[{"kind": "person", "descriptor": "the man",
+                                    "attributes": ["charcoal technical jacket"]}])
+        anchor = AssetRef(kind=AssetKind.IMAGE, role=Role.FRAME_ANCHOR_FIRST, sha256="i1", px=(700, 500))
+        brief = Brief(intent="start from this frame and reimagine the whole thing as anime as he walks "
+                             "away", seconds=8.0, assets=[anchor])
+        lic = resolve_licence(brief, {"i1": card})
+    
+        assert lic.medium_transferred, "the request IS a transformation"
+        assert not hasattr(lic, "marker_for_plate"), (
+            "the licence must not decide a retention marker at all — see §43")
+        for role in (Role.SUBJECT, Role.FRAME_ANCHOR_FIRST, Role.FRAME_ANCHOR_LAST):
+            ref = AssetRef(kind=AssetKind.IMAGE, role=role, sha256="i1", px=(700, 500))
+>           plan = deterministic_draft(replace(brief, assets=[ref]), Mode.FL2VA, {"i1": card},
+                                       opts=ProfileOptions())
+
+tests/test_reference_licence.py:578: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/Users/linyang/Code/contextir/conformance/draft_bridge.py:51: in native_draft
+    packet=native_operation('h3ir.draft.deterministic_draft',data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+qualified = 'h3ir.draft.deterministic_draft'
+arguments = {'brief': Brief(intent='start from this frame and reimagine the whole thing as anime as he walks away', assets=[AssetR...=None, seconds_per_shot=3.4, max_shots=4, include_summary=True, include_retention=True, trigger_repeat_default=1), ...}
+
+    def native_operation(qualified,arguments):
+        request={'operation':qualified,'arguments':cap.plain(arguments)}
+        observed_callbacks=[]
+        p=validator.PROCESS
+        p.stdin.write(json.dumps(request,ensure_ascii=False)+'\n');p.stdin.flush()
+        while True:
+            line=p.stdout.readline()
+            if not line:raise RuntimeError('Go core bridge stopped before responding')
+            result=json.loads(line)
+            if 'callback' not in result:break
+            import callbacks
+            reply=callbacks.dispatch(result['callback'],result.get('payload'))
+            observed_callbacks.append({'name':result['callback'],'payload':result.get('payload'),'reply':reply})
+            p.stdin.write(json.dumps(reply,ensure_ascii=False)+'\n');p.stdin.flush()
+        def redacted(value):
+            if isinstance(value,dict):return {k:('[redacted]' if k in ('api_key','llm_key','authorization','Authorization','access_token','refresh_token','password','bearer_token') else redacted(v)) for k,v in value.items()}
+            if isinstance(value,list):return [redacted(v) for v in value]
+            return value
+        record={'nodeid':cap.CURRENT,'function':qualified,'arguments':redacted(request['arguments'])}
+        if observed_callbacks:record['injected_test_callbacks']=redacted(observed_callbacks)
+        CORE_CALLS.append(record)
+        if result.get('error'):
+            record.update(raised='ValueError',error=result['error'])
+            if result.get('value') is not None:record['failed_native_value']=redacted(result['value'])
+>           raise GoOperationError(result['error'],result.get('error_code'))
+E           pytest_go_core.GoOperationError: contextir: invalid_document at request (1 issues)
+
+/Users/linyang/Code/contextir/conformance/pytest_go_core.py:47: GoOperationError
+____ test_the_rule_is_NOT_armed_when_the_requested_medium_is_unclassifiable ____
+
+    def test_the_rule_is_NOT_armed_when_the_requested_medium_is_unclassifiable():
+        """The false positive that this rule produced on real output before it shipped, and the reason.
+    
+        `classify_medium("1990s cel animation")` is `None` -- outside the closed vocabulary, which is the
+        whole reason `transform_target` reads targets from the request instead. The first version of the
+        arming condition read `observed != requested` and `None != "2d-animation"` is True, so it armed;
+        the plate and the target are in fact BOTH 2D, the correct opening landed in the reference's own
+        bucket, and the rule flagged output that was right.
+    
+        §35's line, one layer down and made by the author who had just written it into §42: absence of a
+        statement is not a statement of absence. `None` means the classifier could not place it.
+        """
+        from h3ir.compile import _transformed_from
+        lic, style = _real_brief_style()
+        assert lic.medium_transferred, "the transformation IS detected"
+>       assert style.requested_medium is None, "and its target is outside the closed vocabulary"
+E       AssertionError: and its target is outside the closed vocabulary
+E       assert '2d-animation' is None
+E        +  where '2d-animation' = install.<locals>.NativeStyle(phrase='1990s cel animation', source='request', requested_medium='2d-animation', observed_medium='2d-animation', observed_phrase='Digital illustration, semi-realistic character design').requested_medium
+
+tests/test_reference_licence.py:1077: AssertionError
+_________________ test_two_swaps_render_byte_identically_twice _________________
+
+    def test_two_swaps_render_byte_identically_twice():
+        brief, cards = _two_swaps("the man in the plaid shirt", "the woman at the lathe")
+>       plan = deterministic_draft(brief, Mode.REF2VA, cards)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_swap_roles.py:719: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/Users/linyang/Code/contextir/conformance/draft_bridge.py:43: in native_draft
+    licence=importlib.import_module('h3ir.licence').resolve_licence(arguments['brief'],arguments['cards'])
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/Users/linyang/Code/contextir/conformance/licence_bridge.py:98: in invoke
+    output=native_operation(function,{**arguments,'responses':responses,'actual_case_id':item['case_id'],'actual_report':result['run_report'],**provenance})['decision']
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+qualified = 'h3ir.licence.resolve_licence'
+arguments = {'brief': {'intent': 'swap them both', 'assets': [{'kind': 'image', 'role': 'replacement_subject', 'sha256': 'sha-plat... {'input_tokens': 3555, 'output_tokens': 1073}, 'usage_invalid': False}}], 'actual_case_id': 'main:licence-01610', ...}
+
+    def native_operation(qualified,arguments):
+        request={'operation':qualified,'arguments':cap.plain(arguments)}
+        observed_callbacks=[]
+        p=validator.PROCESS
+        p.stdin.write(json.dumps(request,ensure_ascii=False)+'\n');p.stdin.flush()
+        while True:
+            line=p.stdout.readline()
+            if not line:raise RuntimeError('Go core bridge stopped before responding')
+            result=json.loads(line)
+            if 'callback' not in result:break
+            import callbacks
+            reply=callbacks.dispatch(result['callback'],result.get('payload'))
+            observed_callbacks.append({'name':result['callback'],'payload':result.get('payload'),'reply':reply})
+            p.stdin.write(json.dumps(reply,ensure_ascii=False)+'\n');p.stdin.flush()
+        def redacted(value):
+            if isinstance(value,dict):return {k:('[redacted]' if k in ('api_key','llm_key','authorization','Authorization','access_token','refresh_token','password','bearer_token') else redacted(v)) for k,v in value.items()}
+            if isinstance(value,list):return [redacted(v) for v in value]
+            return value
+        record={'nodeid':cap.CURRENT,'function':qualified,'arguments':redacted(request['arguments'])}
+        if observed_callbacks:record['injected_test_callbacks']=redacted(observed_callbacks)
+        CORE_CALLS.append(record)
+        if result.get('error'):
+            record.update(raised='ValueError',error=result['error'])
+            if result.get('value') is not None:record['failed_native_value']=redacted(result['value'])
+>           raise GoOperationError(result['error'],result.get('error_code'))
+E           pytest_go_core.GoOperationError: contextir: model_failed at identity_requirements (1 issues)
+
+/Users/linyang/Code/contextir/conformance/pytest_go_core.py:47: GoOperationError
+_______________ test_the_two_swap_draft_passes_its_own_validator _______________
+
+    def test_the_two_swap_draft_passes_its_own_validator():
+        brief, cards = _two_swaps("the man in the plaid shirt", "the woman at the lathe")
+>       plan = deterministic_draft(brief, Mode.REF2VA, cards)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_swap_roles.py:725: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/Users/linyang/Code/contextir/conformance/draft_bridge.py:43: in native_draft
+    licence=importlib.import_module('h3ir.licence').resolve_licence(arguments['brief'],arguments['cards'])
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/Users/linyang/Code/contextir/conformance/licence_bridge.py:98: in invoke
+    output=native_operation(function,{**arguments,'responses':responses,'actual_case_id':item['case_id'],'actual_report':result['run_report'],**provenance})['decision']
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+qualified = 'h3ir.licence.resolve_licence'
+arguments = {'brief': {'intent': 'swap them both', 'assets': [{'kind': 'image', 'role': 'replacement_subject', 'sha256': 'sha-plat... {'input_tokens': 3555, 'output_tokens': 1073}, 'usage_invalid': False}}], 'actual_case_id': 'main:licence-01610', ...}
+
+    def native_operation(qualified,arguments):
+        request={'operation':qualified,'arguments':cap.plain(arguments)}
+        observed_callbacks=[]
+        p=validator.PROCESS
+        p.stdin.write(json.dumps(request,ensure_ascii=False)+'\n');p.stdin.flush()
+        while True:
+            line=p.stdout.readline()
+            if not line:raise RuntimeError('Go core bridge stopped before responding')
+            result=json.loads(line)
+            if 'callback' not in result:break
+            import callbacks
+            reply=callbacks.dispatch(result['callback'],result.get('payload'))
+            observed_callbacks.append({'name':result['callback'],'payload':result.get('payload'),'reply':reply})
+            p.stdin.write(json.dumps(reply,ensure_ascii=False)+'\n');p.stdin.flush()
+        def redacted(value):
+            if isinstance(value,dict):return {k:('[redacted]' if k in ('api_key','llm_key','authorization','Authorization','access_token','refresh_token','password','bearer_token') else redacted(v)) for k,v in value.items()}
+            if isinstance(value,list):return [redacted(v) for v in value]
+            return value
+        record={'nodeid':cap.CURRENT,'function':qualified,'arguments':redacted(request['arguments'])}
+        if observed_callbacks:record['injected_test_callbacks']=redacted(observed_callbacks)
+        CORE_CALLS.append(record)
+        if result.get('error'):
+            record.update(raised='ValueError',error=result['error'])
+            if result.get('value') is not None:record['failed_native_value']=redacted(result['value'])
+>           raise GoOperationError(result['error'],result.get('error_code'))
+E           pytest_go_core.GoOperationError: contextir: model_failed at identity_requirements (1 issues)
+
+/Users/linyang/Code/contextir/conformance/pytest_go_core.py:47: GoOperationError
+=========================== short test summary info ============================
+FAILED tests/test_contract.py::test_the_service_publishes_one_statement_of_the_lists_it_shares_with_the_contract
+FAILED tests/test_contract.py::test_the_version_moves_when_any_part_of_the_contract_moves
+FAILED tests/test_contract.py::test_the_command_prints_what_the_module_builds
+FAILED tests/test_contract.py::test_the_generated_module_carries_the_moves_and_the_cap
+FAILED tests/test_contract.py::test_the_generated_module_says_it_is_generated_and_how_to_regenerate_it
+FAILED tests/test_director.py::test_direction_cannot_move_a_shot_count_the_caller_pinned
+FAILED tests/test_hardening.py::test_every_label_in_the_text_has_a_manifest_entry_behind_it
+FAILED tests/test_reference_licence.py::test_a_frame_anchor_DOES_licence_its_pose
+FAILED tests/test_reference_licence.py::test_the_wardrobe_guard_defers_to_who_governs_wardrobe
+FAILED tests/test_reference_licence.py::test_a_frame_anchor_is_exempt_from_a_transformation_marker
+FAILED tests/test_reference_licence.py::test_the_rule_is_NOT_armed_when_the_requested_medium_is_unclassifiable
+FAILED tests/test_swap_roles.py::test_two_swaps_render_byte_identically_twice
+FAILED tests/test_swap_roles.py::test_the_two_swap_draft_passes_its_own_validator
+13 failed, 978 passed in 12.65s
+/Users/linyang/Code/contextir/conformance/service_bridge.py:18: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+  from starlette.testclient import TestClient

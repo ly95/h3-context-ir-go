@@ -23,7 +23,7 @@ type SubjectProjectionSource struct {
 	Attributes []string `json:"attributes"`
 }
 
-func projectCanonicalSubjects(subjects []contextir.Subject, projections []SubjectProjection) ([]contextir.Subject, error) {
+func projectCanonicalSubjects(subjects []contextir.Subject, projections []SubjectProjection, approvedTargets ...map[string]map[string]string) ([]contextir.Subject, error) {
 	if len(projections) == 0 {
 		return subjects, nil
 	}
@@ -59,19 +59,32 @@ func projectCanonicalSubjects(subjects []contextir.Subject, projections []Subjec
 			}
 			primaryPresent = primaryPresent || source.ID == primary.ID
 			used[source.ID] = true
+			selectedTargets := []string{}
 			for _, attribute := range selection.Attributes {
-				if !contains(source.Attributes, attribute) {
+				targetAttribute := attribute
+				if !contains(source.Attributes, targetAttribute) && len(approvedTargets) > 0 {
+					// Only an already accepted, source-specific adjustment can
+					// carry an explicit original selection into canonical wording.
+					// The caller's raw selection remains in Structure/Evidence.
+					if target, ok := approvedTargets[0][source.ID][attribute]; ok {
+						targetAttribute = target
+					}
+				}
+				if !contains(source.Attributes, targetAttribute) {
 					return nil, invalid("subject_projections.sources.attributes", "Selected attributes must exist exactly on the named canonical source identity.")
 				}
-				if !contains(out.Attributes, attribute) {
-					out.Attributes = append(out.Attributes, attribute)
+				if !contains(selectedTargets, targetAttribute) {
+					selectedTargets = append(selectedTargets, targetAttribute)
+				}
+				if !contains(out.Attributes, targetAttribute) {
+					out.Attributes = append(out.Attributes, targetAttribute)
 				}
 			}
 			for _, attribution := range source.Sources {
 				if attribution.Role != contextir.RoleIdentity && attribution.Role != contextir.RoleAction {
 					return nil, invalid("subject_projections.sources", "Only identity or motion attribution may supply a merged content subject.")
 				}
-				attribution.Details = "Use only these explicitly selected target characteristics: " + strings.Join(selection.Attributes, "; ") + ". Source observations and caller-requested target claims retain their separate recorded provenance."
+				attribution.Details = "Use only these explicitly selected target characteristics: " + strings.Join(selectedTargets, "; ") + ". Source observations and caller-requested target claims retain their separate recorded provenance."
 				out.Sources = append(out.Sources, attribution)
 			}
 			for _, shot := range source.ShotIDs {

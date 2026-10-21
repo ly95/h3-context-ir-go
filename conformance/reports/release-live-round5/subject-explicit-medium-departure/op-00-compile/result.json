@@ -1,0 +1,1386 @@
+{
+  "composition_reviews": [
+    {
+      "version": "contextir/composition-review/v9",
+      "required": true,
+      "passed": true,
+      "calls": [
+        {
+          "stage": "semantic_review",
+          "attempt": 1,
+          "model": "deepseek-flash",
+          "usage": {
+            "input_tokens": 2690,
+            "output_tokens": 536
+          },
+          "valid": true
+        }
+      ]
+    }
+  ],
+  "usage_complete": true,
+  "clarification_policy": "continue_with_recorded_choice",
+  "mode_decision": {
+    "clarification_policy": "continue_with_recorded_choice",
+    "confidence_kind": "routing_policy",
+    "aspect_mismatch": false,
+    "needs_clarification": false,
+    "mode": "ref2va",
+    "confidence": 1,
+    "rule": "caller-override",
+    "signals": [
+      "Mode follows explicit structured choices and media socket requirements."
+    ]
+  },
+  "scope_decision": {
+    "conflict_policy": "supplied_content_wins",
+    "requested": {
+      "speech": false,
+      "music": false,
+      "onscreen_text": false,
+      "magnitude": ""
+    },
+    "forbidden": {
+      "speech": false,
+      "music": false,
+      "onscreen_text": false,
+      "magnitude": ""
+    },
+    "allowed": {
+      "speech": false,
+      "music": true,
+      "onscreen_text": false,
+      "magnitude": "measured"
+    },
+    "dialogue": [],
+    "onscreen_text": [],
+    "reasoning": "The brief requests a redrawn animated car scene with movement in a snowy street. It contains no request for speech, music, or visible lettering, and its prohibition only concerns copying the showroom background/static pose, not any of the tracked content classes.",
+    "calls": [
+      {
+        "stage": "scope",
+        "attempt": 1,
+        "model": "deepseek-flash",
+        "usage": {
+          "input_tokens": 1086,
+          "output_tokens": 215
+        },
+        "valid": true
+      }
+    ]
+  },
+  "licence": {
+    "reference_permissions": {
+      "action": true,
+      "framing": true,
+      "lighting": true,
+      "medium": true,
+      "palette": true,
+      "wardrobe": true
+    },
+    "medium_decision": {
+      "rendering_permission": {
+        "kind": "structured_style",
+        "disposition": "convert",
+        "operation_quote": "",
+        "target": "1990s cel animation",
+        "reasoning": "The caller explicitly supplied the authoritative structured Style field."
+      },
+      "disposition": "convert",
+      "operation_quote": "",
+      "target": "1990s cel animation",
+      "requested_style": "1990s cel animation",
+      "reference_medium": "live-action",
+      "requested_medium": "2d-animation",
+      "treatments": [],
+      "reasoning": "The host-provided rendering permission authorizes conversion to the structured target '1990s cel animation'. The observed reference is live-action, while the requested rendition is a cel-animation style, which belongs to the 2d-animation rendering family. The request does not separately specify any compatible treatment from the supplied vocabulary.",
+      "calls": [
+        {
+          "stage": "medium",
+          "attempt": 1,
+          "model": "deepseek-flash",
+          "usage": {
+            "input_tokens": 1283,
+            "output_tokens": 360
+          },
+          "valid": true
+        }
+      ]
+    },
+    "identity": [
+      {
+        "descriptor_source": "reference",
+        "kind": "object",
+        "label": "\u003cSubject 1\u003e",
+        "descriptor": "the black sports car",
+        "retained_attributes": [
+          "carbon fibre body"
+        ],
+        "requested_attributes": [],
+        "request_quote": "",
+        "wardrobe_attributes": []
+      }
+    ],
+    "governs": {
+      "action": "request",
+      "framing": "reference",
+      "lighting": "reference",
+      "medium": "request",
+      "palette": "reference",
+      "wardrobe": "reference"
+    },
+    "reasons": {
+      "action": "The brief explicitly asks that the car move through a snowy street and not retain the static pose, so the requested behavior governs action.",
+      "framing": "No camera composition, shot scale, viewpoint, or camera movement is requested; the car moving is action, not framing, so framing remains reference-governed.",
+      "lighting": "No explicit light source, direction, or visible quality is requested; snowy-street weather/location and removing the showroom background do not authorize replacing reference lighting.",
+      "medium": "The requested 1990s cel animation rendition is explicitly pinned by the medium decision, so medium is request-governed.",
+      "palette": "No explicit hue, saturation, contrast, or tonal grade is requested; the cel-animation medium decision is handled separately, so palette remains reference-governed.",
+      "wardrobe": "No clothing or accessory change is requested; the carbon fibre body is retained from the observed reference, so wardrobe remains reference-governed."
+    },
+    "transform_phrase": null,
+    "transform_target": "1990s cel animation",
+    "medium_transferred": true,
+    "style": {
+      "observed_phrase": "Live-action, cinematic",
+      "phrase": "1990s cel animation",
+      "source": "request",
+      "reference_medium": "live-action",
+      "requested_medium": "2d-animation",
+      "discrepancy": true,
+      "note": "The request explicitly changes the rendering medium while retaining the referenced identity; this does not by itself select an attribute-transfer relationship."
+    },
+    "subjects": [
+      {
+        "label": "\u003cSubject 1\u003e",
+        "kind": "object",
+        "sources": [
+          "\u003cPicture 1\u003e"
+        ],
+        "descriptor": "the black sports car",
+        "attributes": [
+          "carbon fibre body"
+        ],
+        "pose": [],
+        "pose_licensed": false,
+        "retention": "fully_preserved",
+        "retention_note": "",
+        "appears_in": [],
+        "taken_over_by": ""
+      }
+    ],
+    "calls": [
+      {
+        "stage": "medium",
+        "attempt": 1,
+        "model": "deepseek-flash",
+        "usage": {
+          "input_tokens": 1283,
+          "output_tokens": 360
+        },
+        "valid": true
+      },
+      {
+        "stage": "identity_requirements",
+        "attempt": 1,
+        "model": "deepseek-flash",
+        "usage": {
+          "input_tokens": 1449,
+          "output_tokens": 406
+        },
+        "valid": true
+      },
+      {
+        "stage": "licence",
+        "attempt": 1,
+        "model": "deepseek-flash",
+        "usage": {
+          "input_tokens": 1890,
+          "output_tokens": 2150
+        },
+        "valid": true
+      }
+    ]
+  },
+  "budget": {
+    "prompt_tokens": 902,
+    "target_video_rows": 32256,
+    "target_audio_rows": 400,
+    "known_reference_rows": 576,
+    "in_trained_band": false
+  },
+  "status": "compiled",
+  "version": "contextir/compiler/v1",
+  "brief": {
+    "effort": "standard",
+    "seconds_explicit": true,
+    "aspect_explicit": true,
+    "style": "1990s cel animation",
+    "intent": "Keep the observed black sports car identity and carbon fibre body. Redraw the scene as 1990s cel animation; let the car move through a snowy street. Do not copy the source showroom background or static pose.",
+    "assets": [
+      {
+        "preparation_computed": true,
+        "id": "asset-1",
+        "kind": "image",
+        "description": "the black sports car",
+        "metadata": {
+          "width": 1024,
+          "height": 576,
+          "fps": {
+            "numerator": 0,
+            "denominator": 0
+          }
+        },
+        "preparation": {
+          "sizing": "match",
+          "width": 1024,
+          "height": 576
+        },
+        "role": "subject",
+        "composition": "unknown",
+        "sizing": "match"
+      }
+    ],
+    "seconds": 5,
+    "aspect": "16:9",
+    "mode": "ref2va",
+    "creativity": "balanced",
+    "evidence": [
+      {
+        "card": {
+          "asset_id": "asset-1",
+          "summary": "a black sports car on a showroom floor",
+          "subjects": [
+            {
+              "kind": "object",
+              "descriptor": "the black sports car",
+              "attributes": [
+                "carbon fibre body"
+              ]
+            }
+          ],
+          "environment": "an empty showroom floor",
+          "style": "Live-action, cinematic",
+          "composition": "unknown",
+          "analyzer_version": "1",
+          "coverage": {
+            "status": "complete",
+            "tracks": [
+              "visual"
+            ]
+          }
+        },
+        "asset_id": "asset-1",
+        "facts": [
+          {
+            "id": "card-asset-1-1",
+            "text": "a black sports car on a showroom floor",
+            "source": {
+              "asset_id": "asset-1",
+              "track": "visual"
+            }
+          },
+          {
+            "id": "card-asset-1-2",
+            "text": "an empty showroom floor",
+            "source": {
+              "asset_id": "asset-1",
+              "track": "visual"
+            }
+          },
+          {
+            "id": "card-asset-1-3",
+            "text": "Live-action, cinematic",
+            "source": {
+              "asset_id": "asset-1",
+              "track": "visual"
+            }
+          },
+          {
+            "id": "card-asset-1-4",
+            "text": "the black sports car",
+            "source": {
+              "asset_id": "asset-1",
+              "track": "visual"
+            }
+          },
+          {
+            "id": "card-asset-1-5",
+            "text": "carbon fibre body",
+            "source": {
+              "asset_id": "asset-1",
+              "track": "visual"
+            }
+          }
+        ],
+        "analyzer_version": "1",
+        "coverage": {
+          "status": "complete",
+          "tracks": [
+            "visual"
+          ]
+        }
+      }
+    ],
+    "cards": [
+      {
+        "asset_id": "asset-1",
+        "summary": "a black sports car on a showroom floor",
+        "subjects": [
+          {
+            "kind": "object",
+            "descriptor": "the black sports car",
+            "attributes": [
+              "carbon fibre body"
+            ]
+          }
+        ],
+        "environment": "an empty showroom floor",
+        "style": "Live-action, cinematic",
+        "composition": "unknown",
+        "analyzer_version": "1",
+        "coverage": {
+          "status": "complete",
+          "tracks": [
+            "visual"
+          ]
+        }
+      }
+    ]
+  },
+  "request": {
+    "instruction": "Keep the observed black sports car identity and carbon fibre body. Redraw the scene as 1990s cel animation; let the car move through a snowy street. Do not copy the source showroom background or static pose.",
+    "mode": "ref2va",
+    "target": {
+      "duration_ms": 5000,
+      "frame_count": 120,
+      "aspect_ratio": "16:9",
+      "fps": {
+        "numerator": 24,
+        "denominator": 1
+      },
+      "width": 1344,
+      "height": 768
+    },
+    "assets": [
+      {
+        "id": "asset-1",
+        "kind": "image",
+        "description": "the black sports car",
+        "metadata": {
+          "width": 1024,
+          "height": 576,
+          "fps": {
+            "numerator": 0,
+            "denominator": 0
+          }
+        },
+        "preparation": {
+          "sizing": "match",
+          "width": 1024,
+          "height": 576
+        }
+      }
+    ],
+    "bindings": [
+      {
+        "source": {
+          "asset_id": "asset-1",
+          "track": "visual"
+        },
+        "role": "identity"
+      }
+    ],
+    "constraints": [
+      {
+        "id": "compiler-no-dialogue",
+        "kind": "no_dialogue",
+        "text": "Do not add spoken or sung lines."
+      }
+    ],
+    "allow_creative_additions": true,
+    "allow_generated_dialogue": false,
+    "pinned_shots": [
+      {
+        "id": "shot-1",
+        "start_ms": 0,
+        "end_ms": 1700
+      },
+      {
+        "id": "shot-2",
+        "start_ms": 1700,
+        "end_ms": 3400
+      },
+      {
+        "id": "shot-3",
+        "start_ms": 3400,
+        "end_ms": 5000
+      }
+    ],
+    "addition_scope": {
+      "dialogue": false,
+      "music": true,
+      "visible_text": false
+    }
+  },
+  "structure": {
+    "replacement_targets": {},
+    "style": "1990s cel animation",
+    "mode": "ref2va",
+    "assets": [
+      {
+        "asset_id": "asset-1",
+        "role": "subject",
+        "replaces": ""
+      }
+    ],
+    "shots": [
+      {
+        "subjects": [
+          "\u003cSubject 1\u003e"
+        ],
+        "sync_sound": [
+          "tyres crunching through packed snow",
+          "low engine hum"
+        ],
+        "start_ms": 0,
+        "purpose": "establish",
+        "framing": "wide",
+        "action": "The black sports car with its carbon fibre body rolls forward through a snow-covered street, its tyres pressing fresh tracks into the slush while flakes drift past flat cel-painted shopfronts and parked vehicles.",
+        "what_changes": "The car shifts from standing into steady forward motion, opening the street and laying its first tracks behind it.",
+        "camera": {
+          "type": "Tracking Shot",
+          "amplitude": "small",
+          "speed": "slow"
+        }
+      },
+      {
+        "subjects": [
+          "\u003cSubject 1\u003e"
+        ],
+        "sync_sound": [
+          "snow spraying softly from the tyres",
+          "steady engine note"
+        ],
+        "start_ms": 1700,
+        "purpose": "reveal",
+        "framing": "medium close",
+        "action": "The view tightens on the car's flank as it sweeps past a heaped snowbank, the carbon fibre panels carrying broad cel-shaded highlights and hard ink outlines against the white street.",
+        "what_changes": "The snowbank slides out of frame and the bodywork detail fills more of the image as the car keeps accelerating.",
+        "camera": {
+          "type": "Push In",
+          "amplitude": "small",
+          "speed": "slow"
+        }
+      },
+      {
+        "subjects": [
+          "\u003cSubject 1\u003e"
+        ],
+        "sync_sound": [
+          "distant engine fading with distance",
+          "wind stirring loose snow"
+        ],
+        "start_ms": 3400,
+        "purpose": "resolve",
+        "framing": "wide",
+        "action": "The car pulls away down the snowy street, shrinking toward the far corner while snowfall thickens and its twin tyre tracks stretch back across the frame.",
+        "what_changes": "The car grows distant until it is a small dark shape, leaving the long tracks and falling snow as the dominant elements.",
+        "camera": {
+          "type": "Static Shot",
+          "amplitude": "",
+          "speed": ""
+        }
+      }
+    ],
+    "dialogue": [],
+    "onscreen_text": [],
+    "requested": {
+      "speech": false,
+      "music": false,
+      "onscreen_text": false,
+      "magnitude": ""
+    },
+    "forbidden": {
+      "speech": false,
+      "music": false,
+      "onscreen_text": false,
+      "magnitude": ""
+    },
+    "reasoning": "The single picture is a content reference, not an anchored frame (actual_frame=false), so its showroom setting, static pose and studio presentation are not carried over; only the observed identity of the black sports car with its carbon fibre body is reused, redrawn in 1990s cel animation. The request licenses new action (the car moving through a snowy street), so the motion is authored rather than inherited, and no replacement targets apply. No speech, singing or visible lettering was requested, so those remain off; the scene sound is newly generated ambience with no claim on any source signal, as no audio attachment exists."
+  },
+  "scope": {
+    "speech": false,
+    "music": true,
+    "onscreen_text": false,
+    "magnitude": "measured"
+  },
+  "document": {
+    "version": "contextir/v1",
+    "mode": "ref2va",
+    "target": {
+      "duration_ms": 5000,
+      "frame_count": 120,
+      "aspect_ratio": "16:9",
+      "fps": {
+        "numerator": 24,
+        "denominator": 1
+      },
+      "width": 1344,
+      "height": 768
+    },
+    "assets": [
+      {
+        "id": "asset-1",
+        "kind": "image",
+        "description": "the black sports car",
+        "metadata": {
+          "width": 1024,
+          "height": 576,
+          "fps": {
+            "numerator": 0,
+            "denominator": 0
+          }
+        },
+        "preparation": {
+          "sizing": "match",
+          "width": 1024,
+          "height": 576
+        }
+      }
+    ],
+    "evidence": [
+      {
+        "card": {
+          "asset_id": "asset-1",
+          "summary": "a black sports car on a showroom floor",
+          "subjects": [
+            {
+              "kind": "object",
+              "descriptor": "the black sports car",
+              "attributes": [
+                "carbon fibre body"
+              ]
+            }
+          ],
+          "environment": "an empty showroom floor",
+          "style": "Live-action, cinematic",
+          "composition": "unknown",
+          "analyzer_version": "1",
+          "coverage": {
+            "status": "complete",
+            "tracks": [
+              "visual"
+            ]
+          }
+        },
+        "asset_id": "asset-1",
+        "facts": [
+          {
+            "id": "card-asset-1-1",
+            "text": "a black sports car on a showroom floor",
+            "source": {
+              "asset_id": "asset-1",
+              "track": "visual"
+            }
+          },
+          {
+            "id": "card-asset-1-2",
+            "text": "an empty showroom floor",
+            "source": {
+              "asset_id": "asset-1",
+              "track": "visual"
+            }
+          },
+          {
+            "id": "card-asset-1-3",
+            "text": "Live-action, cinematic",
+            "source": {
+              "asset_id": "asset-1",
+              "track": "visual"
+            }
+          },
+          {
+            "id": "card-asset-1-4",
+            "text": "the black sports car",
+            "source": {
+              "asset_id": "asset-1",
+              "track": "visual"
+            }
+          },
+          {
+            "id": "card-asset-1-5",
+            "text": "carbon fibre body",
+            "source": {
+              "asset_id": "asset-1",
+              "track": "visual"
+            }
+          }
+        ],
+        "analyzer_version": "1",
+        "coverage": {
+          "status": "complete",
+          "tracks": [
+            "visual"
+          ]
+        }
+      }
+    ],
+    "subjects": [
+      {
+        "kind": "object",
+        "descriptor": "the black sports car",
+        "attributes": [
+          "carbon fibre body"
+        ],
+        "origin": "observed",
+        "id": "subject-1",
+        "description": "the black sports car; carbon fibre body",
+        "sources": [
+          {
+            "source": {
+              "asset_id": "asset-1",
+              "track": "visual"
+            },
+            "role": "identity"
+          }
+        ],
+        "retention": "fully_preserved",
+        "retention_details": "Preserve this canonical target identity and its listed stable attributes.",
+        "shot_ids": [
+          "shot-1",
+          "shot-2",
+          "shot-3"
+        ]
+      }
+    ],
+    "style": "1990s cel animation",
+    "shots": [
+      {
+        "id": "shot-1",
+        "start_ms": 0,
+        "end_ms": 1700,
+        "description": [
+          {
+            "text": "Tracking alongside at a slow, small-amplitude drift, the shot opens on a snow-covered street rendered in 1990s cel animation, with flat painted color fields and hard ink outlines. "
+          },
+          {
+            "subject_id": "subject-1"
+          },
+          {
+            "text": " rolls forward from stillness, its carbon fibre body catching broad, simplified highlights while the tyres press fresh dark tracks into the slush. Flakes drift across parked vehicles and low shopfronts; the street stays open around the car as it builds a steady forward pace."
+          }
+        ],
+        "events": [
+          {
+            "kind": "action",
+            "at_ms": 0,
+            "description": [
+              {
+                "subject_id": "subject-1"
+              },
+              {
+                "text": " shifts from rest into a steady roll, tyres biting into the packed snow and leaving the first dark tracks behind."
+              }
+            ]
+          },
+          {
+            "kind": "sound",
+            "at_ms": 900,
+            "description": [
+              {
+                "text": "A low engine hum and the crunch of snow rise under the movement as loose flakes drift through the street."
+              }
+            ]
+          },
+          {
+            "kind": "camera",
+            "description": [
+              {
+                "text": "The camera tracks with the subject with small amplitude at slow speed."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "shot-2",
+        "start_ms": 1700,
+        "end_ms": 3400,
+        "description": [
+          {
+            "text": "The view pushes in with a slow, small-amplitude move as "
+          },
+          {
+            "subject_id": "subject-1"
+          },
+          {
+            "text": " sweeps past a heaped snowbank. The carbon fibre panels fill more of the frame, their cel-shaded planes separated by crisp ink lines, while the snowbank slides out of view and the car keeps accelerating along the white street."
+          }
+        ],
+        "events": [
+          {
+            "kind": "action",
+            "at_ms": 1700,
+            "description": [
+              {
+                "subject_id": "subject-1"
+              },
+              {
+                "text": " sweeps past the heaped snowbank, and broad highlights travel over the carbon fibre panels as the street opens ahead."
+              }
+            ]
+          },
+          {
+            "kind": "sound",
+            "at_ms": 2600,
+            "description": [
+              {
+                "text": "Slush sprays softly from the tyres while the engine note stays steady and close."
+              }
+            ]
+          },
+          {
+            "kind": "camera",
+            "description": [
+              {
+                "text": "The camera pushes in with small amplitude at slow speed."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "shot-3",
+        "start_ms": 3400,
+        "end_ms": 5000,
+        "description": [
+          {
+            "text": "In a static wide view, "
+          },
+          {
+            "subject_id": "subject-1"
+          },
+          {
+            "text": " pulls away down the snowy street, shrinking toward the far corner. Its twin tyre tracks stretch back across the foreground, snowfall thickens into soft cel-painted flecks, and the long empty street becomes the dominant shape as the car grows distant."
+          }
+        ],
+        "events": [
+          {
+            "kind": "action",
+            "at_ms": 3400,
+            "description": [
+              {
+                "subject_id": "subject-1"
+              },
+              {
+                "text": " draws away toward the far corner, leaving twin tracks across the snow as the street widens around it."
+              }
+            ]
+          },
+          {
+            "kind": "sound",
+            "at_ms": 4300,
+            "description": [
+              {
+                "text": "The engine recedes into the distance and wind stirs loose snow across the empty street."
+              }
+            ]
+          },
+          {
+            "kind": "camera",
+            "description": [
+              {
+                "text": "The camera holds a static shot."
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "soundscape": "Newly generated scene sound: tyres crunching through packed snow, a low engine hum, soft slush sprays, and wind stirring loose flakes. The engine fades with distance in the final shot. No dialogue.",
+    "music": "N/A",
+    "constraints": [
+      {
+        "id": "compiler-no-dialogue",
+        "kind": "no_dialogue",
+        "text": "Do not add spoken or sung lines."
+      }
+    ]
+  },
+  "artifact": {
+    "version": "contextir-h3/artifact-v1",
+    "compiler_version": "contextir-h3/v1.2",
+    "format_version": "minimax-h3/prompt-v1",
+    "mode": "ref2va",
+    "target": {
+      "duration_ms": 5000,
+      "frame_count": 120,
+      "aspect_ratio": "16:9",
+      "fps": {
+        "numerator": 24,
+        "denominator": 1
+      },
+      "width": 1344,
+      "height": 768
+    },
+    "profile": {
+      "name": "h3-published-format-v1",
+      "format": "minimax-h3/prompt-v1",
+      "fps": {
+        "numerator": 24,
+        "denominator": 1
+      },
+      "modes": [
+        "t2va",
+        "i2va",
+        "l2va",
+        "fl2va",
+        "ref2va"
+      ],
+      "limits": {
+        "pictures": 0,
+        "videos": 0,
+        "video_audio": 0,
+        "standalone_audio": 0
+      },
+      "supports_reference_frame_anchors": true,
+      "supports_source_intervals": true
+    },
+    "prompt": "subject_definitions:\n\u003cSubject 1\u003e is the black sports car; carbon fibre body. Its identity is referenced from \u003cPicture 1\u003e\n\nsummary:\n[reference generation] Tracking alongside at a slow, small-amplitude drift, the shot opens on a snow-covered street rendered in 1990s cel animation, with flat painted color fields and hard ink outlines. \u003cSubject 1\u003e rolls forward from stillness, its carbon fibre body catching broad, simplified highlights while the tyres press fresh dark tracks into the slush. Flakes drift across parked vehicles and low shopfronts; the street stays open around the car as it builds a steady forward pace. The view pushes in with a slow, small-amplitude move as \u003cSubject 1\u003e sweeps past a heaped snowbank. The carbon fibre panels fill more of the frame, their cel-shaded planes separated by crisp ink lines, while the snowbank slides out of view and the car keeps accelerating along the white street. In a static wide view, \u003cSubject 1\u003e pulls away down the snowy street, shrinking toward the far corner. Its twin tyre tracks stretch back across the foreground, snowfall thickens into soft cel-painted flecks, and the long empty street becomes the dominant shape as the car grows distant.\n\nretention_analysis:\n\u003cSubject 1\u003e (appears in [Shot 1], [Shot 2], [Shot 3]): fully_preserved - Preserve this canonical target identity and its listed stable attributes.\n\ndetailed_description:\nThe target video is in 1990s cel animation style.\n[Shot 1] Tracking alongside at a slow, small-amplitude drift, the shot opens on a snow-covered street rendered in 1990s cel animation, with flat painted color fields and hard ink outlines. \u003cSubject 1\u003e rolls forward from stillness, its carbon fibre body catching broad, simplified highlights while the tyres press fresh dark tracks into the slush. Flakes drift across parked vehicles and low shopfronts; the street stays open around the car as it builds a steady forward pace. At 00:00.000, \u003cSubject 1\u003e shifts from rest into a steady roll, tyres biting into the packed snow and leaving the first dark tracks behind. At 00:00.900, A low engine hum and the crunch of snow rise under the movement as loose flakes drift through the street. The camera tracks with the subject with small amplitude at slow speed. Throughout the target video: Do not add spoken or sung lines.\n[Shot 2] At 00:01.700, the shot cuts to The view pushes in with a slow, small-amplitude move as \u003cSubject 1\u003e sweeps past a heaped snowbank. The carbon fibre panels fill more of the frame, their cel-shaded planes separated by crisp ink lines, while the snowbank slides out of view and the car keeps accelerating along the white street. At 00:01.700, \u003cSubject 1\u003e sweeps past the heaped snowbank, and broad highlights travel over the carbon fibre panels as the street opens ahead. At 00:02.600, Slush sprays softly from the tyres while the engine note stays steady and close. The camera pushes in with small amplitude at slow speed.\n[Shot 3] At 00:03.400, the shot cuts to In a static wide view, \u003cSubject 1\u003e pulls away down the snowy street, shrinking toward the far corner. Its twin tyre tracks stretch back across the foreground, snowfall thickens into soft cel-painted flecks, and the long empty street becomes the dominant shape as the car grows distant. At 00:03.400, \u003cSubject 1\u003e draws away toward the far corner, leaving twin tracks across the snow as the street widens around it. At 00:04.300, The engine recedes into the distance and wind stirs loose snow across the empty street. The camera holds a static shot.\n\noverall_soundscape:\nNewly generated scene sound: tyres crunching through packed snow, a low engine hum, soft slush sprays, and wind stirring loose flakes. The engine fades with distance in the final shot. No dialogue.\n\nnon_diegetic_music:\nN/A\n",
+    "manifest": {
+      "media": [
+        {
+          "preparation": {
+            "sizing": "match",
+            "width": 1024,
+            "height": 576
+          },
+          "source_metadata": {
+            "width": 1024,
+            "height": 576,
+            "fps": {
+              "numerator": 0,
+              "denominator": 0
+            }
+          },
+          "label": "\u003cPicture 1\u003e",
+          "kind": "picture",
+          "source": {
+            "asset_id": "asset-1",
+            "track": "visual"
+          },
+          "socket": "ref_image_1"
+        }
+      ],
+      "subjects": [
+        {
+          "id": "subject-1",
+          "label": "\u003cSubject 1\u003e"
+        }
+      ],
+      "references": [],
+      "speakers": []
+    },
+    "frames": 120,
+    "effective_duration_seconds": {
+      "numerator": 5,
+      "denominator": 1
+    },
+    "document_sha256": "692b940712eda856b790c2b9e9b8ad0409b781912306fdc425a8bac8d1247dfc",
+    "profile_sha256": "ce4364d3f1242f5aeb2216db44195fb3897f4828dd9e145c4c16c64315786ab6",
+    "prompt_sha256": "fa3b49e74fc058e445c47fc55a62878399eb652038995199ea1f3514ae3dc79a",
+    "manifest_sha256": "f7b8c4dd65633801dc83e32225069af18c7172397bad7bf78ce76afe6a7f3310",
+    "sha256": "7a76e38fc3e605e0479225fb51ff7b15fa4b79ecb5427a27806cd2191be0118e"
+  },
+  "evidence": [
+    {
+      "card": {
+        "asset_id": "asset-1",
+        "summary": "a black sports car on a showroom floor",
+        "subjects": [
+          {
+            "kind": "object",
+            "descriptor": "the black sports car",
+            "attributes": [
+              "carbon fibre body"
+            ]
+          }
+        ],
+        "environment": "an empty showroom floor",
+        "style": "Live-action, cinematic",
+        "composition": "unknown",
+        "analyzer_version": "1",
+        "coverage": {
+          "status": "complete",
+          "tracks": [
+            "visual"
+          ]
+        }
+      },
+      "asset_id": "asset-1",
+      "facts": [
+        {
+          "id": "card-asset-1-1",
+          "text": "a black sports car on a showroom floor",
+          "source": {
+            "asset_id": "asset-1",
+            "track": "visual"
+          }
+        },
+        {
+          "id": "card-asset-1-2",
+          "text": "an empty showroom floor",
+          "source": {
+            "asset_id": "asset-1",
+            "track": "visual"
+          }
+        },
+        {
+          "id": "card-asset-1-3",
+          "text": "Live-action, cinematic",
+          "source": {
+            "asset_id": "asset-1",
+            "track": "visual"
+          }
+        },
+        {
+          "id": "card-asset-1-4",
+          "text": "the black sports car",
+          "source": {
+            "asset_id": "asset-1",
+            "track": "visual"
+          }
+        },
+        {
+          "id": "card-asset-1-5",
+          "text": "carbon fibre body",
+          "source": {
+            "asset_id": "asset-1",
+            "track": "visual"
+          }
+        }
+      ],
+      "analyzer_version": "1",
+      "coverage": {
+        "status": "complete",
+        "tracks": [
+          "visual"
+        ]
+      }
+    }
+  ],
+  "decisions": [
+    {
+      "field": "target",
+      "source": "computed",
+      "value": {
+        "effective_seconds": 5,
+        "frame_count": 120,
+        "nominal_seconds": 5,
+        "policy": "snap_up"
+      },
+      "explanation": "Effective timing and nominal duration are recorded separately; generated cuts use effective timing."
+    },
+    {
+      "field": "canvas",
+      "source": "computed",
+      "value": [
+        1344,
+        768
+      ],
+      "explanation": "Native short-edge canvas is aligned to 32 pixels; explicit megapixels replaces the native area budget."
+    },
+    {
+      "field": "assets.asset-1.preparation",
+      "source": "required_adapter_instruction",
+      "value": {
+        "sizing": "match",
+        "width": 1024,
+        "height": 576
+      },
+      "explanation": "These required input transforms are recorded separately from the original source metadata; the compiler has not executed media IO."
+    },
+    {
+      "field": "execution",
+      "source": "explicit_adapter_policy",
+      "value": {
+        "effort": "standard"
+      },
+      "explanation": "The injected adapters and explicit compiler repair configuration implement standard effort."
+    },
+    {
+      "field": "mode",
+      "source": "caller-override",
+      "value": {
+        "clarification_policy": "continue_with_recorded_choice",
+        "confidence_kind": "routing_policy",
+        "aspect_mismatch": false,
+        "needs_clarification": false,
+        "mode": "ref2va",
+        "confidence": 1,
+        "rule": "caller-override",
+        "signals": [
+          "Mode follows explicit structured choices and media socket requirements."
+        ]
+      },
+      "explanation": "Mode follows the production typed routing contract; publication capabilities are checked separately."
+    },
+    {
+      "field": "content_scope",
+      "source": "typed_request_interpretation",
+      "value": {
+        "conflict_policy": "supplied_content_wins",
+        "requested": {
+          "speech": false,
+          "music": false,
+          "onscreen_text": false,
+          "magnitude": ""
+        },
+        "forbidden": {
+          "speech": false,
+          "music": false,
+          "onscreen_text": false,
+          "magnitude": ""
+        },
+        "allowed": {
+          "speech": false,
+          "music": true,
+          "onscreen_text": false,
+          "magnitude": "measured"
+        },
+        "dialogue": [],
+        "onscreen_text": [],
+        "reasoning": "The brief requests a redrawn animated car scene with movement in a snowy street. It contains no request for speech, music, or visible lettering, and its prohibition only concerns copying the showroom background/static pose, not any of the tracked content classes.",
+        "calls": [
+          {
+            "stage": "scope",
+            "attempt": 1,
+            "model": "deepseek-flash",
+            "usage": {
+              "input_tokens": 1086,
+              "output_tokens": 215
+            },
+            "valid": true
+          }
+        ]
+      },
+      "explanation": "Caller requests and prohibitions are interpreted before code applies the explicit creativity level."
+    },
+    {
+      "field": "reference_licence",
+      "source": "typed_attribute_precedence",
+      "value": {
+        "reference_permissions": {
+          "action": true,
+          "framing": true,
+          "lighting": true,
+          "medium": true,
+          "palette": true,
+          "wardrobe": true
+        },
+        "medium_decision": {
+          "rendering_permission": {
+            "kind": "structured_style",
+            "disposition": "convert",
+            "operation_quote": "",
+            "target": "1990s cel animation",
+            "reasoning": "The caller explicitly supplied the authoritative structured Style field."
+          },
+          "disposition": "convert",
+          "operation_quote": "",
+          "target": "1990s cel animation",
+          "requested_style": "1990s cel animation",
+          "reference_medium": "live-action",
+          "requested_medium": "2d-animation",
+          "treatments": [],
+          "reasoning": "The host-provided rendering permission authorizes conversion to the structured target '1990s cel animation'. The observed reference is live-action, while the requested rendition is a cel-animation style, which belongs to the 2d-animation rendering family. The request does not separately specify any compatible treatment from the supplied vocabulary.",
+          "calls": [
+            {
+              "stage": "medium",
+              "attempt": 1,
+              "model": "deepseek-flash",
+              "usage": {
+                "input_tokens": 1283,
+                "output_tokens": 360
+              },
+              "valid": true
+            }
+          ]
+        },
+        "identity": [
+          {
+            "descriptor_source": "reference",
+            "kind": "object",
+            "label": "\u003cSubject 1\u003e",
+            "descriptor": "the black sports car",
+            "retained_attributes": [
+              "carbon fibre body"
+            ],
+            "requested_attributes": [],
+            "request_quote": "",
+            "wardrobe_attributes": []
+          }
+        ],
+        "governs": {
+          "action": "request",
+          "framing": "reference",
+          "lighting": "reference",
+          "medium": "request",
+          "palette": "reference",
+          "wardrobe": "reference"
+        },
+        "reasons": {
+          "action": "The brief explicitly asks that the car move through a snowy street and not retain the static pose, so the requested behavior governs action.",
+          "framing": "No camera composition, shot scale, viewpoint, or camera movement is requested; the car moving is action, not framing, so framing remains reference-governed.",
+          "lighting": "No explicit light source, direction, or visible quality is requested; snowy-street weather/location and removing the showroom background do not authorize replacing reference lighting.",
+          "medium": "The requested 1990s cel animation rendition is explicitly pinned by the medium decision, so medium is request-governed.",
+          "palette": "No explicit hue, saturation, contrast, or tonal grade is requested; the cel-animation medium decision is handled separately, so palette remains reference-governed.",
+          "wardrobe": "No clothing or accessory change is requested; the carbon fibre body is retained from the observed reference, so wardrobe remains reference-governed."
+        },
+        "transform_phrase": null,
+        "transform_target": "1990s cel animation",
+        "medium_transferred": true,
+        "style": {
+          "observed_phrase": "Live-action, cinematic",
+          "phrase": "1990s cel animation",
+          "source": "request",
+          "reference_medium": "live-action",
+          "requested_medium": "2d-animation",
+          "discrepancy": true,
+          "note": "The request explicitly changes the rendering medium while retaining the referenced identity; this does not by itself select an attribute-transfer relationship."
+        },
+        "subjects": [
+          {
+            "label": "\u003cSubject 1\u003e",
+            "kind": "object",
+            "sources": [
+              "\u003cPicture 1\u003e"
+            ],
+            "descriptor": "the black sports car",
+            "attributes": [
+              "carbon fibre body"
+            ],
+            "pose": [],
+            "pose_licensed": false,
+            "retention": "fully_preserved",
+            "retention_note": "",
+            "appears_in": [],
+            "taken_over_by": ""
+          }
+        ],
+        "calls": [
+          {
+            "stage": "medium",
+            "attempt": 1,
+            "model": "deepseek-flash",
+            "usage": {
+              "input_tokens": 1283,
+              "output_tokens": 360
+            },
+            "valid": true
+          },
+          {
+            "stage": "identity_requirements",
+            "attempt": 1,
+            "model": "deepseek-flash",
+            "usage": {
+              "input_tokens": 1449,
+              "output_tokens": 406
+            },
+            "valid": true
+          },
+          {
+            "stage": "licence",
+            "attempt": 1,
+            "model": "deepseek-flash",
+            "usage": {
+              "input_tokens": 1890,
+              "output_tokens": 2150
+            },
+            "valid": true
+          }
+        ]
+      },
+      "explanation": "Each attribute follows explicit request or observed reference; poses and reference-sheet presentation are not subject identity."
+    },
+    {
+      "field": "shots.camera",
+      "source": "host_template",
+      "value": [
+        {
+          "subjects": [
+            "\u003cSubject 1\u003e"
+          ],
+          "sync_sound": [
+            "tyres crunching through packed snow",
+            "low engine hum"
+          ],
+          "start_ms": 0,
+          "purpose": "establish",
+          "framing": "wide",
+          "action": "The black sports car with its carbon fibre body rolls forward through a snow-covered street, its tyres pressing fresh tracks into the slush while flakes drift past flat cel-painted shopfronts and parked vehicles.",
+          "what_changes": "The car shifts from standing into steady forward motion, opening the street and laying its first tracks behind it.",
+          "camera": {
+            "type": "Tracking Shot",
+            "amplitude": "small",
+            "speed": "slow"
+          }
+        },
+        {
+          "subjects": [
+            "\u003cSubject 1\u003e"
+          ],
+          "sync_sound": [
+            "snow spraying softly from the tyres",
+            "steady engine note"
+          ],
+          "start_ms": 1700,
+          "purpose": "reveal",
+          "framing": "medium close",
+          "action": "The view tightens on the car's flank as it sweeps past a heaped snowbank, the carbon fibre panels carrying broad cel-shaded highlights and hard ink outlines against the white street.",
+          "what_changes": "The snowbank slides out of frame and the bodywork detail fills more of the image as the car keeps accelerating.",
+          "camera": {
+            "type": "Push In",
+            "amplitude": "small",
+            "speed": "slow"
+          }
+        },
+        {
+          "subjects": [
+            "\u003cSubject 1\u003e"
+          ],
+          "sync_sound": [
+            "distant engine fading with distance",
+            "wind stirring loose snow"
+          ],
+          "start_ms": 3400,
+          "purpose": "resolve",
+          "framing": "wide",
+          "action": "The car pulls away down the snowy street, shrinking toward the far corner while snowfall thickens and its twin tyre tracks stretch back across the frame.",
+          "what_changes": "The car grows distant until it is a small dark shape, leaving the long tracks and falling snow as the dominant elements.",
+          "camera": {
+            "type": "Static Shot",
+            "amplitude": "",
+            "speed": ""
+          }
+        }
+      ],
+      "explanation": "Canonical camera events are assembled from the typed structural plan after prose."
+    },
+    {
+      "field": "subjects.shot_ids",
+      "source": "typed_actual_use_projection",
+      "value": [
+        {
+          "kind": "object",
+          "descriptor": "the black sports car",
+          "attributes": [
+            "carbon fibre body"
+          ],
+          "origin": "observed",
+          "id": "subject-1",
+          "description": "the black sports car; carbon fibre body",
+          "sources": [
+            {
+              "source": {
+                "asset_id": "asset-1",
+                "track": "visual"
+              },
+              "role": "identity"
+            }
+          ],
+          "retention": "fully_preserved",
+          "retention_details": "Preserve this canonical target identity and its listed stable attributes.",
+          "shot_ids": [
+            "shot-1",
+            "shot-2",
+            "shot-3"
+          ]
+        }
+      ],
+      "explanation": "High-level target appearances derive only from actual RichText and speaker-dialogue bindings. Removed figures carry their incoming replacement's transfer scope; unused source observations remain in Evidence."
+    },
+    {
+      "field": "creativity",
+      "source": "caller_or_default",
+      "value": {
+        "speech": false,
+        "music": true,
+        "onscreen_text": false,
+        "magnitude": "measured"
+      },
+      "explanation": "Scope reflects requested elements, explicit prohibitions, and the selected four-position creativity control."
+    }
+  ],
+  "calls": [
+    {
+      "stage": "scope",
+      "attempt": 1,
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 1086,
+        "output_tokens": 215
+      },
+      "valid": true
+    },
+    {
+      "stage": "medium",
+      "attempt": 1,
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 1283,
+        "output_tokens": 360
+      },
+      "valid": true
+    },
+    {
+      "stage": "identity_requirements",
+      "attempt": 1,
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 1449,
+        "output_tokens": 406
+      },
+      "valid": true
+    },
+    {
+      "stage": "licence",
+      "attempt": 1,
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 1890,
+        "output_tokens": 2150
+      },
+      "valid": true
+    },
+    {
+      "stage": "structure",
+      "attempt": 1,
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 3849,
+        "output_tokens": 1367
+      },
+      "valid": true
+    },
+    {
+      "stage": "plan",
+      "attempt": 1,
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 9965,
+        "output_tokens": 5495
+      },
+      "valid": true
+    },
+    {
+      "stage": "semantic_review",
+      "attempt": 1,
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 2690,
+        "output_tokens": 536
+      },
+      "valid": true
+    }
+  ]
+}

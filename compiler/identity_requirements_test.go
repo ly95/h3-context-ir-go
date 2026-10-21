@@ -120,6 +120,20 @@ func TestOriginalRiderIdentityTargetOverridesSourceAndExcludesSheetPackaging(t *
 			identity["wardrobe_attributes"] = []string{"black technical jacket"}
 			identity["adjusted_attributes"] = []IdentityAttributeAdjustment{{Kind: "target_identity_alignment", Source: "diagonal scar above his right eyebrow", Target: "diagonal scar above the right eyebrow"}}
 			out = body
+		case "reference_sheet_qualification":
+			// These are complete, explicit choices for this fixture. In particular,
+			// qualification keeps the earlier caller alignment of the scar rather
+			// than reintroducing the observed source's gendered wording.
+			out = map[string]any{"identities": []sheetIdentityQualification{
+				{Label: "<Subject 1>", Descriptor: "the woman in the technical jacket", Attributes: []sheetAttributeQualification{
+					{Source: "dark hair", Disposition: "retain", Target: "dark hair"},
+					{Source: "diagonal scar above his right eyebrow", Disposition: "retain", Target: "diagonal scar above the right eyebrow"},
+					{Source: "black technical jacket", Disposition: "retain", Target: "black technical jacket"},
+				}},
+				{Label: "<Subject 2>", Descriptor: "the black dragon", Attributes: []sheetAttributeQualification{
+					{Source: "black scales", Disposition: "retain", Target: "black scales"},
+				}},
+			}}
 		case "licence":
 			owners, reasons := map[string]string{}, map[string]string{}
 			for _, attribute := range LicenceAttributes {
@@ -142,7 +156,7 @@ func TestOriginalRiderIdentityTargetOverridesSourceAndExcludesSheetPackaging(t *
 	if err != nil || subjects[0].Descriptor != "the woman in the technical jacket" || subjects[0].Origin != "user" || subjects[0].Retention != contextir.PartiallyPreserved || strings.Contains(subjects[0].Description, "Adult man") || strings.Contains(subjects[0].Description, "his right") || !strings.Contains(subjects[0].Description, "scar") {
 		t.Fatal(subjects, err)
 	}
-	if strings.Contains(licence.Style.Phrase, "reference sheet") || !strings.Contains(licence.Style.ObservedPhrase, "reference sheet") || len(licence.Calls) != 4 {
+	if strings.Contains(licence.Style.Phrase, "reference sheet") || !strings.Contains(licence.Style.ObservedPhrase, "reference sheet") || len(licence.Calls) != 5 {
 		t.Fatal(licence.Style, licence.Calls)
 	}
 	after, _ := json.Marshal(b.Cards)

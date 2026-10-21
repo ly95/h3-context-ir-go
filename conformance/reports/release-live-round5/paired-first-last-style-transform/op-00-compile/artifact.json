@@ -1,0 +1,155 @@
+{
+  "version": "contextir-h3/artifact-v1",
+  "compiler_version": "contextir-h3/v1.2",
+  "format_version": "minimax-h3/prompt-v1",
+  "mode": "fl2va",
+  "target": {
+    "duration_ms": 8000,
+    "frame_count": 192,
+    "aspect_ratio": "16:9",
+    "fps": {
+      "numerator": 24,
+      "denominator": 1
+    },
+    "width": 1344,
+    "height": 768
+  },
+  "profile": {
+    "name": "h3-published-format-v1",
+    "format": "minimax-h3/prompt-v1",
+    "fps": {
+      "numerator": 24,
+      "denominator": 1
+    },
+    "modes": [
+      "t2va",
+      "i2va",
+      "l2va",
+      "fl2va",
+      "ref2va"
+    ],
+    "limits": {
+      "pictures": 0,
+      "videos": 0,
+      "video_audio": 0,
+      "standalone_audio": 0
+    },
+    "supports_reference_frame_anchors": true,
+    "supports_source_intervals": true
+  },
+  "prompt": "How the reference pictures align with the target video — Picture 1 (from Shot 1) aligns with the 0.00-second mark of the target video; Picture 2 (from Shot 2) aligns with the 8.00-second mark of the target video.\n\nintegrated_multimodal_description: [Shot 1] 1990s cel animation, At 0 ms the complete first supplied reference sheet is held exactly as supplied: the large HERO panel at top shows an adult man with close-cropped hair, shaved sides and a small tied topknot, a scar near one brow, a dark high-collared tactical jacket with straps and buckles, a dark shirt, black cargo trousers and black lace-up boots, standing on a wet nighttime urban walkway with metal railings, rain and amber reflections. Below it, the three full-body turnaround panels labeled FRONT, SIDE PROFILE and BACK and the four detail crops labeled FACE, JACKET COLLAR, HANDS and BOOTS remain in their original positions against the dark neutral background. The whole multi-panel sheet, including every label, border and background area, remains uncropped and undistorted. From 0 ms onward the intact sheet begins a slow visual dissolve, its panels and lettering remaining fully legible as the image starts to soften. At 00:00.000, The complete first reference sheet is visible exactly as supplied, with the HERO panel, three turnaround views and four detail crops all in place. At 00:02.000, A slow visual dissolve begins to soften the intact first sheet without cropping or removing any panel or label. The camera holds a static shot. Throughout the target video: Do not add spoken or sung lines. [Shot 2] At 00:04.000, the shot cuts to The slow dissolve continues across the full frame, carrying the first sheet away while the complete second supplied reference sheet resolves into place. The second sheet shows one dark dragon design with charcoal-to-black scales, subtle blue-green highlights, long swept-back ivory or bone-colored horns, a spiky dorsal ridge, large bat-like wings with dark leathery membranes, a long tapering tail and prominent curved claws. Its wide hero view stands low on rocky, wet ground with faint orange embers in the dark background; the full-body views labeled FRONT, SIDE PROFILE and REAR and the close-up panels labeled HEAD CLOSE, WING MEMBRANE, CLAW AND FOOT and SCALE DETAIL remain in their original positions against the plain dark gray backdrop. By the final endpoint at 8000 ms the dragon sheet is exact, and the entire composite including every label, border, panel and background area is uncropped and undistorted. At 00:04.000, The dissolve is underway: the first sheet has become translucent while the second dragon reference sheet begins to resolve across the same full frame. At 00:07.000, The second dragon sheet is nearly complete, with its wide hero view, three full-body views, four detail panels and all labels still uncropped. The camera holds a static shot.\n\noverall_soundscape: N/A\n\nnon_diegetic_music: N/A\n",
+  "manifest": {
+    "media": [
+      {
+        "preparation": {
+          "sizing": "match",
+          "width": 736,
+          "height": 1088
+        },
+        "source_metadata": {
+          "width": 733,
+          "height": 1100,
+          "fps": {
+            "numerator": 0,
+            "denominator": 0
+          }
+        },
+        "label": "\u003cPicture 1\u003e",
+        "kind": "picture",
+        "source": {
+          "asset_id": "asset-1",
+          "track": "visual"
+        },
+        "uri": "third_party/open-h3-ir/testdata/golden/assets/ref1.png",
+        "sha256": "e23d00458c9c493d6a8bd2f539a58e180e8caaeabf31d288e7c0d1ee4d648237",
+        "socket": "first_frame",
+        "target_uses": [
+          {
+            "reference_id": "reference-asset-1-1",
+            "roles": [
+              "first_frame"
+            ],
+            "retention": "fully_preserved",
+            "anchor_ms": 0,
+            "shots": [
+              {
+                "id": "shot-1",
+                "index": 1,
+                "interval": {
+                  "start_ms": 0,
+                  "end_ms": 4000
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "preparation": {
+          "sizing": "match",
+          "width": 1088,
+          "height": 736
+        },
+        "source_metadata": {
+          "width": 1100,
+          "height": 733,
+          "fps": {
+            "numerator": 0,
+            "denominator": 0
+          }
+        },
+        "label": "\u003cPicture 2\u003e",
+        "kind": "picture",
+        "source": {
+          "asset_id": "asset-2",
+          "track": "visual"
+        },
+        "uri": "third_party/open-h3-ir/testdata/golden/assets/ref2.png",
+        "sha256": "55e2c2b8a943a89eec33608ff359b8cc7fb4af62edd3d0fe13a420073c6403c1",
+        "socket": "last_frame",
+        "target_uses": [
+          {
+            "reference_id": "reference-asset-2-2",
+            "roles": [
+              "last_frame"
+            ],
+            "retention": "fully_preserved",
+            "anchor_ms": 8000,
+            "shots": [
+              {
+                "id": "shot-2",
+                "index": 2,
+                "interval": {
+                  "start_ms": 4000,
+                  "end_ms": 8000
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "subjects": [],
+    "references": [
+      {
+        "id": "reference-asset-1-1",
+        "label": "\u003cPicture 1\u003e"
+      },
+      {
+        "id": "reference-asset-2-2",
+        "label": "\u003cPicture 2\u003e"
+      }
+    ],
+    "speakers": []
+  },
+  "frames": 192,
+  "effective_duration_seconds": {
+    "numerator": 8,
+    "denominator": 1
+  },
+  "document_sha256": "267654e8308efde7890dc5f5dfb50d34aea297c29e1f7927f492754a27e04b7e",
+  "profile_sha256": "ce4364d3f1242f5aeb2216db44195fb3897f4828dd9e145c4c16c64315786ab6",
+  "prompt_sha256": "b32909f00a0115d75f05920fea378077b209a1f6c75fbdefec13afe681d40fe3",
+  "manifest_sha256": "3472ed8432bc5999ad7a3d756eea07e6a2abfef61b4047fbd9815ddf4f316896",
+  "sha256": "c653ebd255b057a27ea7aa0bbb33d8ff217a943098d0e43e790fb5edd19e0db5"
+}

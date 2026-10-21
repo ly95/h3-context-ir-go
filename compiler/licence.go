@@ -219,6 +219,13 @@ func (c *Compiler) decideLicence(ctx context.Context, brief Brief, additional []
 	if identityErr != nil {
 		return out, identityErr
 	}
+	// Qualify source-sheet presentation before target identities are locked into
+	// structural and prose contracts. The host's sheet set excludes actual frames.
+	identity, presentationCalls, presentationErr := c.qualifyReferenceSheetIdentity(ctx, b, out.Subjects, sheets, responsibilities, identity)
+	out.Calls = append(out.Calls, presentationCalls...)
+	if presentationErr != nil {
+		return out, presentationErr
+	}
 	out.Identity = identity
 	schema, _ := json.Marshal(object(map[string]any{"governs": object(governs), "reasons": object(reasons)}))
 	const system = `Resolve reference/request licences for each visual attribute. Return only governs and reasons matching the supplied JSON contract. Interpret the complete request semantically, without keyword lists. The separate medium_decision already settles rendering-medium permission and taxonomy: the medium owner is pinned by the schema. Host code computes the style phrase, transformation phrase/target, discrepancy and note from the accepted medium decision. Do not return those host-owned fields.

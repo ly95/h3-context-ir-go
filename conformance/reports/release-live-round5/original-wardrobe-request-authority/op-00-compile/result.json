@@ -1,0 +1,1495 @@
+{
+  "composition_reviews": [
+    {
+      "version": "contextir/composition-review/v9",
+      "required": true,
+      "passed": true,
+      "calls": [
+        {
+          "stage": "semantic_review",
+          "attempt": 1,
+          "model": "deepseek-flash",
+          "usage": {
+            "input_tokens": 2769,
+            "output_tokens": 428
+          },
+          "valid": true
+        }
+      ]
+    }
+  ],
+  "usage_complete": true,
+  "clarification_policy": "continue_with_recorded_choice",
+  "mode_decision": {
+    "clarification_policy": "continue_with_recorded_choice",
+    "model_signals": [
+      "single attached image",
+      "request changes an attribute of the depicted man",
+      "no explicit first-frame/last-frame or animate-the-photo wording",
+      "not a clear new-scene composition but also not a clear frame-anchoring instruction"
+    ],
+    "confidence_kind": "routing_policy",
+    "model_confidence": 0.62,
+    "interpretation": "ambiguous",
+    "questions": [
+      {
+        "id": "anchor_or_reference",
+        "ask": "Should the image be an exact opening/closing frame (with an explicit crop/resize/canvas decision if its aspect differs), or should what it shows appear redrawn in a new scene?",
+        "options": [
+          {
+            "id": "opening_frame",
+            "label": "Use it as the opening frame"
+          },
+          {
+            "id": "appears_in",
+            "label": "Put what it shows into a new scene"
+          }
+        ],
+        "recommended": "appears_in",
+        "default_if_unanswered": "appears_in"
+      }
+    ],
+    "aspect_mismatch": false,
+    "needs_clarification": true,
+    "mode": "ref2va",
+    "confidence": 0.5,
+    "rule": "12.4-failsafe",
+    "signals": [
+      "single attached image",
+      "request changes an attribute of the depicted man",
+      "no explicit first-frame/last-frame or animate-the-photo wording",
+      "not a clear new-scene composition but also not a clear frame-anchoring instruction",
+      "Confidence records the original routing-policy value; model_confidence separately preserves the provider's interpretation confidence.",
+      "Ambiguous image responsibility: Ref2VA is strictly more expressive for redrawing content, but it does not guarantee exact first/last-frame pixels. The selected mode remains recorded for an explicit caller decision."
+    ],
+    "alternatives": [
+      "i2va",
+      "l2va"
+    ],
+    "calls": [
+      {
+        "stage": "mode",
+        "attempt": 1,
+        "model": "deepseek-flash",
+        "usage": {
+          "input_tokens": 635,
+          "output_tokens": 1222
+        },
+        "valid": true
+      }
+    ]
+  },
+  "scope_decision": {
+    "conflict_policy": "supplied_content_wins",
+    "requested": {
+      "speech": false,
+      "music": false,
+      "onscreen_text": false,
+      "magnitude": ""
+    },
+    "forbidden": {
+      "speech": false,
+      "music": false,
+      "onscreen_text": false,
+      "magnitude": ""
+    },
+    "allowed": {
+      "speech": false,
+      "music": true,
+      "onscreen_text": false,
+      "magnitude": "measured"
+    },
+    "dialogue": [],
+    "onscreen_text": [],
+    "reasoning": "The intent only requests changing the shirt color. It does not request or forbid speech, music, or onscreen text.",
+    "calls": [
+      {
+        "stage": "scope",
+        "attempt": 1,
+        "model": "deepseek-flash",
+        "usage": {
+          "input_tokens": 1030,
+          "output_tokens": 150
+        },
+        "valid": true
+      }
+    ]
+  },
+  "licence": {
+    "reference_permissions": {
+      "action": true,
+      "framing": true,
+      "lighting": true,
+      "medium": true,
+      "palette": true,
+      "wardrobe": true
+    },
+    "medium_decision": {
+      "rendering_permission": {
+        "kind": "preserve",
+        "disposition": "preserve",
+        "operation_quote": "",
+        "target": "",
+        "reasoning": "The request changes a depicted clothing attribute (shirt color) to mossy grey-green; it does not ask to transform, reinterpret, restyle, or render the result in a specified target style or medium.",
+        "calls": [
+          {
+            "stage": "rendering_permission",
+            "attempt": 1,
+            "model": "deepseek-flash",
+            "usage": {
+              "input_tokens": 442,
+              "output_tokens": 177
+            },
+            "valid": true
+          }
+        ]
+      },
+      "disposition": "preserve",
+      "operation_quote": "",
+      "target": "",
+      "requested_style": "",
+      "reference_medium": "live-action",
+      "requested_medium": "",
+      "treatments": [],
+      "reasoning": "The only visual reference is a live-action image of the man. The request changes a depicted clothing attribute—the shirt to a mossy grey-green—without asking for any rendering-family or style transformation. No requested medium or rendering style phrase is present, so requested_medium and requested_style remain empty.",
+      "calls": [
+        {
+          "stage": "rendering_permission",
+          "attempt": 1,
+          "model": "deepseek-flash",
+          "usage": {
+            "input_tokens": 442,
+            "output_tokens": 177
+          },
+          "valid": true
+        },
+        {
+          "stage": "medium",
+          "attempt": 1,
+          "model": "deepseek-flash",
+          "usage": {
+            "input_tokens": 1290,
+            "output_tokens": 238
+          },
+          "valid": true
+        }
+      ]
+    },
+    "identity": [
+      {
+        "descriptor_source": "request",
+        "target_mention": "the man",
+        "kind": "person",
+        "claims": [
+          {
+            "dimension": "wardrobe",
+            "value": "mossy grey-green shirt",
+            "quote": "change the shirt on the man to a mossy grey-green"
+          }
+        ],
+        "label": "\u003cSubject 1\u003e",
+        "descriptor": "the man wearing a mossy grey-green shirt and dark blue jeans",
+        "retained_attributes": [
+          "dark blue jeans"
+        ],
+        "requested_attributes": [
+          "mossy grey-green shirt"
+        ],
+        "request_quote": "change the shirt on the man to a mossy grey-green",
+        "wardrobe_attributes": [
+          "dark blue jeans"
+        ]
+      }
+    ],
+    "governs": {
+      "action": "reference",
+      "framing": "reference",
+      "lighting": "reference",
+      "medium": "reference",
+      "palette": "reference",
+      "wardrobe": "request"
+    },
+    "reasons": {
+      "action": "The request only changes the shirt color; it asks for no new or altered behavior, so action remains with the subject reference.",
+      "framing": "No camera composition, shot scale, viewpoint or camera movement is requested, so framing remains reference-governed.",
+      "lighting": "No instruction about the light, its source, direction or quality is given, so lighting stays governed by the reference image.",
+      "medium": "The medium owner is pinned by the settled medium decision: preserve live-action with no restyling requested.",
+      "palette": "The request names a garment color but gives no scene color grade, saturation or tonal-contrast instruction, so palette remains governed by the reference.",
+      "wardrobe": "The request explicitly specifies a new shirt color ('mossy grey-green'), which overrides the observed navy blue t-shirt for that named property while unmentioned clothing stays with the reference."
+    },
+    "transform_phrase": null,
+    "transform_target": "",
+    "medium_transferred": false,
+    "style": {
+      "observed_phrase": "live-action",
+      "phrase": "live-action",
+      "source": "reference",
+      "reference_medium": "live-action",
+      "requested_medium": "",
+      "discrepancy": false,
+      "note": ""
+    },
+    "subjects": [
+      {
+        "label": "\u003cSubject 1\u003e",
+        "kind": "person",
+        "sources": [
+          "\u003cPicture 1\u003e"
+        ],
+        "descriptor": "the man",
+        "attributes": [
+          "navy blue t-shirt",
+          "dark blue jeans"
+        ],
+        "pose": [],
+        "pose_licensed": false,
+        "retention": "fully_preserved",
+        "retention_note": "",
+        "appears_in": [],
+        "taken_over_by": ""
+      }
+    ],
+    "calls": [
+      {
+        "stage": "rendering_permission",
+        "attempt": 1,
+        "model": "deepseek-flash",
+        "usage": {
+          "input_tokens": 442,
+          "output_tokens": 177
+        },
+        "valid": true
+      },
+      {
+        "stage": "medium",
+        "attempt": 1,
+        "model": "deepseek-flash",
+        "usage": {
+          "input_tokens": 1290,
+          "output_tokens": 238
+        },
+        "valid": true
+      },
+      {
+        "stage": "identity_requirements",
+        "attempt": 1,
+        "model": "deepseek-flash",
+        "usage": {
+          "input_tokens": 1448,
+          "output_tokens": 613
+        },
+        "valid": true
+      },
+      {
+        "stage": "licence",
+        "attempt": 1,
+        "model": "deepseek-flash",
+        "usage": {
+          "input_tokens": 1964,
+          "output_tokens": 338
+        },
+        "valid": true
+      }
+    ]
+  },
+  "budget": {
+    "prompt_tokens": 703,
+    "target_video_rows": 57456,
+    "target_audio_rows": 640,
+    "known_reference_rows": 352,
+    "in_trained_band": true
+  },
+  "findings": [
+    {
+      "rule": "compiler-clarification-continued",
+      "severity": "WARN",
+      "msg": "The caller explicitly selected continue_with_recorded_choice; unresolved frame/reference questions and any aspect mismatch remain in ModeDecision."
+    }
+  ],
+  "status": "compiled",
+  "version": "contextir/compiler/v1",
+  "brief": {
+    "effort": "standard",
+    "seconds_explicit": true,
+    "aspect_explicit": true,
+    "intent": "change the shirt on the man to a mossy grey-green",
+    "assets": [
+      {
+        "preparation_computed": true,
+        "id": "asset-1",
+        "kind": "image",
+        "metadata": {
+          "width": 700,
+          "height": 500,
+          "fps": {
+            "numerator": 0,
+            "denominator": 0
+          }
+        },
+        "preparation": {
+          "sizing": "match",
+          "width": 704,
+          "height": 512
+        },
+        "role": "subject",
+        "composition": "unknown",
+        "sizing": "match"
+      }
+    ],
+    "seconds": 8,
+    "aspect": "16:9",
+    "creativity": "balanced",
+    "evidence": [
+      {
+        "card": {
+          "asset_id": "asset-1",
+          "subjects": [
+            {
+              "kind": "person",
+              "descriptor": "the man",
+              "attributes": [
+                "navy blue t-shirt",
+                "dark blue jeans"
+              ]
+            }
+          ],
+          "style": "live-action",
+          "composition": "unknown",
+          "analyzer_version": "1",
+          "coverage": {
+            "status": "complete",
+            "tracks": [
+              "visual"
+            ]
+          }
+        },
+        "asset_id": "asset-1",
+        "facts": [
+          {
+            "id": "card-asset-1-1",
+            "text": "live-action",
+            "source": {
+              "asset_id": "asset-1",
+              "track": "visual"
+            }
+          },
+          {
+            "id": "card-asset-1-2",
+            "text": "the man",
+            "source": {
+              "asset_id": "asset-1",
+              "track": "visual"
+            }
+          },
+          {
+            "id": "card-asset-1-3",
+            "text": "navy blue t-shirt",
+            "source": {
+              "asset_id": "asset-1",
+              "track": "visual"
+            }
+          },
+          {
+            "id": "card-asset-1-4",
+            "text": "dark blue jeans",
+            "source": {
+              "asset_id": "asset-1",
+              "track": "visual"
+            }
+          }
+        ],
+        "analyzer_version": "1",
+        "coverage": {
+          "status": "complete",
+          "tracks": [
+            "visual"
+          ]
+        }
+      }
+    ],
+    "cards": [
+      {
+        "asset_id": "asset-1",
+        "subjects": [
+          {
+            "kind": "person",
+            "descriptor": "the man",
+            "attributes": [
+              "navy blue t-shirt",
+              "dark blue jeans"
+            ]
+          }
+        ],
+        "style": "live-action",
+        "composition": "unknown",
+        "analyzer_version": "1",
+        "coverage": {
+          "status": "complete",
+          "tracks": [
+            "visual"
+          ]
+        }
+      }
+    ]
+  },
+  "request": {
+    "instruction": "change the shirt on the man to a mossy grey-green",
+    "mode": "ref2va",
+    "target": {
+      "duration_ms": 8000,
+      "frame_count": 192,
+      "aspect_ratio": "16:9",
+      "fps": {
+        "numerator": 24,
+        "denominator": 1
+      },
+      "width": 1344,
+      "height": 768
+    },
+    "assets": [
+      {
+        "id": "asset-1",
+        "kind": "image",
+        "metadata": {
+          "width": 700,
+          "height": 500,
+          "fps": {
+            "numerator": 0,
+            "denominator": 0
+          }
+        },
+        "preparation": {
+          "sizing": "match",
+          "width": 704,
+          "height": 512
+        }
+      }
+    ],
+    "bindings": [
+      {
+        "source": {
+          "asset_id": "asset-1",
+          "track": "visual"
+        },
+        "role": "identity"
+      }
+    ],
+    "constraints": [
+      {
+        "id": "compiler-no-dialogue",
+        "kind": "no_dialogue",
+        "text": "Do not add spoken or sung lines."
+      }
+    ],
+    "allow_creative_additions": true,
+    "allow_generated_dialogue": false,
+    "pinned_shots": [
+      {
+        "id": "shot-1",
+        "start_ms": 0,
+        "end_ms": 8000
+      }
+    ],
+    "addition_scope": {
+      "dialogue": false,
+      "music": true,
+      "visible_text": false
+    }
+  },
+  "structure": {
+    "replacement_targets": {},
+    "style": "live-action",
+    "mode": "ref2va",
+    "assets": [
+      {
+        "asset_id": "asset-1",
+        "role": "subject",
+        "replaces": ""
+      }
+    ],
+    "shots": [
+      {
+        "subjects": [
+          "the man wearing a mossy grey-green shirt and dark blue jeans"
+        ],
+        "sync_sound": [],
+        "start_ms": 0,
+        "purpose": "reveal",
+        "framing": "medium",
+        "action": "The man stands facing the camera in dark blue jeans and a mossy grey-green shirt, his posture relaxed and steady as the camera slowly pushes in toward his torso.",
+        "what_changes": "The framing tightens on the man, bringing the mossy grey-green shirt and its fabric texture into clearer view.",
+        "camera": {
+          "type": "Push In",
+          "amplitude": "small",
+          "speed": "slow"
+        }
+      }
+    ],
+    "dialogue": [],
+    "onscreen_text": [],
+    "requested": {
+      "speech": false,
+      "music": false,
+      "onscreen_text": false,
+      "magnitude": ""
+    },
+    "forbidden": {
+      "speech": false,
+      "music": false,
+      "onscreen_text": false,
+      "magnitude": ""
+    },
+    "reasoning": "The single image is a subject/identity content reference, not an anchored frame, so its figure is redrawn and no panel layout, background, or photographic lighting is preserved. The only requested change is wardrobe: the man's navy blue t-shirt becomes a mossy grey-green shirt while his dark blue jeans remain. Because the request is a simple appearance change, one continuous eight-second take is sufficient and avoids redundant cuts. No audio attachment is present, so no source-audio reuse is claimed; no speech, visible lettering, or replacement is requested. Music is permitted by the balanced scope but is not necessary and is not added as an event."
+  },
+  "scope": {
+    "speech": false,
+    "music": true,
+    "onscreen_text": false,
+    "magnitude": "measured"
+  },
+  "document": {
+    "version": "contextir/v1",
+    "mode": "ref2va",
+    "target": {
+      "duration_ms": 8000,
+      "frame_count": 192,
+      "aspect_ratio": "16:9",
+      "fps": {
+        "numerator": 24,
+        "denominator": 1
+      },
+      "width": 1344,
+      "height": 768
+    },
+    "assets": [
+      {
+        "id": "asset-1",
+        "kind": "image",
+        "metadata": {
+          "width": 700,
+          "height": 500,
+          "fps": {
+            "numerator": 0,
+            "denominator": 0
+          }
+        },
+        "preparation": {
+          "sizing": "match",
+          "width": 704,
+          "height": 512
+        }
+      }
+    ],
+    "evidence": [
+      {
+        "card": {
+          "asset_id": "asset-1",
+          "subjects": [
+            {
+              "kind": "person",
+              "descriptor": "the man",
+              "attributes": [
+                "navy blue t-shirt",
+                "dark blue jeans"
+              ]
+            }
+          ],
+          "style": "live-action",
+          "composition": "unknown",
+          "analyzer_version": "1",
+          "coverage": {
+            "status": "complete",
+            "tracks": [
+              "visual"
+            ]
+          }
+        },
+        "asset_id": "asset-1",
+        "facts": [
+          {
+            "id": "card-asset-1-1",
+            "text": "live-action",
+            "source": {
+              "asset_id": "asset-1",
+              "track": "visual"
+            }
+          },
+          {
+            "id": "card-asset-1-2",
+            "text": "the man",
+            "source": {
+              "asset_id": "asset-1",
+              "track": "visual"
+            }
+          },
+          {
+            "id": "card-asset-1-3",
+            "text": "navy blue t-shirt",
+            "source": {
+              "asset_id": "asset-1",
+              "track": "visual"
+            }
+          },
+          {
+            "id": "card-asset-1-4",
+            "text": "dark blue jeans",
+            "source": {
+              "asset_id": "asset-1",
+              "track": "visual"
+            }
+          }
+        ],
+        "analyzer_version": "1",
+        "coverage": {
+          "status": "complete",
+          "tracks": [
+            "visual"
+          ]
+        }
+      }
+    ],
+    "subjects": [
+      {
+        "kind": "person",
+        "descriptor": "the man wearing a mossy grey-green shirt and dark blue jeans",
+        "attributes": [
+          "dark blue jeans",
+          "mossy grey-green shirt"
+        ],
+        "origin": "user",
+        "id": "subject-1",
+        "description": "the man wearing a mossy grey-green shirt and dark blue jeans; dark blue jeans, mossy grey-green shirt",
+        "sources": [
+          {
+            "source": {
+              "asset_id": "asset-1",
+              "track": "visual"
+            },
+            "role": "identity"
+          }
+        ],
+        "retention": "partially_preserved",
+        "retention_details": "Preserve this canonical target identity and its listed stable attributes. Explicit caller identity requirements replace the corresponding observed source properties.",
+        "shot_ids": [
+          "shot-1"
+        ]
+      }
+    ],
+    "summary": [
+      {
+        "text": "A single slow push-in presents "
+      },
+      {
+        "subject_id": "subject-1"
+      },
+      {
+        "text": " in the updated mossy grey-green shirt and dark blue jeans."
+      }
+    ],
+    "style": "live-action",
+    "shots": [
+      {
+        "id": "shot-1",
+        "start_ms": 0,
+        "end_ms": 8000,
+        "description": [
+          {
+            "text": "A medium shot, framed from mid-thigh upward, centers "
+          },
+          {
+            "subject_id": "subject-1"
+          },
+          {
+            "text": " against a plain, deep grey studio-like backdrop. The composition is clean and frontal: his shoulders square to the lens, his feet planted at a comfortable width, and his hands resting loosely at his sides. The wardrobe is the clear focus of the change. He wears a mossy grey-green shirt with a soft, slightly textured weave, its collar and cuffs neat, the fabric falling in gentle folds across his chest and arms. Dark blue jeans remain visible below the shirt hem, their denim surface matte and close-fitting, with natural creases at the hips and knees. A large soft key light sits high and slightly camera left, laying a gentle highlight along one side of his face, shoulder, and the shirt's shoulder seam while leaving the opposite side in a quiet, readable shadow; a subtle fill keeps the denim and skin tones clear without flattening the form. The background stays uncluttered, its grey tone deepening slightly toward the edges so the figure separates cleanly from the wall. The shot opens in this steady medium framing and slowly pushes in with small amplitude, tightening the view toward his torso. As the camera advances, the weave of the mossy grey-green shirt becomes more apparent, along with the way the collar sits against his neck and the fabric bunches at the bend of his elbows. The man holds a relaxed, steady posture, facing the camera directly with a calm, neutral expression. He makes only small, natural adjustments: a slight shift of weight from one leg to the other, a gentle settling of the shoulders, and a brief, quiet breath that moves the shirt across his chest. These minimal movements keep the portrait alive without pulling attention away from the wardrobe. The lighting remains consistent, preserving the muted green of the shirt and the deep blue of the jeans; no logos, readable text, or extra props compete with the figure. The overall effect is an intimate, measured portrait that presents the updated shirt clearly while retaining the man's dark blue jeans and the simple, direct staging of the reference."
+          }
+        ],
+        "events": [
+          {
+            "kind": "action",
+            "at_ms": 0,
+            "description": [
+              {
+                "subject_id": "subject-1"
+              },
+              {
+                "text": " stands facing the camera in a relaxed, steady posture, his hands loose at his sides and his weight evenly planted."
+              }
+            ]
+          },
+          {
+            "kind": "action",
+            "at_ms": 5200,
+            "description": [
+              {
+                "text": "A small shift of weight and a quiet breath cause the mossy grey-green fabric across his chest and shoulders to catch the soft key light, while the dark denim stays matte and close-fitted."
+              }
+            ]
+          },
+          {
+            "kind": "camera",
+            "description": [
+              {
+                "text": "The camera pushes in with small amplitude at slow speed."
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "soundscape": "A quiet, steady room tone at low level, with no speech and no prominent effects.",
+    "music": "N/A",
+    "constraints": [
+      {
+        "id": "compiler-no-dialogue",
+        "kind": "no_dialogue",
+        "text": "Do not add spoken or sung lines."
+      }
+    ],
+    "claims": [
+      {
+        "id": "claim-user-1",
+        "origin": "user",
+        "text": "Change the shirt on the man to a mossy grey-green while keeping his dark blue jeans."
+      },
+      {
+        "id": "claim-creative-1",
+        "origin": "creative",
+        "text": "A plain deep grey studio-like backdrop, soft high key light with gentle fill, and a calm neutral expression are added to support the wardrobe change."
+      },
+      {
+        "id": "claim-creative-2",
+        "origin": "creative",
+        "text": "A quiet, steady low room tone is added as the only background sound."
+      }
+    ]
+  },
+  "artifact": {
+    "version": "contextir-h3/artifact-v1",
+    "compiler_version": "contextir-h3/v1.2",
+    "format_version": "minimax-h3/prompt-v1",
+    "mode": "ref2va",
+    "target": {
+      "duration_ms": 8000,
+      "frame_count": 192,
+      "aspect_ratio": "16:9",
+      "fps": {
+        "numerator": 24,
+        "denominator": 1
+      },
+      "width": 1344,
+      "height": 768
+    },
+    "profile": {
+      "name": "h3-comfyui-17k5-v1",
+      "format": "minimax-h3/prompt-v1",
+      "fps": {
+        "numerator": 24,
+        "denominator": 1
+      },
+      "modes": [
+        "t2va",
+        "i2va",
+        "l2va",
+        "fl2va",
+        "ref2va"
+      ],
+      "frame_grid": {
+        "modulus": 17,
+        "remainder": 5
+      },
+      "min_frames": 5,
+      "max_frames": 3600,
+      "canvas_multiple": 32,
+      "limits": {
+        "pictures": 9,
+        "videos": 3,
+        "video_audio": 3,
+        "standalone_audio": 3
+      },
+      "supports_reference_frame_anchors": false,
+      "supports_source_intervals": false
+    },
+    "prompt": "subject_definitions:\n\u003cSubject 1\u003e is the man wearing a mossy grey-green shirt and dark blue jeans; dark blue jeans, mossy grey-green shirt. Its identity is referenced from \u003cPicture 1\u003e\n\nsummary:\n[reference generation] A single slow push-in presents \u003cSubject 1\u003e in the updated mossy grey-green shirt and dark blue jeans.\n\nretention_analysis:\n\u003cSubject 1\u003e (appears in [Shot 1]): partially_preserved - Preserve this canonical target identity and its listed stable attributes. Explicit caller identity requirements replace the corresponding observed source properties.\n\ndetailed_description:\nThe target video is in live-action style.\n[Shot 1] A medium shot, framed from mid-thigh upward, centers \u003cSubject 1\u003e against a plain, deep grey studio-like backdrop. The composition is clean and frontal: his shoulders square to the lens, his feet planted at a comfortable width, and his hands resting loosely at his sides. The wardrobe is the clear focus of the change. He wears a mossy grey-green shirt with a soft, slightly textured weave, its collar and cuffs neat, the fabric falling in gentle folds across his chest and arms. Dark blue jeans remain visible below the shirt hem, their denim surface matte and close-fitting, with natural creases at the hips and knees. A large soft key light sits high and slightly camera left, laying a gentle highlight along one side of his face, shoulder, and the shirt's shoulder seam while leaving the opposite side in a quiet, readable shadow; a subtle fill keeps the denim and skin tones clear without flattening the form. The background stays uncluttered, its grey tone deepening slightly toward the edges so the figure separates cleanly from the wall. The shot opens in this steady medium framing and slowly pushes in with small amplitude, tightening the view toward his torso. As the camera advances, the weave of the mossy grey-green shirt becomes more apparent, along with the way the collar sits against his neck and the fabric bunches at the bend of his elbows. The man holds a relaxed, steady posture, facing the camera directly with a calm, neutral expression. He makes only small, natural adjustments: a slight shift of weight from one leg to the other, a gentle settling of the shoulders, and a brief, quiet breath that moves the shirt across his chest. These minimal movements keep the portrait alive without pulling attention away from the wardrobe. The lighting remains consistent, preserving the muted green of the shirt and the deep blue of the jeans; no logos, readable text, or extra props compete with the figure. The overall effect is an intimate, measured portrait that presents the updated shirt clearly while retaining the man's dark blue jeans and the simple, direct staging of the reference. At 00:00.000, \u003cSubject 1\u003e stands facing the camera in a relaxed, steady posture, his hands loose at his sides and his weight evenly planted. At 00:05.200, A small shift of weight and a quiet breath cause the mossy grey-green fabric across his chest and shoulders to catch the soft key light, while the dark denim stays matte and close-fitted. The camera pushes in with small amplitude at slow speed. Throughout the target video: Do not add spoken or sung lines.\n\noverall_soundscape:\nA quiet, steady room tone at low level, with no speech and no prominent effects.\n\nnon_diegetic_music:\nN/A\n",
+    "manifest": {
+      "media": [
+        {
+          "preparation": {
+            "sizing": "match",
+            "width": 704,
+            "height": 512
+          },
+          "source_metadata": {
+            "width": 700,
+            "height": 500,
+            "fps": {
+              "numerator": 0,
+              "denominator": 0
+            }
+          },
+          "label": "\u003cPicture 1\u003e",
+          "kind": "picture",
+          "source": {
+            "asset_id": "asset-1",
+            "track": "visual"
+          },
+          "socket": "ref_image_1"
+        }
+      ],
+      "subjects": [
+        {
+          "id": "subject-1",
+          "label": "\u003cSubject 1\u003e"
+        }
+      ],
+      "references": [],
+      "speakers": []
+    },
+    "frames": 192,
+    "effective_duration_seconds": {
+      "numerator": 8,
+      "denominator": 1
+    },
+    "document_sha256": "47d6b872e686c0463dde1512e0319a552c341f7d0f4b6397d4b34a1f411bf23e",
+    "profile_sha256": "234d423c54663839ad8ef0aab7924d4da6d8bb212ced940e0b240639c3dcbed4",
+    "prompt_sha256": "728c1b83e9b31aec4c4dc4e2b46c2719ded57aeba7050c94fbc4f0aadc3892b6",
+    "manifest_sha256": "d35764d0d56815ac0bfac49d693a0133b60a5b65bae79b86a7ce2a5a47acec3d",
+    "sha256": "158daa2fb9f2916c72ee6e08a473f04587c6d3981251d4acfbc36607775fb51f"
+  },
+  "evidence": [
+    {
+      "card": {
+        "asset_id": "asset-1",
+        "subjects": [
+          {
+            "kind": "person",
+            "descriptor": "the man",
+            "attributes": [
+              "navy blue t-shirt",
+              "dark blue jeans"
+            ]
+          }
+        ],
+        "style": "live-action",
+        "composition": "unknown",
+        "analyzer_version": "1",
+        "coverage": {
+          "status": "complete",
+          "tracks": [
+            "visual"
+          ]
+        }
+      },
+      "asset_id": "asset-1",
+      "facts": [
+        {
+          "id": "card-asset-1-1",
+          "text": "live-action",
+          "source": {
+            "asset_id": "asset-1",
+            "track": "visual"
+          }
+        },
+        {
+          "id": "card-asset-1-2",
+          "text": "the man",
+          "source": {
+            "asset_id": "asset-1",
+            "track": "visual"
+          }
+        },
+        {
+          "id": "card-asset-1-3",
+          "text": "navy blue t-shirt",
+          "source": {
+            "asset_id": "asset-1",
+            "track": "visual"
+          }
+        },
+        {
+          "id": "card-asset-1-4",
+          "text": "dark blue jeans",
+          "source": {
+            "asset_id": "asset-1",
+            "track": "visual"
+          }
+        }
+      ],
+      "analyzer_version": "1",
+      "coverage": {
+        "status": "complete",
+        "tracks": [
+          "visual"
+        ]
+      }
+    }
+  ],
+  "decisions": [
+    {
+      "field": "target",
+      "source": "computed",
+      "value": {
+        "effective_seconds": 8,
+        "frame_count": 192,
+        "nominal_seconds": 8,
+        "policy": "snap_up"
+      },
+      "explanation": "Effective timing and nominal duration are recorded separately; generated cuts use effective timing."
+    },
+    {
+      "field": "canvas",
+      "source": "computed",
+      "value": [
+        1344,
+        768
+      ],
+      "explanation": "Native short-edge canvas is aligned to 32 pixels; explicit megapixels replaces the native area budget."
+    },
+    {
+      "field": "assets.asset-1.preparation",
+      "source": "required_adapter_instruction",
+      "value": {
+        "sizing": "match",
+        "width": 704,
+        "height": 512
+      },
+      "explanation": "These required input transforms are recorded separately from the original source metadata; the compiler has not executed media IO."
+    },
+    {
+      "field": "execution",
+      "source": "explicit_adapter_policy",
+      "value": {
+        "effort": "standard"
+      },
+      "explanation": "The injected adapters and explicit compiler repair configuration implement standard effort."
+    },
+    {
+      "field": "clarification_policy",
+      "source": "explicit_continue_policy",
+      "value": {
+        "clarification_policy": "continue_with_recorded_choice",
+        "model_signals": [
+          "single attached image",
+          "request changes an attribute of the depicted man",
+          "no explicit first-frame/last-frame or animate-the-photo wording",
+          "not a clear new-scene composition but also not a clear frame-anchoring instruction"
+        ],
+        "confidence_kind": "routing_policy",
+        "model_confidence": 0.62,
+        "interpretation": "ambiguous",
+        "questions": [
+          {
+            "id": "anchor_or_reference",
+            "ask": "Should the image be an exact opening/closing frame (with an explicit crop/resize/canvas decision if its aspect differs), or should what it shows appear redrawn in a new scene?",
+            "options": [
+              {
+                "id": "opening_frame",
+                "label": "Use it as the opening frame"
+              },
+              {
+                "id": "appears_in",
+                "label": "Put what it shows into a new scene"
+              }
+            ],
+            "recommended": "appears_in",
+            "default_if_unanswered": "appears_in"
+          }
+        ],
+        "aspect_mismatch": false,
+        "needs_clarification": true,
+        "mode": "ref2va",
+        "confidence": 0.5,
+        "rule": "12.4-failsafe",
+        "signals": [
+          "single attached image",
+          "request changes an attribute of the depicted man",
+          "no explicit first-frame/last-frame or animate-the-photo wording",
+          "not a clear new-scene composition but also not a clear frame-anchoring instruction",
+          "Confidence records the original routing-policy value; model_confidence separately preserves the provider's interpretation confidence.",
+          "Ambiguous image responsibility: Ref2VA is strictly more expressive for redrawing content, but it does not guarantee exact first/last-frame pixels. The selected mode remains recorded for an explicit caller decision."
+        ],
+        "alternatives": [
+          "i2va",
+          "l2va"
+        ],
+        "calls": [
+          {
+            "stage": "mode",
+            "attempt": 1,
+            "model": "deepseek-flash",
+            "usage": {
+              "input_tokens": 635,
+              "output_tokens": 1222
+            },
+            "valid": true
+          }
+        ]
+      },
+      "explanation": "The caller explicitly permits publication using the recorded mode despite the unresolved geometry/question; no mode or aspect was changed."
+    },
+    {
+      "field": "mode",
+      "source": "12.4-failsafe",
+      "value": {
+        "clarification_policy": "continue_with_recorded_choice",
+        "model_signals": [
+          "single attached image",
+          "request changes an attribute of the depicted man",
+          "no explicit first-frame/last-frame or animate-the-photo wording",
+          "not a clear new-scene composition but also not a clear frame-anchoring instruction"
+        ],
+        "confidence_kind": "routing_policy",
+        "model_confidence": 0.62,
+        "interpretation": "ambiguous",
+        "questions": [
+          {
+            "id": "anchor_or_reference",
+            "ask": "Should the image be an exact opening/closing frame (with an explicit crop/resize/canvas decision if its aspect differs), or should what it shows appear redrawn in a new scene?",
+            "options": [
+              {
+                "id": "opening_frame",
+                "label": "Use it as the opening frame"
+              },
+              {
+                "id": "appears_in",
+                "label": "Put what it shows into a new scene"
+              }
+            ],
+            "recommended": "appears_in",
+            "default_if_unanswered": "appears_in"
+          }
+        ],
+        "aspect_mismatch": false,
+        "needs_clarification": true,
+        "mode": "ref2va",
+        "confidence": 0.5,
+        "rule": "12.4-failsafe",
+        "signals": [
+          "single attached image",
+          "request changes an attribute of the depicted man",
+          "no explicit first-frame/last-frame or animate-the-photo wording",
+          "not a clear new-scene composition but also not a clear frame-anchoring instruction",
+          "Confidence records the original routing-policy value; model_confidence separately preserves the provider's interpretation confidence.",
+          "Ambiguous image responsibility: Ref2VA is strictly more expressive for redrawing content, but it does not guarantee exact first/last-frame pixels. The selected mode remains recorded for an explicit caller decision."
+        ],
+        "alternatives": [
+          "i2va",
+          "l2va"
+        ],
+        "calls": [
+          {
+            "stage": "mode",
+            "attempt": 1,
+            "model": "deepseek-flash",
+            "usage": {
+              "input_tokens": 635,
+              "output_tokens": 1222
+            },
+            "valid": true
+          }
+        ]
+      },
+      "explanation": "Mode follows the production typed routing contract; publication capabilities are checked separately."
+    },
+    {
+      "field": "assets.asset-1.role",
+      "source": "typed_request_interpretation",
+      "value": {
+        "asset_id": "asset-1",
+        "role": "subject",
+        "replaces": ""
+      },
+      "explanation": "Missing source responsibility is interpreted before grounded identity and shot planning."
+    },
+    {
+      "field": "content_scope",
+      "source": "typed_request_interpretation",
+      "value": {
+        "conflict_policy": "supplied_content_wins",
+        "requested": {
+          "speech": false,
+          "music": false,
+          "onscreen_text": false,
+          "magnitude": ""
+        },
+        "forbidden": {
+          "speech": false,
+          "music": false,
+          "onscreen_text": false,
+          "magnitude": ""
+        },
+        "allowed": {
+          "speech": false,
+          "music": true,
+          "onscreen_text": false,
+          "magnitude": "measured"
+        },
+        "dialogue": [],
+        "onscreen_text": [],
+        "reasoning": "The intent only requests changing the shirt color. It does not request or forbid speech, music, or onscreen text.",
+        "calls": [
+          {
+            "stage": "scope",
+            "attempt": 1,
+            "model": "deepseek-flash",
+            "usage": {
+              "input_tokens": 1030,
+              "output_tokens": 150
+            },
+            "valid": true
+          }
+        ]
+      },
+      "explanation": "Caller requests and prohibitions are interpreted before code applies the explicit creativity level."
+    },
+    {
+      "field": "reference_licence",
+      "source": "typed_attribute_precedence",
+      "value": {
+        "reference_permissions": {
+          "action": true,
+          "framing": true,
+          "lighting": true,
+          "medium": true,
+          "palette": true,
+          "wardrobe": true
+        },
+        "medium_decision": {
+          "rendering_permission": {
+            "kind": "preserve",
+            "disposition": "preserve",
+            "operation_quote": "",
+            "target": "",
+            "reasoning": "The request changes a depicted clothing attribute (shirt color) to mossy grey-green; it does not ask to transform, reinterpret, restyle, or render the result in a specified target style or medium.",
+            "calls": [
+              {
+                "stage": "rendering_permission",
+                "attempt": 1,
+                "model": "deepseek-flash",
+                "usage": {
+                  "input_tokens": 442,
+                  "output_tokens": 177
+                },
+                "valid": true
+              }
+            ]
+          },
+          "disposition": "preserve",
+          "operation_quote": "",
+          "target": "",
+          "requested_style": "",
+          "reference_medium": "live-action",
+          "requested_medium": "",
+          "treatments": [],
+          "reasoning": "The only visual reference is a live-action image of the man. The request changes a depicted clothing attribute—the shirt to a mossy grey-green—without asking for any rendering-family or style transformation. No requested medium or rendering style phrase is present, so requested_medium and requested_style remain empty.",
+          "calls": [
+            {
+              "stage": "rendering_permission",
+              "attempt": 1,
+              "model": "deepseek-flash",
+              "usage": {
+                "input_tokens": 442,
+                "output_tokens": 177
+              },
+              "valid": true
+            },
+            {
+              "stage": "medium",
+              "attempt": 1,
+              "model": "deepseek-flash",
+              "usage": {
+                "input_tokens": 1290,
+                "output_tokens": 238
+              },
+              "valid": true
+            }
+          ]
+        },
+        "identity": [
+          {
+            "descriptor_source": "request",
+            "target_mention": "the man",
+            "kind": "person",
+            "claims": [
+              {
+                "dimension": "wardrobe",
+                "value": "mossy grey-green shirt",
+                "quote": "change the shirt on the man to a mossy grey-green"
+              }
+            ],
+            "label": "\u003cSubject 1\u003e",
+            "descriptor": "the man wearing a mossy grey-green shirt and dark blue jeans",
+            "retained_attributes": [
+              "dark blue jeans"
+            ],
+            "requested_attributes": [
+              "mossy grey-green shirt"
+            ],
+            "request_quote": "change the shirt on the man to a mossy grey-green",
+            "wardrobe_attributes": [
+              "dark blue jeans"
+            ]
+          }
+        ],
+        "governs": {
+          "action": "reference",
+          "framing": "reference",
+          "lighting": "reference",
+          "medium": "reference",
+          "palette": "reference",
+          "wardrobe": "request"
+        },
+        "reasons": {
+          "action": "The request only changes the shirt color; it asks for no new or altered behavior, so action remains with the subject reference.",
+          "framing": "No camera composition, shot scale, viewpoint or camera movement is requested, so framing remains reference-governed.",
+          "lighting": "No instruction about the light, its source, direction or quality is given, so lighting stays governed by the reference image.",
+          "medium": "The medium owner is pinned by the settled medium decision: preserve live-action with no restyling requested.",
+          "palette": "The request names a garment color but gives no scene color grade, saturation or tonal-contrast instruction, so palette remains governed by the reference.",
+          "wardrobe": "The request explicitly specifies a new shirt color ('mossy grey-green'), which overrides the observed navy blue t-shirt for that named property while unmentioned clothing stays with the reference."
+        },
+        "transform_phrase": null,
+        "transform_target": "",
+        "medium_transferred": false,
+        "style": {
+          "observed_phrase": "live-action",
+          "phrase": "live-action",
+          "source": "reference",
+          "reference_medium": "live-action",
+          "requested_medium": "",
+          "discrepancy": false,
+          "note": ""
+        },
+        "subjects": [
+          {
+            "label": "\u003cSubject 1\u003e",
+            "kind": "person",
+            "sources": [
+              "\u003cPicture 1\u003e"
+            ],
+            "descriptor": "the man",
+            "attributes": [
+              "navy blue t-shirt",
+              "dark blue jeans"
+            ],
+            "pose": [],
+            "pose_licensed": false,
+            "retention": "fully_preserved",
+            "retention_note": "",
+            "appears_in": [],
+            "taken_over_by": ""
+          }
+        ],
+        "calls": [
+          {
+            "stage": "rendering_permission",
+            "attempt": 1,
+            "model": "deepseek-flash",
+            "usage": {
+              "input_tokens": 442,
+              "output_tokens": 177
+            },
+            "valid": true
+          },
+          {
+            "stage": "medium",
+            "attempt": 1,
+            "model": "deepseek-flash",
+            "usage": {
+              "input_tokens": 1290,
+              "output_tokens": 238
+            },
+            "valid": true
+          },
+          {
+            "stage": "identity_requirements",
+            "attempt": 1,
+            "model": "deepseek-flash",
+            "usage": {
+              "input_tokens": 1448,
+              "output_tokens": 613
+            },
+            "valid": true
+          },
+          {
+            "stage": "licence",
+            "attempt": 1,
+            "model": "deepseek-flash",
+            "usage": {
+              "input_tokens": 1964,
+              "output_tokens": 338
+            },
+            "valid": true
+          }
+        ]
+      },
+      "explanation": "Each attribute follows explicit request or observed reference; poses and reference-sheet presentation are not subject identity."
+    },
+    {
+      "field": "shots.camera",
+      "source": "host_template",
+      "value": [
+        {
+          "subjects": [
+            "the man wearing a mossy grey-green shirt and dark blue jeans"
+          ],
+          "sync_sound": [],
+          "start_ms": 0,
+          "purpose": "reveal",
+          "framing": "medium",
+          "action": "The man stands facing the camera in dark blue jeans and a mossy grey-green shirt, his posture relaxed and steady as the camera slowly pushes in toward his torso.",
+          "what_changes": "The framing tightens on the man, bringing the mossy grey-green shirt and its fabric texture into clearer view.",
+          "camera": {
+            "type": "Push In",
+            "amplitude": "small",
+            "speed": "slow"
+          }
+        }
+      ],
+      "explanation": "Canonical camera events are assembled from the typed structural plan after prose."
+    },
+    {
+      "field": "subjects.shot_ids",
+      "source": "typed_actual_use_projection",
+      "value": [
+        {
+          "kind": "person",
+          "descriptor": "the man wearing a mossy grey-green shirt and dark blue jeans",
+          "attributes": [
+            "dark blue jeans",
+            "mossy grey-green shirt"
+          ],
+          "origin": "user",
+          "id": "subject-1",
+          "description": "the man wearing a mossy grey-green shirt and dark blue jeans; dark blue jeans, mossy grey-green shirt",
+          "sources": [
+            {
+              "source": {
+                "asset_id": "asset-1",
+                "track": "visual"
+              },
+              "role": "identity"
+            }
+          ],
+          "retention": "partially_preserved",
+          "retention_details": "Preserve this canonical target identity and its listed stable attributes. Explicit caller identity requirements replace the corresponding observed source properties.",
+          "shot_ids": [
+            "shot-1"
+          ]
+        }
+      ],
+      "explanation": "High-level target appearances derive only from actual RichText and speaker-dialogue bindings. Removed figures carry their incoming replacement's transfer scope; unused source observations remain in Evidence."
+    },
+    {
+      "field": "creativity",
+      "source": "caller_or_default",
+      "value": {
+        "speech": false,
+        "music": true,
+        "onscreen_text": false,
+        "magnitude": "measured"
+      },
+      "explanation": "Scope reflects requested elements, explicit prohibitions, and the selected four-position creativity control."
+    }
+  ],
+  "calls": [
+    {
+      "stage": "mode",
+      "attempt": 1,
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 635,
+        "output_tokens": 1222
+      },
+      "valid": true
+    },
+    {
+      "stage": "roles",
+      "attempt": 1,
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 862,
+        "output_tokens": 199
+      },
+      "valid": true
+    },
+    {
+      "stage": "scope",
+      "attempt": 1,
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 1030,
+        "output_tokens": 150
+      },
+      "valid": true
+    },
+    {
+      "stage": "rendering_permission",
+      "attempt": 1,
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 442,
+        "output_tokens": 177
+      },
+      "valid": true
+    },
+    {
+      "stage": "medium",
+      "attempt": 1,
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 1290,
+        "output_tokens": 238
+      },
+      "valid": true
+    },
+    {
+      "stage": "identity_requirements",
+      "attempt": 1,
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 1448,
+        "output_tokens": 613
+      },
+      "valid": true
+    },
+    {
+      "stage": "licence",
+      "attempt": 1,
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 1964,
+        "output_tokens": 338
+      },
+      "valid": true
+    },
+    {
+      "stage": "structure",
+      "attempt": 1,
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 3798,
+        "output_tokens": 2408
+      },
+      "valid": true
+    },
+    {
+      "stage": "plan",
+      "attempt": 1,
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 9540,
+        "output_tokens": 6497
+      },
+      "valid": true
+    },
+    {
+      "stage": "semantic_review",
+      "attempt": 1,
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 2769,
+        "output_tokens": 428
+      },
+      "valid": true
+    }
+  ]
+}

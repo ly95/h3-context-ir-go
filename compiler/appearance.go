@@ -1,6 +1,11 @@
 package compiler
 
-import "github.com/ly95/contextir"
+import (
+	"fmt"
+	"strings"
+
+	"github.com/ly95/contextir"
+)
 
 func withoutSubjectShotIDs(subjects []contextir.Subject) []contextir.Subject {
 	out := append([]contextir.Subject(nil), subjects...)
@@ -65,7 +70,11 @@ func canonicalAppearanceContract(d contextir.Document, canonical []contextir.Sub
 			if onlyEditSource {
 				continue
 			} // observed source actors need not all become target actors
-			return nil, failure(contextir.CodeModelOutput, "compose", "subjects.shot_ids", "Use each requested reference identity/setting in its actual shot bindings; source metadata alone is not a target appearance.", nil)
+			bindingID := subject.ID
+			if subject.TakenOverBy != "" {
+				bindingID = subject.TakenOverBy
+			}
+			return nil, failure(contextir.CodeModelOutput, "compose", fmt.Sprintf("subjects[%s].shot_ids", subject.ID), fmt.Sprintf("Canonical reference %s (source assets: %s) has no actual shot binding for target %s. Use that target subject_id in at least one actual shot/event description or bound dialogue; definitions and summaries alone do not establish appearance. Not selected by a subject projection does not mean deleted.", subject.ID, strings.Join(requiredAppearanceAssetIDs(subject), ", "), bindingID), nil)
 		}
 		subject.ShotIDs = append([]string(nil), ids...)
 		out = append(out, subject)

@@ -149,14 +149,15 @@ func TestActualVoiceToEngineCandidateReceivesGroundedRecipientReview(t *testing.
 			c, err := New(modelFunc(func(_ context.Context, request contextir.ModelRequest) (contextir.ModelResponse, error) {
 				calls++
 				var input struct {
+					Version   string                `json:"version"`
 					Targets   []audioPropertyTarget `json:"audio_property_targets"`
 					Fragments map[string]string     `json:"fragments"`
 				}
 				if err := json.Unmarshal(request.Input, &input); err != nil || len(input.Targets) != 1 || input.Targets[0].Recipient != audioRecipientVocal || input.Targets[0].SpeakerID != vocal || input.Targets[0].ReferenceID != d.References[0].ID {
 					t.Fatal("critic lost the host-owned reference/vocal target", err, input)
 				}
-				if request.Stage != "semantic_review" || !strings.Contains(string(request.ResponseSchema), "audio_property_target_mismatch") || !strings.Contains(request.System, "similar timbre") || !strings.Contains(request.System, "nonverbal vocalization") || CompositionReviewVersion != "contextir/composition-review/v9" {
-					t.Fatal("v9 recipient review or legitimate acoustic/vocal cases missing")
+				if request.Stage != "semantic_review" || !strings.Contains(string(request.ResponseSchema), "audio_property_target_mismatch") || !strings.Contains(request.System, "similar timbre") || !strings.Contains(request.System, "nonverbal vocalization") || input.Version != CompositionReviewVersion {
+					t.Fatal("recipient review, published version or legitimate acoustic/vocal cases missing")
 				}
 				if variant == "authorized_vocal" && input.Targets[0].NoFixedDialogue || variant != "authorized_vocal" && !input.Targets[0].NoFixedDialogue {
 					t.Fatal("typed fixed-vocal evidence drifted", input.Targets[0])

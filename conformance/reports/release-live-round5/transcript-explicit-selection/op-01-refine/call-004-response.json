@@ -1,0 +1,58 @@
+{
+  "response": {
+    "json": {
+      "updates": [
+        {
+          "field": "asset_remove",
+          "asset_id": "asset-1",
+          "action": "remove",
+          "quote": "Remove audio asset-1 only.",
+          "value": null
+        },
+        {
+          "field": "transcript_uses",
+          "asset_id": "",
+          "action": "clear",
+          "quote": "Remove audio asset-1 only.",
+          "value": null
+        },
+        {
+          "field": "transcripts",
+          "asset_id": "",
+          "action": "set",
+          "quote": "Remove audio asset-1 only.",
+          "value": {}
+        },
+        {
+          "field": "dialogue",
+          "asset_id": "",
+          "action": "set",
+          "quote": "Keep all selected source words and their source selection unchanged.",
+          "value": [
+            {
+              "speaker": "the man at the counter",
+              "text": "We close at six, not half past.",
+              "language": "English",
+              "voiceover": false
+            }
+          ]
+        },
+        {
+          "field": "intent",
+          "asset_id": "",
+          "action": "set",
+          "quote": "Remove audio asset-1 only. Keep all selected source words and their source selection unchanged.",
+          "value": "Have the man at the counter say, word for word, the line: \"We close at six, not half past.\""
+        }
+      ],
+      "reasoning": "Removing asset-1 invalidates its dependent transcript_use and transcript map, so those are cleared in the same patch. The exact source words are preserved as fixed dialogue, and the intent is revised to remove the reference to the now-removed recording while keeping the speaker and word-for-word delivery."
+    },
+    "model": "deepseek-flash",
+    "usage": {
+      "input_tokens": 1311,
+      "output_tokens": 3959
+    }
+  },
+  "elapsed_ms": 21022,
+  "images": []
+}

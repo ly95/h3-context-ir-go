@@ -276,10 +276,7 @@ def inspect(result, semantic, previous=None):
             require(all(speakers[s].get("onscreen") is False and not speakers[s].get("subject_id")
                         for s in line.get("speaker_ids", []) if s in speakers), "voiceover invented a visual speaker")
     if "visible_text" in semantic:
-        visible = [event["visible_text"] for shot in shots for event in shot.get("events", []) if event.get("visible_text")]
-        require(visible == semantic["visible_text"], "visible lettering changed, duplicated or was omitted")
-        for word in semantic["visible_text"]:
-            require(prompt.count(word) == 1, "exact visible text is not emitted once")
+        errors.extend(visible_text_errors(document, prompt, semantic))
     for source in semantic.get("dormant_voice_bindings", []):
         voice_references = [r for r in references.values()
                             if r.get("source", {}).get("asset_id") == source
@@ -456,6 +453,27 @@ def run(report_path, fixture_path, assertions_path):
             "evidence_scope": "Final publication, typed source graph, literal/timing/role invariants; free-form semantic prose and generated video quality require separately recorded review."}
 
 
+def visible_text_errors(document, prompt, semantic):
+    """Count typed displays, not repetitions describing the same visible prop.
+
+    Free prose can still introduce another sign or a readable continuation with
+    no event. Its physical meaning needs the separate composition/independent
+    semantic review; sharing a shot does not automatically make it one display.
+    """
+    displays = [(shot["id"], event["visible_text"])
+                for shot in document.get("shots", []) for event in shot.get("events", [])
+                if event.get("visible_text")]
+    errors = []
+    if [text for _, text in displays] != semantic["visible_text"]:
+        errors.append("visible lettering changed, duplicated or was omitted")
+    if "visible_text_shots" in semantic and [shot for shot, _ in displays] != semantic["visible_text_shots"]:
+        errors.append("visible lettering is in an unauthorized shot")
+    for word in semantic["visible_text"]:
+        if '"' + word + '"' not in prompt:
+            errors.append("exact visible text is absent from the quoted rendered channel")
+    return errors
+
+
 def self_test():
     source = Path(__file__).parent / "reports/remaining-highlevel-compile-v2/transcript-model-selection/result.json"
     r = json.loads(source.read_text())["result"]
@@ -526,12 +544,32 @@ def self_test():
         wrong = copy.deepcopy(property_control)
         mutate(wrong)
         assert not caller_property_reaches_source_target(wrong, "one"), name + " escaped property provenance"
+    same_sign = {
+        "shots": [{"id": "shot-1", "description": [{"text": "One sign reads 出口 EXIT 07."}],
+                   "events": [{"kind": "visible_text", "visible_text": "出口 EXIT 07"}]},
+                  {"id": "shot-2", "description": [{"text": "Only tile and pillars remain visible."}], "events": []}]
+    }
+    sign_semantic = {"visible_text": ["出口 EXIT 07"], "visible_text_shots": ["shot-1"]}
+    same_sign_prompt = 'One sign reads 出口 EXIT 07. The visible text reads "出口 EXIT 07".'
+    assert same_sign_prompt.count("出口 EXIT 07") == 2
+    assert not visible_text_errors(same_sign, same_sign_prompt, sign_semantic)
+    for name, mutate in [
+        ("duplicated typed display", lambda d: d["shots"][0]["events"].append(copy.deepcopy(d["shots"][0]["events"][0]))),
+        ("changed literal", lambda d: d["shots"][0]["events"][0].update(visible_text="出口 EXIT 08")),
+        ("wrong shot", lambda d: d["shots"][1]["events"].append(d["shots"][0]["events"].pop())),
+        ("extra visible words", lambda d: d["shots"][0]["events"].append({"kind": "visible_text", "visible_text": "EXTRA"})),
+    ]:
+        wrong = copy.deepcopy(same_sign)
+        mutate(wrong)
+        assert visible_text_errors(wrong, same_sign_prompt, sign_semantic), name + " escaped typed display contract"
+    assert visible_text_errors(same_sign, "The rendered fixed words disappeared.", sign_semantic)
     print(json.dumps({"self_test": "passed", "positive_publication": 1, "negative_mutations": 5,
                       "independent_sources_positive_and_negative": True,
                       "semantic_dialogue_id_change_and_word_drift": True,
                       "source_bound_equivalent_wheels_positive_and_firstwave_negative": True,
                       "paired_frame_official_addresses_and_header_drift": True,
-                      "caller_property_provenance_and_final_target": True}))
+                      "caller_property_provenance_and_final_target": True,
+                      "same_prop_echo_allowed_typed_display_word_count_shot_still_strict": True}))
 
 
 if __name__ == "__main__":

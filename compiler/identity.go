@@ -24,6 +24,7 @@ func canonicalSubjects(b Brief, st Structure, req contextir.Request, licence *Li
 	if err != nil {
 		return nil, err
 	}
+	attributeTargets := map[string]map[string]string{}
 	if licence != nil {
 		for _, identity := range licence.Identity {
 			observedIndex := -1
@@ -71,6 +72,12 @@ func canonicalSubjects(b Brief, st Structure, req contextir.Request, licence *Li
 				for _, adjustment := range identity.AdjustedAttributes {
 					if attribute == adjustment.Source {
 						subject.Attributes[i] = adjustment.Target
+						if adjustment.Kind == "presentation_cleanup" || adjustment.Kind == "target_identity_alignment" {
+							if attributeTargets[subject.ID] == nil {
+								attributeTargets[subject.ID] = map[string]string{}
+							}
+							attributeTargets[subject.ID][attribute] = adjustment.Target
+						}
 						break
 					}
 				}
@@ -105,7 +112,7 @@ func canonicalSubjects(b Brief, st Structure, req contextir.Request, licence *Li
 			}
 		}
 	}
-	return projectCanonicalSubjects(subjects, st.SubjectProjections)
+	return projectCanonicalSubjects(subjects, st.SubjectProjections, attributeTargets)
 }
 
 func lockSubjectSchema(raw json.RawMessage, subjects []contextir.Subject) (json.RawMessage, error) {

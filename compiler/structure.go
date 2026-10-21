@@ -162,6 +162,19 @@ func (c *Compiler) structure(ctx context.Context, b Brief, target contextir.Targ
 		}
 		structuralInput["canonical_target_subjects"], _ = json.Marshal(canonicalTargets)
 		structuralInput["replacement_motion_obligations"], _ = json.Marshal(motionObligations)
+		var appearances []requiredSubjectAppearance
+		if len(b.SubjectProjections) > 0 {
+			appearancePlan := motionPlan
+			appearancePlan.SubjectProjections = b.SubjectProjections
+			projectedTargets, projectionErr := canonicalSubjects(b, appearancePlan, contextir.Request{Mode: mode, Target: target}, &licence)
+			if projectionErr != nil {
+				return Structure{}, calls, ds, projectionErr
+			}
+			appearances = projectionRequiredSubjectAppearances(projectedTargets, b.SubjectProjections)
+			if len(appearances) > 0 {
+				structuralInput["required_subject_appearances"], _ = json.Marshal(appearances)
+			}
+		}
 		if hasProjectionCandidates(b) {
 			candidates, candidateErr := canonicalSubjects(b, motionPlan, contextir.Request{Mode: mode, Target: target}, &licence)
 			if candidateErr != nil {
@@ -170,7 +183,11 @@ func (c *Compiler) structure(ctx context.Context, b Brief, target contextir.Targ
 			structuralInput["subject_projection_candidates"], _ = json.Marshal(candidates)
 		}
 		input, _ = json.Marshal(structuralInput)
-		response, callErr := c.model.Generate(ctx, contextir.ModelRequest{Stage: "structure", System: structurePromptFor(b) + "\n" + replacementMotionInstruction + "\n" + compositionBoundaryFor(mode), Input: input, ResponseSchema: append(json.RawMessage(nil), schema...)})
+		structureSystem := structurePromptFor(b) + "\n" + replacementMotionInstruction + "\n" + compositionBoundaryFor(mode)
+		if len(appearances) > 0 {
+			structureSystem += "\n" + requiredSubjectAppearanceInstruction
+		}
+		response, callErr := c.model.Generate(ctx, contextir.ModelRequest{Stage: "structure", System: structureSystem, Input: input, ResponseSchema: append(json.RawMessage(nil), schema...)})
 		valid := !response.UsageInvalid && response.Usage.InputTokens >= 0 && response.Usage.OutputTokens >= 0
 		calls = append(calls, planner.CallUsage{Stage: "structure", Attempt: attempt, Model: response.Model, Usage: response.Usage, Valid: valid})
 		if ctx.Err() != nil {

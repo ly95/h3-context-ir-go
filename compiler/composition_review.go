@@ -9,7 +9,7 @@ import (
 	"github.com/ly95/contextir"
 )
 
-const CompositionReviewVersion = "contextir/composition-review/v9"
+const CompositionReviewVersion = "contextir/composition-review/v10"
 
 type CompositionFinding struct {
 	Code          string                     `json:"code"`
@@ -43,6 +43,7 @@ var compositionRemedies = map[string]string{
 	"replacement_motion_changed":      "Preserve the replaced figure's observed position, actions and timing. A requested action for another actor does not authorize rewriting this figure's motion; apply an override only when the caller explicitly changes this same figure's action.",
 	"dialogue_placement_mismatch":     "Align the visual performance narrative with the fixed dialogue events in each shot. Do not direct an actor to deliver the same fixed utterance in a different shot, repeat a completed line after a cut, or describe an absent performance; continuity fragments must describe the one actual continued performance without changing caller words.",
 	"visible_text_placement_mismatch": "Present the exact caller-visible words only in the authorized shots and roles. A visible prop carrying those words can repeat their display even if no second visible-text event is declared. Keep other views out of frame, obscured, facing away or unreadable when the caller restricts the lettering to one shot; do not alter the fixed words or invent a placement from keywords.",
+	"source_presentation_in_identity": "Keep the canonical identity's stable physical facts and caller-authorized changes while removing reference-sheet captions, view/panel packaging and pure source staging. A mixed stable fact and view phrase must preserve the physical fact without promoting its packaging into the target identity. Actual-frame pixels remain protected separately.",
 }
 
 func visibleTextReviewRequired(b Brief, st Structure, documents ...contextir.Document) bool {
@@ -62,6 +63,11 @@ func visibleTextReviewRequired(b Brief, st Structure, documents ...contextir.Doc
 }
 
 func CompositionReviewRequired(b Brief, st Structure, documents ...contextir.Document) bool {
+	for _, doc := range documents {
+		if len(sheetIdentityReviewContract(b, doc)) > 0 {
+			return true
+		}
+	}
 	if visibleTextReviewRequired(b, st, documents...) {
 		return true
 	}
@@ -233,6 +239,10 @@ func (c *Compiler) ReviewComposition(ctx context.Context, b Brief, st Structure,
 	if len(audioTargets) > 0 {
 		codes = append(codes, "audio_property_target_mismatch")
 	}
+	sheetIdentities := sheetIdentityReviewContract(b, d)
+	if len(sheetIdentities) > 0 {
+		codes = append(codes, "source_presentation_in_identity")
+	}
 	findingProperties := map[string]any{"code": map[string]any{"type": "string", "enum": codes}, "fragment_id": map[string]any{"type": "string", "enum": fragmentIDs}, "quote": map[string]any{"type": "string", "minLength": 1}, "subject_id": map[string]any{"type": "string", "enum": subjectIDs}}
 	if len(audioTargets) > 0 {
 		referenceIDs, speakerIDs := []string{""}, []string{""}
@@ -282,6 +292,13 @@ func (c *Compiler) ReviewComposition(ctx context.Context, b Brief, st Structure,
 Positive replacement obligations: inspect replacement_inheritance and its observed_motion_contexts, not only exclusions. The replacement must inherit the identified source figure's observed motion, position and timing. A global action-governs=request entry authorizes only the actor/action actually requested; changing the car's action does not change the driver's action. Compare the final replacement narrative with the identified figure's motion in context. Standing still is not inheriting an observed crossing action unless the caller explicitly changes that same figure's action. Do not invent timing facts outside the declared coverage.
 Finding thresholds: similar sounds are not evidence of copying a recording. Generic newly generated engine ambience, a matching pulse, or an appropriate sound texture is legitimate without an assertion that the source recording is played. For audio_signal_misuse quote an explicit source-signal relationship contradicting the typed copy/property role; never infer copying solely from sonic resemblance. Likewise camera movement after an anchored instant is legitimate. A push-in, pan or other dynamic camera event alone does not demonstrate that the initial or final anchor frame was changed. Report frame_content_changed only when actual narrative asserts incompatible frame content or a crop/removal at that anchored instant. These constraints are mandatory; do not report speculative contradictions.`
 	systemInstructions += "\nThe typed claims preserve their explicit origins. A user-origin claim records caller authorization or a requested outcome; it is not itself evidence that the final narrative executes that outcome or copies an original signal. User claims are deliberately absent from executable fragment addresses. Compare the actual final narrative, source bindings and typed performance events to that authorization. Observed and creative claims remain auditable executable assertions."
+	if len(sheetIdentities) > 0 {
+		var fields map[string]json.RawMessage
+		_ = json.Unmarshal(input, &fields)
+		fields["reference_sheet_identity_contract"], _ = json.Marshal(sheetIdentities)
+		input, _ = json.Marshal(fields)
+		systemInstructions += "\nreference_sheet_identity_contract is host-selected: these explicit reference-sheet assets supply non-frame identity, not actual first/last-frame pixels. Audit the ACTUAL canonical target descriptor and attributes in subject definition fragments against the original source traits and caller claims. Accepted target identity has priority over source conflicts, but that does not authorize sheet labels, panel captions, camera/view/close-up packaging, sheet layout, source pose or background to become identity facts. A sheet caption is not a target name without independent caller authorization. A mixed stable physical trait plus view wording must retain the trait and remove only its view packaging; do not discard a genuine eye color, scar, horn, garment or other physical fact to make cleanup easier. The earlier qualification's existence is not proof of successful cleanup. Report source_presentation_in_identity for clear remaining presentation in actual canonical fields, citing the exact subject definition fragment and subject_id from this host-selected contract. Its quote must be exact actual descriptor, attribute or description text, not JSON field syntax, raw source attribution Details, evidence, retention metadata or an unrelated fragment. This concerns the IR identity sent to H3, not proof that text appears in a generated video. Do not report a caller-authorized name or genuine markings as a panel label merely because similar text occurs on the sheet. Sources used as actual frames are absent from this contract: their panels, captions and full composition remain target frame content and must be preserved. Do not remove them or report a whole-sheet animation as identity contamination."
+	}
 	if len(audioTargets) > 0 {
 		var fields map[string]json.RawMessage
 		_ = json.Unmarshal(input, &fields)
@@ -380,6 +397,9 @@ Finding thresholds: similar sounds are not evidence of copying a recording. Gene
 			return out, failure(contextir.CodeModelOutput, "semantic_review", "findings", "A composition finding must cite a known subject and exact existing narrative fragment.", nil)
 		}
 		if err := validateAudioPropertyFinding(finding, audioTargets, d.Speakers); err != nil {
+			return out, err
+		}
+		if err := validateSheetIdentityFinding(finding, sheetIdentities, d); err != nil {
 			return out, err
 		}
 	}

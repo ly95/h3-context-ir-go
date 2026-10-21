@@ -242,6 +242,19 @@ property to its actual source asset. Unobserved caller-requested properties need
 a quoted target claim; they cannot be relabeled as observed or hidden only in a
 descriptor.
 
+Non-frame reference sheets receive a separate typed identity qualification
+before structural planning. It classifies each accepted source trait as stable,
+mixed with presentation, or pure presentation; the host keeps exact source
+provenance and applies only the authorized presentation adjustment. Caller
+identity claims remain immutable. The final composition audit also inspects the
+emitted identity definitions, so declaring cleanup is insufficient. Whole-frame
+anchors keep their complete sheet, labels and layout.
+
+When an identity projection leaves other reference subjects unmerged, those
+subjects keep their separate appearance obligations. Combining selected sources
+is not deletion of the others. Structure and prose receive the same real target
+and source IDs; missing-appearance diagnostics identify the absent subject.
+
 Fixed dialogue slots expose their shot IDs, shared line IDs and continuation
 flags, while keeping original words hidden from the writer. Render validation
 compares actual fragments byte-for-byte without inserting boundary spaces. An
