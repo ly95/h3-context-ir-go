@@ -145,7 +145,13 @@ def inspect(result, semantic, previous=None):
                 interval = target.get("interval", {})
                 require(0 <= interval.get("start_ms", -1) < interval.get("end_ms", -1) <= target_end,
                         "manifest target interval escapes final timeline")
-    for name, actual in (("subjects", subjects), ("references", references), ("speakers", speakers)):
+    # A dormant voice-property Speaker is legitimate metadata but receives no
+    # (SN) vocal label. The manifest numbers actual vocal performers only.
+    line_definitions = {line["id"]: line for line in document.get("dialogue", [])}
+    performing_speakers = {speaker for shot in shots for event in shot.get("events", [])
+                           if event.get("dialogue") for speaker in line_definitions.get(
+                               event["dialogue"].get("line_id"), {}).get("speaker_ids", [])}
+    for name, actual in (("subjects", subjects), ("references", references), ("speakers", performing_speakers)):
         require({x.get("id") for x in manifest.get(name, [])} == set(actual),
                 "manifest " + name + " ID set differs from Document")
     labels = {row.get("label") for name in ("media", "subjects", "references", "speakers")
@@ -247,7 +253,7 @@ def inspect(result, semantic, previous=None):
     if semantic.get("no_subject_pose"):
         require(all(not s.get("pose") and not s.get("pose_licensed") for s in subjects.values() if s.get("sources")),
                 "content reference was promoted into source-pose lock")
-    if semantic.get("replacement_motion_required"):
+    if semantic.get("replacement_motion_required") and semantic.get("declared_role") != "placed_subject":
         require(bool(result.get("replacement_motion_obligations")), "incoming/replacement motion obligations absent")
     if "preserve_dialogue_from_op" in semantic and previous:
         base = previous[semantic["preserve_dialogue_from_op"]]

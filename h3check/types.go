@@ -85,6 +85,32 @@ type Scope struct {
 	Forbidden []string `json:"forbidden"`
 }
 
+// DialogueContract carries explicit caller words and the host's ordered emission
+// plan. It supplements text-only linting when the caller owns structured IR.
+// Text/language for fixed lines must come from the accepted caller contract,
+// rather than being copied back from a writer's candidate.
+type DialogueContract struct {
+	Lines []DialogueLineContract `json:"lines"`
+	Parts []DialoguePartContract `json:"parts"`
+}
+
+type DialogueLineContract struct {
+	ID             string `json:"id"`
+	Text           string `json:"text"`
+	Language       string `json:"language"`
+	Voiceover      bool   `json:"voiceover"`
+	VisibleSpeaker bool   `json:"visible_speaker"`
+	Fixed          bool   `json:"fixed"`
+}
+
+type DialoguePartContract struct {
+	LineID                string `json:"line_id"`
+	Text                  string `json:"text"`
+	Shot                  int    `json:"shot"`
+	ContinuesFromPrevious bool   `json:"continues_from_previous"`
+	ContinuesToNext       bool   `json:"continues_to_next"`
+}
+
 func (s Scope) permits(e string) bool {
 	if contains(s.Forbidden, e) {
 		return false
@@ -103,6 +129,7 @@ type Context struct {
 	Videos                   int               `json:"n_videos"`
 	Audios                   int               `json:"n_audios"`
 	ExpectedDialogue         []string          `json:"expected_dialogue"`
+	DialogueContract         *DialogueContract `json:"dialogue_contract,omitempty"`
 	LoRATriggers             []LoRATrigger     `json:"lora_triggers"`
 	OnscreenText             []string          `json:"onscreen_text"`
 	TokenBudget              [2]int            `json:"token_budget"`

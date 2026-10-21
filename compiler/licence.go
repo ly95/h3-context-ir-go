@@ -106,7 +106,7 @@ func (c *Compiler) decideLicence(ctx context.Context, brief Brief, additional []
 	if err != nil {
 		return out, err
 	}
-	b, err = roleScopedCompositionBrief(b)
+	b, err = roleScopedLicenceBrief(b)
 	if err != nil {
 		return out, err
 	}
@@ -136,7 +136,7 @@ func (c *Compiler) decideLicence(ctx context.Context, brief Brief, additional []
 		if reading.Card.AssetID != "" && reading.Card.AssetID != reading.ID {
 			return out, invalid("reference_readings.card.asset_id", "Reading and Card identities must agree.")
 		}
-		reading.Card = roleScopedCard(reading.Card, reading.Role)
+		reading.Card = roleScopedLicenceCard(reading.Card, reading.Role)
 		seenReadings[reading.ID] = true
 		readings = append(readings, reading)
 	}

@@ -1,0 +1,112 @@
+{
+  "version": "contextir-h3/artifact-v1",
+  "compiler_version": "contextir-h3/v1.2",
+  "format_version": "minimax-h3/prompt-v1",
+  "mode": "ref2va",
+  "target": {
+    "duration_ms": 5000,
+    "frame_count": 120,
+    "aspect_ratio": "16:9",
+    "fps": {
+      "numerator": 24,
+      "denominator": 1
+    },
+    "width": 1344,
+    "height": 768
+  },
+  "profile": {
+    "name": "h3-published-format-v1",
+    "format": "minimax-h3/prompt-v1",
+    "fps": {
+      "numerator": 24,
+      "denominator": 1
+    },
+    "modes": [
+      "t2va",
+      "i2va",
+      "l2va",
+      "fl2va",
+      "ref2va"
+    ],
+    "limits": {
+      "pictures": 0,
+      "videos": 0,
+      "video_audio": 0,
+      "standalone_audio": 0
+    },
+    "supports_reference_frame_anchors": true,
+    "supports_source_intervals": true
+  },
+  "prompt": "subject_definitions:\n\u003cSubject 1\u003e is A car seen from the front; only its front end and bodywork become legible in the dark.\n\u003cAudio 1\u003e is a sound-texture reference for the target video without copying the original signal. Caller-provided reference metadata: a low engine rumble. This description does not establish an auditory observation, authorize additional speech, or change the declared copy/property relationship. Its role is sound texture. Only the declared audio property is referenced; the recorded audio signal itself is not copied into the target.\n\nsummary:\n[audio reference] The camera holds a static shot. The target begins in near-total darkness, with no visible horizon or surrounding detail established beyond a dark paved space. The faint front end of the \u003cSubject 1\u003e gradually resolves from the black: a low edge of bodywork, a suggestion of the hood, and the front face becoming legible only as weak reflections slide across its surface. The vehicle remains in place, its shape only partially visible against the surrounding dark. The light is extremely low and narrow, catching highlights along the front end while leaving most of the body lost in shadow. The action is the reveal of its silhouette and the wet sheen of its front end emerging into partial visibility. The camera holds a static shot throughout, allowing the slow appearance of the vehicle to carry the change. The camera pushes in with small amplitude at slow speed. The \u003cSubject 1\u003e pulls forward out of the remaining shadow, its front end breaking into a dim pool of light. The bodywork becomes more legible as the vehicle closes the distance, moving from a stationary silhouette into clear forward motion. The car fills more of the frame as it advances, while the surrounding darkness stays largely unbroken and the light remains low and constrained. The change is from stillness and partial visibility to deliberate forward movement in dim light. The camera pushes in with small amplitude at slow speed, matching the car's approach without overtaking it.\n\nretention_analysis:\n\u003cAudio 1\u003e: reference - \u003cAudio 1\u003e's sound texture is referenced. Generate a new sound matching the defined texture without copying the original signal. Applicable scope: ([Shot 1], [Shot 2]; sound texture).\n\ndetailed_description:\nThe target video is in live-action style, cinematic.\n[Shot 1] The camera holds a static shot. The target begins in near-total darkness, with no visible horizon or surrounding detail established beyond a dark paved space. The faint front end of the \u003cSubject 1\u003e gradually resolves from the black: a low edge of bodywork, a suggestion of the hood, and the front face becoming legible only as weak reflections slide across its surface. The vehicle remains in place, its shape only partially visible against the surrounding dark. The light is extremely low and narrow, catching highlights along the front end while leaving most of the body lost in shadow. The action is the reveal of its silhouette and the wet sheen of its front end emerging into partial visibility. The camera holds a static shot throughout, allowing the slow appearance of the vehicle to carry the change. \u003cAudio 1\u003e applies in this shot as sound texture. Its defined audible characteristics are referenced without copying the source signal. At 00:00.000, Near-total darkness; the front end of the \u003cSubject 1\u003e begins to resolve from black. At 00:00.000, A low, resonant engine rumble at idle rolls through the dark, newly generated to match the \u003cAudio 1\u003e sound texture without copying the original signal. At 00:01.200, The \u003cSubject 1\u003e remains stationary as its silhouette and front-end sheen become partially visible. The camera holds a static shot. Throughout the target video: Do not add spoken or sung lines.\n[Shot 2] At 00:02.500, the shot cuts to The camera pushes in with small amplitude at slow speed. The \u003cSubject 1\u003e pulls forward out of the remaining shadow, its front end breaking into a dim pool of light. The bodywork becomes more legible as the vehicle closes the distance, moving from a stationary silhouette into clear forward motion. The car fills more of the frame as it advances, while the surrounding darkness stays largely unbroken and the light remains low and constrained. The change is from stillness and partial visibility to deliberate forward movement in dim light. The camera pushes in with small amplitude at slow speed, matching the car's approach without overtaking it. \u003cAudio 1\u003e applies in this shot as sound texture. Its defined audible characteristics are referenced without copying the source signal. At 00:02.500, The \u003cSubject 1\u003e pulls forward out of the remaining shadow. At 00:02.500, The engine note deepens under load, joined by soft tire roll over pavement; both are newly generated to match the \u003cAudio 1\u003e texture without reusing its signal. At 00:03.800, The \u003cSubject 1\u003e advances into dim light, filling more of the frame as it closes the distance. The camera pushes in with small amplitude at slow speed.\n\noverall_soundscape:\nA newly generated low, resonant engine rumble at idle opens the scene, deepening under load as the car moves forward; soft tire roll over pavement accompanies the advance. The texture follows the supplied sound reference without copying its signal.\n\nnon_diegetic_music:\nN/A\n",
+  "manifest": {
+    "media": [
+      {
+        "preparation": {},
+        "source_metadata": {
+          "duration_ms": 3000,
+          "fps": {
+            "numerator": 0,
+            "denominator": 0
+          }
+        },
+        "label": "\u003cAudio 1\u003e",
+        "kind": "audio",
+        "source": {
+          "asset_id": "asset-1",
+          "track": "audio"
+        },
+        "socket": "ref_audio_1",
+        "target_uses": [
+          {
+            "reference_id": "reference-asset-1-1",
+            "roles": [
+              "sfx"
+            ],
+            "retention": "reference",
+            "shots": [
+              {
+                "id": "shot-1",
+                "index": 1,
+                "interval": {
+                  "start_ms": 0,
+                  "end_ms": 2500
+                }
+              },
+              {
+                "id": "shot-2",
+                "index": 2,
+                "interval": {
+                  "start_ms": 2500,
+                  "end_ms": 5000
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "subjects": [
+      {
+        "id": "car",
+        "label": "\u003cSubject 1\u003e"
+      }
+    ],
+    "references": [
+      {
+        "id": "reference-asset-1-1",
+        "label": "\u003cAudio 1\u003e"
+      }
+    ],
+    "speakers": []
+  },
+  "frames": 120,
+  "effective_duration_seconds": {
+    "numerator": 5,
+    "denominator": 1
+  },
+  "document_sha256": "cf7a5c7f13427e3955db82ff218b032f8b6b177c5e83804f7846255b4069313b",
+  "profile_sha256": "ce4364d3f1242f5aeb2216db44195fb3897f4828dd9e145c4c16c64315786ab6",
+  "prompt_sha256": "6bad4d8b98e105d675847e09c79158b70bdc7aab2fab1579005da2d059b56954",
+  "manifest_sha256": "cf7de4ce4043c604719d377e63b20b334523f2c75aa4d862ab0eb04589d33665",
+  "sha256": "616983af3e50fa83d0b48d48eea7e29b54cbaca1bf49e9bf3d76e217582a223b"
+}

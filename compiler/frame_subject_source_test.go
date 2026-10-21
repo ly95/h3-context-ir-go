@@ -72,6 +72,8 @@ func TestGoConformanceFramePoseCompileWithObservedIdentity(t *testing.T) {
 				d.Shots[i].Events = nil
 			}
 			out = d
+		case "semantic_review":
+			out = map[string]any{"findings": []any{}}
 		default:
 			t.Fatal("unexpected interpretation stage", req.Stage)
 		}

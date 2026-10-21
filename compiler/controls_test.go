@@ -21,6 +21,7 @@ func TestRefinePreservesUnchangedOriginalConstraints(t *testing.T) {
 	}
 	before, _ := json.Marshal(previous)
 	change := "Have them pause before speaking."
+	reviewCalls := 0
 	model := modelFunc(func(ctx context.Context, m contextir.ModelRequest) (contextir.ModelResponse, error) {
 		var out any
 		var input struct {
@@ -57,6 +58,19 @@ func TestRefinePreservesUnchangedOriginalConstraints(t *testing.T) {
 			}
 			d.Style = "" // The writer omits the host-owned style field.
 			out = d
+		case "semantic_review":
+			reviewCalls++
+			var packet struct {
+				Dialogue struct {
+					Lines []struct {
+						Text string `json:"text"`
+					} `json:"lines"`
+				} `json:"dialogue_contract"`
+			}
+			if err := json.Unmarshal(m.Input, &packet); err != nil || len(packet.Dialogue.Lines) != 1 || packet.Dialogue.Lines[0].Text != b.Dialogue[0].Text {
+				t.Fatal("independent critic lost the unchanged caller words", err)
+			}
+			out = map[string]any{"findings": []CompositionFinding{}}
 		default:
 			t.Fatal(m.Stage)
 		}
@@ -82,7 +96,7 @@ func TestRefinePreservesUnchangedOriginalConstraints(t *testing.T) {
 	if next.Brief.Seconds != 8 || !reflect.DeepEqual(next.Brief.Dialogue, b.Dialogue) || !reflect.DeepEqual(next.Brief.Constraints, b.Constraints) {
 		t.Fatal("unrequested changes", next.Brief)
 	}
-	if len(next.Calls) != 6 || next.Calls[0].Stage != "refine" || !strings.Contains(next.Brief.Intent, "pausing") {
+	if len(next.Calls) != 7 || next.Calls[0].Stage != "refine" || next.Calls[6].Stage != "semantic_review" || reviewCalls != 1 || !strings.Contains(next.Brief.Intent, "pausing") {
 		t.Fatal(next.Calls, next.Brief)
 	}
 	if !strings.Contains(next.Artifact.Prompt, "That belt is done.") {

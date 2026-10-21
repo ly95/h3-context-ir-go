@@ -587,7 +587,7 @@ func requestFor(b Brief, target contextir.Target, st Structure, scope Scope) (co
 		}
 		req.Bindings = append(req.Bindings, bound)
 	}
-	for i, a := range b.FrameAnchors {
+	for _, a := range b.FrameAnchors {
 		if a.Role != RoleFirstFrame && a.Role != RoleLastFrame {
 			return req, invalid("frame_anchors.role", "Frame anchors require frame_anchor_first or frame_anchor_last.")
 		}
@@ -595,8 +595,21 @@ func requestFor(b Brief, target contextir.Target, st Structure, scope Scope) (co
 			return req, invalid("frame_anchors.asset_id", "Frame anchor must reference an input asset.")
 		}
 		at := a.At
-		req.Bindings = append(req.Bindings, contextir.AssetBinding{Source: contextir.SourceRef{AssetID: a.AssetID, Track: contextir.TrackVisual}, Role: contextir.RoleKeyframe, Anchor: &at})
-		_ = i
+		role := rootRole(a.Role)
+		if st.Mode == contextir.ModeReference {
+			role = contextir.RoleKeyframe
+		}
+		bound := contextir.AssetBinding{Source: contextir.SourceRef{AssetID: a.AssetID, Track: contextir.TrackVisual}, Role: role, Anchor: &at}
+		// An asset role and an explicit anchor can state the same responsibility.
+		// Emit that exact binding once; distinct roles/times remain visible to the
+		// root validator rather than being silently replaced or normalized.
+		alreadyBound := false
+		for _, existing := range req.Bindings {
+			alreadyBound = alreadyBound || sameJSON(existing, bound)
+		}
+		if !alreadyBound {
+			req.Bindings = append(req.Bindings, bound)
+		}
 	}
 	if err := bindProjectedFrameIdentities(b, st, &req); err != nil {
 		return req, err
@@ -780,6 +793,7 @@ func (m controlledModel) Generate(ctx context.Context, req contextir.ModelReques
 	req.System += "\n" + compositionBoundaryFor(original.Mode)
 	req.System += "\n" + proseLengthInstruction(prose)
 	req.System += "\n" + replacementMotionInstruction
+	req.System += "\n" + writerHygieneInstruction
 	req.System += "\nSubject shot_ids are HOST-OWNED: omit them. Bind referenced identities and environments by subject_id in the actual shot/event descriptions where they contribute; merely listing a source definition does not place it in every shot. An actor which leaves need not remain in later shots. Unsourced new targets should also use actual structural bindings in reference mode. In base modes return no subject metadata: all identities belong in natural literal narrative, while actual source-frame observations remain Evidence."
 	response, err := m.inner.Generate(ctx, req)
 	if m.observePlanCall != nil {

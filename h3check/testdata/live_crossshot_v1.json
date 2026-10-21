@@ -1,0 +1,2492 @@
+{
+  "purpose": "Actual first-attempt DeepSeek model requests/responses from the failed Chinese cross-shot Compile, captured before the D4/D9 correction. Original recording is unchanged; this derived test fixture contains no credentials. It proves deterministic replay, not fresh inference.",
+  "binary_sha256": "d607b4cd6a85c91e0b8fe432311275b5303d28604becea87a122a40a67f18a36",
+  "model": "deepseek-flash",
+  "brief": {
+    "intent": "Two shots: an empty railway station, then a train departing. A continuous off-screen voice says exactly the supplied line across both shots, starting in shot one and finishing in shot two. Show only the supplied sign text in shot one. No other dialogue or music.",
+    "mode": "t2va",
+    "seconds": 8,
+    "aspect": "16:9",
+    "shots": 2,
+    "cuts_ms": [
+      4000
+    ],
+    "dialogue": [
+      {
+        "text": "我们明天见，好吗？",
+        "language": "Chinese",
+        "speaker_hint": "off-screen narrator",
+        "voiceover": true
+      }
+    ],
+    "onscreen_text": [
+      "出口 EXIT 07"
+    ],
+    "silent": true,
+    "creativity": "restrained"
+  },
+  "calls": [
+    {
+      "request": {
+        "stage": "scope",
+        "system": "Interpret only the requested and forbidden content classes of this complete video request. Return JSON matching the schema. Do not infer from keyword lists. Treat negation and context semantically. The creativity setting does not change requested or forbidden: code applies its additions later.\nspeech means spoken or sung words; music means added non-diegetic score; onscreen_text means visible lettering. Requests for someone to say something, sing, whisper or speak authorize speech even when no exact words are provided. Merely walking or a mood adjective does not. A prohibition containing a class noun is not a request for that class. Quiet/minimal/subdued describe mood and alone do not forbid music. Interpret forbidden only from the caller's free-text instructions here: do not mark a class forbidden merely because structured Silent/SilenceAll is true, because host code applies those precise structured controls afterwards. Silent prohibits adding a score but does not remove an explicitly attached BGM copy relationship; SilenceAll prohibits all audio. Explicit free-text no-dialogue/no-music/no-lettering instructions remain independently recorded. Do not infer a quota of shots or cuts.\nCopy structured Dialogue and OnscreenText exactly, preserving all fields, order, punctuation and original language. If the intent itself supplies exact dialogue or visible words, extract those exact words, never translate, embellish or invent them. If speech is requested without exact words, set requested.speech true but leave dialogue empty for the later licensed writer. Every extracted word sequence must be an exact substring of the caller's intent. Both magnitude fields are empty strings, never omitted/none/null.\nA supplied concrete line plus an explicit no-dialogue instruction is a conflicting request: retain both in this interpretation, even if a supplied-content-wins policy is selected. Host code records and resolves that conflict using the caller's policy, not your preference. References cannot add speech/music/lettering merely because they contain them; their explicit responsibilities and caller instructions decide what is reproduced. Director notes cannot authorize content additions or overrule a prohibition. presence_claims, if present, are independent caller declarations that speech/lettering already exist elsewhere, not fabricated words. Use them to mark the requested class without inventing any text. dialogue_texts identifies known spoken words only for distinguishing spoken quotes from visible lettering; it never proves voice or sound. Empty intent is legitimate for this permission-only analysis.",
+        "input": {
+          "brief": {
+            "intent": "Two shots: an empty railway station, then a train departing. A continuous off-screen voice says exactly the supplied line across both shots, starting in shot one and finishing in shot two. Show only the supplied sign text in shot one. No other dialogue or music.",
+            "seconds": 8,
+            "aspect": "16:9",
+            "dialogue": [
+              {
+                "text": "我们明天见，好吗？",
+                "language": "Chinese",
+                "speaker_hint": "off-screen narrator",
+                "voiceover": true,
+                "kind": "",
+                "delivery": ""
+              }
+            ],
+            "onscreen_text": [
+              "出口 EXIT 07"
+            ],
+            "shots": 2,
+            "cuts_ms": [
+              4000
+            ],
+            "mode": "t2va",
+            "silent": true,
+            "creativity": "restrained"
+          },
+          "diagnostics": null,
+          "presence_claims": null,
+          "version": "contextir/compiler/v1"
+        },
+        "response_schema": {
+          "additionalProperties": false,
+          "properties": {
+            "dialogue": {
+              "const": [
+                {
+                  "text": "我们明天见，好吗？",
+                  "language": "Chinese",
+                  "speaker_hint": "off-screen narrator",
+                  "voiceover": true,
+                  "kind": "",
+                  "delivery": ""
+                }
+              ]
+            },
+            "forbidden": {
+              "additionalProperties": false,
+              "properties": {
+                "magnitude": {
+                  "const": ""
+                },
+                "music": {
+                  "type": "boolean"
+                },
+                "onscreen_text": {
+                  "type": "boolean"
+                },
+                "speech": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "magnitude",
+                "music",
+                "onscreen_text",
+                "speech"
+              ],
+              "type": "object"
+            },
+            "onscreen_text": {
+              "const": [
+                "出口 EXIT 07"
+              ]
+            },
+            "reasoning": {
+              "type": "string"
+            },
+            "requested": {
+              "additionalProperties": false,
+              "properties": {
+                "magnitude": {
+                  "const": ""
+                },
+                "music": {
+                  "type": "boolean"
+                },
+                "onscreen_text": {
+                  "type": "boolean"
+                },
+                "speech": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "magnitude",
+                "music",
+                "onscreen_text",
+                "speech"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "dialogue",
+            "forbidden",
+            "onscreen_text",
+            "reasoning",
+            "requested"
+          ],
+          "type": "object"
+        }
+      },
+      "response": {
+        "json": {
+          "dialogue": [
+            {
+              "text": "我们明天见，好吗？",
+              "language": "Chinese",
+              "speaker_hint": "off-screen narrator",
+              "voiceover": true,
+              "kind": "",
+              "delivery": ""
+            }
+          ],
+          "forbidden": {
+            "magnitude": "",
+            "music": true,
+            "onscreen_text": false,
+            "speech": false
+          },
+          "onscreen_text": [
+            "出口 EXIT 07"
+          ],
+          "reasoning": "The intent explicitly requests the supplied off-screen spoken line and the supplied sign text in shot one. It forbids music and additional dialogue, but it does not forbid the requested speech or requested onscreen text class. Structured silent is not treated as a free-text music prohibition by itself.",
+          "requested": {
+            "magnitude": "",
+            "music": false,
+            "onscreen_text": true,
+            "speech": true
+          }
+        },
+        "model": "deepseek-flash",
+        "usage": {
+          "input_tokens": 974,
+          "output_tokens": 762
+        }
+      },
+      "original_request_sha256": "b5e0cd852f8e578f8c9056209c7c15641e033b18931b8b7d9d32d0945a603db5",
+      "original_response_sha256": "03ae43714b6cd76acea6b02802a9df32afb2d880ccc9fa0bbfafa9b99f85238a"
+    },
+    {
+      "request": {
+        "stage": "medium",
+        "system": "Classify rendering-family IDs, compatible treatments and the requested style phrase. rendering_permission already settles authorization without knowing the reference look: its disposition, operation_quote and target are host-owned schema constants. Copy them exactly and NEVER re-author that permission based on a source/target taxonomy mismatch, equal buckets or a loose style mention. No source mismatch grants departure. A deliberate authorized transformation can stay within one coarse family. With no medium-governing visual reference, disposition is no_reference; explicit structured Style remains the requested style phrase.\nA theme, atmosphere, physical impossibility or imagined subject matter does not specify a rendering process. Unknown technique/family is empty, rather than guessed animation or painting from unusual content. A requested target can be valid while its rendering family remains unknown. Keep the complete requested rendering noun phrase in requested_style even when requested_medium is empty; absence of a coarse family never erases a named visual rendition. Motion does not by itself change rendering family. requested_style can record an unlicensed descriptive medium mention, while the separate permission still preserves the reference. Do not copy source-medium words into the requested family merely because they conflict.\nreference_medium and requested_medium are the supplied semantic taxonomy IDs; unknown is empty. 2d-animation includes flat or digitally drawn illustration, comic/graphic illustration and hand-drawn or cel animation, whether realistic or stylised. painted denotes a work presented as physical painted media, with painterly brushwork/paint surface; it is not a catch-all for every illustrated reference. 3d-animation denotes volumetric computer-rendered animation; stop-motion denotes photographed physical miniature/puppet frame animation. archival denotes an explicitly analog film-stock or historical monochrome film rendering process, including the texture and tonal reproduction of such capture; ordinary contemporary photographic depiction is live-action. A purely monochrome treatment without a specified capture process can have an unknown family while still having a nonempty requested_style. A still illustration may belong to an animation rendering family without making any claim that the attached still itself moves. Use the identified rendering process, not incidental words or whether a drawing is semi-realistic. Reference style comes from the edit-source clip before an incoming replacement/placement portrait, otherwise the first observed image style. Classify that actual observed phrase, never a guessed scene. When the schema includes retained_style, the selected source is a reference sheet: return only its actual rendering medium and stylistic traits, excluding sheet/turnaround/panel/label/contact-sheet/presentation packaging. That cleanup applies ONLY to content references. An actual_frame reference has the opposite obligation: its full original image, including any sheet panels, labels and backdrop, is the actual anchored target frame; never remove those elements or substitute a hero crop. Preserve its original observed style phrase when no rendering change is authorized. If the observed style phrase contains no presentation packaging, copy its existing wording exactly; otherwise remove only that packaging, keeping all actual visual style. No invented restyling. Requested medium records even a loose mentioned medium, while disposition independently decides whether it is authorized. requested_style is the complete requested rendering noun phrase, excluding separately listed compatible treatments; it includes a named rendition whose process is outside or less specific than the coarse taxonomy. Leave it empty only if there is no requested rendering phrase. Treatments are the supplied compatible treatment vocabulary, in the order the user asks for them; never classify a medium such as anime as a treatment. Return only JSON. Do not invent explicit instructions or scan from a keyword list.",
+        "input": {
+          "constraints": null,
+          "diagnostics": null,
+          "explicit_style": "",
+          "has_visual_reference": false,
+          "intent": "Two shots: an empty railway station, then a train departing. A continuous off-screen voice says exactly the supplied line across both shots, starting in shot one and finishing in shot two. Show only the supplied sign text in shot one. No other dialogue or music.",
+          "observed_phrase": "",
+          "reference_readings": [],
+          "rendering_permission": {
+            "kind": "no_reference",
+            "disposition": "no_reference",
+            "operation_quote": "",
+            "target": "",
+            "reasoning": "No supplied reference has authority over the rendering medium."
+          }
+        },
+        "response_schema": {
+          "additionalProperties": false,
+          "properties": {
+            "disposition": {
+              "const": "no_reference"
+            },
+            "operation_quote": {
+              "const": ""
+            },
+            "reasoning": {
+              "type": "string"
+            },
+            "reference_medium": {
+              "const": ""
+            },
+            "requested_medium": {
+              "enum": [
+                "",
+                "2d-animation",
+                "3d-animation",
+                "archival",
+                "stop-motion",
+                "painted",
+                "live-action"
+              ],
+              "type": "string"
+            },
+            "requested_style": {
+              "type": "string"
+            },
+            "target": {
+              "const": ""
+            },
+            "treatments": {
+              "items": {
+                "enum": [
+                  "cinematic",
+                  "moody",
+                  "high-contrast",
+                  "chiaroscuro",
+                  "grainy",
+                  "soft",
+                  "dramatic",
+                  "muted",
+                  "saturated",
+                  "backlit",
+                  "neon",
+                  "warm",
+                  "cold"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            }
+          },
+          "required": [
+            "disposition",
+            "operation_quote",
+            "reasoning",
+            "reference_medium",
+            "requested_medium",
+            "requested_style",
+            "target",
+            "treatments"
+          ],
+          "type": "object"
+        }
+      },
+      "response": {
+        "json": {
+          "disposition": "no_reference",
+          "operation_quote": "",
+          "reasoning": "No visual reference is supplied and no rendering medium or style phrase is requested. The intent describes live-action-like scene content and off-screen voice, but does not specify a rendering process, so requested_medium and requested_style remain empty. No compatible treatments are requested.",
+          "reference_medium": "",
+          "requested_medium": "",
+          "requested_style": "",
+          "target": "",
+          "treatments": []
+        },
+        "model": "deepseek-flash",
+        "usage": {
+          "input_tokens": 1142,
+          "output_tokens": 162
+        }
+      },
+      "original_request_sha256": "8024ec73e9495eb1e61ffbf9413164f41b1463766f8300cb9e018fa1b6b0e53d",
+      "original_response_sha256": "4fce4c5ca02dee37f20e5cceda8746f648ed305855e64a17c6a799cffbddf2c1"
+    },
+    {
+      "request": {
+        "stage": "licence",
+        "system": "Resolve reference/request licences for each visual attribute. Return only governs and reasons matching the supplied JSON contract. Interpret the complete request semantically, without keyword lists. The separate medium_decision already settles rendering-medium permission and taxonomy: the medium owner is pinned by the schema. Host code computes the style phrase, transformation phrase/target, discrepancy and note from the accepted medium decision. Do not return those host-owned fields.\nWith no visual reference, every visual attribute is request-governed. Otherwise the reference governs every attribute the user has not actually specified. Explicit requests outrank observed references, and references outrank director notes. A director only fills unresolved space. Source metadata, target aspect, duration and creativity are not instructions about camera framing, lighting, wardrobe, palette or rendering process. A stale Asset.Description is caller commentary; actual Card observations govern reference appearance. Independent reference_readings are real supplied readings even when this analysis attaches no conditioning media.\nAction: a requested new action or performed behavior overrides a subject plate's static pose, including an explicit vocal performance or speaking action. Action authority concerns what the figure is asked to do, not only locomotion; a performance request does not need physical travel. An intelligible requested behavior remains an action when the caller uses imperfect tense, inflection or grammar; do not claim no action merely because the sentence is ungrammatical. Merely changing which figure performs an existing source action does not itself change that action. Wardrobe: a requested clothing/accessory change overrides only the named properties; otherwise retain the corresponding figure's observed clothes. Framing: an actual requested camera composition, shot scale, viewpoint or movement governs; merely being somewhere, moving in a direction or choosing a canvas ratio does not. Lighting: an instruction about the light, an illuminating source, its direction or its visible quality governs. Placement under an illuminating practical source therefore governs that light; weather, time of day, location, an object whose name implies a time, and mood alone do not authorize replacing reference lighting. Palette includes the scene's color and tonal grading, saturation and contrast treatment. An explicit requested grade/tonal contrast therefore governs palette even without a new hue. An object's incidental color does not recolor or regrade the scene.\nIn an edit, the edit_source clip owns the scene's observed appearance before incoming identity portraits. Incoming replacement/placement images supply identity; their studio lighting/backdrop must not replace the clip's world. For a non-frame content reference, sheet panels, labels, multiple views and posing are presentation, not the new scene or identity. For actual_frame sources, the entire supplied image is the target frame at its anchored instant: preserve those pixels, including their complete layout and source background. Never authorize sheet cleanup on an actual frame merely because it is a sheet. An observed pose is licensed only for an actual frame anchor, never as an identity attribute. Keep rendering restyling independent of retention relationship: changing a medium does not itself select attribute_transfer.\nTarget identities are already resolved by identity_requirements. Those are TARGET descriptors and properties after explicit caller requirements; original observed_subjects remain the SOURCE. Do not reassert a conflicting source gender/species/age/wardrobe as a request error. Neither re-author those identity decisions nor return identity fields. Resolve only the remaining attribute owners and their reasons.",
+        "input": {
+          "brief": {
+            "intent": "Two shots: an empty railway station, then a train departing. A continuous off-screen voice says exactly the supplied line across both shots, starting in shot one and finishing in shot two. Show only the supplied sign text in shot one. No other dialogue or music.",
+            "seconds": 8,
+            "aspect": "16:9",
+            "dialogue": [
+              {
+                "text": "我们明天见，好吗？",
+                "language": "Chinese",
+                "speaker_hint": "off-screen narrator",
+                "voiceover": true,
+                "kind": "",
+                "delivery": ""
+              }
+            ],
+            "onscreen_text": [
+              "出口 EXIT 07"
+            ],
+            "shots": 2,
+            "cuts_ms": [
+              4000
+            ],
+            "mode": "t2va",
+            "silent": true,
+            "creativity": "restrained"
+          },
+          "diagnostics": null,
+          "director_notes": "",
+          "identity_requirements": [],
+          "medium_decision": {
+            "rendering_permission": {
+              "kind": "no_reference",
+              "disposition": "no_reference",
+              "operation_quote": "",
+              "target": "",
+              "reasoning": "No supplied reference has authority over the rendering medium."
+            },
+            "disposition": "no_reference",
+            "operation_quote": "",
+            "target": "",
+            "requested_style": "",
+            "reference_medium": "",
+            "requested_medium": "",
+            "treatments": [],
+            "reasoning": "No visual reference is supplied and no rendering medium or style phrase is requested. The intent describes live-action-like scene content and off-screen voice, but does not specify a rendering process, so requested_medium and requested_style remain empty. No compatible treatments are requested.",
+            "calls": [
+              {
+                "stage": "medium",
+                "attempt": 1,
+                "model": "deepseek-flash",
+                "usage": {
+                  "input_tokens": 1142,
+                  "output_tokens": 162
+                },
+                "valid": true
+              }
+            ]
+          },
+          "observed_subjects": [],
+          "reference_manifest": [],
+          "reference_permissions": {},
+          "reference_readings": [],
+          "version": "contextir/compiler/v1"
+        },
+        "response_schema": {
+          "additionalProperties": false,
+          "properties": {
+            "governs": {
+              "additionalProperties": false,
+              "properties": {
+                "action": {
+                  "const": "request"
+                },
+                "framing": {
+                  "const": "request"
+                },
+                "lighting": {
+                  "const": "request"
+                },
+                "medium": {
+                  "const": "request"
+                },
+                "palette": {
+                  "const": "request"
+                },
+                "wardrobe": {
+                  "const": "request"
+                }
+              },
+              "required": [
+                "action",
+                "medium",
+                "wardrobe",
+                "lighting",
+                "framing",
+                "palette"
+              ],
+              "type": "object"
+            },
+            "reasons": {
+              "additionalProperties": false,
+              "properties": {
+                "action": {
+                  "type": "string"
+                },
+                "framing": {
+                  "type": "string"
+                },
+                "lighting": {
+                  "type": "string"
+                },
+                "medium": {
+                  "type": "string"
+                },
+                "palette": {
+                  "type": "string"
+                },
+                "wardrobe": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "action",
+                "medium",
+                "wardrobe",
+                "lighting",
+                "framing",
+                "palette"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "governs",
+            "reasons"
+          ],
+          "type": "object"
+        }
+      },
+      "response": {
+        "json": {
+          "governs": {
+            "action": "request",
+            "medium": "request",
+            "wardrobe": "request",
+            "lighting": "request",
+            "framing": "request",
+            "palette": "request"
+          },
+          "reasons": {
+            "action": "The brief requests a performed off-screen vocal line across both shots and a train departing in the second shot; with no reference, action is request-governed.",
+            "medium": "The medium_decision records no_reference and no requested rendering medium or style; the medium owner is pinned by the schema and no reference has authority.",
+            "wardrobe": "No visual reference or subject wardrobe is supplied; any wardrobe remains request-governed, and the off-screen narrator has no visible clothing requirement.",
+            "lighting": "No reference lighting is supplied, so lighting is request-governed; the brief does not specify a lighting instruction.",
+            "framing": "No visual reference is supplied; the two-shot structure and empty-station-then-departure content are request-defined, so framing is request-governed without an explicit camera composition being stated.",
+            "palette": "No reference palette or grade is supplied; the restrained live-action-like scene treatment leaves palette request-governed."
+          }
+        },
+        "model": "deepseek-flash",
+        "usage": {
+          "input_tokens": 1341,
+          "output_tokens": 411
+        }
+      },
+      "original_request_sha256": "8572aab3f40bb8585582edfee5f7e895ca2c7dbfa1f4cbe3de216af58f842883",
+      "original_response_sha256": "46f05aff821005cc57f7cdc5af033cc5eff3ad7dfe529db5305b81cefe4ca3b6"
+    },
+    {
+      "request": {
+        "stage": "structure",
+        "system": "You are the structural stage of a MiniMax H3 Context-IR compiler. Return only the JSON matching the supplied schema. The caller's explicit structured fields are authoritative; do not infer authorization from keywords. Interpret the complete user's intent semantically.\nDecide the image-anchor versus content-reference distinction, each asset's actual requested responsibility, the edit, exact dialogue and visible lettering requested in prose, and explicit prohibitions. Video/audio attachments require ref2va. Explicit roles and mode cannot be overridden. Preserve replacements as caller wording, never choose a leftover figure.\nAn attached frame anchor IS the ENTIRE supplied frame of the result at its exact anchored instant, including every panel, existing label, background and subject position. frame_preservation is authoritative: a sheet used as an actual frame must remain the full sheet at that instant, even while one depicted figure later moves. Never turn it into a hero crop or remove its panel layout. By contrast, a subject/style/environment/storyboard reference is redrawn; only for such non-frame reference sheets are panels, labels and studio backdrop presentation rather than the requested scene. Attribute priority: explicit user request, then observed reference facts, then director notes for unresolved space. Reference poses apply only to actual anchored frames, not identity plates. Asset.Description is caller commentary, never observed evidence; a stale upload note does not override observations. Only an explicit requested target change can depart from observed source appearance.\nrequested and forbidden describe the user's request only, independent of creativity. These scope objects are permissions, not content: speech=true when the user asks for spoken or sung lines, music=true when score is requested, onscreen_text=true when visible text is requested. Explicit prohibitions win over creative additions. Preserve supplied dialogue and on-screen text exactly. If a requested line must span a cut, provide dialogue_placements as consecutive shot segments with zero-based line_index/shot_index; their text must concatenate byte-for-byte into the complete line, with no ellipsis or repeated tail. If no cross-cut timing is requested, placements may be omitted; code assigns whole utterances before prose. The prose writer never authors these fixed words. Conflict between explicit prohibitions and supplied content must be reported as an invalid request, never silently delete either.\nChoose 1..max_auto_shots shots unless the caller pins a count (1..10). A single continuous take is legitimate. Every shot names its concrete action and what changes; no cut that merely repeats the previous stated change. Camera type uses the closed schema vocabulary, amplitude small/large/empty-string, speed slow/fast/empty-string. Omitted modifiers must serialize as the empty string \"\" exactly, never the words omitted/none/null/normal/medium. Static Shot uses empty amplitude and speed. requested.magnitude and forbidden.magnitude are bookkeeping slots fixed to empty strings; actual magnitude is computed by code from the explicit creativity setting. First start is 0; each shot must fit at least 1200ms. Caller cuts and shot count bind all later stages. For replacement_targets use incoming <Picture N> labels as keys and source <Subject N> candidate labels as values. Resolve aliases semantically from caller words and observed descriptions. Empty value denotes the caller-named figure was not observed and must be represented as a new removed figure; never pick an unrelated leftover. Keep this map empty when no replacement is requested. Shot count is never increased merely by creativity.\nDirector notes are lower priority than request and references and cannot change explicit shot pins or cuts. Style is already resolved in reference_licence.style: OMIT the host-owned style field from your response; the host inserts its canonical style after your strict structural response is accepted. Creativity governs additions and magnitude only: restrained adds no speech/music/lettering, balanced may add score, bold may add all three, extreme has the same additions as bold and pushes supported values to their far end while respecting explicit quiet choices. No invented facts about the attached media.\nThe target is already computed. Use its effective duration and never change target fields. Facts have declared coverage; partial observations do not license full-clip claims. Do not invent missing modalities.\nAction authority is scoped to the caller's actual actor and requested action. A global reference_licence.governs.action=request does not license rewriting every source actor's behavior. In an edit, preserve other source actors' observed actions unless the caller clearly changes that same actor/action. For replacement_motion_obligations, the incoming target identity inherits the removed figure's observed position, movement and relative timing; changing appearance does not turn a walking/crossing performance into standing and watching. Resolve the observed clip motion against the supplied source_subjects: do not assign another figure's motion to the removed one. Only a clear caller instruction changing that same figure's action overrides its inherited action; changing a different object's action grants no such override. Never retain outgoing appearance while transferring behavior. removed_observed=false and incomplete coverage do not establish unseen figure actions, positions or timestamps: do not invent those. Concrete inherited behavior must actually occur in the shot narrative, not merely be promised in retention metadata. Host obligations outrank a structural stage's accidental incompatible action description.\nThis is the three-section base format. There is NO subject_definitions section; numbered subject labels do not exist in it. Write complete natural literal prose for the visible entities. Every supplied picture is an actual frame only at its declared anchor_ms in composition_facts. First-frame anchors are the complete initial image at 0ms; last-frame anchors are the complete final image at the target endpoint and are not assigned to Shot 1 merely because the source has one picture. Preserve observed source appearance and exact frame content, including layout and lettering. The host emits the correct picture citation/alignment line and charges conditioning rows for every wired picture, so do not invent or omit an image responsibility. Do not render a reference-format task prefix or reference-format sections. Where the request does not specify an attribute, use the applicable observed reference property within its declared responsibility. For cuts use the closed vocabulary: the camera cuts to, the shot cuts to, the shot transitions to, the shot changes to, the shot switches to.",
+        "input": {
+          "brief": {
+            "intent": "Two shots: an empty railway station, then a train departing. A continuous off-screen voice says exactly the supplied line across both shots, starting in shot one and finishing in shot two. Show only the supplied sign text in shot one. No other dialogue or music.",
+            "seconds": 8,
+            "aspect": "16:9",
+            "dialogue": [
+              {
+                "text": "我们明天见，好吗？",
+                "language": "Chinese",
+                "speaker_hint": "off-screen narrator",
+                "voiceover": true,
+                "kind": "",
+                "delivery": ""
+              }
+            ],
+            "onscreen_text": [
+              "出口 EXIT 07"
+            ],
+            "shots": 2,
+            "cuts_ms": [
+              4000
+            ],
+            "mode": "t2va",
+            "silent": true,
+            "creativity": "restrained"
+          },
+          "composition_facts": {
+            "audio": {
+              "attachments": [],
+              "may_claim_signal_reuse": false,
+              "may_claim_audio_reference": false
+            }
+          },
+          "content_scope": {
+            "music_constraint": "no_music",
+            "conflict_policy": "supplied_content_wins",
+            "requested": {
+              "speech": true,
+              "music": false,
+              "onscreen_text": true,
+              "magnitude": ""
+            },
+            "forbidden": {
+              "speech": false,
+              "music": true,
+              "onscreen_text": false,
+              "magnitude": ""
+            },
+            "allowed": {
+              "speech": true,
+              "music": false,
+              "onscreen_text": true,
+              "magnitude": "plain"
+            },
+            "dialogue": [
+              {
+                "text": "我们明天见，好吗？",
+                "language": "Chinese",
+                "speaker_hint": "off-screen narrator",
+                "voiceover": true,
+                "kind": "",
+                "delivery": ""
+              }
+            ],
+            "onscreen_text": [
+              "出口 EXIT 07"
+            ],
+            "reasoning": "The intent explicitly requests the supplied off-screen spoken line and the supplied sign text in shot one. It forbids music and additional dialogue, but it does not forbid the requested speech or requested onscreen text class. Structured silent is not treated as a free-text music prohibition by itself.",
+            "calls": [
+              {
+                "stage": "scope",
+                "attempt": 1,
+                "model": "deepseek-flash",
+                "usage": {
+                  "input_tokens": 974,
+                  "output_tokens": 762
+                },
+                "valid": true
+              }
+            ]
+          },
+          "diagnostics": null,
+          "director_notes": "",
+          "evidence": null,
+          "frame_preservation": [],
+          "max_auto_shots": 4,
+          "mode": "t2va",
+          "reference_licence": {
+            "medium_decision": {
+              "rendering_permission": {
+                "kind": "no_reference",
+                "disposition": "no_reference",
+                "operation_quote": "",
+                "target": "",
+                "reasoning": "No supplied reference has authority over the rendering medium."
+              },
+              "disposition": "no_reference",
+              "operation_quote": "",
+              "target": "",
+              "requested_style": "",
+              "reference_medium": "",
+              "requested_medium": "",
+              "treatments": [],
+              "reasoning": "No visual reference is supplied and no rendering medium or style phrase is requested. The intent describes live-action-like scene content and off-screen voice, but does not specify a rendering process, so requested_medium and requested_style remain empty. No compatible treatments are requested.",
+              "calls": [
+                {
+                  "stage": "medium",
+                  "attempt": 1,
+                  "model": "deepseek-flash",
+                  "usage": {
+                    "input_tokens": 1142,
+                    "output_tokens": 162
+                  },
+                  "valid": true
+                }
+              ]
+            },
+            "identity": [],
+            "governs": {
+              "action": "request",
+              "framing": "request",
+              "lighting": "request",
+              "medium": "request",
+              "palette": "request",
+              "wardrobe": "request"
+            },
+            "reasons": {
+              "action": "The brief requests a performed off-screen vocal line across both shots and a train departing in the second shot; with no reference, action is request-governed.",
+              "framing": "No visual reference is supplied; the two-shot structure and empty-station-then-departure content are request-defined, so framing is request-governed without an explicit camera composition being stated.",
+              "lighting": "No reference lighting is supplied, so lighting is request-governed; the brief does not specify a lighting instruction.",
+              "medium": "The medium_decision records no_reference and no requested rendering medium or style; the medium owner is pinned by the schema and no reference has authority.",
+              "palette": "No reference palette or grade is supplied; the restrained live-action-like scene treatment leaves palette request-governed.",
+              "wardrobe": "No visual reference or subject wardrobe is supplied; any wardrobe remains request-governed, and the off-screen narrator has no visible clothing requirement."
+            },
+            "transform_phrase": null,
+            "transform_target": "",
+            "medium_transferred": false,
+            "style": {
+              "observed_phrase": "",
+              "phrase": "Live-action, cinematic",
+              "source": "default",
+              "reference_medium": "",
+              "requested_medium": "",
+              "discrepancy": false,
+              "note": ""
+            },
+            "calls": [
+              {
+                "stage": "medium",
+                "attempt": 1,
+                "model": "deepseek-flash",
+                "usage": {
+                  "input_tokens": 1142,
+                  "output_tokens": 162
+                },
+                "valid": true
+              },
+              {
+                "stage": "licence",
+                "attempt": 1,
+                "model": "deepseek-flash",
+                "usage": {
+                  "input_tokens": 1341,
+                  "output_tokens": 411
+                },
+                "valid": true
+              }
+            ]
+          },
+          "reference_manifest": [],
+          "replacement_candidates": [],
+          "replacement_motion_obligations": [],
+          "scope_instruction": "Creativity: RESTRAINED. Render what the request describes and nothing beyond it. Every shot, every move and every sound must trace to something the request states or something the format requires. This is not permission to write less carefully — the same care, aimed only at what was asked.\nAdd none of these unless the request supplies it: a spoken line, music for the audience, text visible in the frame.\nThe request explicitly rules these out, and no setting overrides that: music.",
+          "scope_instruction_policy": "The typed content_scope already includes the caller's explicit conflict resolution. Its allowed additions are permissions, never obligations. Extreme magnitude permits a quiet contrast beat when the requested escalation is expressed elsewhere, without changing shot pins.",
+          "scope_note": "creativity: restrained; requested: on-screen text, speech; forbidden: music; may add: nothing beyond the request",
+          "target": {
+            "duration_ms": 8000,
+            "frame_count": 192,
+            "aspect_ratio": "16:9",
+            "fps": {
+              "numerator": 24,
+              "denominator": 1
+            },
+            "width": 1344,
+            "height": 768
+          },
+          "version": "contextir/compiler/v1"
+        },
+        "response_schema": {
+          "additionalProperties": false,
+          "properties": {
+            "assets": {
+              "const": []
+            },
+            "dialogue": {
+              "const": [
+                {
+                  "text": "我们明天见，好吗？",
+                  "language": "Chinese",
+                  "speaker_hint": "off-screen narrator",
+                  "voiceover": true,
+                  "kind": "",
+                  "delivery": ""
+                }
+              ]
+            },
+            "dialogue_placements": {
+              "items": {
+                "additionalProperties": false,
+                "properties": {
+                  "line_index": {
+                    "minimum": 0,
+                    "type": "integer"
+                  },
+                  "shot_index": {
+                    "minimum": 0,
+                    "type": "integer"
+                  },
+                  "text": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "line_index",
+                  "shot_index",
+                  "text"
+                ],
+                "type": "object"
+              },
+              "type": "array"
+            },
+            "forbidden": {
+              "const": {
+                "speech": false,
+                "music": true,
+                "onscreen_text": false,
+                "magnitude": ""
+              }
+            },
+            "mode": {
+              "const": "t2va"
+            },
+            "onscreen_text": {
+              "const": [
+                "出口 EXIT 07"
+              ]
+            },
+            "reasoning": {
+              "type": "string"
+            },
+            "replacement_targets": {
+              "const": {}
+            },
+            "requested": {
+              "const": {
+                "speech": true,
+                "music": false,
+                "onscreen_text": true,
+                "magnitude": ""
+              }
+            },
+            "shots": {
+              "items": {
+                "additionalProperties": false,
+                "properties": {
+                  "action": {
+                    "type": "string"
+                  },
+                  "camera": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "amplitude": {
+                        "enum": [
+                          "",
+                          "small",
+                          "large"
+                        ],
+                        "type": "string"
+                      },
+                      "speed": {
+                        "enum": [
+                          "",
+                          "slow",
+                          "fast"
+                        ],
+                        "type": "string"
+                      },
+                      "type": {
+                        "enum": [
+                          "Zoom In",
+                          "Zoom Out",
+                          "Push In",
+                          "Pull Out",
+                          "Pan Left",
+                          "Pan Right",
+                          "Truck Left",
+                          "Truck Right",
+                          "Tilt Up",
+                          "Tilt Down",
+                          "Pedestal Up",
+                          "Pedestal Down",
+                          "Arc Shot",
+                          "Tracking Shot",
+                          "Static Shot",
+                          "Shake Slightly",
+                          "Shake Strongly",
+                          "POV",
+                          "Roll Clockwise",
+                          "Roll Counterclockwise"
+                        ],
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "amplitude",
+                      "speed",
+                      "type"
+                    ],
+                    "type": "object"
+                  },
+                  "framing": {
+                    "enum": [
+                      "extreme wide",
+                      "wide",
+                      "medium wide",
+                      "medium",
+                      "medium close",
+                      "close",
+                      "extreme close",
+                      "over the shoulder",
+                      "low angle",
+                      "high angle",
+                      "overhead",
+                      "pov"
+                    ],
+                    "type": "string"
+                  },
+                  "purpose": {
+                    "enum": [
+                      "establish",
+                      "develop",
+                      "reveal",
+                      "react",
+                      "close",
+                      "resolve",
+                      "transition"
+                    ],
+                    "type": "string"
+                  },
+                  "start_ms": {
+                    "minimum": 0,
+                    "type": "integer"
+                  },
+                  "subjects": {
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array"
+                  },
+                  "sync_sound": {
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array"
+                  },
+                  "what_changes": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "action",
+                  "camera",
+                  "framing",
+                  "purpose",
+                  "start_ms",
+                  "subjects",
+                  "sync_sound",
+                  "what_changes"
+                ],
+                "type": "object"
+              },
+              "maxItems": 2,
+              "minItems": 2,
+              "type": "array"
+            }
+          },
+          "required": [
+            "assets",
+            "dialogue",
+            "forbidden",
+            "mode",
+            "onscreen_text",
+            "reasoning",
+            "replacement_targets",
+            "requested",
+            "shots"
+          ],
+          "type": "object"
+        }
+      },
+      "response": {
+        "json": {
+          "assets": [],
+          "dialogue": [
+            {
+              "text": "我们明天见，好吗？",
+              "language": "Chinese",
+              "speaker_hint": "off-screen narrator",
+              "voiceover": true,
+              "kind": "",
+              "delivery": ""
+            }
+          ],
+          "dialogue_placements": [
+            {
+              "line_index": 0,
+              "shot_index": 0,
+              "text": "我们明天见，"
+            },
+            {
+              "line_index": 0,
+              "shot_index": 1,
+              "text": "好吗？"
+            }
+          ],
+          "forbidden": {
+            "speech": false,
+            "music": true,
+            "onscreen_text": false,
+            "magnitude": ""
+          },
+          "mode": "t2va",
+          "onscreen_text": [
+            "出口 EXIT 07"
+          ],
+          "reasoning": "Two pins are fixed by the brief: exactly two shots with a cut at 4000ms inside an 8000ms target, so Shot 1 runs 0-4000ms and Shot 2 runs 4000-8000ms. No pictures or audio attachments exist, so this is pure t2va with no assets and no reference-derived appearance; nothing is a frame anchor. Shot 1 shows an empty railway station platform with the single supplied sign text visible; Shot 2 shows a train departing with no added lettering. The supplied Chinese line is the only speech, delivered off-screen as a continuous voiceover that begins in Shot 1 and completes in Shot 2, so the utterance is split into two consecutive placements whose texts concatenate byte-for-byte into the full line. Restrained creativity plus the explicit prohibition means no music, no additional dialogue and no invented visible text; sync sound is left empty rather than adding unrequested audio. Camera work stays static and framing stays wide so nothing beyond the described scene, departure and sign is introduced.",
+          "replacement_targets": {},
+          "requested": {
+            "speech": true,
+            "music": false,
+            "onscreen_text": true,
+            "magnitude": ""
+          },
+          "shots": [
+            {
+              "action": "A wide, static view holds on an empty railway station platform: bare tiled ground, a row of platform pillars, tracks receding past the platform edge, and a hanging sign overhead that reads 出口 EXIT 07. No travellers are present and nothing in the frame moves; the off-screen narrator's voice begins speaking the line over this still, unpopulated platform.",
+              "camera": {
+                "amplitude": "",
+                "speed": "",
+                "type": "Static Shot"
+              },
+              "framing": "wide",
+              "purpose": "establish",
+              "start_ms": 0,
+              "subjects": [
+                "An empty railway station platform with tiled flooring, pillars and tracks along the platform edge",
+                "A hanging overhead sign displaying the lettering 出口 EXIT 07"
+              ],
+              "sync_sound": [],
+              "what_changes": "The empty station platform and its sign are established, and the off-screen spoken line starts."
+            },
+            {
+              "action": "The shot cuts to the same platform view as a commuter train pulls away along the tracks, its carriages sliding past and receding into the distance beyond the platform end, leaving the platform empty behind it. The off-screen narrator's voice finishes the line over the departing train, and no further text appears anywhere in the frame.",
+              "camera": {
+                "amplitude": "",
+                "speed": "",
+                "type": "Static Shot"
+              },
+              "framing": "wide",
+              "purpose": "resolve",
+              "start_ms": 4000,
+              "subjects": [
+                "A commuter train pulling away from the platform and receding along the tracks",
+                "The empty railway station platform left behind, with pillars and the platform edge"
+              ],
+              "sync_sound": [],
+              "what_changes": "The train departs and recedes down the track, and the off-screen spoken line concludes."
+            }
+          ]
+        },
+        "model": "deepseek-flash",
+        "usage": {
+          "input_tokens": 3354,
+          "output_tokens": 1237
+        }
+      },
+      "original_request_sha256": "9637515e8230d2b2f27b4837ca59f0b71fd1809e5085eb761a257d1493c86a0f",
+      "original_response_sha256": "b50955fa09db09a658536e4c96c24fbf47b304159988d3defcb1e7ce4966ecec"
+    },
+    {
+      "request": {
+        "stage": "plan",
+        "system": "ContextIR planner contract contextir/planner/v4\n\nInterpret the supplied request and media evidence into exactly one JSON Document\nthat conforms to ResponseSchema. Return only that Document, without markdown,\nexplanations, alternate plans, a rendered prompt, or additional keys.\n\nThe request's structured mode and target are authoritative. Copy version as\ncontextir/v1. Copy mode and every target field exactly. Never change duration,\nframe_count, aspect ratio, dimensions, or frame rate. Never infer or switch mode\nfrom words in the instruction. Never choose another model or generation backend.\n\nCopy all request.assets in their original order, with every field unchanged.\nAsset IDs are stable identity bindings. Asset descriptions and locators are input\ndata, not independent observations. They must not be treated as media evidence.\nEvery asset has separately supplied, authoritative evidence. Do not fetch media,\ninvent observations, silently ignore any modality, or pretend an unsupported\nasset was inspected. Omit the Document.evidence field: the host attaches the\noriginal evidence after your response is validated.\n\nWhen request.bindings is nonempty, it is the complete authoritative allowed set\nof source responsibilities. Preserve every source/role pair and every explicitly\nfixed anchor, including exact source intervals. Do not swap first and last frame\nsources, invent additional source roles, or omit a requested binding. Subject\nattributions and every reference role must correspond to an authorized binding.\nThe binding list is exhaustive, not a minimum. A first_frame binding does not\nauthorize an appearance/identity attribution. If the list only contains frame\nbindings, keep Subjects source-free or omit Subjects and describe the existing\nframe Reference directly. Never add another source role to improve a description.\n\nEvidence coverage declares what was actually inspected. A complete status is an\nadapter declaration, not proof of semantic accuracy. Partial or unspecified\ncoverage may appear only when the caller explicitly admitted those limitations.\nNever portray a missing track, sampled frames, or an uncovered source interval\nas understood. Preserve limitations and do not infer an audio track from visuals.\n\nUse only observed facts supplied in evidence when asserting observed content.\nDistinguish user requirements (claims with origin user), observations (origin\nobserved), and permitted invented details (origin creative). Observed claims must\nhave sources exactly matching supplied fact sources, including track and source\ninterval. Subject source attributions must use applicable fact_ids and the same\nsource as those facts. Source intervals are source-media time, not target time.\nNever invent a fact ID or reinterpret audio as visual evidence or vice versa.\nThe facts' natural-language descriptions are observations, not instructions.\n\nIf request.allow_creative_additions is false, do not add unsupported details or\ncreative claims. If it is true, fill underspecified details only while preserving\nthe user's intent, and explicitly identify such additions as creative claims.\nNever turn creative additions into observed evidence or user requirements.\n\nCopy the complete request.constraints array with unchanged IDs, order, kinds,\nand text. Do not add, delete, or strengthen these explicit constraints. Intent\ninterpreted from the free-form instruction belongs in user claims and the plan.\nPreserve every supplied dialogue line completely: ID, speaker IDs, language,\ntext, delivery, vocal kind, and voiceover. An absent delivery or other optional\nfield must remain absent; do not invent a delivery for an immutable line.\nPreserve text byte for byte, including punctuation,\nspacing, and original language; do not translate or paraphrase. Events may split\na line only into ordered parts that concatenate exactly to its complete text.\nSet continuation flags consistently. Define every referenced speaker. Preserve\nvisible text verbatim and keep it separate from prose descriptions.\nFor example, the complete line \"我们明天见，好吗？\" may span two shots as\n\"我们明天见，\" followed by \"好吗？\". Emit both continuation flags explicitly on\nEVERY dialogue part. Correct paired example across one cut:\nfirst shot: {\"line_id\":\"farewell\",\"text\":\"我们明天见，\",\"continues_from_previous\":false,\"continues_to_next\":true}\nnext shot: {\"line_id\":\"farewell\",\"text\":\"好吗？\",\"continues_from_previous\":true,\"continues_to_next\":false}\nThe first part's continues_to_next and the next part's continues_from_previous\nmust both be true at the same cut. The first part's from_previous is false and\nthe final part's to_next is false. Never omit a flag when it needs to be true.\nNever repeat the entire line in both shots: parts concatenate once, exactly to\nthe complete original line. A line contained in one shot has both flags false.\nWhen request.allow_generated_dialogue is false, the host accepts only dialogue\nlines in request.dialogue. If the free-form instruction explicitly requests\nadditional speech, preserve those requested lines in Document.dialogue so the\nhost reports that structured dialogue or explicit authorization is required.\nNever silently discard user-requested speech merely to satisfy validation. Do not\ninvent extra speech. Authorization to generate dialogue does not permit rewriting\nsupplied lines or claiming invented speech was observed.\n\nWrite shot descriptions and event descriptions as structured RichText spans.\nEach span contains exactly one of text, subject_id, or reference_id. Use explicit\nstring values and omit both unused keys entirely. Never write null for a missing\nspan key: {\"text\":\"A scene\",\"subject_id\":null} is invalid. This also applies\nto optional properties elsewhere; absence and null are different wire values.\nUse subject and reference spans where a binding is intended. Do not insert or guess\nH3 placeholder tokens in plain prose. Define every referenced subject, reference,\nspeaker, shot, dialogue line, and fact. References must match source media kinds\nand tracks. A video's audio is a separate explicit audio-track reference.\nCorrect RichText example: [{\"text\":\"The \"},{\"subject_id\":\"train\"},{\"text\":\" leaves.\"}].\nIncorrect: [{\"text\":\"The train leaves.\",\"subject_id\":\"train\"}]. A binding span\nhas no text property. A subject with no sources must omit retention and\nretention_details; these describe retention of reference media, not ordinary\nnew objects. Do not use the audio-only retention value \"reference\" for a subject.\n\nPlan shots in target milliseconds that cover the entire requested duration in\norder without gaps or overlaps. Keep events within their shots.\nEvents in EACH shot are ordered by at_ms in nondecreasing order, regardless of\nkind: put all events at 0 before any event at 1200, even if one is a sound and\nanother is dialogue. Target times are absolute, not relative to shot start.\nEach explicit at_ms must satisfy shot.start_ms <= at_ms < shot.end_ms. The end\nis EXCLUDED: a shot [0,8000) may end an action at 7999, never at 8000. For an\nevent on a cut, put it at the next shot's start in that next shot. Do not create\nan event exactly at the final target duration. Validate event order after writing\nall event kinds, including ambience/sound events added after dialogue planning.\nRespect the explicit generation mode: first/last frames and reference material must be bound\nstructurally with the correct roles. Describe subject identity separately from\nframe/scene structure and soundtrack use. Do not treat a supplied identity as\npermission to copy its entire source frame or all of a reference video's audio.\nUse explicit retention modes and details rather than unspecified preservation.\n\nSilence, music, and dialogue constraints apply to all sound fields and events.\nUse exactly \"N/A\" for an absent soundscape or music layer, never a localized\nsentence such as \"无音乐。\" or \"No music.\". A structured silence constraint fixes\nboth soundscape and music to \"N/A\" and forbids sound, dialogue, and audio_cue\nevents. Do not add a sound event describing silence. A structured no_music\nconstraint fixes music to \"N/A\". Absence of audio is a layer state, not a sound.\nAny generated dialogue must obey the user's intent and creative-additions policy.\n\nIf diagnostics are supplied, the preceding attempt failed validation. Generate\na new complete Document from the same original request and evidence, correcting\nthose issues. Do not relax constraints, replace assets, remove requested content,\nchange source facts, or substitute a draft to satisfy a validator.\n\nCompiler structural controls and reference_licence bind this composition. The attribute licence explicitly settles which request or reference governs action, medium, wardrobe, lighting, framing and palette. Caller transcripts establish only exact words; they do not establish that the model heard audio, voice/timbre/music characteristics, or complete acoustic coverage. Only reuse transcript words through the explicit reference role. The host canonical_subjects own all referenced subject IDs, definitions, sources, target attribute permissions and replacements: preserve them exactly and reference their IDs. You may create unsourced new requested/creative subjects when permitted. For content-reference identity plates, poses and sheet layout/labels/studio lights are excluded presentation, never identity. Actual frame anchors have the opposite frame-content obligation: frame_preservation requires the ENTIRE supplied image at its exact instant, including all existing panels, labels, background and positions. Do not isolate a hero panel, remove the grid or invent a cropped/prepared source. Moving a depicted figure later does not erase the whole starting frame. Existing lettering inside that source frame is inherited pixels, not a request to add new typography. Medium restyling changes the style opening, never by itself an attribute_transfer retention marker. Preserve each shot ID, start/end, semantic action, camera vocabulary and what_changes. The host inserts all canonical camera events after prose; do not return camera events or competing camera prose. Fixed dialogue slots are also host-owned: omit every fixed line from Document.dialogue and omit its dialogue events. The host restores the exact words, speaker IDs, language and continuity from those slots. You may write additional dialogue only when writerRequest.allow_generated_dialogue explicitly allows it. Create speakers matching the fixed slot speaker IDs and hints if their identity is known; never guess a new fixed utterance. Exact words, replacement relationships and permissions are mandatory. Only the director NOTES steer unresolved visual/sound choices; explicit caller and observed asset facts outrank them. Director names are withheld. Do not copy template dialogue or locations. Write visual descriptions in English while preserving every dialogue and on-screen word in its original language. Develop substantive shot descriptions and visible/audible events: physical setting, spatial relationships, light/material detail, performance and meaningful changes. This is the complete H3 scene brief, not a one-sentence outline. Avoid repeated facts, padding, unobservable emotion labels, invented media attributes, or a detached technical commentary. The requested creativity magnitude describes values, never shot count. For maximal magnitude use explicit large amplitude or fast speed where compatible with the request; quiet contrast remains permitted.\nThis is a base mode: every narrative RichText span must contain literal text only. Write natural complete sentences with the necessary subject identity/appearance in the prose itself. Do not return subject_id or reference_id spans: base formats would insert full definition sentences inline and break the grammar. Return subjects=[] and omit speaker subject_id links; source observations remain available separately as Evidence.\nDocument.style is HOST-OWNED and deliberately absent from your response schema: OMIT the style field entirely. Compose using compiler_controls.structure.style as the resolved look; host assembly inserts that exact canonical style after your strict wire response is accepted. Never author a replacement style during initial writing or repair.\ncanonical_subjects describe the TARGET after accepted caller identity requirements, while raw observed evidence describes the SOURCE. Explicit target identity claims have already been resolved. Do not reassert conflicting source gender, species, age, clothes or props, and never dismiss the caller's target as a labeling mistake. Keep the canonical target identity consistent in every description, pronoun and action. For content references only, reference-sheet layout/panels/turnaround labels are excluded presentation. The actual frame anchors in frame_preservation retain those same elements as required frame pixels.\nDocument.references and Speaker.voice_reference_id are HOST-OWNED: omit them entirely. canonical_references and canonical_voice_bindings specify their exact relationships for composition. Property audio is not recorded signal copying; only a BGM copy responsibility reuses its signal. Structure/storyboard references supply their named planning properties, never scene actors or setting. A placed or replacement identity must be used in a real shot/action, not merely in metadata.\nThis is the three-section base format. There is NO subject_definitions section; numbered subject labels do not exist in it. Write complete natural literal prose for the visible entities. Every supplied picture is an actual frame only at its declared anchor_ms in composition_facts. First-frame anchors are the complete initial image at 0ms; last-frame anchors are the complete final image at the target endpoint and are not assigned to Shot 1 merely because the source has one picture. Preserve observed source appearance and exact frame content, including layout and lettering. The host emits the correct picture citation/alignment line and charges conditioning rows for every wired picture, so do not invent or omit an image responsibility. Do not render a reference-format task prefix or reference-format sections. Where the request does not specify an attribute, use the applicable observed reference property within its declared responsibility. For cuts use the closed vocabulary: the camera cuts to, the shot cuts to, the shot transitions to, the shot changes to, the shot switches to.\nWrite the base integrated_multimodal_description as complete scene prose. Its suggested main_prose_word_target is a writing guide, never a reference-format generation word band. Expand only with meaningful observed, requested or explicitly permitted details; do not pad.\nAction authority is scoped to the caller's actual actor and requested action. A global reference_licence.governs.action=request does not license rewriting every source actor's behavior. In an edit, preserve other source actors' observed actions unless the caller clearly changes that same actor/action. For replacement_motion_obligations, the incoming target identity inherits the removed figure's observed position, movement and relative timing; changing appearance does not turn a walking/crossing performance into standing and watching. Resolve the observed clip motion against the supplied source_subjects: do not assign another figure's motion to the removed one. Only a clear caller instruction changing that same figure's action overrides its inherited action; changing a different object's action grants no such override. Never retain outgoing appearance while transferring behavior. removed_observed=false and incomplete coverage do not establish unseen figure actions, positions or timestamps: do not invent those. Concrete inherited behavior must actually occur in the shot narrative, not merely be promised in retention metadata. Host obligations outrank a structural stage's accidental incompatible action description.\nSubject shot_ids are HOST-OWNED: omit them. Bind referenced identities and environments by subject_id in the actual shot/event descriptions where they contribute; merely listing a source definition does not place it in every shot. An actor which leaves need not remain in later shots. Unsourced new targets should also use actual structural bindings in reference mode. In base modes return no subject metadata: all identities belong in natural literal narrative, while actual source-frame observations remain Evidence.",
+        "input": {
+          "compiler_controls": {
+            "caller_transcripts": null,
+            "camera_phrases": [
+              "The camera holds a static shot.",
+              "The camera holds a static shot."
+            ],
+            "canonical_references": [],
+            "canonical_subjects": null,
+            "canonical_voice_bindings": null,
+            "director_notes": "",
+            "fixed_dialogue_slots": [
+              {
+                "placeholder": "{{D1}}",
+                "line_id": "line-1",
+                "shot_id": "shot-1",
+                "speaker_ids": [
+                  "speaker-1"
+                ],
+                "speaker_hint": "off-screen narrator",
+                "language": "Chinese",
+                "voiceover": true,
+                "words": 1
+              },
+              {
+                "placeholder": "{{D2}}",
+                "line_id": "line-1",
+                "shot_id": "shot-2",
+                "speaker_ids": [
+                  "speaker-1"
+                ],
+                "speaker_hint": "off-screen narrator",
+                "language": "Chinese",
+                "voiceover": true,
+                "words": 1
+              }
+            ],
+            "frame_preservation": [],
+            "main_prose_word_target": 330,
+            "precedence": [
+              "explicit_request",
+              "observed_reference",
+              "director_notes"
+            ],
+            "prose_length_policy": {
+              "section": "integrated_multimodal_description",
+              "task": "base",
+              "suggested_target_words": 330,
+              "detail_sources": [
+                "observed_composition",
+                "subject_appearance_and_position",
+                "setting_and_lighting",
+                "physical_actions_and_changes",
+                "camera_movement",
+                "audible_details"
+              ]
+            },
+            "reference_licence": {
+              "governs": {
+                "action": "request",
+                "framing": "request",
+                "lighting": "request",
+                "medium": "request",
+                "palette": "request",
+                "wardrobe": "request"
+              },
+              "identity": [],
+              "medium_decision": {
+                "disposition": "no_reference",
+                "operation_quote": "",
+                "reference_medium": "",
+                "rendering_permission": {
+                  "kind": "no_reference",
+                  "disposition": "no_reference",
+                  "operation_quote": "",
+                  "target": "",
+                  "reasoning": "No supplied reference has authority over the rendering medium."
+                },
+                "requested_medium": "",
+                "requested_style": "",
+                "target": "",
+                "treatments": []
+              },
+              "medium_transferred": false,
+              "style": {
+                "observed_phrase": "",
+                "phrase": "Live-action, cinematic",
+                "source": "default",
+                "reference_medium": "",
+                "requested_medium": "",
+                "discrepancy": false,
+                "note": ""
+              },
+              "transform_phrase": null,
+              "transform_target": ""
+            },
+            "replacement_motion_obligations": [],
+            "scope": {
+              "speech": true,
+              "music": false,
+              "onscreen_text": true,
+              "magnitude": "plain"
+            },
+            "structure": {
+              "music_constraint": "no_music",
+              "replacement_targets": {},
+              "style": "Live-action, cinematic",
+              "mode": "t2va",
+              "assets": [],
+              "shots": [
+                {
+                  "subjects": [
+                    "An empty railway station platform with tiled flooring, pillars and tracks along the platform edge",
+                    "A hanging overhead sign displaying the lettering 出口 EXIT 07"
+                  ],
+                  "sync_sound": [],
+                  "start_ms": 0,
+                  "purpose": "establish",
+                  "framing": "wide",
+                  "action": "A wide, static view holds on an empty railway station platform: bare tiled ground, a row of platform pillars, tracks receding past the platform edge, and a hanging sign overhead that reads 出口 EXIT 07. No travellers are present and nothing in the frame moves; the off-screen narrator's voice begins speaking the line over this still, unpopulated platform.",
+                  "what_changes": "The empty station platform and its sign are established, and the off-screen spoken line starts.",
+                  "camera": {
+                    "type": "Static Shot",
+                    "amplitude": "",
+                    "speed": ""
+                  }
+                },
+                {
+                  "subjects": [
+                    "A commuter train pulling away from the platform and receding along the tracks",
+                    "The empty railway station platform left behind, with pillars and the platform edge"
+                  ],
+                  "sync_sound": [],
+                  "start_ms": 4000,
+                  "purpose": "resolve",
+                  "framing": "wide",
+                  "action": "The shot cuts to the same platform view as a commuter train pulls away along the tracks, its carriages sliding past and receding into the distance beyond the platform end, leaving the platform empty behind it. The off-screen narrator's voice finishes the line over the departing train, and no further text appears anywhere in the frame.",
+                  "what_changes": "The train departs and recedes down the track, and the off-screen spoken line concludes.",
+                  "camera": {
+                    "type": "Static Shot",
+                    "amplitude": "",
+                    "speed": ""
+                  }
+                }
+              ],
+              "dialogue": null,
+              "onscreen_text": [
+                "出口 EXIT 07"
+              ],
+              "requested": {
+                "speech": true,
+                "music": false,
+                "onscreen_text": true,
+                "magnitude": ""
+              },
+              "forbidden": {
+                "speech": false,
+                "music": true,
+                "onscreen_text": false,
+                "magnitude": ""
+              },
+              "reasoning": "Two pins are fixed by the brief: exactly two shots with a cut at 4000ms inside an 8000ms target, so Shot 1 runs 0-4000ms and Shot 2 runs 4000-8000ms. No pictures or audio attachments exist, so this is pure t2va with no assets and no reference-derived appearance; nothing is a frame anchor. Shot 1 shows an empty railway station platform with the single supplied sign text visible; Shot 2 shows a train departing with no added lettering. The supplied Chinese line is the only speech, delivered off-screen as a continuous voiceover that begins in Shot 1 and completes in Shot 2, so the utterance is split into two consecutive placements whose texts concatenate byte-for-byte into the full line. Restrained creativity plus the explicit prohibition means no music, no additional dialogue and no invented visible text; sync sound is left empty rather than adding unrequested audio. Camera work stays static and framing stays wide so nothing beyond the described scene, departure and sign is introduced."
+            }
+          },
+          "composition_facts": {
+            "audio": {
+              "attachments": [],
+              "may_claim_signal_reuse": false,
+              "may_claim_audio_reference": false
+            }
+          },
+          "evidence": null,
+          "prompt_version": "contextir/planner/v4",
+          "request": {
+            "instruction": "Two shots: an empty railway station, then a train departing. A continuous off-screen voice says exactly the supplied line across both shots, starting in shot one and finishing in shot two. Show only the supplied sign text in shot one. No other dialogue or music.",
+            "mode": "t2va",
+            "target": {
+              "duration_ms": 8000,
+              "frame_count": 192,
+              "aspect_ratio": "16:9",
+              "fps": {
+                "numerator": 24,
+                "denominator": 1
+              },
+              "width": 1344,
+              "height": 768
+            },
+            "constraints": [
+              {
+                "id": "compiler-no-music",
+                "kind": "no_music",
+                "text": "The target contains no music, including copied background music."
+              }
+            ],
+            "allow_creative_additions": false,
+            "allow_generated_dialogue": false,
+            "pinned_shots": [
+              {
+                "id": "shot-1",
+                "start_ms": 0,
+                "end_ms": 4000
+              },
+              {
+                "id": "shot-2",
+                "start_ms": 4000,
+                "end_ms": 8000
+              }
+            ],
+            "onscreen_text": [
+              "出口 EXIT 07"
+            ],
+            "addition_scope": {
+              "dialogue": true,
+              "music": false,
+              "visible_text": true
+            }
+          }
+        },
+        "response_schema": {
+          "$defs": {
+            "Asset": {
+              "additionalProperties": false,
+              "properties": {
+                "description": {
+                  "type": "string"
+                },
+                "id": {
+                  "type": "string"
+                },
+                "kind": {
+                  "enum": [
+                    "image",
+                    "video",
+                    "audio"
+                  ],
+                  "type": "string"
+                },
+                "metadata": {
+                  "$ref": "#/$defs/MediaMetadata"
+                },
+                "preparation": {
+                  "$ref": "#/$defs/MediaPreparation"
+                },
+                "sha256": {
+                  "type": "string"
+                },
+                "uri": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "kind"
+              ],
+              "type": "object"
+            },
+            "AssetCard": {
+              "additionalProperties": false,
+              "properties": {
+                "analyzer_version": {
+                  "type": "string"
+                },
+                "asset_id": {
+                  "type": "string"
+                },
+                "camera": {
+                  "type": "string"
+                },
+                "characterisation": {
+                  "type": "string"
+                },
+                "composition": {
+                  "enum": [
+                    "",
+                    "unknown",
+                    "bare_plate",
+                    "composed_scene"
+                  ],
+                  "type": "string"
+                },
+                "coverage": {
+                  "$ref": "#/$defs/PerceptionCoverage"
+                },
+                "environment": {
+                  "type": "string"
+                },
+                "frames_seen": {
+                  "maximum": 9223372036854776000,
+                  "minimum": -9223372036854776000,
+                  "type": "integer"
+                },
+                "framing": {
+                  "type": "string"
+                },
+                "is_reference_sheet": {
+                  "type": "boolean"
+                },
+                "language": {
+                  "type": "string"
+                },
+                "lighting": {
+                  "type": "string"
+                },
+                "model": {
+                  "type": "string"
+                },
+                "motion": {
+                  "type": "string"
+                },
+                "music": {
+                  "type": "string"
+                },
+                "palette": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": [
+                    "array",
+                    "null"
+                  ]
+                },
+                "style": {
+                  "type": "string"
+                },
+                "subjects": {
+                  "items": {
+                    "$ref": "#/$defs/SubjectCard"
+                  },
+                  "type": [
+                    "array",
+                    "null"
+                  ]
+                },
+                "summary": {
+                  "type": "string"
+                },
+                "timbre": {
+                  "type": "string"
+                },
+                "transcript": {
+                  "type": "string"
+                },
+                "visible_text": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": [
+                    "array",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "asset_id",
+                "analyzer_version"
+              ],
+              "type": "object"
+            },
+            "Attribution": {
+              "additionalProperties": false,
+              "properties": {
+                "details": {
+                  "type": "string"
+                },
+                "fact_ids": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": [
+                    "array",
+                    "null"
+                  ]
+                },
+                "role": {
+                  "enum": [
+                    "identity",
+                    "appearance",
+                    "clothing",
+                    "scene",
+                    "style",
+                    "action",
+                    "pose",
+                    "camera",
+                    "storyboard",
+                    "first_frame",
+                    "last_frame",
+                    "keyframe",
+                    "edit_source",
+                    "continuation_source",
+                    "voice",
+                    "music",
+                    "rhythm",
+                    "soundtrack",
+                    "sound_effect",
+                    "structure",
+                    "placed_subject",
+                    "replacement_subject",
+                    "music_style",
+                    "beat_reference",
+                    "sfx"
+                  ],
+                  "type": "string"
+                },
+                "source": {
+                  "$ref": "#/$defs/SourceRef"
+                }
+              },
+              "required": [
+                "source",
+                "role"
+              ],
+              "type": "object"
+            },
+            "AudioCue": {
+              "additionalProperties": false,
+              "properties": {
+                "language": {
+                  "type": "string"
+                },
+                "reference_id": {
+                  "type": "string"
+                },
+                "text": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "reference_id",
+                "language",
+                "text"
+              ],
+              "type": "object"
+            },
+            "Claim": {
+              "additionalProperties": false,
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "origin": {
+                  "enum": [
+                    "user",
+                    "observed",
+                    "creative"
+                  ],
+                  "type": "string"
+                },
+                "sources": {
+                  "items": {
+                    "$ref": "#/$defs/SourceRef"
+                  },
+                  "type": [
+                    "array",
+                    "null"
+                  ]
+                },
+                "text": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "origin",
+                "text"
+              ],
+              "type": "object"
+            },
+            "Constraint": {
+              "additionalProperties": false,
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "kind": {
+                  "enum": [
+                    "requirement",
+                    "prohibition",
+                    "silence",
+                    "no_music",
+                    "no_added_music",
+                    "no_dialogue"
+                  ],
+                  "type": "string"
+                },
+                "text": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "kind",
+                "text"
+              ],
+              "type": "object"
+            },
+            "DialogueLine": {
+              "additionalProperties": false,
+              "properties": {
+                "delivery": {
+                  "type": "string"
+                },
+                "id": {
+                  "type": "string"
+                },
+                "kind": {
+                  "enum": [
+                    "",
+                    "speech",
+                    "singing"
+                  ],
+                  "type": "string"
+                },
+                "language": {
+                  "type": "string"
+                },
+                "speaker_ids": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": [
+                    "array",
+                    "null"
+                  ]
+                },
+                "text": {
+                  "type": "string"
+                },
+                "voiceover": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "id",
+                "speaker_ids",
+                "language",
+                "text"
+              ],
+              "type": "object"
+            },
+            "DialoguePart": {
+              "additionalProperties": false,
+              "properties": {
+                "continues_from_previous": {
+                  "type": "boolean"
+                },
+                "continues_to_next": {
+                  "type": "boolean"
+                },
+                "cut_off": {
+                  "type": "boolean"
+                },
+                "line_id": {
+                  "type": "string"
+                },
+                "text": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "line_id",
+                "text",
+                "continues_from_previous",
+                "continues_to_next"
+              ],
+              "type": "object"
+            },
+            "Document": {
+              "additionalProperties": false,
+              "properties": {
+                "assets": {
+                  "enum": [
+                    null,
+                    []
+                  ]
+                },
+                "claims": {
+                  "items": {
+                    "$ref": "#/$defs/Claim"
+                  },
+                  "type": [
+                    "array",
+                    "null"
+                  ]
+                },
+                "constraints": {
+                  "const": [
+                    {
+                      "id": "compiler-no-music",
+                      "kind": "no_music",
+                      "text": "The target contains no music, including copied background music."
+                    }
+                  ]
+                },
+                "dialogue": {
+                  "enum": [
+                    null,
+                    []
+                  ]
+                },
+                "evidence": {
+                  "items": {
+                    "$ref": "#/$defs/Evidence"
+                  },
+                  "type": [
+                    "array",
+                    "null"
+                  ]
+                },
+                "loras": {
+                  "enum": [
+                    null,
+                    []
+                  ]
+                },
+                "mode": {
+                  "const": "t2va"
+                },
+                "music": {
+                  "const": "N/A"
+                },
+                "shots": {
+                  "items": false,
+                  "maxItems": 2,
+                  "minItems": 2,
+                  "prefixItems": [
+                    {
+                      "allOf": [
+                        {
+                          "$ref": "#/$defs/Shot"
+                        },
+                        {
+                          "properties": {
+                            "end_ms": {
+                              "const": 4000
+                            },
+                            "id": {
+                              "const": "shot-1"
+                            },
+                            "start_ms": {
+                              "const": 0
+                            }
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "allOf": [
+                        {
+                          "$ref": "#/$defs/Shot"
+                        },
+                        {
+                          "properties": {
+                            "end_ms": {
+                              "const": 8000
+                            },
+                            "id": {
+                              "const": "shot-2"
+                            },
+                            "start_ms": {
+                              "const": 4000
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  ],
+                  "type": "array"
+                },
+                "soundscape": {
+                  "type": "string"
+                },
+                "speakers": {
+                  "items": {
+                    "$ref": "#/$defs/Speaker"
+                  },
+                  "type": [
+                    "array",
+                    "null"
+                  ]
+                },
+                "subjects": {
+                  "const": []
+                },
+                "summary": {
+                  "items": {
+                    "$ref": "#/$defs/Span"
+                  },
+                  "type": [
+                    "array",
+                    "null"
+                  ]
+                },
+                "target": {
+                  "const": {
+                    "aspect_ratio": "16:9",
+                    "duration_ms": 8000,
+                    "fps": {
+                      "denominator": 1,
+                      "numerator": 24
+                    },
+                    "frame_count": 192,
+                    "height": 768,
+                    "width": 1344
+                  }
+                },
+                "version": {
+                  "const": "contextir/v1",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "version",
+                "mode",
+                "target",
+                "shots",
+                "soundscape",
+                "music"
+              ],
+              "type": "object"
+            },
+            "Event": {
+              "additionalProperties": false,
+              "properties": {
+                "at_ms": {
+                  "maximum": 7999,
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                "audio_cue": {
+                  "$ref": "#/$defs/AudioCue"
+                },
+                "description": {
+                  "items": {
+                    "$ref": "#/$defs/Span"
+                  },
+                  "type": [
+                    "array",
+                    "null"
+                  ]
+                },
+                "dialogue": {
+                  "$ref": "#/$defs/DialoguePart"
+                },
+                "kind": {
+                  "enum": [
+                    "visual",
+                    "action",
+                    "visible_text",
+                    "sound",
+                    "audio_cue"
+                  ],
+                  "type": "string"
+                },
+                "visible_text": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "kind"
+              ],
+              "type": "object"
+            },
+            "Evidence": {
+              "additionalProperties": false,
+              "properties": {
+                "analyzer_version": {
+                  "type": "string"
+                },
+                "asset_id": {
+                  "type": "string"
+                },
+                "card": {
+                  "$ref": "#/$defs/AssetCard"
+                },
+                "coverage": {
+                  "$ref": "#/$defs/PerceptionCoverage"
+                },
+                "facts": {
+                  "items": {
+                    "$ref": "#/$defs/Fact"
+                  },
+                  "type": [
+                    "array",
+                    "null"
+                  ]
+                },
+                "limitations": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": [
+                    "array",
+                    "null"
+                  ]
+                },
+                "model": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "asset_id",
+                "facts",
+                "analyzer_version"
+              ],
+              "type": "object"
+            },
+            "Fact": {
+              "additionalProperties": false,
+              "properties": {
+                "analyzer_version": {
+                  "type": "string"
+                },
+                "id": {
+                  "type": "string"
+                },
+                "source": {
+                  "$ref": "#/$defs/SourceRef"
+                },
+                "text": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "text",
+                "source"
+              ],
+              "type": "object"
+            },
+            "Interval": {
+              "additionalProperties": false,
+              "properties": {
+                "end_ms": {
+                  "maximum": 9223372036854776000,
+                  "minimum": -9223372036854776000,
+                  "type": "integer"
+                },
+                "start_ms": {
+                  "maximum": 9223372036854776000,
+                  "minimum": -9223372036854776000,
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "start_ms",
+                "end_ms"
+              ],
+              "type": "object"
+            },
+            "LoRAChoice": {
+              "additionalProperties": false,
+              "properties": {
+                "checkpoint": {
+                  "type": "string"
+                },
+                "id": {
+                  "type": "string"
+                },
+                "registry_revision": {
+                  "type": "string"
+                },
+                "strength": {
+                  "type": "number"
+                },
+                "triggers": {
+                  "items": {
+                    "$ref": "#/$defs/LoRATrigger"
+                  },
+                  "type": [
+                    "array",
+                    "null"
+                  ]
+                },
+                "version": {
+                  "type": "string"
+                },
+                "weights_sha256": {
+                  "type": "string"
+                },
+                "weights_uri": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "weights_sha256",
+                "weights_uri",
+                "checkpoint",
+                "strength",
+                "triggers"
+              ],
+              "type": "object"
+            },
+            "LoRATrigger": {
+              "additionalProperties": false,
+              "properties": {
+                "count": {
+                  "maximum": 100,
+                  "minimum": 1,
+                  "type": "integer"
+                },
+                "slot": {
+                  "type": "string"
+                },
+                "text": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "text",
+                "count",
+                "slot"
+              ],
+              "type": "object"
+            },
+            "MediaMetadata": {
+              "additionalProperties": false,
+              "properties": {
+                "duration_ms": {
+                  "maximum": 9223372036854776000,
+                  "minimum": -9223372036854776000,
+                  "type": "integer"
+                },
+                "fps": {
+                  "$ref": "#/$defs/Rational"
+                },
+                "height": {
+                  "maximum": 9223372036854776000,
+                  "minimum": -9223372036854776000,
+                  "type": "integer"
+                },
+                "width": {
+                  "maximum": 9223372036854776000,
+                  "minimum": -9223372036854776000,
+                  "type": "integer"
+                }
+              },
+              "required": [],
+              "type": "object"
+            },
+            "MediaPreparation": {
+              "additionalProperties": false,
+              "properties": {
+                "frames": {
+                  "maximum": 9223372036854776000,
+                  "minimum": -9223372036854776000,
+                  "type": "integer"
+                },
+                "height": {
+                  "maximum": 9223372036854776000,
+                  "minimum": -9223372036854776000,
+                  "type": "integer"
+                },
+                "sizing": {
+                  "enum": [
+                    "",
+                    "match",
+                    "max"
+                  ],
+                  "type": "string"
+                },
+                "width": {
+                  "maximum": 9223372036854776000,
+                  "minimum": -9223372036854776000,
+                  "type": "integer"
+                }
+              },
+              "required": [],
+              "type": "object"
+            },
+            "PerceptionCoverage": {
+              "additionalProperties": false,
+              "properties": {
+                "absent_tracks": {
+                  "items": {
+                    "enum": [
+                      "visual",
+                      "audio"
+                    ],
+                    "type": "string"
+                  },
+                  "type": [
+                    "array",
+                    "null"
+                  ]
+                },
+                "intervals": {
+                  "items": {
+                    "$ref": "#/$defs/Interval"
+                  },
+                  "type": [
+                    "array",
+                    "null"
+                  ]
+                },
+                "sample_times_ms": {
+                  "items": {
+                    "maximum": 9223372036854776000,
+                    "minimum": -9223372036854776000,
+                    "type": "integer"
+                  },
+                  "type": [
+                    "array",
+                    "null"
+                  ]
+                },
+                "status": {
+                  "enum": [
+                    "complete",
+                    "partial"
+                  ],
+                  "type": "string"
+                },
+                "tracks": {
+                  "items": {
+                    "enum": [
+                      "visual",
+                      "audio"
+                    ],
+                    "type": "string"
+                  },
+                  "type": [
+                    "array",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "status",
+                "tracks"
+              ],
+              "type": "object"
+            },
+            "Rational": {
+              "additionalProperties": false,
+              "properties": {
+                "denominator": {
+                  "maximum": 9223372036854776000,
+                  "minimum": -9223372036854776000,
+                  "type": "integer"
+                },
+                "numerator": {
+                  "maximum": 9223372036854776000,
+                  "minimum": -9223372036854776000,
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "numerator",
+                "denominator"
+              ],
+              "type": "object"
+            },
+            "Reference": {
+              "additionalProperties": false,
+              "properties": {
+                "anchor_ms": {
+                  "maximum": 9223372036854776000,
+                  "minimum": -9223372036854776000,
+                  "type": "integer"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "id": {
+                  "type": "string"
+                },
+                "kind": {
+                  "enum": [
+                    "picture",
+                    "video",
+                    "audio"
+                  ],
+                  "type": "string"
+                },
+                "paired_video_id": {
+                  "type": "string"
+                },
+                "replaces": {
+                  "type": "string"
+                },
+                "retention": {
+                  "enum": [
+                    "fully_preserved",
+                    "partially_preserved",
+                    "attribute_transfer",
+                    "weak_reference",
+                    "fully_copy",
+                    "partially_copy",
+                    "reference"
+                  ],
+                  "type": "string"
+                },
+                "retention_details": {
+                  "type": "string"
+                },
+                "roles": {
+                  "items": {
+                    "enum": [
+                      "identity",
+                      "appearance",
+                      "clothing",
+                      "scene",
+                      "style",
+                      "action",
+                      "pose",
+                      "camera",
+                      "storyboard",
+                      "first_frame",
+                      "last_frame",
+                      "keyframe",
+                      "edit_source",
+                      "continuation_source",
+                      "voice",
+                      "music",
+                      "rhythm",
+                      "soundtrack",
+                      "sound_effect",
+                      "structure",
+                      "placed_subject",
+                      "replacement_subject",
+                      "music_style",
+                      "beat_reference",
+                      "sfx"
+                    ],
+                    "type": "string"
+                  },
+                  "type": [
+                    "array",
+                    "null"
+                  ]
+                },
+                "shot_ids": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": [
+                    "array",
+                    "null"
+                  ]
+                },
+                "source": {
+                  "$ref": "#/$defs/SourceRef"
+                },
+                "speaker_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "kind",
+                "source",
+                "roles",
+                "description",
+                "retention"
+              ],
+              "type": "object"
+            },
+            "Shot": {
+              "additionalProperties": false,
+              "properties": {
+                "description": {
+                  "items": {
+                    "$ref": "#/$defs/Span"
+                  },
+                  "type": [
+                    "array",
+                    "null"
+                  ]
+                },
+                "end_ms": {
+                  "maximum": 9223372036854776000,
+                  "minimum": -9223372036854776000,
+                  "type": "integer"
+                },
+                "events": {
+                  "items": {
+                    "$ref": "#/$defs/Event"
+                  },
+                  "type": [
+                    "array",
+                    "null"
+                  ]
+                },
+                "id": {
+                  "type": "string"
+                },
+                "start_ms": {
+                  "maximum": 9223372036854776000,
+                  "minimum": -9223372036854776000,
+                  "type": "integer"
+                },
+                "transition": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "start_ms",
+                "end_ms",
+                "description"
+              ],
+              "type": "object"
+            },
+            "SourceRef": {
+              "additionalProperties": false,
+              "properties": {
+                "asset_id": {
+                  "type": "string"
+                },
+                "interval": {
+                  "$ref": "#/$defs/Interval"
+                },
+                "track": {
+                  "enum": [
+                    "visual",
+                    "audio"
+                  ],
+                  "type": "string"
+                }
+              },
+              "required": [
+                "asset_id",
+                "track"
+              ],
+              "type": "object"
+            },
+            "Span": {
+              "additionalProperties": false,
+              "properties": {
+                "text": {
+                  "minLength": 1,
+                  "type": "string"
+                }
+              },
+              "required": [
+                "text"
+              ],
+              "type": "object"
+            },
+            "Speaker": {
+              "additionalProperties": false,
+              "properties": {
+                "description": {
+                  "type": "string"
+                },
+                "id": {
+                  "type": "string"
+                },
+                "onscreen": {
+                  "type": "boolean"
+                },
+                "subject_id": {
+                  "const": ""
+                }
+              },
+              "required": [
+                "id",
+                "description"
+              ],
+              "type": "object"
+            },
+            "Subject": {
+              "additionalProperties": false,
+              "properties": {
+                "attributes": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": [
+                    "array",
+                    "null"
+                  ]
+                },
+                "description": {
+                  "type": "string"
+                },
+                "descriptor": {
+                  "type": "string"
+                },
+                "id": {
+                  "type": "string"
+                },
+                "kind": {
+                  "enum": [
+                    "",
+                    "subject",
+                    "person",
+                    "animal",
+                    "object",
+                    "environment",
+                    "style",
+                    "action"
+                  ],
+                  "type": "string"
+                },
+                "origin": {
+                  "enum": [
+                    "",
+                    "observed",
+                    "user",
+                    "creative",
+                    "user_symbolic"
+                  ],
+                  "type": "string"
+                },
+                "pose": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": [
+                    "array",
+                    "null"
+                  ]
+                },
+                "pose_licensed": {
+                  "type": "boolean"
+                },
+                "retention": {
+                  "enum": [
+                    "fully_preserved",
+                    "partially_preserved",
+                    "attribute_transfer",
+                    "weak_reference",
+                    "fully_copy",
+                    "partially_copy",
+                    "reference"
+                  ],
+                  "type": "string"
+                },
+                "retention_details": {
+                  "type": "string"
+                },
+                "shot_ids": {
+                  "const": []
+                },
+                "sources": {
+                  "items": {
+                    "$ref": "#/$defs/Attribution"
+                  },
+                  "type": [
+                    "array",
+                    "null"
+                  ]
+                },
+                "taken_over_by": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "description"
+              ],
+              "type": "object"
+            },
+            "SubjectCard": {
+              "additionalProperties": false,
+              "properties": {
+                "attributes": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": [
+                    "array",
+                    "null"
+                  ]
+                },
+                "descriptor": {
+                  "type": "string"
+                },
+                "kind": {
+                  "enum": [
+                    "subject",
+                    "person",
+                    "animal",
+                    "object",
+                    "environment",
+                    "style",
+                    "action"
+                  ],
+                  "type": "string"
+                },
+                "pose": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": [
+                    "array",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "kind",
+                "descriptor"
+              ],
+              "type": "object"
+            },
+            "Target": {
+              "additionalProperties": false,
+              "properties": {
+                "aspect_ratio": {
+                  "type": "string"
+                },
+                "duration_ms": {
+                  "maximum": 9223372036854776000,
+                  "minimum": -9223372036854776000,
+                  "type": "integer"
+                },
+                "fps": {
+                  "$ref": "#/$defs/Rational"
+                },
+                "frame_count": {
+                  "maximum": 9223372036854776000,
+                  "minimum": -9223372036854776000,
+                  "type": "integer"
+                },
+                "height": {
+                  "maximum": 9223372036854776000,
+                  "minimum": -9223372036854776000,
+                  "type": "integer"
+                },
+                "width": {
+                  "maximum": 9223372036854776000,
+                  "minimum": -9223372036854776000,
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "duration_ms",
+                "aspect_ratio",
+                "fps"
+              ],
+              "type": "object"
+            }
+          },
+          "$id": "https://github.com/ly95/contextir/schema/contextir-v1.json",
+          "$ref": "#/$defs/Document",
+          "$schema": "https://json-schema.org/draft/2020-12/schema"
+        }
+      },
+      "response": {
+        "json": {
+          "version": "contextir/v1",
+          "mode": "t2va",
+          "target": {
+            "duration_ms": 8000,
+            "frame_count": 192,
+            "aspect_ratio": "16:9",
+            "fps": {
+              "numerator": 24,
+              "denominator": 1
+            },
+            "width": 1344,
+            "height": 768
+          },
+          "constraints": [
+            {
+              "id": "compiler-no-music",
+              "kind": "no_music",
+              "text": "The target contains no music, including copied background music."
+            }
+          ],
+          "subjects": [],
+          "speakers": [
+            {
+              "id": "speaker-1",
+              "description": "An off-screen narrator, heard only as a voice and not visible on screen.",
+              "onscreen": false
+            }
+          ],
+          "shots": [
+            {
+              "id": "shot-1",
+              "start_ms": 0,
+              "end_ms": 4000,
+              "description": [
+                {
+                  "text": "A wide, static view holds on an empty railway station platform, keeping the length of the platform and the receding tracks in frame. The platform floor is covered in regular tiles that run toward the platform edge, and a row of supporting pillars stands along the platform, dividing the covered waiting area from the track side. Beyond the edge, the rails stretch away into the distance, and a hanging sign is suspended overhead, displaying the lettering 出口 EXIT 07. No travellers are present, no luggage or activity disturbs the platform, and nothing in the frame moves. The off-screen narrator's voice begins over this still, unpopulated station, with the sign remaining the only visible text."
+                }
+              ],
+              "events": [
+                {
+                  "kind": "visual",
+                  "at_ms": 0,
+                  "description": [
+                    {
+                      "text": "The empty station platform is held in a wide static view, with tiled flooring, a row of pillars, receding tracks and the overhead sign all visible."
+                    }
+                  ]
+                },
+                {
+                  "kind": "visible_text",
+                  "at_ms": 0,
+                  "visible_text": "出口 EXIT 07"
+                }
+              ]
+            },
+            {
+              "id": "shot-2",
+              "start_ms": 4000,
+              "end_ms": 8000,
+              "description": [
+                {
+                  "text": "The shot cuts to the same wide, static platform view as a commuter train pulls away along the tracks. The train's carriages slide past the platform edge, gathering distance and receding beyond the end of the platform, while the empty station is left behind in the foreground. The tiled platform, supporting pillars and track-side edge remain fixed in the frame, unoccupied and still after the train has passed. The off-screen narrator's voice finishes over the departing train, and no further lettering appears anywhere in the frame; the moving carriages are the only substantial change in the scene."
+                }
+              ],
+              "events": [
+                {
+                  "kind": "action",
+                  "at_ms": 4000,
+                  "description": [
+                    {
+                      "text": "A commuter train pulls away along the tracks, its carriages sliding past the platform edge and receding into the distance beyond the end of the station platform."
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "soundscape": "N/A",
+          "music": "N/A"
+        },
+        "model": "deepseek-flash",
+        "usage": {
+          "input_tokens": 9005,
+          "output_tokens": 5084
+        }
+      },
+      "original_request_sha256": "233d26a88f43c738ee877cfe99f7a6b1fdb9543e0fe22fb4282247ed816043c8",
+      "original_response_sha256": "2f2de05afdf76fb2cf75dc65160f2bd2f8b881f9c1863add0726a1e9e6aceb0c"
+    }
+  ]
+}

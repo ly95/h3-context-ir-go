@@ -151,6 +151,16 @@ func (c *Compiler) structure(ctx context.Context, b Brief, target contextir.Targ
 		schema, _ = json.Marshal(schemaObject)
 		var structuralInput map[string]json.RawMessage
 		_ = json.Unmarshal(input, &structuralInput)
+		licenceInput, licenceInputErr := compositionLicenceView(structuralInput["reference_licence"])
+		if licenceInputErr != nil {
+			return Structure{}, calls, ds, invalid("reference_licence", "Cannot project resolved composition permissions.")
+		}
+		structuralInput["reference_licence"] = licenceInput
+		canonicalTargets, canonicalErr := canonicalSubjects(b, motionPlan, contextir.Request{Mode: mode, Target: target}, &licence)
+		if canonicalErr != nil {
+			return Structure{}, calls, ds, canonicalErr
+		}
+		structuralInput["canonical_target_subjects"], _ = json.Marshal(canonicalTargets)
 		structuralInput["replacement_motion_obligations"], _ = json.Marshal(motionObligations)
 		if hasProjectionCandidates(b) {
 			candidates, candidateErr := canonicalSubjects(b, motionPlan, contextir.Request{Mode: mode, Target: target}, &licence)

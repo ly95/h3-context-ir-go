@@ -71,9 +71,10 @@ func (c *Compiler) assess(b Brief, st Structure, scope Scope, d contextir.Docume
 	}
 	ctx.PromptTokens = &tokenCount
 	ctx.Pictures = &pictures
-	for _, line := range d.Dialogue {
+	for _, line := range st.Dialogue {
 		ctx.ExpectedDialogue = append(ctx.ExpectedDialogue, line.Text)
 	}
+	ctx.DialogueContract = assessmentDialogueContract(st, d)
 	ctx.OnscreenText = append([]string(nil), st.OnscreenText...)
 	for _, choice := range d.LoRAs {
 		for _, trigger := range choice.Triggers {
@@ -149,6 +150,65 @@ func (c *Compiler) assess(b Brief, st Structure, scope Scope, d contextir.Docume
 		return findings, &contextir.Error{Code: contextir.CodeModelOutput, Stage: "h3.validation", Issues: issues}
 	}
 	return findings, nil
+}
+
+// assessmentDialogueContract binds the actual rendered parts to the accepted
+// structure's immutable caller words. A writer cannot change a Document line
+// and have that changed line become its own oracle during H3 linting.
+func assessmentDialogueContract(st Structure, d contextir.Document) *h3check.DialogueContract {
+	contract := &h3check.DialogueContract{}
+	fixed := map[string]h3check.DialogueLineContract{}
+	for i, line := range st.Dialogue {
+		language := line.Language
+		if language == "" {
+			language = "English"
+		}
+		id := fmt.Sprintf("line-%d", i+1)
+		fixed[id] = h3check.DialogueLineContract{ID: id, Text: line.Text, Language: language, Voiceover: line.Voiceover, Fixed: true}
+	}
+	visible := map[string]bool{}
+	for _, speaker := range d.Speakers {
+		if speaker.Onscreen != nil {
+			visible[speaker.ID] = *speaker.Onscreen
+		} else {
+			visible[speaker.ID] = speaker.SubjectID != ""
+		}
+	}
+	seen := map[string]bool{}
+	// Fixed contract lines retain caller order even when the candidate changes
+	// declaration ordering. Missing fixed lines are still checked for emission.
+	for i := range st.Dialogue {
+		id := fmt.Sprintf("line-%d", i+1)
+		line := fixed[id]
+		for _, actual := range d.Dialogue {
+			if actual.ID == id {
+				for _, speaker := range actual.SpeakerIDs {
+					line.VisibleSpeaker = line.VisibleSpeaker || visible[speaker]
+				}
+			}
+		}
+		contract.Lines = append(contract.Lines, line)
+		seen[id] = true
+	}
+	for _, line := range d.Dialogue {
+		if seen[line.ID] {
+			continue
+		}
+		item := h3check.DialogueLineContract{ID: line.ID, Text: line.Text, Language: line.Language, Voiceover: line.Voiceover}
+		for _, speaker := range line.SpeakerIDs {
+			item.VisibleSpeaker = item.VisibleSpeaker || visible[speaker]
+		}
+		contract.Lines = append(contract.Lines, item)
+	}
+	for shot, item := range d.Shots {
+		for _, event := range item.Events {
+			if event.Dialogue != nil {
+				part := event.Dialogue
+				contract.Parts = append(contract.Parts, h3check.DialoguePartContract{LineID: part.LineID, Text: part.Text, Shot: shot + 1, ContinuesFromPrevious: part.ContinuesFromPrevious, ContinuesToNext: part.ContinuesToNext})
+			}
+		}
+	}
+	return contract
 }
 
 // ReferenceWardrobeTerms returns only the accepted model-identified garment

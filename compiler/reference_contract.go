@@ -370,6 +370,18 @@ func (c referenceContract) verify(d contextir.Document) error {
 // roleScopedCompositionBrief projects only information a resolved role licenses
 // for composition. It is a deep copy: authoritative observations remain intact.
 func roleScopedCompositionBrief(b Brief) (Brief, error) {
+	return roleScopedBrief(b, true)
+}
+
+// Licence decisions need source appearance to decide whether explicit caller
+// instructions preserve or change it. Only later composition receives the
+// resolved identity/scene projection. Property-only references remain restricted
+// at both boundaries.
+func roleScopedLicenceBrief(b Brief) (Brief, error) {
+	return roleScopedBrief(b, false)
+}
+
+func roleScopedBrief(b Brief, composition bool) (Brief, error) {
 	wire, err := json.Marshal(b)
 	if err != nil {
 		return Brief{}, invalid("brief", "The role-scoped composition input must be valid JSON.")
@@ -382,19 +394,61 @@ func roleScopedCompositionBrief(b Brief) (Brief, error) {
 	for i := range projected.Assets {
 		a := &projected.Assets[i]
 		roles[a.ID] = a.Role
-		if a.Role == RoleStructure || a.Role == RoleStoryboard || a.Role == RoleStyle {
+		if roleHasScopedCompositionView(a.Role) && (composition || propertyOnlyVisualRole(a.Role)) {
 			a.Description, a.URI = "", ""
 		}
 	}
 	for i := range projected.Cards {
-		projected.Cards[i] = roleScopedCard(projected.Cards[i], roles[projected.Cards[i].AssetID])
+		role := roles[projected.Cards[i].AssetID]
+		if composition || propertyOnlyVisualRole(role) {
+			projected.Cards[i] = roleScopedCard(projected.Cards[i], role)
+		}
 	}
-	projected.Evidence = roleScopedEvidence(projected.Evidence, roles)
+	evidenceRoles := roles
+	if !composition {
+		evidenceRoles = map[string]Role{}
+		for id, role := range roles {
+			if propertyOnlyVisualRole(role) {
+				evidenceRoles[id] = role
+			}
+		}
+	}
+	projected.Evidence = roleScopedEvidence(projected.Evidence, evidenceRoles)
 	return projected, nil
+}
+
+func propertyOnlyVisualRole(role Role) bool {
+	return role == RoleStructure || role == RoleStoryboard || role == RoleStyle
+}
+
+func roleScopedLicenceCard(card AssetCard, role Role) AssetCard {
+	if propertyOnlyVisualRole(role) {
+		return roleScopedCard(card, role)
+	}
+	return card
+}
+
+func roleHasScopedCompositionView(role Role) bool {
+	switch role {
+	case RoleSubject, RolePlacedSubject, RoleReplacementSubject, RoleEnvironment, RoleStructure, RoleStoryboard, RoleStyle:
+		return true
+	}
+	return false
 }
 
 func roleScopedCard(card AssetCard, role Role) AssetCard {
 	switch role {
+	case RoleSubject, RolePlacedSubject, RoleReplacementSubject:
+		// Stable identity is reusable; its source setting and transient pose are
+		// not. The accepted target identity is supplied separately by the licence.
+		subjects := append([]SubjectCard(nil), card.Subjects...)
+		for i := range subjects {
+			subjects[i].Attributes = append([]string(nil), subjects[i].Attributes...)
+			subjects[i].Pose = nil
+		}
+		return AssetCard{AssetID: card.AssetID, Subjects: subjects, Coverage: card.Coverage, AnalyzerVersion: card.AnalyzerVersion, Model: card.Model}
+	case RoleEnvironment:
+		return AssetCard{AssetID: card.AssetID, Environment: card.Environment, Lighting: card.Lighting, Palette: card.Palette, Style: card.Style, Coverage: card.Coverage, AnalyzerVersion: card.AnalyzerVersion, Model: card.Model}
 	case RoleStructure:
 		return AssetCard{AssetID: card.AssetID, Camera: card.Camera, FramesSeen: card.FramesSeen, Coverage: card.Coverage, AnalyzerVersion: card.AnalyzerVersion, Model: card.Model}
 	case RoleStoryboard:
@@ -409,7 +463,7 @@ func roleScopedAssets(assets []contextir.Asset, roles map[string]Role) []context
 	out := append([]contextir.Asset(nil), assets...)
 	for i := range out {
 		role := roles[out[i].ID]
-		if role == RoleStructure || role == RoleStoryboard || role == RoleStyle {
+		if roleHasScopedCompositionView(role) {
 			out[i].Description, out[i].URI = "", ""
 		}
 	}
@@ -421,12 +475,13 @@ func sameAssetContract(a, b []contextir.Asset) bool {
 }
 
 func roleScopedEvidence(evidence []contextir.Evidence, roles map[string]Role) []contextir.Evidence {
+	evidence = append([]contextir.Evidence(nil), evidence...)
 	for i := range evidence {
 		e := &evidence[i]
 		role := roles[e.AssetID]
-		if role == RoleStructure || role == RoleStoryboard || role == RoleStyle {
+		if roleHasScopedCompositionView(role) {
 			e.Facts = nil
-			e.Limitations = []string{"Only the declared reference properties are exposed for composition; this projection is not an additional observation."}
+			e.Limitations = append(append([]string(nil), e.Limitations...), "Only the declared reference properties are exposed for composition; this projection is not an additional observation.")
 			if e.Card != nil {
 				card := roleScopedCard(*e.Card, role)
 				e.Card = &card
@@ -466,26 +521,59 @@ func (c referenceContract) projectWriterInput(input map[string]json.RawMessage) 
 	controls["canonical_references"], _ = json.Marshal(c.References)
 	controls["canonical_voice_bindings"], _ = json.Marshal(c.Speakers)
 	if raw := controls["reference_licence"]; len(raw) > 0 && string(raw) != "null" {
-		var licence map[string]json.RawMessage
-		if err := json.Unmarshal(raw, &licence); err != nil {
+		projected, err := compositionLicenceView(raw)
+		if err != nil {
 			return err
 		}
-		// Reasoning and raw source subjects can contain context that the resolved
-		// role does not license. Target subjects and canonical style are separate.
-		delete(licence, "reasons")
-		delete(licence, "subjects")
-		delete(licence, "calls")
-		if mediumRaw := licence["medium_decision"]; len(mediumRaw) > 0 && string(mediumRaw) != "null" {
-			var medium map[string]json.RawMessage
-			if err := json.Unmarshal(mediumRaw, &medium); err != nil {
-				return err
-			}
-			delete(medium, "reasoning")
-			delete(medium, "calls")
-			licence["medium_decision"], _ = json.Marshal(medium)
-		}
-		controls["reference_licence"], _ = json.Marshal(licence)
+		controls["reference_licence"] = projected
 	}
 	input["compiler_controls"], _ = json.Marshal(controls)
 	return nil
+}
+
+// Composition receives resolved permissions and canonical target identities,
+// never raw source identity summaries or explanatory prose from licence calls.
+// The complete decision remains authoritative in the compiler Result.
+func compositionLicenceView(raw json.RawMessage) (json.RawMessage, error) {
+	var fields map[string]json.RawMessage
+	if err := json.Unmarshal(raw, &fields); err != nil {
+		return nil, err
+	}
+	for _, key := range []string{"identity", "subjects", "reasons", "calls"} {
+		delete(fields, key)
+	}
+	trim := func(raw json.RawMessage, keys ...string) (json.RawMessage, error) {
+		var object map[string]json.RawMessage
+		if err := json.Unmarshal(raw, &object); err != nil {
+			return nil, err
+		}
+		for _, key := range keys {
+			delete(object, key)
+		}
+		return json.Marshal(object)
+	}
+	if raw := fields["style"]; len(raw) > 0 && string(raw) != "null" {
+		clean, err := trim(raw, "observed_phrase", "note")
+		if err != nil {
+			return nil, err
+		}
+		fields["style"] = clean
+	}
+	if raw := fields["medium_decision"]; len(raw) > 0 && string(raw) != "null" {
+		var medium map[string]json.RawMessage
+		if err := json.Unmarshal(raw, &medium); err != nil {
+			return nil, err
+		}
+		delete(medium, "reasoning")
+		delete(medium, "calls")
+		if permission := medium["rendering_permission"]; len(permission) > 0 && string(permission) != "null" {
+			clean, err := trim(permission, "reasoning", "calls")
+			if err != nil {
+				return nil, err
+			}
+			medium["rendering_permission"] = clean
+		}
+		fields["medium_decision"], _ = json.Marshal(medium)
+	}
+	return json.Marshal(fields)
 }

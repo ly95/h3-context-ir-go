@@ -129,6 +129,25 @@ class PrivateNativeVerifierTests(unittest.TestCase):
             with self.assertRaisesRegex(native.CheckFailure, "replace directive"):
                 native.verify_go(shutil.which("go"), checked, env)
 
+    def test_skipped_test_or_unterminated_package_cannot_pass(self):
+        def event(action, test=None):
+            value = {"Action": action, "Package": native.MODULE + "/compiler"}
+            if test:
+                value["Test"] = test
+            return value
+        controls = {
+            "complete": [event("start"), event("run", "TestRoot"), event("pass", "TestRoot"), event("pass")],
+            "skipped_root": [event("start"), event("run", "TestRoot"), event("skip", "TestRoot"), event("pass")],
+            "skipped_leaf": [event("start"), event("run", "TestRoot"), event("skip", "TestRoot/leaf"), event("pass", "TestRoot"), event("pass")],
+            "unfinished_package": [event("start"), event("run", "TestRoot"), event("pass", "TestRoot")],
+        }
+        for name, events in controls.items():
+            with self.subTest(name=name), tempfile.TemporaryDirectory() as tmp:
+                root = Path(tmp)
+                result = native.retain_test_output("\n".join(json.dumps(e) for e in events).encode(), b"", root / "out", root / "err")
+                self.assertEqual(native.native_evidence_passed(0, False, result), name == "complete")
+
+
     def test_json_event_leaf_counts_and_redacted_diagnostics(self):
         def event(action, test=None):
             out = {"Action": action, "Package": native.MODULE + "/compiler"}

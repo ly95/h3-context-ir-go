@@ -14,8 +14,11 @@ import (
 func referenceIdentityReply(t *testing.T, request contextir.ModelRequest) json.RawMessage {
 	t.Helper()
 	var input struct {
-		Subjects []plan.SubjectPlan `json:"observed_subjects"`
-		Sheets   map[string]bool    `json:"reference_sheet_sources"`
+		Subjects    []plan.SubjectPlan      `json:"observed_subjects"`
+		Sheets      map[string]bool         `json:"reference_sheet_sources"`
+		Intent      string                  `json:"intent"`
+		Bindings    []identitySourceBinding `json:"source_bindings"`
+		Projections []SubjectProjection     `json:"explicit_subject_projections"`
 	}
 	if err := json.Unmarshal(request.Input, &input); err != nil {
 		t.Fatal(err)
@@ -34,7 +37,55 @@ func referenceIdentityReply(t *testing.T, request contextir.ModelRequest) json.R
 		}
 		identities = append(identities, identity)
 	}
-	raw, _ := json.Marshal(map[string]any{"identity": identities})
+	reply := map[string]any{"identity": identities}
+	var schema struct {
+		Properties map[string]json.RawMessage `json:"properties"`
+	}
+	if err := json.Unmarshal(request.ResponseSchema, &schema); err != nil {
+		t.Fatal(err)
+	}
+	if _, required := schema.Properties["source_contributions"]; required {
+		// This double follows explicit fixture choices, never infers a merge from
+		// prose. Model-selected projections remain the structure double's decision.
+		targets := []identityContributionTarget{}
+		byID := map[string]identitySourceBinding{}
+		byLabel := map[string]map[string]any{}
+		for _, binding := range input.Bindings {
+			byID[binding.SubjectID] = binding
+		}
+		for _, identity := range identities {
+			byLabel[identity["label"].(string)] = identity
+		}
+		for _, projection := range input.Projections {
+			target := identityContributionTarget{SubjectID: projection.SubjectID, TargetMention: input.Intent, Quote: input.Intent, Sources: []identityContribution{}}
+			for _, selection := range projection.Sources {
+				binding, ok := byID[selection.SubjectID]
+				if !ok {
+					t.Fatal("explicit fixture projection has no source binding", selection.SubjectID)
+				}
+				for _, attribute := range selection.Attributes {
+					origin := "observed"
+					if !contains(binding.ObservedAttributes, attribute) {
+						origin = "caller_requested"
+						entry := byLabel[binding.SubjectLabel]
+						entry["descriptor_source"] = "request"
+						entry["target_mention"] = input.Intent
+						entry["request_quote"] = input.Intent
+						entry["requested_attributes"] = append(entry["requested_attributes"].([]string), attribute)
+						claims := []IdentityClaim{}
+						if previous, ok := entry["claims"].([]IdentityClaim); ok {
+							claims = previous
+						}
+						entry["claims"] = append(claims, IdentityClaim{Dimension: "stable_attribute", Value: attribute, Quote: input.Intent})
+					}
+					target.Sources = append(target.Sources, identityContribution{SubjectLabel: binding.SubjectLabel, SourceLabel: binding.SourceLabel, AssetID: binding.AssetID, Attribute: attribute, Origin: origin, Quote: input.Intent})
+				}
+			}
+			targets = append(targets, target)
+		}
+		reply["source_contributions"] = targets
+	}
+	raw, _ := json.Marshal(reply)
 	return raw
 }
 

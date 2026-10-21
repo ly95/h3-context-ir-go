@@ -26,7 +26,13 @@ func (c *checker) checkDialogue() {
 		}
 		spoken = append(spoken, norm(rx(`^\s*\[[^\]]*\]\s*`).ReplaceAllString(blk, "")))
 	}
+	if c.ctx.DialogueContract != nil {
+		c.checkTypedDialogue(spans)
+	}
 	for _, want := range c.ctx.ExpectedDialogue {
+		if c.ctx.DialogueContract != nil {
+			break
+		}
 		if want == "" {
 			continue
 		}
@@ -137,9 +143,118 @@ func (c *checker) checkDialogue() {
 	}
 	phrase := "says in an off-screen voiceover"
 	for _, p := range rx(phrase).FindAllStringIndex(c.desc, -1) {
+		if c.ctx.DialogueContract != nil {
+			// Visibility and every actual emitted block are checked together above.
+			break
+		}
 		tail := headCharacters(c.desc[p[1]:], 400)
 		if !has(`(?i)lips?\b[^.]*\b(closed|shut)`, tail) {
 			c.err("D9-voiceover-no-lips-clause", "every voiceover <d> must be followed by a statement that the on-screen character's lips remain closed")
+		}
+	}
+}
+
+// checkTypedDialogue checks the rendered protocol against explicit IR bindings.
+// It never infers whether a character is visible from scene descriptions.
+func (c *checker) checkTypedDialogue(spans [][]int) {
+	contract := c.ctx.DialogueContract
+	lines := map[string]DialogueLineContract{}
+	var fixed []string
+	for _, line := range contract.Lines {
+		if line.ID == "" || line.Text == "" || line.Language == "" {
+			c.err("D4-dialogue-not-verbatim", "typed dialogue contract requires a real line ID, original text and language")
+		}
+		if _, exists := lines[line.ID]; exists {
+			c.err("D10-dialogue-line-duplicated", "typed dialogue contract repeats a line identity")
+		}
+		lines[line.ID] = line
+		if line.Fixed {
+			fixed = append(fixed, line.Text)
+		}
+	}
+	if len(fixed) != len(c.ctx.ExpectedDialogue) {
+		c.err("D4-dialogue-not-verbatim", "typed dialogue contract does not cover every original caller line")
+	} else {
+		for i := range fixed {
+			if fixed[i] != c.ctx.ExpectedDialogue[i] {
+				c.err("D4-dialogue-not-verbatim", "typed dialogue contract differs from original caller words")
+			}
+		}
+	}
+	if len(contract.Parts) != len(spans) {
+		c.err("D4-dialogue-not-verbatim", "rendered dialogue block count differs from the explicit emission plan")
+	}
+	byLine := map[string][]int{}
+	for i, part := range contract.Parts {
+		line, exists := lines[part.LineID]
+		if !exists {
+			c.err("D4-dialogue-not-verbatim", "typed dialogue part names an unknown line")
+			continue
+		}
+		byLine[part.LineID] = append(byLine[part.LineID], i)
+		if i >= len(spans) {
+			continue
+		}
+		span := spans[i]
+		want := "[" + line.Language + "] " + part.Text
+		if c.desc[span[2]:span[3]] != want {
+			c.err("D4-dialogue-not-verbatim", "rendered dialogue text or language differs from its explicit original fragment")
+		}
+		shot := 0
+		shotStart := 0
+		for _, mark := range rx(`\[Shot\s+(\d+)\]`).FindAllStringSubmatchIndex(c.desc[:span[0]], -1) {
+			shot = atoi(c.desc[mark[2]:mark[3]])
+			shotStart = mark[0]
+		}
+		if shot != part.Shot || part.Shot <= 0 {
+			c.err("D13-line-split-without-a-cut", "rendered dialogue fragment belongs to a different shot than its explicit emission plan")
+		}
+		before := c.desc[shotStart:span[0]]
+		from := strings.HasSuffix(strings.TrimSpace(before), "<scenetrans>")
+		end := len(c.desc)
+		if i+1 < len(spans) {
+			end = spans[i+1][0]
+		}
+		if next := rx(`\[Shot\s+\d+\]`).FindStringIndex(c.desc[span[1]:end]); next != nil {
+			end = span[1] + next[0]
+		}
+		after := c.desc[span[1]:end]
+		to := strings.Contains(after, "<scenetrans>")
+		if from != part.ContinuesFromPrevious || to != part.ContinuesToNext {
+			c.err("D11-split-line-no-scenetrans", "actual connecting markers differ from the fragment's explicit continuity flags")
+		}
+		if part.ContinuesToNext && !has(continuityPattern, after) {
+			c.warn("D12-split-line-no-continuity-statement", "the connecting marker needs an explicit statement that the audio continues across the cut")
+		}
+		prefixStart := shotStart
+		if i > 0 && spans[i-1][1] > prefixStart {
+			prefixStart = spans[i-1][1]
+		}
+		prefix := strings.TrimSpace(c.desc[prefixStart:span[0]])
+		prefix = strings.TrimSpace(strings.TrimSuffix(prefix, "<scenetrans>"))
+		voiceover := strings.HasSuffix(prefix, "says in an off-screen voiceover:")
+		if voiceover != line.Voiceover {
+			c.err("D9-voiceover-no-lips-clause", "rendered vocal channel differs from its explicit voiceover contract")
+		}
+		if line.Voiceover && line.VisibleSpeaker && !has(`(?i)lips?\b[^.]*\b(closed|shut)`, headCharacters(after, 400)) {
+			c.err("D9-voiceover-no-lips-clause", "an explicitly visible voiceover character must keep their lips closed after every spoken fragment")
+		}
+	}
+	for id, line := range lines {
+		indices := byLine[id]
+		var text strings.Builder
+		for i, index := range indices {
+			part := contract.Parts[index]
+			text.WriteString(part.Text)
+			if part.ContinuesFromPrevious != (i > 0) || part.ContinuesToNext != (i+1 < len(indices)) {
+				c.err("D11-split-line-no-scenetrans", "typed fragment flags do not form one complete continuous utterance")
+			}
+			if i > 0 && part.Shot <= contract.Parts[indices[i-1]].Shot {
+				c.err("D13-line-split-without-a-cut", "a divided line must advance across ordered shot cuts")
+			}
+		}
+		if text.String() != line.Text {
+			c.err("D4-dialogue-not-verbatim", "explicit fragments do not concatenate byte-for-byte to the original caller line")
 		}
 	}
 }

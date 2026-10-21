@@ -16,6 +16,7 @@ func TestOriginalFixedDialogueBypassesProse(t *testing.T) {
 	for _, tc := range []struct{ intent, text, hint string }{{"A baker sets the first tray on the counter before sunrise.", "First batch of the morning.", "the baker"}, {"two mechanics argue", "That belt is done.", ""}} {
 		t.Run(tc.text, func(t *testing.T) {
 			b := Brief{Intent: tc.intent, Seconds: 8, Creativity: CreativityRestrained, Dialogue: []Dialogue{{Text: tc.text, SpeakerHint: tc.hint}}}
+			writerCalls, reviewCalls := 0, 0
 			model := modelFunc(func(ctx context.Context, m contextir.ModelRequest) (contextir.ModelResponse, error) {
 				var out any
 				if m.Stage == "scope" {
@@ -32,7 +33,21 @@ func TestOriginalFixedDialogueBypassesProse(t *testing.T) {
 					out = map[string]any{"governs": governs, "reasons": reasons}
 				} else if m.Stage == "structure" {
 					out = Structure{ReplacementTargets: map[string]string{}, Mode: contextir.ModeText, Style: "Live-action, cinematic", Assets: []StructuralAsset{}, Shots: []ProposedShot{{Purpose: "establish", Framing: "medium", Action: b.Intent, WhatChanges: "the work begins", Subjects: []string{}, SyncSound: []string{}, Camera: Camera{Type: "Push In", Amplitude: "small", Speed: "slow"}}}, Dialogue: b.Dialogue, OnscreenText: []string{}, Requested: Scope{Speech: true}, Forbidden: Scope{}}
-				} else {
+				} else if m.Stage == "semantic_review" {
+					reviewCalls++
+					var packet struct {
+						Dialogue struct {
+							Lines []struct {
+								Text string `json:"text"`
+							} `json:"lines"`
+						} `json:"dialogue_contract"`
+					}
+					if err := json.Unmarshal(m.Input, &packet); err != nil || len(packet.Dialogue.Lines) != 1 || packet.Dialogue.Lines[0].Text != tc.text {
+						t.Fatal("critic needs original fixed words to audit the final performance", err)
+					}
+					out = map[string]any{"findings": []CompositionFinding{}}
+				} else if m.Stage == "plan" {
+					writerCalls++
 					if strings.Contains(string(m.Input), tc.text) {
 						t.Fatal("fixed words exposed to prose instead of slots")
 					}
@@ -60,6 +75,8 @@ func TestOriginalFixedDialogueBypassesProse(t *testing.T) {
 					d.Shots[0].Events = nil // original missing-placeholder fallback shape
 					d.Style = ""            // The writer omits the host-owned style field.
 					out = d
+				} else {
+					t.Fatal("unexpected typed model boundary", m.Stage)
 				}
 				if m.Stage == "structure" {
 					value := out.(Structure)
@@ -81,6 +98,9 @@ func TestOriginalFixedDialogueBypassesProse(t *testing.T) {
 			}
 			if strings.Contains(result.Artifact.Prompt, "{{D") || strings.Contains(result.Artifact.Prompt, "{{CAM}}") {
 				t.Fatal("unexpanded slot")
+			}
+			if writerCalls != 1 || reviewCalls != 1 {
+				t.Fatal("writer and independent critic boundaries were not both exercised", writerCalls, reviewCalls)
 			}
 		})
 	}

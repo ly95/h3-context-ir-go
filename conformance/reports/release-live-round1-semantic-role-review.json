@@ -1,0 +1,839 @@
+{
+  "schema": "contextir-release-semantic-role-review/v1",
+  "created_at": "2026-10-21T05:40:58.896946+00:00",
+  "review_state": "complete",
+  "run_directory": "/Users/linyang/Code/contextir/conformance/reports/release-live-round1",
+  "binary_sha256": "d607b4cd6a85c91e0b8fe432311275b5303d28604becea87a122a40a67f18a36",
+  "input_sha256": "482ea8702ca7c9f5cffd44939f67654f7380b5bd5587b3e06c3d33cb134f3ec0",
+  "review_scope": "Independent manual review of final Document, Artifact prompt and manifest against explicit typed role plus supplied source observations. This is not actual-media perception or generated-video quality verification.",
+  "cases": [
+    {
+      "case_id": "declared-role-subject",
+      "role": "subject",
+      "status": "failed",
+      "requirement": "Reference source identifies the generated subject; the showroom must not be copied merely from a subject-only role.",
+      "reason": "Source role is structurally bound correctly, but final narrative imports a source property outside the declared role. Runner structural checks passed; independent semantic review fails.",
+      "evidence": [
+        {
+          "path": "declared-role-subject/op-00-compile/result.json",
+          "sha256": "829e2d0b39b44001c328c97e50342da16e3dddd54cba2bd0e4c3cf8729040e08"
+        },
+        {
+          "path": "declared-role-subject/op-00-compile/document.json",
+          "sha256": "709984cbd566c5d5ed9f2bdfa0cb24a532150ec2396634cc05e9a0c012588b58"
+        },
+        {
+          "path": "declared-role-subject/op-00-compile/artifact.json",
+          "sha256": "dda221b0c4b17ab0856dc07ff8f463c3f3b1fda4122d2dc1908b9512a82db82f"
+        },
+        {
+          "path": "declared-role-subject/op-00-compile/operation.json",
+          "sha256": "12b604eb47a0c006f96f35de43d8a27e0fa5af499da8781a5227c85c9cdd82c6"
+        }
+      ],
+      "checks": [
+        {
+          "check": "declared_subject_identity_preserved",
+          "status": "passed",
+          "evidence": "/subjects/0 is observed black sports car with carbon fibre body sourced asset-1/visual identity; manifest <Picture 1> correctly binds its identity."
+        },
+        {
+          "check": "source_environment_not_imported",
+          "status": "failed",
+          "evidence": "/shots/1/description/0 says \"The shot cuts to a medium wide view of the empty showroom floor.\" This matches card.environment=\"an empty showroom floor\" although the only declared source role is subject and user intent specifies no showroom."
+        },
+        {
+          "check": "source_environment_provenance_separated",
+          "status": "failed",
+          "evidence": "/claims/1 origin=observed text=\"a black sports car on a showroom floor\" propagates the whole scene alongside the authorized car identity; final prompt reuses showroom in summary and detailed description."
+        },
+        {
+          "check": "unauthorized_speech_absent",
+          "status": "passed",
+          "evidence": "No dialogue or speakers; compiler-no-dialogue constraint retained; engine/tyre audio is newly generated."
+        }
+      ]
+    },
+    {
+      "case_id": "declared-role-environment",
+      "role": "environment",
+      "status": "failed",
+      "requirement": "Reference source supplies the showroom environment; source car identity is not independently licensed as a subject reference.",
+      "reason": "Source role is structurally bound correctly, but final narrative imports a source property outside the declared role. Runner structural checks passed; independent semantic review fails.",
+      "evidence": [
+        {
+          "path": "declared-role-environment/op-00-compile/result.json",
+          "sha256": "cd161355d91b61880691d8e135c06787fab190cea7ea6b2249cfe91344068598"
+        },
+        {
+          "path": "declared-role-environment/op-00-compile/document.json",
+          "sha256": "acd9fd369e77d07f3f1cd3c252185d42928b8beb8acb926710003b1dfefd41a5"
+        },
+        {
+          "path": "declared-role-environment/op-00-compile/artifact.json",
+          "sha256": "eb0a99b80e6d1566162dc7d7904f0ab7f196500c0fad50d6f7ab722316b19a0b"
+        },
+        {
+          "path": "declared-role-environment/op-00-compile/operation.json",
+          "sha256": "0fa04181e4b8785804c33f1553d939f2a199b5b2ef97e9bbee3f691aaaeaa6af"
+        }
+      ],
+      "checks": [
+        {
+          "check": "declared_environment_preserved",
+          "status": "passed",
+          "evidence": "/subjects/0 kind=environment, descriptor=\"an empty showroom floor\", sources[0].role=scene; prompt and manifest bind <Picture 1> to the showroom."
+        },
+        {
+          "check": "source_actor_identity_not_imported",
+          "status": "failed",
+          "evidence": "/shots/0/description/1 calls the target \"the black sports car\" and describes \"carbon-fibre weave\"; /shots/1/description[0,2] repeats black sports car/carbon-fibre panels. These stable target identity properties match card.subjects[0] although declared attachment role is environment and intent only asks for a car moving out of darkness."
+        },
+        {
+          "check": "actor_provenance_separated",
+          "status": "failed",
+          "evidence": "The target car is free prose rather than a canonical generated subject, so source-specific carbon-fibre identity is imported without a subject identity binding or a creative claim distinguishing it."
+        },
+        {
+          "check": "unauthorized_speech_absent",
+          "status": "passed",
+          "evidence": "No dialogue or speakers; no_dialogue constraint retained; music=N/A."
+        }
+      ]
+    },
+    {
+      "case_id": "declared-role-style",
+      "role": "style",
+      "status": "passed",
+      "requirement": "Reference source supplies visual presentation; source car identity and showroom location are not independently licensed by the style role.",
+      "reason": "Final Document, prompt and manifest preserve the declared property role without importing source identity, scenery or audio signal; source-observation limits remain explicit.",
+      "evidence": [
+        {
+          "path": "declared-role-style/op-00-compile/result.json",
+          "sha256": "fcde13534f54b8a840ee875aecfacb3b1e58666f9e9045d75dadaae9de88add1"
+        },
+        {
+          "path": "declared-role-style/op-00-compile/document.json",
+          "sha256": "c406019943de4cba42797ca93fecd50e7066f73851e3a5ae6b50bf5e4aebc9d7"
+        },
+        {
+          "path": "declared-role-style/op-00-compile/artifact.json",
+          "sha256": "15ee1dd801a29375844879c622885361afc374d76d8ac0e49c4a271f264f5ea1"
+        },
+        {
+          "path": "declared-role-style/op-00-compile/operation.json",
+          "sha256": "09e4900be16b413d0fcfa9a0f59ea20c7c2ffc0eb0fedab3b6e462bf3bc55c17"
+        }
+      ],
+      "checks": [
+        {
+          "check": "declared_role_preserved",
+          "status": "passed",
+          "evidence": "Reference asset-1 roles=[style], weak_reference, and final live-action/cinematic presentation follows the supplied style card."
+        },
+        {
+          "check": "source_binding_published",
+          "status": "passed",
+          "evidence": "Manifest <Picture 1> ref_image_1 target_uses.style covers both shots; prompt limits it to visual style and composition."
+        },
+        {
+          "check": "source_identity_scene_not_imported",
+          "status": "passed",
+          "evidence": "Generated car has no source identity binding; source-specific carbon-fibre and showroom are absent from target narrative, which keeps background undefined. Target dark/low-slung appearance is recorded as a creative claim."
+        },
+        {
+          "check": "unauthorized_speech_absent",
+          "status": "passed",
+          "evidence": "No dialogue or speakers; no_dialogue constraint; generated ambient score and mechanical sounds do not copy source audio."
+        }
+      ]
+    },
+    {
+      "case_id": "declared-role-structure",
+      "role": "structure",
+      "status": "passed",
+      "requirement": "Video supplies temporal/motion/composition guidance without independently importing source identity, scenery, or its audio track.",
+      "reason": "Final Document, prompt and manifest preserve the declared property role without importing source identity, scenery or audio signal; source-observation limits remain explicit.",
+      "evidence": [
+        {
+          "path": "declared-role-structure/op-00-compile/result.json",
+          "sha256": "656bae5e1d7ecced51a1a3c1b1af5482122b7cf95c5a6cabd5e2fafa2a3d8d82"
+        },
+        {
+          "path": "declared-role-structure/op-00-compile/document.json",
+          "sha256": "b66d8318861cf124a9176c127b84b9875a4ca4da97f170d29d0e01de16c140ff"
+        },
+        {
+          "path": "declared-role-structure/op-00-compile/artifact.json",
+          "sha256": "386b732838db83d715f74e2ceb78e3cceb142d9a2f98270f0c1ba7d9c4af320d"
+        },
+        {
+          "path": "declared-role-structure/op-00-compile/operation.json",
+          "sha256": "0edf077c889f2ca113dbbd2f754530c6f8f660ed56a840a457f81f98ad643866"
+        }
+      ],
+      "checks": [
+        {
+          "check": "declared_role_preserved",
+          "status": "passed",
+          "evidence": "Reference asset-1 video/visual roles=[structure], retention=weak_reference, shot_ids=[shot-1,shot-2]; prompt limits use to camera/cutting structure."
+        },
+        {
+          "check": "source_binding_published",
+          "status": "passed",
+          "evidence": "Manifest <Video 1> ref_video_1 target_uses.structure covers 0–2600ms and 2600–5000ms. Source audio is not a manifest input."
+        },
+        {
+          "check": "source_identity_scene_not_imported",
+          "status": "passed",
+          "evidence": "Target subjects are user car and darkness with no observed source identities; tunnel setting and source left-to-right car action are not copied."
+        },
+        {
+          "check": "unauthorized_speech_or_source_audio_absent",
+          "status": "passed",
+          "evidence": "No dialogue/speakers; generated room tone/engine/tyres/score are marked creative rather than copied source signal."
+        },
+        {
+          "check": "specific_source_camera_match",
+          "status": "not_evaluable",
+          "evidence": "Supplied partial video card records car motion and frames_seen=3, but no concrete camera/cut trajectory; exact source camera matching is not established by this fixture."
+        }
+      ]
+    },
+    {
+      "case_id": "declared-role-storyboard",
+      "role": "storyboard",
+      "status": "passed",
+      "requirement": "Image supplies shot/composition guidance without independently importing subject identity, scenery, or speech.",
+      "reason": "Published Document, prompt and manifest preserve the declared role without promoting source contents or adding unauthorized speech; scope limits remain explicit.",
+      "evidence": [
+        {
+          "path": "declared-role-storyboard/op-00-compile/result.json",
+          "sha256": "6b07388f39509387f36b092f31f21a19ac46332b585db76c4f5a759630f397ed"
+        },
+        {
+          "path": "declared-role-storyboard/op-00-compile/document.json",
+          "sha256": "fe986840876add1c6751e759c8d6e0b85614d16beafd073d104d06e2393ad04e"
+        },
+        {
+          "path": "declared-role-storyboard/op-00-compile/artifact.json",
+          "sha256": "f33b8abf57262b45163c598bc04e5445453288de9af3df88ac367cec31a1c971"
+        },
+        {
+          "path": "declared-role-storyboard/op-00-compile/operation.json",
+          "sha256": "fb94ea0f8eb442dda0410a6060d415dea797ddc3ef563292c16e9ce96c3539a5"
+        }
+      ],
+      "checks": [
+        {
+          "check": "declared_role_preserved",
+          "status": "passed",
+          "evidence": "/references/0: roles=[storyboard], retention=weak_reference, shot_ids=[shot-1]; definition limits use to viewpoint/placement/order."
+        },
+        {
+          "check": "source_binding_published",
+          "status": "passed",
+          "evidence": "Artifact manifest.media[0]: <Picture 1>, asset-1/visual, ref_image_1, target_uses.storyboard; prompt explicitly identifies the reference as shot-planning guidance."
+        },
+        {
+          "check": "source_actor_not_imported",
+          "status": "passed",
+          "evidence": "Target car is a user-origin subject without reference sources. Carbon-fibre identity from the source card is not imported as a sourced actor."
+        },
+        {
+          "check": "source_scene_not_imported",
+          "status": "passed",
+          "evidence": "Source card showroom is replaced by an explicitly creative concrete bay/loading area; no environment/scene binding from storyboard image."
+        },
+        {
+          "check": "unauthorized_speech_absent",
+          "status": "passed",
+          "evidence": "No Document dialogue; no_dialogue constraint; final audio consists of generated engine/tyre/ambience and music=N/A."
+        },
+        {
+          "check": "specific_storyboard_framing",
+          "status": "not_evaluable",
+          "evidence": "Supplied source card composition is unknown and contains no panel/order/viewpoint facts. Specific visual matching cannot be judged; final IR preserves the intended guidance binding without claiming observed viewpoint."
+        }
+      ]
+    },
+    {
+      "case_id": "declared-role-frame_anchor_first",
+      "role": "frame_anchor_first",
+      "status": "passed",
+      "requirement": "First-frame source must be bound as an exact starting anchor at zero; its pose/framing may be retained through that license.",
+      "reason": "The actual frame role preserves the entire image at its exact target anchor, including subject and background; this is an authorized full-frame responsibility.",
+      "evidence": [
+        {
+          "path": "declared-role-frame_anchor_first/op-00-compile/result.json",
+          "sha256": "82e73bee15ac98823c8a902b7e65b84b523601509fe6c157a12bc6670f7d8c17"
+        },
+        {
+          "path": "declared-role-frame_anchor_first/op-00-compile/document.json",
+          "sha256": "819d329b9e721880b79c314d0a9a37efae0d0a7b51990e91349f2a530126959d"
+        },
+        {
+          "path": "declared-role-frame_anchor_first/op-00-compile/artifact.json",
+          "sha256": "20cc72c507e901145267cc517a3fe1f50b0490f88dc0d6eeda457b5be4b4997f"
+        },
+        {
+          "path": "declared-role-frame_anchor_first/op-00-compile/operation.json",
+          "sha256": "cb28b24e215dff564b5336656fbdea5eea789aac99ad06259f9ad2c1c99224f6"
+        }
+      ],
+      "checks": [
+        {
+          "check": "exact_anchor_binding",
+          "status": "passed",
+          "evidence": "Document mode=i2va; reference asset-1 roles=[first_frame], retention=fully_preserved, anchor_ms=0; manifest socket=first_frame carries the same anchor."
+        },
+        {
+          "check": "whole_frame_contract",
+          "status": "passed",
+          "evidence": "Reference description/retention preserve full layout, panels, labels, background, placement and lighting without extraction or redraw. Prompt identifies exact 0.00s opening or 5.00s final image alignment."
+        },
+        {
+          "check": "source_identity_scene_authorized",
+          "status": "passed",
+          "evidence": "Black carbon-fibre car and showroom are permitted here because frame anchor licenses full image content, unlike the restricted subject/environment role cases."
+        },
+        {
+          "check": "unauthorized_speech_absent",
+          "status": "passed",
+          "evidence": "No dialogue/speaker, no_dialogue constraint, music=N/A; newly generated engine/tyres permitted."
+        },
+        {
+          "check": "actual_pixel_pose_match",
+          "status": "not_evaluable",
+          "evidence": "Supplied card has composition=unknown and no actual reference pixels; whole-image binding is verified, but model description of precise placement/light cannot establish equality to unseen pixels."
+        }
+      ]
+    },
+    {
+      "case_id": "declared-role-frame_anchor_last",
+      "role": "frame_anchor_last",
+      "status": "passed",
+      "requirement": "Last-frame source must be bound as an exact ending anchor at the generated end; its pose/framing may be retained through that license.",
+      "reason": "The actual frame role preserves the entire image at its exact target anchor, including subject and background; this is an authorized full-frame responsibility.",
+      "evidence": [
+        {
+          "path": "declared-role-frame_anchor_last/op-00-compile/result.json",
+          "sha256": "edda8a32eeb51607aa49ce38d59f592b96f7aecab1879a0ded85b996168971cd"
+        },
+        {
+          "path": "declared-role-frame_anchor_last/op-00-compile/document.json",
+          "sha256": "005a62cf866f207105031ea877a0712c79f341abb51eee2cd279d1ec0bf5da12"
+        },
+        {
+          "path": "declared-role-frame_anchor_last/op-00-compile/artifact.json",
+          "sha256": "b8659c73aea249e86b9b9d9c0f4969d782ba35abe710778e7a926563d74b625f"
+        },
+        {
+          "path": "declared-role-frame_anchor_last/op-00-compile/operation.json",
+          "sha256": "da11c3764aab4a057d503307ae3501e81ff6d8ab63fc88b198807ccd659f56bb"
+        }
+      ],
+      "checks": [
+        {
+          "check": "exact_anchor_binding",
+          "status": "passed",
+          "evidence": "Document mode=l2va; reference asset-1 roles=[last_frame], retention=fully_preserved, anchor_ms=5000; manifest socket=last_frame carries the same anchor."
+        },
+        {
+          "check": "whole_frame_contract",
+          "status": "passed",
+          "evidence": "Reference description/retention preserve full layout, panels, labels, background, placement and lighting without extraction or redraw. Prompt identifies exact 0.00s opening or 5.00s final image alignment."
+        },
+        {
+          "check": "source_identity_scene_authorized",
+          "status": "passed",
+          "evidence": "Black carbon-fibre car and showroom are permitted here because frame anchor licenses full image content, unlike the restricted subject/environment role cases."
+        },
+        {
+          "check": "unauthorized_speech_absent",
+          "status": "passed",
+          "evidence": "No dialogue/speaker, no_dialogue constraint, music=N/A; newly generated engine/tyres permitted."
+        },
+        {
+          "check": "actual_pixel_pose_match",
+          "status": "not_evaluable",
+          "evidence": "Supplied card has composition=unknown and no actual reference pixels; whole-image binding is verified, but model description of precise placement/light cannot establish equality to unseen pixels."
+        }
+      ]
+    },
+    {
+      "case_id": "declared-role-edit_source",
+      "role": "edit_source",
+      "status": "passed",
+      "requirement": "Source video is the explicitly edited base; source visual continuity may be retained, but source audio is not automatically copied.",
+      "reason": "Source clip remains the edited visual base, preserving its known car/tunnel and requested motion, without copying source audio or adding speech.",
+      "evidence": [
+        {
+          "path": "declared-role-edit_source/op-00-compile/result.json",
+          "sha256": "d4893c758e3dff2b5cc7e597ebf040da192469503ed9d1b5c09e525ac401f2d0"
+        },
+        {
+          "path": "declared-role-edit_source/op-00-compile/document.json",
+          "sha256": "2fd9586ef32816c2d85d60b8de606e00921967c4e0adb077141282e0d87244d1"
+        },
+        {
+          "path": "declared-role-edit_source/op-00-compile/artifact.json",
+          "sha256": "f7cc191b8130eca9c0857ad211edb5541bfed089817f31986400a376a555aac9"
+        },
+        {
+          "path": "declared-role-edit_source/op-00-compile/operation.json",
+          "sha256": "754b2053f5eb5f0b63c1cc25ed90e0e1025e621a22691720a9524d81602ae029"
+        }
+      ],
+      "checks": [
+        {
+          "check": "base_video_role",
+          "status": "passed",
+          "evidence": "Canonical subject and reference both source asset-1/visual edit_source; final prompt explicitly describes an edited version of <Video 1>."
+        },
+        {
+          "check": "known_scene_and_action_preserved",
+          "status": "passed",
+          "evidence": "Final tunnel/car match supplied source summary, with the authorized car movement out of darkness. Added headlights, haze, ambience and score are separated in a creative claim."
+        },
+        {
+          "check": "actual_binding",
+          "status": "passed",
+          "evidence": "Manifest <Video 1> ref_video_1 edit_source fully_preserved applies both shot intervals; no unrelated reference/actor is substituted."
+        },
+        {
+          "check": "source_audio_or_speech_not_imported",
+          "status": "passed",
+          "evidence": "Source manifest only has visual track; generated audio is described as creative, no dialogue/speakers, no_dialogue constraint retained."
+        },
+        {
+          "check": "unseen_video_preservation",
+          "status": "not_evaluable",
+          "evidence": "Partial source card has three observed frames and no exact camera/timeline; exact preservation of unseen content and original cuts cannot be independently established."
+        }
+      ]
+    },
+    {
+      "case_id": "declared-role-continuation_source",
+      "role": "continuation_source",
+      "status": "failed",
+      "requirement": "Source video is the continuation base; continuation must follow source motion/scene rather than reinterpret the clip as mere style.",
+      "reason": "Compile failed after both actual writer attempts; no authoritative final Document/Artifact was published. This is a real model-contract failure, not a semantic pass.",
+      "evidence": [
+        {
+          "path": "declared-role-continuation_source/op-00-compile/result.json",
+          "sha256": "312ee832ee5951fa03aebb9f545796182075bda8a5f3a30aebe1040b3b021536"
+        },
+        {
+          "path": "declared-role-continuation_source/op-00-compile/operation.json",
+          "sha256": "6f7e34e9a200ad0032bc4225f0ad14d41911e314aa5b87798c772ff80cbc653c"
+        },
+        {
+          "path": "declared-role-continuation_source/op-00-compile/call-007-request.json",
+          "sha256": "bb7cfc5bf54e3b60ed47920e83f291cf0e229688e87e565fab3f288a53a11a0e"
+        },
+        {
+          "path": "declared-role-continuation_source/op-00-compile/call-007-output.json",
+          "sha256": "bef6fae3a404de1c3d8871fae3bd43c8da37b78d80050c2bd4f09b7784d75a68"
+        },
+        {
+          "path": "declared-role-continuation_source/op-00-compile/call-008-request.json",
+          "sha256": "f41757302e255cd3512137eb216438b7e3f410f88fd4ea757026cd0c00c35f00"
+        },
+        {
+          "path": "declared-role-continuation_source/op-00-compile/call-008-output.json",
+          "sha256": "ecff7f5d857c3e5e757a8f8127bee2706873b73d0da73225c252339c4ac57817"
+        }
+      ],
+      "checks": [
+        {
+          "check": "compiled_final_artifact",
+          "status": "failed",
+          "evidence": "operation.json: final invalid_model_output at plan, h3.H1-unicode-hazard. First writer attempt was rejected for shots.transition outside the closed cut vocabulary; four U+2014 em dashes in that draft are allowed. Its repair contains three U+2019 curly apostrophes and fails H1 before final publication."
+        },
+        {
+          "check": "final_role_identity_scene_audio_semantics",
+          "status": "not_evaluable",
+          "evidence": "Final Document/Artifact is absent; rejected model candidates must not be treated as accepted output."
+        }
+      ]
+    },
+    {
+      "case_id": "declared-role-voice_timbre",
+      "role": "voice_timbre",
+      "status": "passed",
+      "requirement": "Audio supplies only voice character, not transcript or new dialogue; a speech-free car request must not invent speech solely to use the asset.",
+      "reason": "Dormant voice-property reference is preserved without creating any unauthorized utterance; actual active voice likeness cannot be evaluated by this speech-free fixture.",
+      "evidence": [
+        {
+          "path": "declared-role-voice_timbre/op-00-compile/result.json",
+          "sha256": "84d5b25899c1d22302ec0e2e3f144b4e31f2c172b5c77b40a05377ebcc88f291"
+        },
+        {
+          "path": "declared-role-voice_timbre/op-00-compile/document.json",
+          "sha256": "568e12c910fbfef2e42f4a2410901fb521a3d422a9be6563dc56e4e26a342fbc"
+        },
+        {
+          "path": "declared-role-voice_timbre/op-00-compile/artifact.json",
+          "sha256": "ce989358bbead1cb4582bc34d2f360d4e95c62d78a2fb4244f0bda6a613513f6"
+        },
+        {
+          "path": "declared-role-voice_timbre/op-00-compile/operation.json",
+          "sha256": "d8d8f5e352757a3bbb1185a8b1bf1520a33691df4eeb15a4fa542cdec9aa05e0"
+        }
+      ],
+      "checks": [
+        {
+          "check": "declared_voice_property_preserved",
+          "status": "passed",
+          "evidence": "Reference asset-1/audio roles=[voice], retention=reference, speaker_id=voice-asset-1; its definition explicitly limits use to timbre/delivery and excludes source words/signal."
+        },
+        {
+          "check": "no_utterance_invented",
+          "status": "passed",
+          "evidence": "Document has no dialogue. Speaker metadata is dormant and manifest.speakers is empty; no spoken or sung words/performance are present. no_dialogue constraint retained."
+        },
+        {
+          "check": "no_signal_copy",
+          "status": "passed",
+          "evidence": "Soundscape says newly generated engine rumble; reference retention excludes source signal; music=N/A."
+        },
+        {
+          "check": "active_voice_likeness",
+          "status": "not_evaluable",
+          "evidence": "No speech was requested or generated, and the source card describes engine rumble rather than an actual voice. This fixture verifies dormant-voice safety, not successful voice cloning or actual timbre reproduction."
+        }
+      ]
+    },
+    {
+      "case_id": "declared-role-bgm",
+      "role": "bgm",
+      "status": "passed",
+      "requirement": "Audio is the declared background track reference; it must not become dialogue, voice character or visual identity.",
+      "reason": "Declared BGM signal-copy relationship is preserved in actual prompt, music field and manifest, without adding speech or copying unrelated visual content.",
+      "evidence": [
+        {
+          "path": "declared-role-bgm/op-00-compile/result.json",
+          "sha256": "db672056645f0532ea80891040ecc66c9924ada80f63267190e45fa5ab156f90"
+        },
+        {
+          "path": "declared-role-bgm/op-00-compile/document.json",
+          "sha256": "356d0fc0f04e464c7d020eeaa16a6e506acef3cb4ee97512e87371d1471307ed"
+        },
+        {
+          "path": "declared-role-bgm/op-00-compile/artifact.json",
+          "sha256": "9ef88c04acddca08442cf6f786591ac77c4b04913968d56ef86dd48c8875a6c8"
+        },
+        {
+          "path": "declared-role-bgm/op-00-compile/operation.json",
+          "sha256": "434be571bfca72450992e4cb2b14603d07c7c1c4b70bba96d0c64076a99cafb2"
+        }
+      ],
+      "checks": [
+        {
+          "check": "declared_bgm_copies_signal",
+          "status": "passed",
+          "evidence": "Reference asset-1/audio roles=[music], retention=partially_copy. Final music explicitly reuses supplied engine rumble as the music layer mixed beneath the scene; it is not downgraded to style-only."
+        },
+        {
+          "check": "actual_binding_and_shot_application",
+          "status": "passed",
+          "evidence": "Manifest <Audio 1> ref_audio_1 has target_uses music/partially_copy for shot-1 0–5000ms; prompt explicitly says the source signal is copied in part or combined with other audio."
+        },
+        {
+          "check": "target_visuals_separated",
+          "status": "passed",
+          "evidence": "Generic generated car/industrial yard details are marked creative and have no visual source identity binding."
+        },
+        {
+          "check": "no_new_speech",
+          "status": "passed",
+          "evidence": "No dialogue/speakers, no_dialogue constraint retained; additional night ambience is allowed by partially_copy rather than an exclusive fully_copy contract."
+        },
+        {
+          "check": "waveform_mix_and_duration",
+          "status": "not_evaluable",
+          "evidence": "Only partial typed audio observation is provided; actual 3-second waveform selection/mixing across a 5-second target and inference output are outside IR-text acceptance."
+        }
+      ]
+    },
+    {
+      "case_id": "declared-role-music_style",
+      "role": "music_style",
+      "status": "passed",
+      "requirement": "Audio supplies music-style characteristics; no permission to copy exact source audio or invent dialogue follows.",
+      "reason": "Published Document, prompt and manifest preserve the declared role without promoting source contents or adding unauthorized speech; scope limits remain explicit.",
+      "evidence": [
+        {
+          "path": "declared-role-music_style/op-00-compile/result.json",
+          "sha256": "3af518bdfa7a16501782aaf468accc766ffc6f82c746f56efad22eff558e3656"
+        },
+        {
+          "path": "declared-role-music_style/op-00-compile/document.json",
+          "sha256": "63c36987d472b15659bb13bd9e8d34d02c5ac0d251ae2f0b9507c27d266503c4"
+        },
+        {
+          "path": "declared-role-music_style/op-00-compile/artifact.json",
+          "sha256": "a2ed8552bd70a3c4d0454c112e3d7c846cf0106bee6b28fa2825c584bdd7c5e6"
+        },
+        {
+          "path": "declared-role-music_style/op-00-compile/operation.json",
+          "sha256": "b90e2827565cfbf9dac7d9d50ae748a3032228ec5a88cf2b588687a83dd232b5"
+        }
+      ],
+      "checks": [
+        {
+          "check": "declared_role_preserved",
+          "status": "passed",
+          "evidence": "/references/0: roles=[music_style], retention=reference; final music describes a newly generated sparse score without copying the source signal."
+        },
+        {
+          "check": "source_binding_published",
+          "status": "passed",
+          "evidence": "Artifact manifest.media[0]: <Audio 1>, asset-1/audio, ref_audio_1, target_uses.music_style, shot-1 0–5000ms; prompt explicitly applies the property reference in the shot."
+        },
+        {
+          "check": "source_identity_scene_not_imported",
+          "status": "passed",
+          "evidence": "Only generated car subject car (origin=creative, no source identity); no source visual assets or scene are introduced."
+        },
+        {
+          "check": "unauthorized_speech_absent",
+          "status": "passed",
+          "evidence": "Document has no dialogue; no_dialogue constraint explicitly forbids spoken/sung lines; soundscape specifies no voices/chatter."
+        },
+        {
+          "check": "actual_source_perception",
+          "status": "not_evaluable",
+          "evidence": "Audio is a supplied partial typed card, not an actual audio API observation; no claim of listening or generated-video quality."
+        }
+      ]
+    },
+    {
+      "case_id": "declared-role-beat_reference",
+      "role": "beat_reference",
+      "status": "passed",
+      "requirement": "Audio supplies timing/rhythm guidance; no permission to copy exact source audio or invent dialogue follows.",
+      "reason": "Final IR and prompt preserve the declared role, actual source bindings and authorized target content; observation limits remain explicit.",
+      "evidence": [
+        {
+          "path": "declared-role-beat_reference/op-00-compile/result.json",
+          "sha256": "de0e03dc676d374365248204b947b440a8842a692f24078bfe2b8bff28536b3a"
+        },
+        {
+          "path": "declared-role-beat_reference/op-00-compile/document.json",
+          "sha256": "80474ffc93e1fc666f99bcce496867f48b1c8d46bfba16440572b86564909868"
+        },
+        {
+          "path": "declared-role-beat_reference/op-00-compile/artifact.json",
+          "sha256": "c0e164d032d92970b149aef1e64cd03eb8369a187c6d3c2865d13900523550df"
+        },
+        {
+          "path": "declared-role-beat_reference/op-00-compile/operation.json",
+          "sha256": "6e4ba5e1d8ccb36ca7d4f17dde88b2fb0dc24bf87d9e6575cd0610da87a45940"
+        }
+      ],
+      "checks": [
+        {
+          "check": "role_and_binding",
+          "status": "passed",
+          "evidence": "Reference asset-1/audio roles=[beat_reference], retention=reference; manifest <Audio 1> and prompt explicitly apply timing/rhythm guidance to shot-1."
+        },
+        {
+          "check": "source_signal_not_copied",
+          "status": "passed",
+          "evidence": "Soundscape and shot sound events specify newly generated low engine rumble; retention explicitly rejects source-signal copying."
+        },
+        {
+          "check": "unauthorized_speech_absent",
+          "status": "passed",
+          "evidence": "No dialogue/speakers; no_dialogue constraint retained; music=N/A."
+        },
+        {
+          "check": "actual_beat_alignment",
+          "status": "not_evaluable",
+          "evidence": "Supplied partial audio card only says low engine rumble and has no beat/onset timestamps. The timed actions exist but their alignment to an actual waveform cannot be judged from this fixture."
+        }
+      ]
+    },
+    {
+      "case_id": "declared-role-sfx",
+      "role": "sfx",
+      "status": "passed",
+      "requirement": "Audio supplies sound-effect reference; no permission to reinterpret it as dialogue or musical identity follows.",
+      "reason": "Sound-texture role is used in actual shot sound events as newly generated rumble; source signal is not copied and no speech is introduced.",
+      "evidence": [
+        {
+          "path": "declared-role-sfx/op-00-compile/result.json",
+          "sha256": "dbf925221d13a53926cb727f70ff6348823b9548f9acac84110dfacc4e848047"
+        },
+        {
+          "path": "declared-role-sfx/op-00-compile/document.json",
+          "sha256": "cf7a5c7f13427e3955db82ff218b032f8b6b177c5e83804f7846255b4069313b"
+        },
+        {
+          "path": "declared-role-sfx/op-00-compile/artifact.json",
+          "sha256": "334af4e7295e0b577924967ed0683577a8654bf555c50bf8377fe27d56c4c5e1"
+        },
+        {
+          "path": "declared-role-sfx/op-00-compile/operation.json",
+          "sha256": "44a4cd8ebd71f8194fd1414a9be2903426074c855a9d73c9a31fa3c494edf9d8"
+        }
+      ],
+      "checks": [
+        {
+          "check": "role_and_binding",
+          "status": "passed",
+          "evidence": "Reference asset-1/audio roles=[sfx], retention=reference; manifest <Audio 1> ref_audio_1 covers both shots."
+        },
+        {
+          "check": "actual_shot_application",
+          "status": "passed",
+          "evidence": "Shot sound events explicitly refer to reference-asset-1-1 and newly generated engine rumble/tyre sounds without reusing its signal; final soundscape repeats this relationship."
+        },
+        {
+          "check": "unauthorized_speech_absent",
+          "status": "passed",
+          "evidence": "No dialogue/speakers; no_dialogue constraint retained; music=N/A."
+        },
+        {
+          "check": "actual_audio_perception",
+          "status": "not_evaluable",
+          "evidence": "Source characterization is a supplied partial typed card, not an actual audio model inspection."
+        }
+      ]
+    },
+    {
+      "case_id": "declared-role-placed_subject",
+      "role": "placed_subject",
+      "status": "passed",
+      "requirement": "Incoming driver in red must be added using asset-1 while the edited base asset-2 retains its own driver, car and tunnel; placement must not silently replace an existing identity.",
+      "reason": "Final IR and prompt preserve the declared role, actual source bindings and authorized target content; observation limits remain explicit.",
+      "evidence": [
+        {
+          "path": "declared-role-placed_subject/op-00-compile/result.json",
+          "sha256": "e14224b893871c3139a8477c0cf4be8ce3795628ce27e6fcc708fc23f972927c"
+        },
+        {
+          "path": "declared-role-placed_subject/op-00-compile/document.json",
+          "sha256": "26b9643a6fc93d4113933cbbdc3d964eef85a40bf132c8678db1f057a0749ce8"
+        },
+        {
+          "path": "declared-role-placed_subject/op-00-compile/artifact.json",
+          "sha256": "d96cc0bb3baf0921ce0b1f3d84398682a77a618bb583d2076969554cebdf278f"
+        },
+        {
+          "path": "declared-role-placed_subject/op-00-compile/operation.json",
+          "sha256": "2919a0c1dfeae20dd3eaed93d2d9e8cee26812ac831b3db33cbbe3f3b7536099"
+        }
+      ],
+      "checks": [
+        {
+          "check": "incoming_identity_added",
+          "status": "passed",
+          "evidence": "Canonical subject-1 is driver in red/red jacket from asset-1/visual placed_subject, actually seated at the wheel in final shot and prompt."
+        },
+        {
+          "check": "source_actors_retained",
+          "status": "passed",
+          "evidence": "Subject-2 original driver/grey overall and subject-3 black carbon-fibre car remain sourced to asset-2/edit_source; original driver still crosses left-to-right."
+        },
+        {
+          "check": "source_scene_retained_without_picture_background",
+          "status": "passed",
+          "evidence": "Final shot keeps concrete road tunnel and sodium strip lights from edit_source; incoming picture showroom floor is not imported."
+        },
+        {
+          "check": "actual_binding_published",
+          "status": "passed",
+          "evidence": "Manifest binds <Picture 1> placed_subject and <Video 1> edit_source to shot-1; prompt says picture is placed into video and preserves base scene/camera/timing."
+        },
+        {
+          "check": "unauthorized_source_audio_or_speech_absent",
+          "status": "passed",
+          "evidence": "No source audio manifest input, dialogue or speakers; generated engine/tyre/footstep sound and music=N/A; no_dialogue constraint retained."
+        },
+        {
+          "check": "unseen_source_details",
+          "status": "not_evaluable",
+          "evidence": "Video observation is partial with frames_seen=3; full frame-by-frame camera/timing preservation and actual source media content are not established."
+        }
+      ]
+    },
+    {
+      "case_id": "declared-role-replacement_subject",
+      "role": "replacement_subject",
+      "status": "passed",
+      "requirement": "Incoming driver in red must replace the explicitly targeted original driver, retaining the base car/tunnel and inherited motion; the replacement must not duplicate or preserve the replaced driver identity.",
+      "reason": "Final target uses the incoming red-jacket driver in the original driver action; removed original identity is transfer-only, while car and tunnel remain intact.",
+      "evidence": [
+        {
+          "path": "declared-role-replacement_subject/op-00-compile/result.json",
+          "sha256": "973c0101bf10e9b4b91cdb7e3953480218cb6b1be9d0fdb2f77869ec1affedf3"
+        },
+        {
+          "path": "declared-role-replacement_subject/op-00-compile/document.json",
+          "sha256": "629433d3c4ac4468507c8f44f3f8d02bb1f0aaeb1ff1390ec8743143878ee373"
+        },
+        {
+          "path": "declared-role-replacement_subject/op-00-compile/artifact.json",
+          "sha256": "573a28548c3254500da48e59e11768df23ff8686c89dc6b74f9519e06adf25f5"
+        },
+        {
+          "path": "declared-role-replacement_subject/op-00-compile/operation.json",
+          "sha256": "1f3f30f21d418681cdfeb902602f9f4b2f19d565e42a0b981de60dcfb1d42cdc"
+        }
+      ],
+      "checks": [
+        {
+          "check": "explicit_replacement_target",
+          "status": "passed",
+          "evidence": "subject-1 asset-1 replacement_subject is driver in red/red jacket; subject-2 original driver is attribute_transfer with taken_over_by=subject-1 and no grey-overall appearance."
+        },
+        {
+          "check": "motion_transferred_without_actor_duplication",
+          "status": "passed",
+          "evidence": "Shot-1/2 depict subject-1 crossing left-to-right and clearing right edge. Original subject-2 is never a target narrative actor; prompt explicitly states its retention describes transferred behavior, not a separate actor."
+        },
+        {
+          "check": "base_scene_and_object_preserved",
+          "status": "passed",
+          "evidence": "Subject-3 black carbon-fibre car remains sourced to asset-2/edit_source; final tunnel/sodium strip-light setting is preserved and incoming image showroom is absent."
+        },
+        {
+          "check": "manifest_binding",
+          "status": "passed",
+          "evidence": "<Picture 1> replacement_subject replaces=the driver; <Video 1> edit_source; both have correct shot intervals and actual final prompt relations."
+        },
+        {
+          "check": "unauthorized_source_audio_or_speech_absent",
+          "status": "passed",
+          "evidence": "No source-audio input, dialogue or speaker; generated footsteps/engine/tyres and newly generated cinematic drone are permitted creative audio."
+        },
+        {
+          "check": "full_video_preservation",
+          "status": "not_evaluable",
+          "evidence": "Source video card is partial; exact unseen intervals and source camera trajectory are not established."
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "passed": 13,
+    "failed": 3,
+    "not_evaluable": 0
+  },
+  "updated_at": "2026-10-21T05:54:16.276625+00:00",
+  "finished_at": "2026-10-21T05:54:16.276625+00:00",
+  "all_declared_role_cases_reviewed": true,
+  "compiled_artifact_cases": 15,
+  "failed_before_artifact_cases": 1,
+  "passed": false,
+  "scope_limits": [
+    "All 16 source observations are supplied typed Cards; this review does not establish real-media perception accuracy.",
+    "Passed is limited to the declared role contract, final IR, prompt and manifest. Active voice likeness, precise beat timing, unknown composition/pose, unseen video intervals and actual waveform mixing remain individually not_evaluable.",
+    "Final automated operation checks passed in the subject/environment cases, but independent final narrative review detects source-role contamination.",
+    "Rejected model drafts are failure evidence, not published output."
+  ],
+  "run_report_snapshot_sha256": "652028db7c80da4b3699cd644c75c41b837a352b63738ec53ddbf9d2ffbaacbe"
+}

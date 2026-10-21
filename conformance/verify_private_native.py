@@ -276,7 +276,7 @@ def redact(value):
 
 
 def retain_test_output(stdout: bytes, stderr: bytes, stdout_path: Path, stderr_path: Path) -> dict:
-    terminal, packages, started = {}, {}, set()
+    terminal, packages, started, started_packages = {}, {}, set(), set()
     invalid = 0
     with stdout_path.open("x", encoding="utf-8") as stream:
         for raw in stdout.splitlines():
@@ -288,6 +288,8 @@ def retain_test_output(stdout: bytes, stderr: bytes, stdout_path: Path, stderr_p
                 event = {"Action": "withheld_non_json", "bytes": len(raw), "sha256": hashlib.sha256(raw).hexdigest()}
             stream.write(json.dumps(redact(event), ensure_ascii=False) + "\n")
             package, test, action = event.get("Package"), event.get("Test"), event.get("Action")
+            if isinstance(package, str) and action == "start":
+                started_packages.add(package)
             if isinstance(package, str) and isinstance(test, str):
                 if action == "run":
                     started.add((package, test))
@@ -307,6 +309,7 @@ def retain_test_output(stdout: bytes, stderr: bytes, stdout_path: Path, stderr_p
         counts["packages"][action] += 1
     return {"counts": counts, "invalid_json_lines": invalid,
             "unterminated_tests": len(started - set(terminal)),
+            "unterminated_packages": len(started_packages - set(packages)),
             "failures": [{"package": p, "test": t} for (p, t), action in sorted(terminal.items()) if action == "fail"],
             "skips": [{"package": p, "test": t} for (p, t), action in sorted(terminal.items()) if action == "skip"],
             "stdout_path": str(stdout_path), "stderr_path": str(stderr_path),
@@ -321,6 +324,14 @@ def verify_unchanged(checked: dict) -> None:
             and all(sha256_file(path) == checked["artifact_hashes"][kind]
                     for kind, path in checked["artifacts"].items()),
             "cache_immutability", "verified source/download cache bytes changed during native verification")
+
+
+def native_evidence_passed(code, timed_out, result):
+    return (code == 0 and not timed_out and result["invalid_json_lines"] == 0
+            and result["unterminated_tests"] == 0 and result["unterminated_packages"] == 0
+            and result["counts"]["root"]["skip"] == 0 and result["counts"]["sub"]["skip"] == 0
+            and result["counts"]["root"]["total"] > 0 and result["counts"]["packages"]["total"] > 0
+            and all(v["fail"] == 0 for v in result["counts"].values()))
 
 
 def main() -> int:
@@ -376,10 +387,7 @@ def main() -> int:
             result = retain_test_output(stdout, stderr, stdout_path, stderr_path)
             report["native"] = result
             report["native"].update({"exit_status": code, "launcher_timed_out": timed_out})
-            passed = (code == 0 and not timed_out and result["invalid_json_lines"] == 0
-                      and result["unterminated_tests"] == 0 and result["counts"]["root"]["total"] > 0
-                      and result["counts"]["packages"]["total"] > 0
-                      and all(v["fail"] == 0 for v in result["counts"].values()))
+            passed = native_evidence_passed(code, timed_out, result)
             report["native_tests_passed"] = passed
             require(passed, "native_tests", "shipped native suite failed or returned incomplete JSON evidence; inspect retained redacted logs")
         verify_unchanged(checked)

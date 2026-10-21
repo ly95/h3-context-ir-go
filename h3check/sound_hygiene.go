@@ -106,11 +106,17 @@ func (c *checker) checkHygiene() {
 			}
 		}
 	}
-	for _, r := range []rune{'‘', '’', '“', '”', '\u00a0', '〈', '〉', '＜', '＞', '（', '）', '［', '］'} {
-		if strings.ContainsRune(c.scrub, r) {
-			c.err("H1-unicode-hazard", "structural text contains characters that change tokenization")
-			break
+	var hazards []string
+	for _, replacement := range []struct{ from, to rune }{
+		{'‘', '\''}, {'’', '\''}, {'“', '"'}, {'”', '"'}, {'\u00a0', ' '},
+		{'〈', '<'}, {'〉', '>'}, {'＜', '<'}, {'＞', '>'}, {'（', '('}, {'）', ')'}, {'［', '['}, {'］', ']'},
+	} {
+		if strings.ContainsRune(c.scrub, replacement.from) {
+			hazards = append(hazards, fmt.Sprintf("U+%04X -> U+%04X", replacement.from, replacement.to))
 		}
+	}
+	if len(hazards) > 0 {
+		c.err("H1-unicode-hazard", "generated structural prose contains tokenization hazards: "+strings.Join(hazards, ", ")+". Use the indicated ASCII punctuation only in model-authored prose; preserve caller dialogue and visible text verbatim. Em dashes in official frame instructions are valid.")
 	}
 	for _, s := range c.ctx.OnscreenText {
 		if s != "" && !strings.Contains(c.text, `"`+s+`"`) {

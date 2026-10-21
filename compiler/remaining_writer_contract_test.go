@@ -499,6 +499,10 @@ func TestRemainingWriterReferenceWords(t *testing.T) {
 			}
 			contextPlan := actual.Structure
 			contextPlan.TranscriptUses = nil
+			// This branch releases the selected performance, not merely its source
+			// selector. Keeping the fixed line while deleting its events would be
+			// a real missing-dialogue defect rather than the advisory-only case.
+			contextPlan.Dialogue = nil
 			findings, e = c.assess(actual.Brief, contextPlan, actual.Scope, unperformed)
 			if e != nil || !remainingRule(findings, "D16-transcript-not-reperformed") {
 				t.Fatal("native context did not carry original source words on this path", findings, e)

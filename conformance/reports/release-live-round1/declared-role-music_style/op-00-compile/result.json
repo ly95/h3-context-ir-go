@@ -1,0 +1,1106 @@
+{
+  "composition_reviews": [
+    {
+      "version": "contextir/composition-review/v3",
+      "required": true,
+      "passed": true,
+      "calls": [
+        {
+          "stage": "semantic_review",
+          "attempt": 1,
+          "model": "deepseek-flash",
+          "usage": {
+            "input_tokens": 2418,
+            "output_tokens": 629
+          },
+          "valid": true
+        }
+      ]
+    }
+  ],
+  "usage_complete": true,
+  "clarification_policy": "continue_with_recorded_choice",
+  "mode_decision": {
+    "clarification_policy": "continue_with_recorded_choice",
+    "confidence_kind": "routing_policy",
+    "aspect_mismatch": false,
+    "needs_clarification": false,
+    "mode": "ref2va",
+    "confidence": 1,
+    "rule": "12.2#1",
+    "signals": [
+      "Mode follows explicit structured choices and media socket requirements."
+    ]
+  },
+  "scope_decision": {
+    "conflict_policy": "supplied_content_wins",
+    "requested": {
+      "speech": false,
+      "music": false,
+      "onscreen_text": false,
+      "magnitude": ""
+    },
+    "forbidden": {
+      "speech": false,
+      "music": false,
+      "onscreen_text": false,
+      "magnitude": ""
+    },
+    "allowed": {
+      "speech": false,
+      "music": true,
+      "onscreen_text": false,
+      "magnitude": "measured"
+    },
+    "dialogue": [],
+    "onscreen_text": [],
+    "reasoning": "The intent only describes a car pulling forward out of the dark. It does not request spoken words, singing, added non-diegetic score, or visible lettering. The audio asset is described as an engine rumble, which is diegetic sound rather than an explicit music request, and no free-text prohibition forbids speech, music, or onscreen text.",
+    "calls": [
+      {
+        "stage": "scope",
+        "attempt": 1,
+        "model": "deepseek-flash",
+        "usage": {
+          "input_tokens": 1022,
+          "output_tokens": 485
+        },
+        "valid": true
+      }
+    ]
+  },
+  "licence": {
+    "medium_decision": {
+      "rendering_permission": {
+        "kind": "no_reference",
+        "disposition": "no_reference",
+        "operation_quote": "",
+        "target": "",
+        "reasoning": "No supplied reference has authority over the rendering medium."
+      },
+      "disposition": "no_reference",
+      "operation_quote": "",
+      "target": "",
+      "requested_style": "",
+      "reference_medium": "",
+      "requested_medium": "",
+      "treatments": [],
+      "reasoning": "No visual reference governs rendering, and the intent describes motion/action rather than a requested rendering medium or style phrase. The audio reference is a music-style input and does not supply a visual rendering family. No compatible treatments are explicitly requested.",
+      "calls": [
+        {
+          "stage": "medium",
+          "attempt": 1,
+          "model": "deepseek-flash",
+          "usage": {
+            "input_tokens": 1162,
+            "output_tokens": 261
+          },
+          "valid": true
+        }
+      ]
+    },
+    "identity": [],
+    "governs": {
+      "action": "request",
+      "framing": "request",
+      "lighting": "request",
+      "medium": "request",
+      "palette": "request",
+      "wardrobe": "request"
+    },
+    "reasons": {
+      "action": "The intent explicitly requests a performed action: the car pulls forward.",
+      "framing": "There is no visual reference to govern framing; the request therefore holds framing authority, though no explicit camera composition is stated.",
+      "lighting": "“Out of the dark” is an explicit lighting condition request, and no visual reference competes for lighting authority.",
+      "medium": "No visual reference supplies rendering authority; the only asset is audio for music style, so the request governs the medium.",
+      "palette": "No visual reference supplies palette authority, and the dark emergence supports request-governed tonal treatment.",
+      "wardrobe": "No visual reference or subject plate exists, and no clothing change is named; wardrobe remains request-governed rather than reference-governed."
+    },
+    "transform_phrase": null,
+    "transform_target": "",
+    "medium_transferred": false,
+    "style": {
+      "observed_phrase": "",
+      "phrase": "Live-action, cinematic",
+      "source": "default",
+      "reference_medium": "",
+      "requested_medium": "",
+      "discrepancy": false,
+      "note": ""
+    },
+    "calls": [
+      {
+        "stage": "medium",
+        "attempt": 1,
+        "model": "deepseek-flash",
+        "usage": {
+          "input_tokens": 1162,
+          "output_tokens": 261
+        },
+        "valid": true
+      },
+      {
+        "stage": "licence",
+        "attempt": 1,
+        "model": "deepseek-flash",
+        "usage": {
+          "input_tokens": 1508,
+          "output_tokens": 447
+        },
+        "valid": true
+      }
+    ]
+  },
+  "budget": {
+    "prompt_tokens": 1010,
+    "target_video_rows": 32256,
+    "target_audio_rows": 400,
+    "known_reference_rows": 0,
+    "unknown_reference_rows": [
+      "\u003cAudio 1\u003e"
+    ],
+    "in_trained_band": false
+  },
+  "findings": [
+    {
+      "rule": "R5-unanalysed-subject",
+      "severity": "WARN",
+      "msg": "\u003cSubject 1\u003e defined but absent from retention_analysis"
+    },
+    {
+      "rule": "A2-sound-duplicated",
+      "severity": "WARN",
+      "msg": "overall_soundscape repeats content already in the description rather than a separate layer"
+    }
+  ],
+  "status": "compiled",
+  "version": "contextir/compiler/v1",
+  "brief": {
+    "effort": "standard",
+    "seconds_explicit": true,
+    "aspect_explicit": true,
+    "intent": "the car pulls forward out of the dark",
+    "assets": [
+      {
+        "preparation_computed": true,
+        "id": "asset-1",
+        "kind": "audio",
+        "description": "a low engine rumble",
+        "metadata": {
+          "duration_ms": 3000,
+          "fps": {
+            "numerator": 0,
+            "denominator": 0
+          }
+        },
+        "preparation": {},
+        "role": "music_style",
+        "composition": "unknown",
+        "sizing": "match"
+      }
+    ],
+    "seconds": 5,
+    "aspect": "16:9",
+    "creativity": "balanced",
+    "evidence": [
+      {
+        "card": {
+          "asset_id": "asset-1",
+          "summary": "an audio reference.",
+          "characterisation": "a low engine rumble",
+          "composition": "unknown",
+          "analyzer_version": "1",
+          "coverage": {
+            "status": "partial",
+            "tracks": [
+              "audio"
+            ]
+          }
+        },
+        "asset_id": "asset-1",
+        "facts": [
+          {
+            "id": "card-asset-1-1",
+            "text": "an audio reference.",
+            "source": {
+              "asset_id": "asset-1",
+              "track": "audio"
+            }
+          },
+          {
+            "id": "card-asset-1-2",
+            "text": "a low engine rumble",
+            "source": {
+              "asset_id": "asset-1",
+              "track": "audio"
+            }
+          }
+        ],
+        "analyzer_version": "1",
+        "coverage": {
+          "status": "partial",
+          "tracks": [
+            "audio"
+          ]
+        }
+      }
+    ],
+    "cards": [
+      {
+        "asset_id": "asset-1",
+        "summary": "an audio reference.",
+        "characterisation": "a low engine rumble",
+        "composition": "unknown",
+        "analyzer_version": "1",
+        "coverage": {
+          "status": "partial",
+          "tracks": [
+            "audio"
+          ]
+        }
+      }
+    ]
+  },
+  "request": {
+    "instruction": "the car pulls forward out of the dark",
+    "mode": "ref2va",
+    "target": {
+      "duration_ms": 5000,
+      "frame_count": 120,
+      "aspect_ratio": "16:9",
+      "fps": {
+        "numerator": 24,
+        "denominator": 1
+      },
+      "width": 1344,
+      "height": 768
+    },
+    "assets": [
+      {
+        "id": "asset-1",
+        "kind": "audio",
+        "description": "a low engine rumble",
+        "metadata": {
+          "duration_ms": 3000,
+          "fps": {
+            "numerator": 0,
+            "denominator": 0
+          }
+        },
+        "preparation": {}
+      }
+    ],
+    "bindings": [
+      {
+        "source": {
+          "asset_id": "asset-1",
+          "track": "audio"
+        },
+        "role": "music_style"
+      }
+    ],
+    "constraints": [
+      {
+        "id": "compiler-no-dialogue",
+        "kind": "no_dialogue",
+        "text": "Do not add spoken or sung lines."
+      }
+    ],
+    "allow_creative_additions": true,
+    "allow_generated_dialogue": false,
+    "pinned_shots": [
+      {
+        "id": "shot-1",
+        "start_ms": 0,
+        "end_ms": 5000
+      }
+    ],
+    "addition_scope": {
+      "dialogue": false,
+      "music": true,
+      "visible_text": false
+    }
+  },
+  "structure": {
+    "replacement_targets": {},
+    "style": "Live-action, cinematic",
+    "mode": "ref2va",
+    "assets": [
+      {
+        "asset_id": "asset-1",
+        "role": "music_style",
+        "replaces": ""
+      }
+    ],
+    "shots": [
+      {
+        "subjects": [
+          "the car"
+        ],
+        "sync_sound": [
+          "a low engine rumble building steadily as the car rolls forward",
+          "tyres pressing across a hard concrete floor"
+        ],
+        "start_ms": 0,
+        "purpose": "reveal",
+        "framing": "medium wide",
+        "action": "In near-total darkness a car sits facing the camera, its shape barely separable from the surrounding black; then it rolls forward at a steady, unhurried pace, its bonnet, grille and windscreen edges catching a faint pool of light as the body advances toward the lens, the headlight housings and wet-looking paint gaining definition as it emerges, until the front of the car stands clear of the darkness at the end of the take.",
+        "what_changes": "The car travels from an almost invisible silhouette in darkness into a lit, clearly defined form facing the camera.",
+        "camera": {
+          "type": "Tracking Shot",
+          "amplitude": "small",
+          "speed": "slow"
+        }
+      }
+    ],
+    "dialogue": [],
+    "onscreen_text": [],
+    "requested": {
+      "speech": false,
+      "music": false,
+      "onscreen_text": false,
+      "magnitude": ""
+    },
+    "forbidden": {
+      "speech": false,
+      "music": false,
+      "onscreen_text": false,
+      "magnitude": ""
+    },
+    "reasoning": "The request is a single continuous action: a car pulling forward out of darkness, with no cut pinned by the caller, so one unbroken take carrying the full five seconds best serves it. Framing, lighting and palette are request-governed; 'out of the dark' is treated as the governing lighting condition, with the car's silhouette and surfaces progressively resolving as it advances into a dim pool of light rather than any new event being invented. The sole attached asset is an audio reference for musical style, instrumentation and tempo, whose signal is not used and whose engine-rumble characterisation is diegetic in nature; it therefore informs only a low, sparse, rumbling score added under the balanced allowance for audience music, never a reuse or copying of the source signal. No spoken lines, singing or visible lettering are requested, so dialogue and on-screen text remain empty."
+  },
+  "scope": {
+    "speech": false,
+    "music": true,
+    "onscreen_text": false,
+    "magnitude": "measured"
+  },
+  "document": {
+    "version": "contextir/v1",
+    "mode": "ref2va",
+    "target": {
+      "duration_ms": 5000,
+      "frame_count": 120,
+      "aspect_ratio": "16:9",
+      "fps": {
+        "numerator": 24,
+        "denominator": 1
+      },
+      "width": 1344,
+      "height": 768
+    },
+    "assets": [
+      {
+        "id": "asset-1",
+        "kind": "audio",
+        "description": "a low engine rumble",
+        "metadata": {
+          "duration_ms": 3000,
+          "fps": {
+            "numerator": 0,
+            "denominator": 0
+          }
+        },
+        "preparation": {}
+      }
+    ],
+    "evidence": [
+      {
+        "card": {
+          "asset_id": "asset-1",
+          "summary": "an audio reference.",
+          "characterisation": "a low engine rumble",
+          "composition": "unknown",
+          "analyzer_version": "1",
+          "coverage": {
+            "status": "partial",
+            "tracks": [
+              "audio"
+            ]
+          }
+        },
+        "asset_id": "asset-1",
+        "facts": [
+          {
+            "id": "card-asset-1-1",
+            "text": "an audio reference.",
+            "source": {
+              "asset_id": "asset-1",
+              "track": "audio"
+            }
+          },
+          {
+            "id": "card-asset-1-2",
+            "text": "a low engine rumble",
+            "source": {
+              "asset_id": "asset-1",
+              "track": "audio"
+            }
+          }
+        ],
+        "analyzer_version": "1",
+        "coverage": {
+          "status": "partial",
+          "tracks": [
+            "audio"
+          ]
+        }
+      }
+    ],
+    "subjects": [
+      {
+        "kind": "object",
+        "origin": "creative",
+        "id": "car",
+        "description": "A dark car with a low bonnet, broad grille, windscreen and rectangular headlight housings, its polished paint carrying a wet-looking sheen.",
+        "shot_ids": [
+          "shot-1"
+        ]
+      }
+    ],
+    "references": [
+      {
+        "id": "reference-asset-1-1",
+        "kind": "audio",
+        "source": {
+          "asset_id": "asset-1",
+          "track": "audio"
+        },
+        "roles": [
+          "music_style"
+        ],
+        "description": "a music-style reference for the target video's newly generated score, supplying musical style, instrumentation and tempo without copying the original signal. Caller-provided reference metadata: a low engine rumble. This description does not establish an auditory observation, authorize additional speech, or change the declared copy/property relationship.",
+        "retention": "reference",
+        "retention_details": "Generate new music following its musical style, instrumentation and tempo without copying the original signal.",
+        "shot_ids": [
+          "shot-1"
+        ]
+      }
+    ],
+    "summary": [
+      {
+        "text": "A car pulls forward out of darkness into a faint, cold light in one continuous tracking take."
+      }
+    ],
+    "style": "Live-action, cinematic",
+    "shots": [
+      {
+        "id": "shot-1",
+        "start_ms": 0,
+        "end_ms": 5000,
+        "description": [
+          {
+            "text": "A single continuous take opens in a dark, enclosed space where almost nothing is visible except the faint outline of a "
+          },
+          {
+            "subject_id": "car"
+          },
+          {
+            "text": " facing the camera. The vehicle begins as a low silhouette, its bonnet, grille and windscreen edges swallowed by black, while a narrow pool of dim, cold light lies ahead on the hard concrete floor. A slow, small-amplitude camera track follows the "
+          },
+          {
+            "subject_id": "car"
+          },
+          {
+            "text": " as it rolls forward at a steady, unhurried pace. The movement is smooth and mechanical rather than hurried, and the camera holds a medium-wide view, keeping the surrounding darkness dominant so the emerging front end seems to push out of the frame's own shadow. As the "
+          },
+          {
+            "subject_id": "car"
+          },
+          {
+            "text": " advances, the leading edge of the bonnet enters the light first, then the broad grille, then the windscreen and the rectangular headlight housings; each surface gains definition and a wet-looking sheen without ever becoming brightly lit. The paint reads as dark and polished, catching only thin highlights along its curves, while the floor beneath shows a hard, slightly reflective texture. The light does not reveal the room's edges; it only separates the car's front from the blackness, leaving walls and ceiling indeterminate. Tyres press across the concrete with a weighted, rolling contact, and the low engine rumble builds steadily underneath, filling the close acoustic space with a restrained mechanical presence. The camera keeps pace in a smooth lateral drift, maintaining the same medium-wide framing and allowing the "
+          },
+          {
+            "subject_id": "car"
+          },
+          {
+            "text": "'s front face to grow gradually more legible against the black. As the bonnet crosses the beam, highlights slide along the grille slats and lower bumper, briefly revealing the vehicle's width before the body settles into the lit patch. By the end of the take the "
+          },
+          {
+            "subject_id": "car"
+          },
+          {
+            "text": " stands clear of the deepest shadow, its front lit just enough to read as a solid form, while the rest of the space remains unbroken black. There are no cuts, no other figures, and no on-screen lettering; the only change is the "
+          },
+          {
+            "subject_id": "car"
+          },
+          {
+            "text": " travelling out of obscurity into a faint, cold light, with the sound of its engine and tyres continuing to anchor the advance."
+          }
+        ],
+        "events": [
+          {
+            "kind": "visual",
+            "at_ms": 0,
+            "description": [
+              {
+                "text": "The frame opens in near-total darkness; a "
+              },
+              {
+                "subject_id": "car"
+              },
+              {
+                "text": " is only a low, almost invisible silhouette facing the camera."
+              }
+            ]
+          },
+          {
+            "kind": "sound",
+            "at_ms": 0,
+            "description": [
+              {
+                "text": "A low engine rumble starts quietly and begins to build."
+              }
+            ]
+          },
+          {
+            "kind": "action",
+            "at_ms": 1200,
+            "description": [
+              {
+                "text": "The "
+              },
+              {
+                "subject_id": "car"
+              },
+              {
+                "text": " rolls forward at a steady, unhurried pace, its bonnet and grille edges catching a faint pool of light."
+              }
+            ]
+          },
+          {
+            "kind": "visual",
+            "at_ms": 2500,
+            "description": [
+              {
+                "text": "The windscreen and rectangular headlight housings gain definition as the front of the "
+              },
+              {
+                "subject_id": "car"
+              },
+              {
+                "text": " emerges from the black."
+              }
+            ]
+          },
+          {
+            "kind": "sound",
+            "at_ms": 3800,
+            "description": [
+              {
+                "text": "Tyres press audibly across a hard concrete floor as the rumble deepens."
+              }
+            ]
+          },
+          {
+            "kind": "action",
+            "at_ms": 4600,
+            "description": [
+              {
+                "text": "The "
+              },
+              {
+                "subject_id": "car"
+              },
+              {
+                "text": " comes clear of the darkness and stands lit at the end of the take."
+              }
+            ]
+          },
+          {
+            "kind": "camera",
+            "description": [
+              {
+                "text": "The camera tracks with the subject with small amplitude at slow speed."
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "soundscape": "A low engine rumble builds steadily as tyres press across a hard concrete floor; the acoustic space is close and dark, with no voices or other chatter.",
+    "music": "A newly generated sparse score built from low, slowly pulsing rumble-like tones at a measured tempo, following the reference's musical style and instrumentation without copying its signal.",
+    "constraints": [
+      {
+        "id": "compiler-no-dialogue",
+        "kind": "no_dialogue",
+        "text": "Do not add spoken or sung lines."
+      }
+    ],
+    "claims": [
+      {
+        "id": "user-car-forward",
+        "origin": "user",
+        "text": "The car pulls forward out of the dark."
+      },
+      {
+        "id": "observed-audio-character",
+        "origin": "observed",
+        "text": "The supplied audio reference is characterised as a low engine rumble.",
+        "sources": [
+          {
+            "asset_id": "asset-1",
+            "track": "audio"
+          }
+        ]
+      },
+      {
+        "id": "creative-setting",
+        "origin": "creative",
+        "text": "The setting is a dark, enclosed space with a hard concrete floor and a faint pool of cold light ahead."
+      },
+      {
+        "id": "creative-car-surface",
+        "origin": "creative",
+        "text": "The car has dark polished paint, a broad grille and rectangular headlight housings that catch a wet-looking sheen."
+      },
+      {
+        "id": "creative-camera",
+        "origin": "creative",
+        "text": "The camera uses a slow, small-amplitude lateral track at a medium-wide framing."
+      },
+      {
+        "id": "creative-sound",
+        "origin": "creative",
+        "text": "Tyres press across concrete and a low engine rumble builds steadily under the action."
+      }
+    ]
+  },
+  "artifact": {
+    "version": "contextir-h3/artifact-v1",
+    "compiler_version": "contextir-h3/v1.2",
+    "format_version": "minimax-h3/prompt-v1",
+    "mode": "ref2va",
+    "target": {
+      "duration_ms": 5000,
+      "frame_count": 120,
+      "aspect_ratio": "16:9",
+      "fps": {
+        "numerator": 24,
+        "denominator": 1
+      },
+      "width": 1344,
+      "height": 768
+    },
+    "profile": {
+      "name": "h3-published-format-v1",
+      "format": "minimax-h3/prompt-v1",
+      "fps": {
+        "numerator": 24,
+        "denominator": 1
+      },
+      "modes": [
+        "t2va",
+        "i2va",
+        "l2va",
+        "fl2va",
+        "ref2va"
+      ],
+      "limits": {
+        "pictures": 0,
+        "videos": 0,
+        "video_audio": 0,
+        "standalone_audio": 0
+      },
+      "supports_reference_frame_anchors": true,
+      "supports_source_intervals": true
+    },
+    "prompt": "subject_definitions:\n\u003cSubject 1\u003e is A dark car with a low bonnet, broad grille, windscreen and rectangular headlight housings, its polished paint carrying a wet-looking sheen.\n\u003cAudio 1\u003e is a music-style reference for the target video's newly generated score, supplying musical style, instrumentation and tempo without copying the original signal. Caller-provided reference metadata: a low engine rumble. This description does not establish an auditory observation, authorize additional speech, or change the declared copy/property relationship. Its role is background-music style without copying the recording. Only the declared audio property is referenced; the recorded audio signal itself is not copied into the target.\n\nsummary:\n[audio reference] A car pulls forward out of darkness into a faint, cold light in one continuous tracking take.\n\nretention_analysis:\n\u003cAudio 1\u003e: reference - Generate new music following its musical style, instrumentation and tempo without copying the original signal. Applicable scope: ([Shot 1]; background-music style without copying the recording).\n\ndetailed_description:\nThe target video is in live-action style, cinematic.\n[Shot 1] A single continuous take opens in a dark, enclosed space where almost nothing is visible except the faint outline of a \u003cSubject 1\u003e facing the camera. The vehicle begins as a low silhouette, its bonnet, grille and windscreen edges swallowed by black, while a narrow pool of dim, cold light lies ahead on the hard concrete floor. A slow, small-amplitude camera track follows the \u003cSubject 1\u003e as it rolls forward at a steady, unhurried pace. The movement is smooth and mechanical rather than hurried, and the camera holds a medium-wide view, keeping the surrounding darkness dominant so the emerging front end seems to push out of the frame's own shadow. As the \u003cSubject 1\u003e advances, the leading edge of the bonnet enters the light first, then the broad grille, then the windscreen and the rectangular headlight housings; each surface gains definition and a wet-looking sheen without ever becoming brightly lit. The paint reads as dark and polished, catching only thin highlights along its curves, while the floor beneath shows a hard, slightly reflective texture. The light does not reveal the room's edges; it only separates the car's front from the blackness, leaving walls and ceiling indeterminate. Tyres press across the concrete with a weighted, rolling contact, and the low engine rumble builds steadily underneath, filling the close acoustic space with a restrained mechanical presence. The camera keeps pace in a smooth lateral drift, maintaining the same medium-wide framing and allowing the \u003cSubject 1\u003e's front face to grow gradually more legible against the black. As the bonnet crosses the beam, highlights slide along the grille slats and lower bumper, briefly revealing the vehicle's width before the body settles into the lit patch. By the end of the take the \u003cSubject 1\u003e stands clear of the deepest shadow, its front lit just enough to read as a solid form, while the rest of the space remains unbroken black. There are no cuts, no other figures, and no on-screen lettering; the only change is the \u003cSubject 1\u003e travelling out of obscurity into a faint, cold light, with the sound of its engine and tyres continuing to anchor the advance. \u003cAudio 1\u003e applies in this shot as background-music style without copying the recording. Its defined audible characteristics are referenced without copying the source signal. At 00:00.000, The frame opens in near-total darkness; a \u003cSubject 1\u003e is only a low, almost invisible silhouette facing the camera. At 00:00.000, A low engine rumble starts quietly and begins to build. At 00:01.200, The \u003cSubject 1\u003e rolls forward at a steady, unhurried pace, its bonnet and grille edges catching a faint pool of light. At 00:02.500, The windscreen and rectangular headlight housings gain definition as the front of the \u003cSubject 1\u003e emerges from the black. At 00:03.800, Tyres press audibly across a hard concrete floor as the rumble deepens. At 00:04.600, The \u003cSubject 1\u003e comes clear of the darkness and stands lit at the end of the take. The camera tracks with the subject with small amplitude at slow speed. Throughout the target video: Do not add spoken or sung lines.\n\noverall_soundscape:\nA low engine rumble builds steadily as tyres press across a hard concrete floor; the acoustic space is close and dark, with no voices or other chatter.\n\nnon_diegetic_music:\nA newly generated sparse score built from low, slowly pulsing rumble-like tones at a measured tempo, following the reference's musical style and instrumentation without copying its signal.\n",
+    "manifest": {
+      "media": [
+        {
+          "preparation": {},
+          "source_metadata": {
+            "duration_ms": 3000,
+            "fps": {
+              "numerator": 0,
+              "denominator": 0
+            }
+          },
+          "label": "\u003cAudio 1\u003e",
+          "kind": "audio",
+          "source": {
+            "asset_id": "asset-1",
+            "track": "audio"
+          },
+          "socket": "ref_audio_1",
+          "target_uses": [
+            {
+              "reference_id": "reference-asset-1-1",
+              "roles": [
+                "music_style"
+              ],
+              "retention": "reference",
+              "shots": [
+                {
+                  "id": "shot-1",
+                  "index": 1,
+                  "interval": {
+                    "start_ms": 0,
+                    "end_ms": 5000
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "subjects": [
+        {
+          "id": "car",
+          "label": "\u003cSubject 1\u003e"
+        }
+      ],
+      "references": [
+        {
+          "id": "reference-asset-1-1",
+          "label": "\u003cAudio 1\u003e"
+        }
+      ],
+      "speakers": []
+    },
+    "frames": 120,
+    "effective_duration_seconds": {
+      "numerator": 5,
+      "denominator": 1
+    },
+    "document_sha256": "63c36987d472b15659bb13bd9e8d34d02c5ac0d251ae2f0b9507c27d266503c4",
+    "profile_sha256": "ce4364d3f1242f5aeb2216db44195fb3897f4828dd9e145c4c16c64315786ab6",
+    "prompt_sha256": "3ba5dc7283ba1d92de9989d6bb05ec5d7ff1ea6fe1bcceec25d777e86721d610",
+    "manifest_sha256": "9449cfeee3312c024c560ec605890ff3ad78a53b2dfe81b198de7ba7e1fdae99",
+    "sha256": "20ab565a6b99f7b7f21745f24a697c16e6d65d0c2e40635cc943540bc6aa0d6a"
+  },
+  "evidence": [
+    {
+      "card": {
+        "asset_id": "asset-1",
+        "summary": "an audio reference.",
+        "characterisation": "a low engine rumble",
+        "composition": "unknown",
+        "analyzer_version": "1",
+        "coverage": {
+          "status": "partial",
+          "tracks": [
+            "audio"
+          ]
+        }
+      },
+      "asset_id": "asset-1",
+      "facts": [
+        {
+          "id": "card-asset-1-1",
+          "text": "an audio reference.",
+          "source": {
+            "asset_id": "asset-1",
+            "track": "audio"
+          }
+        },
+        {
+          "id": "card-asset-1-2",
+          "text": "a low engine rumble",
+          "source": {
+            "asset_id": "asset-1",
+            "track": "audio"
+          }
+        }
+      ],
+      "analyzer_version": "1",
+      "coverage": {
+        "status": "partial",
+        "tracks": [
+          "audio"
+        ]
+      }
+    }
+  ],
+  "decisions": [
+    {
+      "field": "target",
+      "source": "computed",
+      "value": {
+        "effective_seconds": 5,
+        "frame_count": 120,
+        "nominal_seconds": 5,
+        "policy": "snap_up"
+      },
+      "explanation": "Effective timing and nominal duration are recorded separately; generated cuts use effective timing."
+    },
+    {
+      "field": "canvas",
+      "source": "computed",
+      "value": [
+        1344,
+        768
+      ],
+      "explanation": "Native short-edge canvas is aligned to 32 pixels; explicit megapixels replaces the native area budget."
+    },
+    {
+      "field": "execution",
+      "source": "explicit_adapter_policy",
+      "value": {
+        "effort": "standard"
+      },
+      "explanation": "The injected adapters and explicit compiler repair configuration implement standard effort."
+    },
+    {
+      "field": "mode",
+      "source": "12.2#1",
+      "value": {
+        "clarification_policy": "continue_with_recorded_choice",
+        "confidence_kind": "routing_policy",
+        "aspect_mismatch": false,
+        "needs_clarification": false,
+        "mode": "ref2va",
+        "confidence": 1,
+        "rule": "12.2#1",
+        "signals": [
+          "Mode follows explicit structured choices and media socket requirements."
+        ]
+      },
+      "explanation": "Mode follows the production typed routing contract; publication capabilities are checked separately."
+    },
+    {
+      "field": "content_scope",
+      "source": "typed_request_interpretation",
+      "value": {
+        "conflict_policy": "supplied_content_wins",
+        "requested": {
+          "speech": false,
+          "music": false,
+          "onscreen_text": false,
+          "magnitude": ""
+        },
+        "forbidden": {
+          "speech": false,
+          "music": false,
+          "onscreen_text": false,
+          "magnitude": ""
+        },
+        "allowed": {
+          "speech": false,
+          "music": true,
+          "onscreen_text": false,
+          "magnitude": "measured"
+        },
+        "dialogue": [],
+        "onscreen_text": [],
+        "reasoning": "The intent only describes a car pulling forward out of the dark. It does not request spoken words, singing, added non-diegetic score, or visible lettering. The audio asset is described as an engine rumble, which is diegetic sound rather than an explicit music request, and no free-text prohibition forbids speech, music, or onscreen text.",
+        "calls": [
+          {
+            "stage": "scope",
+            "attempt": 1,
+            "model": "deepseek-flash",
+            "usage": {
+              "input_tokens": 1022,
+              "output_tokens": 485
+            },
+            "valid": true
+          }
+        ]
+      },
+      "explanation": "Caller requests and prohibitions are interpreted before code applies the explicit creativity level."
+    },
+    {
+      "field": "reference_licence",
+      "source": "typed_attribute_precedence",
+      "value": {
+        "medium_decision": {
+          "rendering_permission": {
+            "kind": "no_reference",
+            "disposition": "no_reference",
+            "operation_quote": "",
+            "target": "",
+            "reasoning": "No supplied reference has authority over the rendering medium."
+          },
+          "disposition": "no_reference",
+          "operation_quote": "",
+          "target": "",
+          "requested_style": "",
+          "reference_medium": "",
+          "requested_medium": "",
+          "treatments": [],
+          "reasoning": "No visual reference governs rendering, and the intent describes motion/action rather than a requested rendering medium or style phrase. The audio reference is a music-style input and does not supply a visual rendering family. No compatible treatments are explicitly requested.",
+          "calls": [
+            {
+              "stage": "medium",
+              "attempt": 1,
+              "model": "deepseek-flash",
+              "usage": {
+                "input_tokens": 1162,
+                "output_tokens": 261
+              },
+              "valid": true
+            }
+          ]
+        },
+        "identity": [],
+        "governs": {
+          "action": "request",
+          "framing": "request",
+          "lighting": "request",
+          "medium": "request",
+          "palette": "request",
+          "wardrobe": "request"
+        },
+        "reasons": {
+          "action": "The intent explicitly requests a performed action: the car pulls forward.",
+          "framing": "There is no visual reference to govern framing; the request therefore holds framing authority, though no explicit camera composition is stated.",
+          "lighting": "“Out of the dark” is an explicit lighting condition request, and no visual reference competes for lighting authority.",
+          "medium": "No visual reference supplies rendering authority; the only asset is audio for music style, so the request governs the medium.",
+          "palette": "No visual reference supplies palette authority, and the dark emergence supports request-governed tonal treatment.",
+          "wardrobe": "No visual reference or subject plate exists, and no clothing change is named; wardrobe remains request-governed rather than reference-governed."
+        },
+        "transform_phrase": null,
+        "transform_target": "",
+        "medium_transferred": false,
+        "style": {
+          "observed_phrase": "",
+          "phrase": "Live-action, cinematic",
+          "source": "default",
+          "reference_medium": "",
+          "requested_medium": "",
+          "discrepancy": false,
+          "note": ""
+        },
+        "calls": [
+          {
+            "stage": "medium",
+            "attempt": 1,
+            "model": "deepseek-flash",
+            "usage": {
+              "input_tokens": 1162,
+              "output_tokens": 261
+            },
+            "valid": true
+          },
+          {
+            "stage": "licence",
+            "attempt": 1,
+            "model": "deepseek-flash",
+            "usage": {
+              "input_tokens": 1508,
+              "output_tokens": 447
+            },
+            "valid": true
+          }
+        ]
+      },
+      "explanation": "Each attribute follows explicit request or observed reference; poses and reference-sheet presentation are not subject identity."
+    },
+    {
+      "field": "shots.camera",
+      "source": "host_template",
+      "value": [
+        {
+          "subjects": [
+            "the car"
+          ],
+          "sync_sound": [
+            "a low engine rumble building steadily as the car rolls forward",
+            "tyres pressing across a hard concrete floor"
+          ],
+          "start_ms": 0,
+          "purpose": "reveal",
+          "framing": "medium wide",
+          "action": "In near-total darkness a car sits facing the camera, its shape barely separable from the surrounding black; then it rolls forward at a steady, unhurried pace, its bonnet, grille and windscreen edges catching a faint pool of light as the body advances toward the lens, the headlight housings and wet-looking paint gaining definition as it emerges, until the front of the car stands clear of the darkness at the end of the take.",
+          "what_changes": "The car travels from an almost invisible silhouette in darkness into a lit, clearly defined form facing the camera.",
+          "camera": {
+            "type": "Tracking Shot",
+            "amplitude": "small",
+            "speed": "slow"
+          }
+        }
+      ],
+      "explanation": "Canonical camera events are assembled from the typed structural plan after prose."
+    },
+    {
+      "field": "subjects.shot_ids",
+      "source": "typed_actual_use_projection",
+      "value": [
+        {
+          "kind": "object",
+          "origin": "creative",
+          "id": "car",
+          "description": "A dark car with a low bonnet, broad grille, windscreen and rectangular headlight housings, its polished paint carrying a wet-looking sheen.",
+          "shot_ids": [
+            "shot-1"
+          ]
+        }
+      ],
+      "explanation": "High-level target appearances derive only from actual RichText and speaker-dialogue bindings. Removed figures carry their incoming replacement's transfer scope; unused source observations remain in Evidence."
+    },
+    {
+      "field": "creativity",
+      "source": "caller_or_default",
+      "value": {
+        "speech": false,
+        "music": true,
+        "onscreen_text": false,
+        "magnitude": "measured"
+      },
+      "explanation": "Scope reflects requested elements, explicit prohibitions, and the selected four-position creativity control."
+    }
+  ],
+  "calls": [
+    {
+      "stage": "scope",
+      "attempt": 1,
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 1022,
+        "output_tokens": 485
+      },
+      "valid": true
+    },
+    {
+      "stage": "medium",
+      "attempt": 1,
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 1162,
+        "output_tokens": 261
+      },
+      "valid": true
+    },
+    {
+      "stage": "licence",
+      "attempt": 1,
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 1508,
+        "output_tokens": 447
+      },
+      "valid": true
+    },
+    {
+      "stage": "structure",
+      "attempt": 1,
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 3634,
+        "output_tokens": 1080
+      },
+      "valid": true
+    },
+    {
+      "stage": "plan",
+      "attempt": 1,
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 9083,
+        "output_tokens": 10845
+      },
+      "valid": true
+    },
+    {
+      "stage": "semantic_review",
+      "attempt": 1,
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 2418,
+        "output_tokens": 629
+      },
+      "valid": true
+    }
+  ]
+}

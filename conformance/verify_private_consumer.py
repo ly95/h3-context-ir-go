@@ -174,6 +174,7 @@ def parse_json(value: str, stage: str):
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--commit", required=True, help="Already-pushed full 40-character commit SHA (no branch/default)")
+    parser.add_argument("--version", help="Optional exact release tag to install; its origin must equal --commit")
     parser.add_argument("--report", type=Path, help="New absolute JSON report path; existing files are never overwritten")
     parser.add_argument("--test-plan", action="store_true", help="Also run the downloaded plan package TestUpstreamCorpus without modifying the module cache")
     parser.add_argument("--module-cache", type=Path, help="Optional existing external cache from an earlier consumer run (never a worktree)")
@@ -181,6 +182,9 @@ def main() -> int:
     if not re.fullmatch(r"[0-9a-fA-F]{40}", args.commit):
         parser.error("--commit must be a full 40-character hexadecimal SHA")
     commit = args.commit.lower()
+    if args.version is not None and not re.fullmatch(r"v[0-9]+\.[0-9]+\.[0-9]+(?:-[0-9A-Za-z.-]+)?", args.version):
+        parser.error("--version must be an exact semantic release tag")
+    requested_revision = args.version or commit
     if args.report is not None:
         if not args.report.is_absolute():
             parser.error("--report must be an absolute path")
@@ -214,7 +218,7 @@ def main() -> int:
     report = {
         "schema": "contextir-private-consumer/v1",
         "started_at": dt.datetime.now(dt.timezone.utc).isoformat(),
-        "module": MODULE, "requested_commit": commit,
+        "module": MODULE, "requested_commit": commit, "requested_version": args.version,
         "work_directory": str(work), "report_path": str(report_path),
         "isolated_module_cache": True, "module_cache_reused": args.module_cache is not None, "workspace_disabled": True,
         "local_replace_allowed": False, "provider_calls": 0,
@@ -223,7 +227,7 @@ def main() -> int:
     }
     try:
         execute(["go", "mod", "init", "consumer.invalid/contextir-check"], stage="module_init", cwd=module_dir, env=env)
-        raw = execute(["go", "mod", "download", "-json", MODULE + "@" + commit], stage="remote_download", cwd=module_dir, env=env)
+        raw = execute(["go", "mod", "download", "-json", MODULE + "@" + requested_revision], stage="remote_download", cwd=module_dir, env=env)
         downloaded = parse_json(raw, "remote_download")
         if downloaded.get("Error"):
             raise CheckFailure("remote_download", "module download returned an error; raw diagnostics withheld")
@@ -232,6 +236,8 @@ def main() -> int:
         actual_commit = origin.get("Hash", "").lower()
         if downloaded.get("Path") != MODULE or actual_commit != commit:
             raise CheckFailure("origin_verification", "downloaded module origin does not equal requested commit")
+        if args.version is not None and version != args.version:
+            raise CheckFailure("version_verification", "downloaded version differs from the requested exact tag")
         if not version.startswith("v"):
             raise CheckFailure("version_verification", "downloaded module has no canonical version")
         zip_path = Path(downloaded.get("Zip", "")).resolve()

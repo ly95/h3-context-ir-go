@@ -54,7 +54,15 @@ func (c *Compiler) decideIdentityRequirements(ctx context.Context, b Brief, subj
 		}
 		items = append(items, object(properties))
 	}
-	schema, _ := json.Marshal(object(map[string]any{"identity": map[string]any{"type": "array", "prefixItems": items, "items": false, "minItems": len(items), "maxItems": len(items)}}))
+	bindings, contributionContract, bindingErr := identityContributionBindings(b, subjects)
+	if bindingErr != nil {
+		return nil, nil, bindingErr
+	}
+	properties := map[string]any{"identity": map[string]any{"type": "array", "prefixItems": items, "items": false, "minItems": len(items), "maxItems": len(items)}}
+	if contributionContract {
+		properties["source_contributions"] = identityContributionsSchema(bindings, object)
+	}
+	schema, _ := json.Marshal(object(properties))
 	const system = `Resolve ONLY target identity requirements against observed source identities. Read the caller's complete intent and constraints first. Every explicit identity-bearing assertion in those words is a TARGET requirement, including a referential noun phrase; it does not need a separate transformation verb. Observed gender, age, species, name, clothing and physical attributes describe the SOURCE and may not overrule a conflicting caller target. Never dismiss the caller's target as a callout mismatch or silently substitute the source identity. A source with a different observed identity property can retain its other stable visual traits while honoring that target change.
 For each source subject return the exact label and observed kind unless the caller expressly changes its kind. If identity/wardrobe is unchanged, descriptor_source=reference and descriptor equals the exact source descriptor, target_mention/request_quote empty, claims/requested_attributes/adjusted_attributes empty. Keep all stable observed attributes. A whole-figure swap does not delete the outgoing figure's recorded attributes here: a separate host relationship removes that figure later.
 For a source marked reference-sheet, use presentation_cleanup (or request when identity is changed). Remove panel/view/turnaround phrasing from descriptor; when no such wording is present, its existing descriptor can be copied exactly. Presentation is not identity. Cleanup cannot change gender/species/age or remove an identity trait without a caller-authorized request. No reference pose, studio setup, layout, label or mood inference belongs in retained attributes. excluded_presentation contains only PURE presentation/background source attributes. A mixed attribute containing a stable physical fact and view packaging MUST retain its exact source in retained_attributes and use adjusted_attributes kind=presentation_cleanup to preserve the stable fact while removing only the view packaging. Such cleanup requires a declared reference sheet, not a caller identity change. Sources absent from reference_sheet_sources include actual frame anchors: their entire image composition is target frame content and must never be cleaned into a hero panel.
@@ -65,6 +73,9 @@ wardrobe_attributes is exactly the retained garments/accessories subset, excludi
 	if hasEnvironment {
 		systemPrompt += "\n" + environmentIdentityInstruction
 	}
+	if contributionContract {
+		systemPrompt += "\n" + identityContributionInstruction
+	}
 	var diagnostics []contextir.Issue
 	var lastErr error
 	for attempt := 1; attempt <= c.options.MaxStructureRetries+1; attempt++ {
@@ -72,8 +83,14 @@ wardrobe_attributes is exactly the retained garments/accessories subset, excludi
 			return nil, calls, failure(contextir.CodeCanceled, "identity_requirements", "context", "Identity requirement interpretation was canceled.", ctx.Err())
 		}
 		inputFields := map[string]any{"intent": b.Intent, "constraints": b.Constraints, "observed_subjects": subjects, "reference_sheet_sources": sheets, "diagnostics": diagnostics}
-		if hasEnvironment {
+		if hasEnvironment || contributionContract {
 			inputFields["subject_responsibilities"] = responsibilities
+		}
+		if contributionContract {
+			inputFields["source_bindings"] = bindings
+			if len(b.SubjectProjections) > 0 {
+				inputFields["explicit_subject_projections"] = b.SubjectProjections
+			}
 		}
 		input, _ := json.Marshal(inputFields)
 		response, callErr := c.model.Generate(ctx, contextir.ModelRequest{Stage: "identity_requirements", System: systemPrompt, Input: input, ResponseSchema: append(json.RawMessage(nil), schema...)})
@@ -94,7 +111,8 @@ wardrobe_attributes is exactly the retained garments/accessories subset, excludi
 			continue
 		}
 		var reply struct {
-			Identity []IdentityDecision `json:"identity"`
+			Identity      []IdentityDecision           `json:"identity"`
+			Contributions []identityContributionTarget `json:"source_contributions"`
 		}
 		lastErr = validateWire(response.JSON, schema)
 		if lastErr == nil {
@@ -102,6 +120,9 @@ wardrobe_attributes is exactly the retained garments/accessories subset, excludi
 		}
 		if lastErr == nil {
 			lastErr = validateIdentityRequirements(b, subjects, sheets, reply.Identity, responsibilities)
+		}
+		if lastErr == nil && contributionContract {
+			lastErr = validateIdentityContributions(b, bindings, reply.Identity, reply.Contributions)
 		}
 		if lastErr == nil {
 			return reply.Identity, calls, nil
