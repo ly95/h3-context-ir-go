@@ -43,14 +43,13 @@ Frame snapping requires the explicit `budget.SnapUp` policy. The target retains
 both requested seconds and actual frames. Observed attribute and pose lists are
 preserved in full; the upstream list caps are not used to discard evidence.
 
-`upstream_test.go` replays every captured call from
-`conformance/fixtures/compiler_calls.json`, records results in
-`conformance/reports/go-plan-corpus.json`, and fails on different results.
-Mode inference is recorded separately as not covered by this deterministic
-package. Held-out semantic expectations and live typed resolution are separate
-artifacts; no expected target is read into a model prompt.
+Run `go test ./plan`. `upstream_test.go` replays the captured deterministic calls
+from `conformance/fixtures/compiler_calls.json` and fails on different results.
+Tests write temporary output by default; `CONTEXTIR_PLAN_CORPUS_REPORT` is an
+explicit optional destination for a retained report. Mode inference is outside
+this deterministic package and is tested through the high-level compiler's
+typed decision boundary. No expected target is read into a model prompt.
 
-The independent `pytest_go_core` bridge also runs the original Python assertions
-while replacing these public plan primitives with their native Go implementations.
-Its scope is explicit: Python orchestration, interpretation and rendering are not
-counted as native Go coverage merely because one plan primitive passed.
+The corpus verifies the named planning primitives; passing it does not establish
+complete Compile behavior. See [upstream tests](../docs/UPSTREAM_TESTS.md) for
+the broader native workflow tests and source mappings.

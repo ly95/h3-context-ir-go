@@ -1,10 +1,13 @@
-# 早期 DeepSeek smoke 测试历史
+# Optional live smoke evaluation
 
-这些是最初自编的三个开发案例，**不是上游功能验收**。它们的全部成功与失败保留作历史。当前工作使用上游原始测试、原始素材和真实模型输入，见 [上游验收说明](../conformance/README.md) 与 [逐项状态](../docs/UPSTREAM_TESTS.md)。本页的通过数不能代表当前编译器已经完整实现 IR。
+`cmd/contextir-eval` runs three built-in synthetic scenes through a configured
+model: text-only generation, exact cross-cut Chinese dialogue, and real-pixel
+observation of a synthetic first-frame image. These are smoke cases, not the
+complete upstream behavior suite or a statistical quality benchmark.
 
-这里记录固定合成案例的真实模型结果。它们验证能否贯通规划、校验、编译和重放；通过不等于自然语言理解已经可靠，也不代表实际 H3 视频质量。
-
-`go test ./...` 不访问网络。以下命令会使用已经配置的 `DEEPSEEK_API_KEY` 调用真实服务并消耗额度，接口和模型需要显式指定：
+Ordinary `go test ./...` does not invoke this command or call paid services.
+To make a new live recording, explicitly provide the endpoint and model and set
+the API key in the variable read by the command:
 
 ```sh
 go run ./cmd/contextir-eval \
@@ -15,30 +18,20 @@ go run ./cmd/contextir-eval \
   -out /tmp/contextir-eval-new-run
 ```
 
-输出目录必须不存在。程序不读取 dotenv，不寻找其它项目的凭据，也不打印 API key。可以通过 `-api-key-env` 指定其它环境变量名。`-max-retries` 默认 0，只有显式配置才为不合合同的规划结果增加调用，最多 3 次；传输错误不自动重试。每次规划输出与所有已发生的用量分别保留。图片感知单独计量，不包含在 Planner 的规划用量中。
+The output directory must not exist. The command reads only the explicitly named
+credential variable (`DEEPSEEK_API_KEY` by default); it does not search dotenv or
+other projects. Model calls consume provider quota. Each attempt, failure and
+reported usage is retained; a valid adapter response is distinct from a final
+case passing the IR and H3 contracts.
 
-默认 `reasoning.effort=none`，可通过 `-reasoning-effort` 显式选择；报告记录实际选项。其它固定参数为 `max_output_tokens=8192`、24 FPS、8 秒，使用 `OfficialProfile()` 编译。案例包括：
+The recording contains the synthetic inputs, requests, model JSON, observations,
+Document, H3 prompt and report. Structural checks include validation and an
+Encode → Decode → Compile hash roundtrip. Scene semantics and actual video
+quality remain separate checks. Do not use the raw-content recorder for private
+application media without an explicit approved content policy.
 
-| 案例 | 需要检查的行为 |
-| --- | --- |
-| text-red-ball | 红球在白底向右滚动，固定镜头、静音，无其它物体 |
-| exact-dialogue | 两段各 4 秒；中文原文对白跨镜头拆分，拼接后与调用者完全相同，无额外台词或配乐 |
-| image-first-frame | 真实观察合成图片；不采信故意写错的蓝色方块说明，锁定实际红色圆形图片作为首帧 |
-
-自动通过要求完整 IR 合同校验、H3 编译成功，以及 Encode → Decode → Compile 的 artifact hash 一致。自由文本的颜色、动作、构图和事实蕴含仍需人工检查输出；报告始终标记 `requires_semantic_review=true`。这是三个合成案例的 smoke test，不是统计意义上的质量基准。模型温度和随机种子未固定，服务端版本可能变化。
-
-输出包含请求、模型 JSON、观察证据、成功文档、H3 提示词与 `report.json`。这些文件只含程序内置合成场景。生产调用应遵守内容日志策略，不要直接复用保存原始模型内容的测试 recorder。
-
-`calls[].adapter_succeeded` 只表示适配器返回了完整 JSON 和有效接口响应；最终是否满足 IR 合同看案例级 `passed`。早期两轮的同义字段叫 `success`，不能据此把被 Planner 拒绝的尝试计为通过。
-
-## 已保存的历史
-
-- [首轮报告](results/2026-10-20-round1/report.json)：规划 0/3 通过，图片感知 1/1 成功。失败包括非规范静音字段、擅自新增对白 delivery、跨镜头重复全文、混合 Span 字段及越过显式 Bindings 的职责。失败输出保留，后续合同调整不覆盖该记录。
-- [第二轮报告](results/2026-10-20-round2/report.json)：Planner v3、`none`、最多一次修复。三个案例首尝试都被拒绝；文字与图片案例第二次通过，跨镜对白第二次仍失败，因此整轮进程退出非零。问题集中在事件时间倒序、镜头结束边界和连续台词 flags。实际发生 6 次规划与 1 次图片观察，不把修复后的结果算成首尝试成功。
-- [第三轮报告](results/2026-10-20-round3/report.json)：Planner v4、`low`、最多一次修复，3/3 首次规划通过，没有触发修复。实际为 3 次规划与 1 次图片观察；所有案例完成校验、编译与 hash 相同的持久化重放。两项同时调整，不能将改善单独归因于 prompt 或思考模式。
-
-首轮只请求了一次规划，没有模型输出修复重试。它证明原来的纯 fake 测试没有覆盖真实模型输出的这些问题。
-
-第三轮人工检查确认了红球/白底/向右移动/静音的主要意图、两段各 4 秒及对白原文拼接、实际红色圆形观察与首帧 socket 绑定。编译文本仍有完整主体描述嵌入句子后的重复冠词和标点，且红球终点描述不够具体；这些是尚需改进的文本质量，不应由结构通过率掩盖。没有调用实际 H3 生成视频。
-
-三轮共发生 15 次模型调用，失败与修复尝试均保留用量。默认 go test 不执行这些调用。运行环境为 Go 1.27.2；使用的 `deepseek-flash` 为服务端别名，不能据此保证将来返回同一模型版本。
+For broader configurable Compile/Refine inputs and separate assertions, use
+[contextir-live-eval](../cmd/contextir-live-eval/README.md). Upstream fixtures and
+native test scope are described in [UPSTREAM_TESTS.md](../docs/UPSTREAM_TESTS.md).
+Generated reports and historical development recordings are not distributed in
+this source tree.

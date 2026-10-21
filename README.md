@@ -1,135 +1,106 @@
 # ContextIR
 
-独立的 Go package：把自然语言视频需求和真实素材观察编译成可编辑、可持久化的 IR，再从同一份 IR 生成 H3 prompt、输入绑定、预算和内容哈希。核心及适配器只使用 Go 标准库，运行时不依赖 Python、CLW Studio、数据库或队列。
+ContextIR 是独立的 Go 视频提示词编译库。它把自然语言需求与素材观察编译为可编辑、可持久化的 IR，再从同一份 `Document` 生成 H3 prompt、素材绑定、预算和内容哈希。
 
-验收依据是 [OpenH3-IR 固定提交 fd031e1](https://github.com/ruashots/open-h3-ir/tree/fd031e136ae3d89147324c0d1b2aa65e838c21f5) 的完整功能与原始测试。原测试输入、原断言、历次失败和真实 DeepSeek 输出分别保存在 [conformance](conformance/README.md)，未把早期三个自编 smoke cases 当作功能验收。具体通过范围和剩余差异见 [验收清单](docs/UPSTREAM_TESTS.md) 与 [当前状态](docs/READINESS.md)。
+库与测试使用 Go 标准库，不需要 Python。模型、感知、存储和 HTTP 执行能力由调用方显式配置；核心验证与渲染可以完全离线运行。
 
-验收按上游单测保护的业务行为重写，使用 Go 的接口、类型和显式依赖。原清单 **991 个条目全部通过验证，N/A 为 0**：672 项由未修改的原断言验证实际 Go 主输出，319 项由 Go API 测试验证原意及必要的接口/输入调整。见 [最终逐项报告](https://github.com/ly95/contextir/blob/bda66cc6b666fc7500b1c989a07b6c6f55adc71a/conformance/reports/native-functionality-release-v2.json)。原样 Python 桥接诊断另存 **981 passed / 10 failed**；十项差异及对应 Go 正反例见 [说明](docs/UPSTREAM_TESTS.md#原样重跑保留的十项差异)。
-
-真实最低 Go 1.25.0 的全库测试与 vet 已通过；全库 race 也通过：**442 个主测试、7957 个子测试，0 失败、0 跳过**。见 [最低版本](https://github.com/ly95/contextir/blob/bda66cc6b666fc7500b1c989a07b6c6f55adc71a/conformance/reports/go-minimum-release-v1.json) 与 [质量记录](https://github.com/ly95/contextir/blob/bda66cc6b666fc7500b1c989a07b6c6f55adc71a/conformance/reports/local-quality-release-v1.json)。
-
-同一冻结实现完成真实 DeepSeek 的 **35 次 Compile + 5 次 Refine，40/40 符合预期**：36 次成功产出、4 次正确拒绝。277 次实际调用、全部失败候选、重试和用量均保留；独立检查与语义复核分别报告，见 [实测结果](https://github.com/ly95/contextir/blob/bda66cc6b666fc7500b1c989a07b6c6f55adc71a/conformance/reports/release-live-round6/report.json)、[独立检查](https://github.com/ly95/contextir/blob/bda66cc6b666fc7500b1c989a07b6c6f55adc71a/conformance/reports/release-live-round6-verification.json) 和 [当前状态](docs/READINESS.md)。
-
-这是公开协议的独立实现，没有 MiniMax 托管 Context-IR 的内部代码、训练数据或生成质量等价证据。
+本项目参考 [OpenH3-IR](https://github.com/ruashots/open-h3-ir/tree/fd031e136ae3d89147324c0d1b2aa65e838c21f5) 与 MiniMax 公开的 H3 格式指南，是独立、非官方实现。它不包含 MiniMax 的模型权重或托管 Context-IR 内部实现。
 
 ## 安装
 
-需要 Go 1.25+。私有仓库调用方需要相应 GitHub 访问权限，可按环境设置 `GOPRIVATE=github.com/ly95/*`，不要把凭据放进 module URL。
+需要 Go 1.25 或更新版本。
 
 ```sh
-GOPRIVATE='github.com/ly95/*' go get github.com/ly95/contextir@v0.2.0
+go get github.com/ly95/contextir@latest
 ```
 
-`v0.2.0` 已从全新外部缓存实际安装。下载包内 442 主测试、7957 子测试全部通过，完整 40 操作/277 尝试严格重放通过。实际 OriginHash、ZIP、独立测试收据和不可变审计提交见 [发布索引](https://github.com/ly95/contextir/blob/main/conformance/reports/release-index.json)。旧标签和旧伪版本的证据作为历史保留。
+## 从需求编译
 
-完整模型录音、源码快照和历史失败保存在独立的 [审计分支](https://github.com/ly95/contextir/tree/codex/conformance-evidence)，具体不可变提交及最终安装证明见 [发布索引](https://github.com/ly95/contextir/blob/main/conformance/reports/release-index.json)。发行树只保留现有 CI 所需的原始基线和完整录音目录，报告数据从约 1.43 GiB 减为约 35.3 MiB，原断言和 CI 校验保持不变。Go module ZIP 排除这个嵌套审计 module，库及自包含测试不依赖完整审计资料。完整审计的复验请使用 [独立审计 checkout](conformance/reports/README.md)。
-
-## 从一句需求编译
+向 `compiler.New` 注入实现 `planner.Model` 的模型。素材观察可通过 `planner.Perceiver` 提供，也可使用调用方已取得的结构化 Evidence；纯文本请求的 perceiver 可以为 `nil`。
 
 ```go
-client, err := deepseek.New(deepseek.Config{
-    BaseURL: "https://api.deepseek.com",
-    Model: "deepseek-flash",
-    APIKey: apiKey, // 宿主显式取得；库不读环境变量或 dotenv。
-    ReasoningEffort: "low",
-    MaxOutputTokens: 16384,
-})
-if err != nil { return err }
+package video
 
-c, err := compiler.New(client, myPerceiver, compiler.Options{
-    Profile: h3.OfficialProfile(),
-    FramePolicy: compiler.FramePolicyExact,
-    MaxStructureRetries: 3,
-    Planner: planner.Options{MaxRetries: 3},
-})
-if err != nil { return err }
-r, err := c.Compile(ctx, compiler.Brief{
-    Intent: "a lighthouse keeper climbs the tower stairs in a storm and lights the lamp",
-    Seconds: 15,
-    Aspect: "16:9",
-})
-// 无论成功与否均保留 r.Calls；已发生的用量不能随错误丢失。
-if err != nil { return err }
-if r.Status == "needs_input" {
-    // 展示 r.ModeDecision.Questions，用户作出结构化选择后重新提交。
-    return nil
+import (
+    "context"
+
+    "github.com/ly95/contextir/compiler"
+    "github.com/ly95/contextir/h3"
+    "github.com/ly95/contextir/planner"
+)
+
+func Compile(ctx context.Context, model planner.Model) (compiler.Result, error) {
+    c, err := compiler.New(model, nil, compiler.Options{
+        Profile: h3.OfficialProfile(),
+        FramePolicy: compiler.FramePolicyExact,
+        MaxStructureRetries: 1,
+        Planner: planner.Options{MaxRetries: 1},
+    })
+    if err != nil {
+        return compiler.Result{}, err
+    }
+    return c.Compile(ctx, compiler.Brief{
+        Intent: "A lighthouse keeper climbs the tower stairs in a storm and lights the lamp.",
+        Seconds: 15,
+        Aspect: "16:9",
+    })
 }
-// 持久化 r.Document，并把 r.Artifact 交给实际 H3 推理适配器。
 ```
 
-导入 module 的 `compiler`、`deepseek`、`h3`、`planner` 包。纯文本请求的 `myPerceiver` 可以为 nil。`chatcompat.Client` 提供另一个可注入的 Chat Completions 文本/视觉后端，详见其 [说明](chatcompat/README.md)。
+成功结果的 `Document` 是持久化和编辑入口，`Artifact` 包含最终 prompt 与 manifest。调用方必须检查错误和 `Status`：`needs_input` 表示需要展示结构化澄清问题，尚未发布产物。无论成功或失败，均应保留返回的 `Calls`，其中包含已经发生的模型与感知用量。
 
-管线中的模式、素材职责、替换目标、内容许可和参考属性优先级通过独立的类型化模型合同解释；不使用关键词列表或正则猜测用户意图。代码管理镜头边界、来源与输入绑定、固定对白槽位、摄影机闭集、预算、校验和有限修复。固定对白由宿主回填原文，写作模型不负责重新抄写它。
+内置 [deepseek](deepseek/README.md) 和 [chatcompat](chatcompat/README.md) 提供模型适配器。端点、模型、凭据、输出上限与推理选项均由调用方提供，库不会读取环境变量、切换模型或自行寻找凭据。完整高层 API 见 [compiler](compiler/README.md)。
 
-画风、引用职责与音轨复制关系同样由宿主管理。环境、结构、植入/替换、音频属性、参考图帧等容易混淆的输入还有独立的 `semantic_review`：审核最终正文是否把场景当演员、偷用未许可内容、遗漏植入人物或改变锚定图像。明确错误进入有限修复；审核通过不表示已经证明任意语义或成片质量。审核调用与写作调用逐次进入同一用量账本。
+## 能力
 
-`Compile` 默认明确失败。`Draft` 是单独的离线能力；只有显式选择 `FailurePolicyDraft` 才允许失败后生成带降级状态、原因和真实用量的草稿。
+- 五种生成模式：`t2va`、`i2va`、`l2va`、`fl2va`、`ref2va`。
+- 十六种素材职责，分别管理主体、环境、风格、分镜、结构、首尾帧、编辑、续写、植入、替换及音频引用。
+- 固定与生成对白、旁白、歌唱、说话人、跨镜连续分片、可见文字与原音轨歌词 cue。固定文字保留原文，不由写作模型重新抄写。
+- 内容许可、参考属性优先级、音轨复制与声音属性参考、明确的替换目标和多来源身份属性投影。
+- 镜头与切点锁定、摄影机闭集、四档创意程度、内置与自定义导演，以及 LoRA 注册与约束。
+- 严格 JSON、版本化 Schema、结构化诊断、有限模型修复、用量账本和确定性产物哈希。
 
-## 模式、引用与控制
+用户意图通过显式类型或模型的结构化合同解释。代码管理时间、引用、来源、固定文字与执行约束；输入不合法、能力不足或模型输出不合约时返回明确错误。`Draft` 是单独的离线能力；失败后生成草稿必须显式选择相应政策，并保留降级状态和原因。
 
-- 五种模式：`t2va`、`i2va`、`l2va`、`fl2va`、`ref2va`，明确区分实际首尾帧与内容参考。
-- 原项目全部 16 种素材职责；主体身份与参考姿态、参考图排版、环境、风格、视频结构分别管理。
-- 视频续写、编辑、主体放入和替换；目标不唯一时不按“剩下的人”猜测。未观察到但由用户明确命名的人物保留为 `user_symbolic`，不会伪造观察事实。
-- 同步音轨、独立音频、voice timbre、music style、beat reference、SFX；属性参考不会被误当成原信号复制。`AudioCopyModes` 明确选择 BGM 的完整/部分复制，默认部分复制；完整最终录音不能暗中混入新对白、配乐或另一个复制音轨。
-- 固定与生成对白、说话人、旁白、歌唱、跨镜连续分片、可见文字和复用音轨歌词 cue。`TranscriptUses` 只把明确选定的转写原文用于重新表演，不因拥有转写就授权说话或复制信号；禁止把台词重复写成画面文字。
-- `SubjectProjections` 通过明确来源 ID 与属性选择合并目标身份，保留观察与用户目标声明的不同来源，不把姿态、布景或不相关服装一起带入。
-- 镜头数量/切点锁定、摄影机闭集、四档创意程度、七种内置导演及自定义说明；用户与参考优先于导演。
-- LoRA 注册、权重哈希、checkpoint/尺寸/帧数/步数约束、强度和触发词管理。
-- `Document` 是产物唯一事实来源；prompt、manifest、来源元数据、输入准备指令和哈希从它派生。
+## 包
 
-完整 Go API 见 [compiler](compiler/README.md)；低层 `plan`、`budget`、`tokens`、`h3check` 可单独使用。
+| 包 | 用途 |
+| --- | --- |
+| 根包 `contextir` | `Document`、Evidence、严格编解码、Schema、验证、错误与用量 |
+| [compiler](compiler/README.md)、[planner](planner/README.md) | Brief 编译与修订、素材观察、类型化解释与规划 |
+| [h3](h3/README.md)、[h3check](h3check/README.md) | H3 渲染、manifest、执行 profile 与最终文本检查 |
+| [plan](plan/README.md)、[budget](budget/README.md)、[tokens](tokens/README.md) | 确定性结构、帧与画布预算、离线精确 BPE 计数 |
+| [media](media/README.md) | 本地媒体检查、ffprobe/ffmpeg、视频抽帧、可选缓存与 ASR 接口 |
+| [deepseek](deepseek/README.md)、[chatcompat](chatcompat/README.md) | 显式配置的模型与图片请求适配器 |
+| [evaluate](evaluate/README.md) | 离线评分、基线与回归比较 |
+| [service](service/README.md)、`uploads` | 可选 HTTP handler、记录接口与内容寻址上传存储 |
+| [comfy](comfy/README.md)、[lora](lora/README.md) | ComfyUI 远端操作、LoRA 注册与运行约束 |
 
-[evaluate](evaluate/README.md) 提供独立离线评分、聚合、历史基线和回归比较。指标读取最终 H3 正文与真实调用记录；编译和校验失败阻断验收，篇幅、警告数与镜头差异度只作报告。旧基线没有测量的指标保持缺失，不补零参与比较。
+## 离线使用与测试
 
-## 素材感知与外部执行
-
-`media` 提供显式本地解析器、文件头事实、ffprobe/ffmpeg 量测、真实视频抽帧及可选的调用方目录缓存。`deepseek.ImagePerceiver` 和 `chatcompat.Client` 接受真实像素；素材的文字 note 不是观察事实。
-
-静态图片观察可以声明完整视觉覆盖；抽样视频明确是 `partial`，记录实际采样时间。音频可量测并接入调用方的 ASR，转写只说明词语，不能当成听懂音色、音乐和节奏。默认 Planner 不接纳部分覆盖；需要调用方显式设置 `AllowPartialPerception`。库没有偷偷用文字代替未支持的模态。
-
-`MediaPreparation` 是绑定所需的尺寸/帧数准备指令，和原文件元数据分开；它不表示已经裁剪或转码。实际素材准备和 H3 视频生成由调用方执行。`comfy` 提供远端 ComfyUI HTTP 客户端和图修改工具，详见 [说明](comfy/README.md)。
-
-可选 [service](service/README.md) 包提供标准库 HTTP handler、公开字段/角色/限额合同、上传、编译、读取和修订。公开 wire contract 为版本 3，如实公布实际拒绝码，并透传 `audio_copy_modes`、`transcript_uses`、`subject_projections`，拒绝未知字段或非法嵌套值。`uploads` 是独立的内容寻址、配额、在途预留、TTL/LRU 存储。核心库不自动监听网络，也不自动创建全局存储。
-
-## 时间、预算与持久化
-
-IR 使用整数毫秒和有理数 FPS。低层 `h3.Compile` 不改变时长；`OfficialProfile` 负责公开格式，`ComfyUIProfile` 另外检查实际运行时的帧网格、尺寸和输入限制。
-
-高层默认 `FramePolicyExact`。ComfyUI 调用方可以显式选择 `FramePolicySnapUp` 匹配原项目的 `17k+5` 网格：结果同时报告 nominal/effective duration、实际帧数与对齐策略，没有隐式取整。`budget` 计算画布与 latent rows；`tokens` 内嵌原项目的完整 Qwen2.5 词表并作精确 BPE 计数，离线运行。
-
-`contextir.Decode` / `DecodeEvidence` 拒绝未知字段、大小写别名、重复 keys、尾随 JSON、无效 UTF-8 与不成对 surrogate。`Validate` 检查时间、跨引用、来源和请求合同。默认上限 8 MiB，超限明确报错，不截短。发布 Schema 由 Go 类型生成并受同步测试保护。
-
-## 命令行与复验
+已有 `Document` 时，调用 `h3.Compile(document, profile)` 即可生成产物，不调用模型。`OfficialProfile` 检查公开格式；`ComfyUIProfile` 额外检查执行后端的帧网格、画布、socket 与输入限制。IR 使用整数毫秒和有理数 FPS，不隐式调整时长。需要 `17k+5` 对齐时，调用方显式选择 `FramePolicySnapUp`，结果同时报告请求时长与有效时长。
 
 ```sh
-# 确定性操作，不调用模型。
 go run ./cmd/contextir schema
 go run ./cmd/contextir contract
-go run ./cmd/contextir directors
 go run ./cmd/contextir validate < document.json
 go run ./cmd/contextir compile -profile comfyui < document.json
-go run ./cmd/contextir-score score -kind result -in compile-result.json -as-run -out run.json
-go run ./cmd/contextir-score baseline -in run.json -out baseline.json
-go run ./cmd/contextir-score compare -baseline baseline.json -candidate next-run.json
 
-go test ./...
-go test -race ./...
-go vet ./...
+make check
 ```
 
-全部适用原要求的复验入口是 `conformance/run_native_functionality.py --require-all --go-compatibility-report <最低版本报告>`。它同时核查独立 Go 测试和 fresh 原断言报告中的主 Go API 调用、实际 validator 调用、不可变 bridge/runtime/fixture/录音请求来源；命令和完整前置条件见 [复验说明](conformance/README.md)。普通 Go 测试不调用付费服务，最终本地质量检查见 [记录](https://github.com/ly95/contextir/blob/bda66cc6b666fc7500b1c989a07b6c6f55adc71a/conformance/reports/local-quality-release-v1.json)。
+`make check` 执行格式检查、vet、全部原生测试、race 和解码 fuzz；需要 ffmpeg、ffprobe，以及 race detector 所需的 C 编译器。缺少媒体工具时，完整检查会先报错。也可分别运行 `go test ./...`、`go test -race ./...` 与 `go vet ./...`，但直接运行 Go 测试可能在缺少媒体工具时跳过对应集成用例。
 
-高层 `brief` / `draft` 及预算、token、原始 H3 校验命令的参数见 `go run ./cmd/contextir <command> -h`。付费模型验证是单独命令，不在普通单元测试中触发：
+普通 Go 测试不调用付费模型。命令行参数见 [CLI 文档](cmd/contextir/README.md)；真实模型录制单独使用 [live-eval](cmd/contextir-live-eval/README.md)，会访问显式配置的服务并消耗额度。
 
-```sh
-# 凭据由当前进程环境显式提供；不读取 dotenv，不把 key 写进参数。
-go run ./cmd/contextir-upstream-eval -kind suite \
-  -input conformance/fixtures/suite_briefs.json -out /tmp/contextir-new-suite \
-  -base-url https://api.deepseek.com -model deepseek-flash -reasoning-effort low
-```
+上游来源、逐项测试映射和 Go 适配原则见 [测试说明](docs/UPSTREAM_TESTS.md) 与 [conformance](conformance/README.md)。
 
-真实模型验收保存每个原输入、每次 request/schema/output、用量、失败和产物。`proposed`、`licence_decided` 或 JSON 结构有效并不表示原要求通过；另用独立 oracle 和原断言验证。混合 pytest 的 `991 passed` 也不等于 991 项都验证了 Go 主行为。本轮逐项映射区分了真实主输出、仅调用辅助函数的历史记录和独立 Go 适配；真实模型的失败、重试和警告另列，不用确定性测试通过替代语义或成片质量。
+## 能力边界
 
-## 来源
+素材的文字说明不是观察事实。静态图片可声明完整视觉覆盖；抽样视频只覆盖实际采样帧，ASR 只建立转写词语，不能证明音色、音乐或节奏。部分覆盖需要调用方显式接纳。感知与媒体准备的具体边界见 [media](media/README.md)。
 
-格式依据 MiniMax 官方[基础指南](https://huggingface.co/MiniMaxAI/MiniMax-H3/blob/main/docs/VIDEO_PROMPT_WRITING_GUIDE_base_en.md)与[全参考指南](https://huggingface.co/MiniMaxAI/MiniMax-H3/blob/main/docs/VIDEO_PROMPT_WRITING_GUIDE_ref_en.md)。原项目测试、算法和词表来源及许可证保留在 [third_party](third_party/open-h3-ir/NOTICE) 和 [来源说明](docs/UPSTREAM.md)。
+`MediaPreparation` 描述后端所需的素材准备，不表示已经裁剪、转码或生成视频。实际 H3 推理由调用方执行。IR、prompt 与单元测试的通过不能证明成片的人物一致性、音画同步、文字保真或与 MiniMax 托管服务质量等价。已知格式与执行限制见 [实现范围](docs/READINESS.md)。
+
+## 许可证与来源
+
+ContextIR 使用 [Apache License 2.0](LICENSE)。OpenH3-IR、Qwen2.5 词表及测试素材的原有声明保留在 [第三方说明](THIRD_PARTY_NOTICES.md) 与 `third_party/`。模型权重、托管服务和调用方媒体的许可独立于本库。来源版本见 [UPSTREAM.md](docs/UPSTREAM.md)，贡献方式见 [CONTRIBUTING.md](CONTRIBUTING.md)。

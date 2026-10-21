@@ -21,9 +21,11 @@ import (
 )
 
 // Independently pin the complete file inventory/provenance, rather than trusting
-// response files and their editable checksums alone. Refresh only from a new
-// actual frozen-binary recording; old recordings remain in the audit archive.
-const remainingHighlevelManifestSHA256 = "27c415cde6d02e381192747ba7eacbf3140fc8a905fa1d29dbb9094ab17e06f6"
+// response files and their editable checksums alone. Refresh recordings only
+// from a new actual frozen-binary run; publication-only receipt redaction is
+// separately documented and never changes recorded requests or responses.
+// Publication-only receipt redaction is described in testdata/PUBLICATION.md.
+const remainingHighlevelManifestSHA256 = "e7a32c787ebd6c07e06ca6cac03a3feafddecbeea0692d0b1877744aac4db6a9"
 
 type remainingHighlevelContext struct {
 	Schema  string `json:"schema"`

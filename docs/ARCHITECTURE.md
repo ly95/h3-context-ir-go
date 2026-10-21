@@ -10,9 +10,9 @@ ContextIR 的持久化资产是 `Document`，不是一段经过润色的字符�
 4. `h3`：唯一 Document 渲染路径、素材 manifest、标签分配、公开 H3 格式、运行时 Profile、内容哈希。`h3check` 负责写作规则；`budget`、`tokens`、`plan`、`lora` 提供可独立调用的确定性能力。
 5. `deepseek` / `chatcompat`：显式配置的模型适配器与真实像素请求；`media`：显式本地解析、文件头、ffprobe/ffmpeg、抽帧、可选缓存和可注入 ASR。核心与内置包均仅依赖 Go 标准库。
 6. `service` / `uploads`：可选 HTTP handler、编译记录与内容寻址上传；`comfy`：远端 ComfyUI HTTP 与图操作。库不自动监听或启动任务。
-7. `cmd/contextir`：离线操作及显式模型编译 CLI；`cmd/contextir-upstream-eval`：原上游输入的真实模型验证；`cmd/contextir-eval`：保留早期自编 smoke 历史。
+7. `cmd/contextir`：离线操作及显式模型编译 CLI；`cmd/contextir-score`：离线评分与基线比较；`cmd/contextir-live-eval`、`cmd/contextir-upstream-eval`：显式输入的真实模型录制；`cmd/contextir-eval`：内置合成场景的 smoke 验证。
 
-模型与感知适配器由宿主注入。核心验证与渲染不做 IO；`media` 只对显式 resolver 返回的本地文件执行配置好的媒体工具，`comfy` 只访问配置的端点。模型包不读取环境变量或自动下载素材。CLI 仅读取指定名称的凭据变量，不搜索 dotenv。CLW 的鉴权、资产读取、计费与 River 生命周期留在 CLW，ContextIR 没有对它的依赖。
+模型与感知适配器由宿主注入。核心验证与渲染不做 IO；`media` 只对显式 resolver 返回的本地文件执行配置好的媒体工具，`comfy` 只访问配置的端点。模型包不读取环境变量或自动下载素材。CLI 仅读取指定名称的凭据变量，不搜索 dotenv。应用的鉴权、资产读取、计费与任务生命周期由宿主负责。
 
 ## 来源与不可变输入
 
@@ -68,6 +68,6 @@ Planner 默认零次重试。有限重试只针对不合合同的完整模型结
 
 Go API 与 IR 文档分别版本化。未知字段和版本拒绝，避免旧版静默丢失新信息。新目标模型需要自己的 compiler/capability profile；在有真实第二个后端之前，不引入万能视频 IR、插件注册中心或通用 DAG。
 
-上游完整测试、原始断言、原始输入的真实模型解释与最终成片质量是不同证据。`conformance` 逐条记录原 nodeid、实际触及的 Go 函数、模型录制与未覆盖项。真实视频生成、人物一致性、音画同步和成片文字保真仍需实际 H3 推理评测，不能由 IR 测试代替。
+上游需求映射、原生测试、固定模型响应回放、真实模型解释与最终成片质量是不同证据。`conformance` 保留原 nodeid、原断言来源和 Go 适配说明；当前运行结果以实际 Go 测试输出为准。真实视频生成、人物一致性、音画同步和成片文字保真仍需实际 H3 推理评测，不能由 IR 测试代替。
 
-当前实现边界与真实评测证据见 [READINESS.md](READINESS.md) 和 [evals](../evals/README.md)。v0.1.0 是早期基础版本，后续审计修复不通过重写旧标签发布。
+当前实现边界见 [READINESS.md](READINESS.md)，测试方法见 [UPSTREAM_TESTS.md](UPSTREAM_TESTS.md)。版本标签不可重写；后续修复通过新版本发布。

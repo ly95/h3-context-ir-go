@@ -57,10 +57,10 @@ does not invent repair history. Comparison exits 1 for a failed gate, 2 for inva
 input. Output files and baselines cannot overwrite history. The CLI never reads
 provider configuration or environment secrets.
 
-Verification is deliberately separated:
+Run `go test ./evaluate ./cmd/contextir-score`. Verification is separated:
 
-- `fixtures/evaluate_calls.json`: **14 actual calls across 8 unchanged original
-  pytest tests**, observed during a **991-pass** upstream run.
+- `fixtures/evaluate_calls.json`: **14 actual source calls across 8 original
+  tests**, preserving their captured inputs and expected outputs.
 - `fixtures/evaluate_probes.json`: **333 supplemental source-function
   differentials**, including scoring 137 captured real upstream renderer outputs,
  7 aggregates, 147 comparisons and 42 gates. These are not additional original
@@ -70,15 +70,7 @@ Verification is deliberately separated:
   rule-number/meaning uniqueness across production Go, matching the source's
   independent namespace invariant.
 
-The narrow original-assert replay is
-`conformance/reports/go-evaluate-pytest-round2.json`: all991 original assertions
-pass, with8 tests actually invoking native evaluation (983 remain Python-only).
-The original bodies are unchanged. Its binary/adapter hashes and the first-round
-tuple/JSON container correction are recorded separately; supplemental probes do
-not increase that original native-touch count.
-
-Regenerate the observations with `conformance/capture_evaluate.py` and supplemental
-probes with `conformance/probe_evaluate.py`; both require an explicit pinned
-upstream checkout and refuse to overwrite previous output. The original-assert
-bridge is `conformance/evaluate_bridge.py`; its measured touch counts belong to
-the actual pytest replay report, not to the supplemental probe count.
+Captured fixtures and supplementary probes are distinct from a fresh execution
+of the original source suite. Native tests compare the actual Go values and
+report text without a Python bridge. See [upstream tests](../docs/UPSTREAM_TESTS.md)
+for the fixed source version and behavior-mapping policy.

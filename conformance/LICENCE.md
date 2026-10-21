@@ -1,62 +1,62 @@
-# Reference licence oracle
+# Reference-permission fixtures
 
-`fixtures/licence_inputs.json` is the model-safe input corpus. It has 437 actual
-`resolve_licence` / `resolve_style` calls from the unchanged original suite,
-representing 228 unique Brief/cards inputs. Each entry has its original nodeid
-and a SHA-256 over compact, sorted UTF-8 JSON of `input`.
+Here, “licence” means the content properties a reference permits the compiler to
+reuse, rather than a software or media copyright license. Software attribution
+is documented in [THIRD_PARTY_NOTICES.md](../THIRD_PARTY_NOTICES.md).
 
-`fixtures/licence_expectations.json` is the independent held-out oracle.
-`licence_cases.json` additionally preserves all 1,617 actual calls, the utility
-function results, and every collected original assertion with source lines.
-Do not pass either file to a model. In particular, the original `resolve_style`
-argument named `licence` is a Python-computed answer, so it is deliberately absent
-from the model-safe file.
+`fixtures/licence_inputs.json` contains provider-safe inputs from 437 original
+`resolve_licence` / `resolve_style` calls, representing 228 unique Brief/card
+inputs. Each entry retains its source node ID and an input digest.
 
-The native production API consumes the original DTOs directly:
+`fixtures/licence_expectations.json` is a separate held-out oracle.
+`licence_cases.json` additionally preserves 1,617 original licence/style/helper
+calls and their collected assertions. Do not pass expected answers to a model.
+The original `resolve_style` argument named `licence` is itself a computed
+answer and is deliberately absent from the provider-safe file.
+
+## Native API
+
+The compiler consumes the source DTO through an explicit conversion:
 
 ```go
-type Input struct {
-    Brief plan.Brief                `json:"brief"`
-    Cards map[string]plan.AssetCard `json:"cards"`
+brief, err := compiler.FromOriginal(sourceBrief, observedCards)
+if err != nil {
+    return err
 }
-// item.Input is decoded only from licence_inputs.json.
-brief, err := compiler.FromOriginal(item.Input.Brief, item.Input.Cards)
-if err != nil { return err }
 c, err := compiler.New(model, nil, compiler.Options{
     Profile: h3.ComfyUIProfile(),
     FramePolicy: compiler.FramePolicySnapUp,
     MaxStructureRetries: 1,
 })
-if err != nil { return err }
+if err != nil {
+    return err
+}
 decision, err := c.DecideLicence(ctx, brief)
 ```
 
-`model` is the caller's explicitly configured adapter. No test script in this
-directory sources a credential, selects a provider, or calls a model itself.
-Record each actual request/output, model, usage validity, errors and retries.
-Duplicate input hashes may reuse one actual decision with an explicit
-`reused_from` pointer; they must not invent a new response or count another paid
-call. Hash-identical inputs can occur in different original functions and retain
-separate held-out assertions.
-
-Evaluate only after recording the model result. Compare all six `governs` values
-against the original result, `medium_transferred` against the original property,
-and style source and known requested/reference medium buckets independently.
-The original assertions further constrain pose, retained wardrobe, reference
-sheet lighting, medium transformations, grammar, notes and prose channels; a
-matching governance map alone does not establish those complete behaviors.
-Exact free-form reasoning/phrasing equality is not claimed by structured-map
-agreement, and a successful model call is not a passed original requirement.
-
-To regenerate the observation, use the pinned source and isolated Python:
+`model` is the caller's explicitly configured adapter. `observedCards` is source
+evidence, not a target answer. Native tests use controlled dependencies and
+recorded responses; no model credentials are needed:
 
 ```sh
-CONTEXTIR_CAPTURE_PATH="$PWD/conformance/reports/upstream-licence-capture-new.json" \
-PYTHONPATH="$PWD/conformance:/tmp/open-h3-ir-reference" \
-/tmp/contextir-upstream-venv/bin/python -m pytest -q \
-  -p pytest_capture_licence /tmp/open-h3-ir-reference/tests
+go test ./compiler ./plan ./h3
 ```
 
-The recorded run used the upstream checkout as cwd. The plugin wraps original
-functions without altering returns or assertions; its successful source run
-is evidence of the oracle only, not native Go licence parity.
+## What must be checked
+
+Compare property ownership, medium transfer, style source and known rendering
+families independently. Pose, wardrobe, source-sheet presentation, visual medium,
+reference retention and final prose each have their own invariant; a matching
+ownership map alone does not establish them all.
+
+A new live run must retain actual requests/responses, model identity, failed
+attempts and usage validity. Hash-identical inputs may reuse an explicitly
+identified result, but replay must not invent a new response or charge another
+provider call. Complete typed request identity is checked before consuming a
+recorded result.
+
+Original source expectations and native representation adjustments remain
+separate. A model response being valid JSON, or a permission decision matching a
+map, is not a complete Compile success or a video-quality assessment. See
+[upstream tests](../docs/UPSTREAM_TESTS.md) for adaptation policy and
+[live-eval](../cmd/contextir-live-eval/README.md) for explicit model recording.

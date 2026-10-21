@@ -50,7 +50,8 @@ returns an explicit `Bypassed` result with reason
 `audio_metadata_is_request_specific`. Video caching stores only the visual result;
 each request still runs its own configured ASR and retains that invocation's usage.
 
-The original upstream audio-cache five assertions execute these native cache and
-metadata APIs through the conformance bridge. Additional native tests cover real
-image hits, contract/model/content invalidation, corrupted entries, poisoned audio
-entries and a real audiovisual clip whose cached vision never reuses ASR output.
+Run `go test ./media` to verify the native cache and metadata APIs, including the
+upstream audio-cache invariants, real image hits, contract/model/content
+invalidation, corrupted entries, poisoned audio entries and a real audiovisual
+clip whose cached vision never reuses ASR output. The integration tests need
+ffmpeg/ffprobe and report explicit skips when those tools are unavailable.

@@ -57,11 +57,13 @@ it with `usage_complete` and `unmetered_asset_ids` in IR provenance. A compile o
 refine failure carries the same fields beside its structured error; a failed
 attempt's reported usage is never replaced with zero or counted a second time.
 
-The request contract, all eight section digests, and the JSON/JS contract exports
-match pinned open-h3-ir. Original request/HTTP/refusal assertions run against this
-Go handler through the conformance bridge. Supplementary Go tests cover a full
-native create/read/refine lifecycle, publication integrity and concurrent record
-versions. This does not claim that an unchanged Python suite is entirely Go.
+The request contract, all eight section digests, and the JSON/JS exports share
+one native versioned definition. Run `go test ./service ./cmd/contextir` to verify
+request/HTTP/refusal behavior, a full create/read/refine lifecycle, publication
+integrity, concurrent record versions and actual CLI exports. Native contract v3
+includes additional fields and refusal codes, with explicit version/digest
+checks; it does not reuse upstream Python v2's digest. Source mappings are in
+[upstream tests](../docs/UPSTREAM_TESTS.md).
 
 One deliberate request-default difference: omitted `seed` remains unspecified;
 it is not silently replaced with the source implementation's default 7. An
