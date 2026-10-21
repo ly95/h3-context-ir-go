@@ -84,6 +84,8 @@ prefix 案例的调用方原属性名 `wheels from the second picture` 是 opaqu
 
 `v0.2.0` 已从全新外部缓存实际安装，Origin.Hash 精确为 `58a9657b939cb7e38eeec435b1453a7410acca5d`，ZIP 为 **10,786,780 字节**，首次安装实测约 24 秒、无传输重试。下载包内 **442 主测试、7957 子测试全部通过，0 测试失败/跳过**；完整 **40 操作 / 277 尝试** 严格重放通过，完整 Result、36 份 compiled Document/Artifact 及 4 个预期拒绝一致。119 个生产文件与真实模型冻结源码逐项匹配，没有 replace、模型凭据转发或新 API 调用。标签安装、原生全测、严格重放、独立 Origin 核验及不可变审计提交均记录在 [发布索引](https://github.com/ly95/contextir/blob/main/conformance/reports/release-index.json)。
 
+首次安装时间来自本机系统代理及 Git HTTP/1.1 的验证环境，使用了新的 Git/Go 下载缓存；未修改全局网络或 Git 设置。
+
 候选 `38393570e2c87365c26be278d0550dae3cd389b7` 已从私有远端实际安装，ZIP 为 10,835,560 字节；下载包 442 主测试、7957 子测试通过，完整 40 操作/277 调用尝试严格回放通过。候选安装和重放证明保存在审计分支；最终标签证明以 [发布索引](https://github.com/ly95/contextir/blob/main/conformance/reports/release-index.json) 为准。
 
 完整审计已保留在独立分支，发行树保留 CI 的 4 个原基线及 8 个完整录音目录，共 37,030,618 字节；原有逐字节来源核验与 CI 逻辑不变。见 [保留清单](../conformance/reports/release-thin-ci-keep-set-v1.json)。生产 Go、testdata 和原 fixtures 均未修改；完整付费录音在审计 checkout 中提供。

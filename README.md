@@ -17,7 +17,7 @@
 需要 Go 1.25+。私有仓库调用方需要相应 GitHub 访问权限，可按环境设置 `GOPRIVATE=github.com/ly95/*`，不要把凭据放进 module URL。
 
 ```sh
-go get github.com/ly95/contextir@v0.2.0
+GOPRIVATE='github.com/ly95/*' go get github.com/ly95/contextir@v0.2.0
 ```
 
 `v0.2.0` 已从全新外部缓存实际安装。下载包内 442 主测试、7957 子测试全部通过，完整 40 操作/277 尝试严格重放通过。实际 OriginHash、ZIP、独立测试收据和不可变审计提交见 [发布索引](https://github.com/ly95/contextir/blob/main/conformance/reports/release-index.json)。旧标签和旧伪版本的证据作为历史保留。
