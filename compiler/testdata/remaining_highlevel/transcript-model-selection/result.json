@@ -1,74 +1,8 @@
 {
-  "case_id": "transcript-model-selection",
-  "input_sha256": "667a5d4272c1b5f3ced6ebd3fb7b89a865d5acff7d1b53acaef879eac4b10917",
-  "status": "compiled",
-  "calls": [
-    {
-      "stage": "scope",
-      "model": "deepseek-flash",
-      "usage": {
-        "input_tokens": 1386,
-        "output_tokens": 516
-      },
-      "usage_valid": true,
-      "images": 0
-    },
-    {
-      "stage": "medium",
-      "model": "deepseek-flash",
-      "usage": {
-        "input_tokens": 1226,
-        "output_tokens": 219
-      },
-      "usage_valid": true,
-      "images": 0
-    },
-    {
-      "stage": "licence",
-      "model": "deepseek-flash",
-      "usage": {
-        "input_tokens": 1661,
-        "output_tokens": 448
-      },
-      "usage_valid": true,
-      "images": 0
-    },
-    {
-      "stage": "structure",
-      "model": "deepseek-flash",
-      "usage": {
-        "input_tokens": 4087,
-        "output_tokens": 1037
-      },
-      "usage_valid": true,
-      "images": 0
-    },
-    {
-      "stage": "plan",
-      "model": "deepseek-flash",
-      "usage": {
-        "input_tokens": 9709,
-        "output_tokens": 9728
-      },
-      "usage_valid": true,
-      "images": 0
-    },
-    {
-      "stage": "semantic_review",
-      "model": "deepseek-flash",
-      "usage": {
-        "input_tokens": 2976,
-        "output_tokens": 1899
-      },
-      "usage_valid": true,
-      "images": 0
-    }
-  ],
-  "elapsed_ms": 70132,
   "result": {
     "composition_reviews": [
       {
-        "version": "contextir/composition-review/v3",
+        "version": "contextir/composition-review/v10",
         "required": true,
         "passed": true,
         "calls": [
@@ -77,8 +11,8 @@
             "attempt": 1,
             "model": "deepseek-flash",
             "usage": {
-              "input_tokens": 2976,
-              "output_tokens": 1899
+              "input_tokens": 4417,
+              "output_tokens": 1003
             },
             "valid": true
           }
@@ -105,7 +39,7 @@
           "asset_id": "asset-1",
           "text": "We close at six, not half past.",
           "language": "English",
-          "speaker_hint": "man at the counter",
+          "speaker_hint": "the man at the counter",
           "voiceover": false
         }
       ],
@@ -132,14 +66,14 @@
         {
           "text": "We close at six, not half past.",
           "language": "English",
-          "speaker_hint": "man at the counter",
+          "speaker_hint": "the man at the counter",
           "voiceover": false,
           "kind": "",
           "delivery": ""
         }
       ],
       "onscreen_text": [],
-      "reasoning": "The caller explicitly asks the man at the counter to repeat the recorded line word for word, so speech is requested. The exact words come from the supplied audio transcript and should be selected as a transcript use rather than duplicated in dialogue. No music, onscreen text, or forbidden content classes are requested.",
+      "reasoning": "The caller requests a new word-for-word performance of the recorded line, so speech is requested and the exact line is selected from asset-1 for transcript use rather than duplicated in dialogue. No music or onscreen text is requested, and no explicit prohibitions are given.",
       "calls": [
         {
           "stage": "scope",
@@ -147,7 +81,7 @@
           "model": "deepseek-flash",
           "usage": {
             "input_tokens": 1386,
-            "output_tokens": 516
+            "output_tokens": 646
           },
           "valid": true
         }
@@ -169,7 +103,7 @@
         "reference_medium": "",
         "requested_medium": "",
         "treatments": [],
-        "reasoning": "The only supplied reference is an audio voice-timbre recording; it does not specify or authorize any visual rendering medium or style. The request is to repeat a spoken line, with no requested visual rendition phrase, so the requested medium and style remain empty and no treatments are requested.",
+        "reasoning": "The only supplied reference is an audio clip (voice timbre), not a visual reference; there is no medium-governing visual reference and no explicit structured style. The intent concerns replicating a spoken line's delivery, not any rendering process, so requested_medium, requested_style and treatments are all empty, and the host-owned no_reference permission is copied verbatim.",
         "calls": [
           {
             "stage": "medium",
@@ -177,7 +111,7 @@
             "model": "deepseek-flash",
             "usage": {
               "input_tokens": 1226,
-              "output_tokens": 219
+              "output_tokens": 150
             },
             "valid": true
           }
@@ -193,12 +127,12 @@
         "wardrobe": "request"
       },
       "reasons": {
-        "action": "The caller explicitly asks the man at the counter to perform an intelligible spoken line again, word for word, matching the recorded vocal reference; this requested performance governs action, while the audio reference only supplies voice timbre and delivery rather than pose or behaviour.",
-        "framing": "No visual reference provides a shot scale, viewpoint or camera movement, and the 16:9 canvas ratio is not itself a framing instruction; with no conditioning image, framing is request-governed.",
-        "lighting": "The only supplied reference is audio and describes no illuminant, direction or quality of light; no source has authority over lighting, so it remains with the request.",
-        "medium": "The recording permission decision is already fixed as no_reference with no requested style phrase; the sole asset is an audio voice-timbre clip with no authority over visual rendition, so the medium is request-governed.",
-        "palette": "The audio reference carries no colour, saturation or tonal-contrast information, and no director note resolves it; the scene's colour and grading therefore rest with the request.",
-        "wardrobe": "No visual reference supplies any garment, and nothing in the supplied material observes or describes attire; clothing therefore falls to the request's own (unstated) terms rather than to any reference."
+        "action": "The intent explicitly asks the man at the counter to speak the recorded line again, a performed vocal behavior, so the requested action governs.",
+        "framing": "No visual reference establishes a composition and the request specifies only duration and canvas ratio, not shot scale or viewpoint, so framing remains request-governed.",
+        "lighting": "No visual reference establishes lighting and the request gives no instruction about light or its sources, so lighting remains request-governed.",
+        "medium": "The only supplied reference is an audio clip for voice timbre; no visual reference exists, and the medium decision is no_reference, so the request governs rendering.",
+        "palette": "No visual reference supplies color or tonal grading and the request asks for none, so palette remains request-governed.",
+        "wardrobe": "No visual reference supplies clothing and the request names no garment, so wardrobe remains request-governed."
       },
       "transform_phrase": null,
       "transform_target": "",
@@ -219,7 +153,7 @@
           "model": "deepseek-flash",
           "usage": {
             "input_tokens": 1226,
-            "output_tokens": 219
+            "output_tokens": 150
           },
           "valid": true
         },
@@ -228,20 +162,20 @@
           "attempt": 1,
           "model": "deepseek-flash",
           "usage": {
-            "input_tokens": 1661,
-            "output_tokens": 448
+            "input_tokens": 1681,
+            "output_tokens": 321
           },
           "valid": true
         }
       ]
     },
     "budget": {
-      "prompt_tokens": 1888,
+      "prompt_tokens": 1044,
       "target_video_rows": 57456,
       "target_audio_rows": 640,
       "known_reference_rows": 0,
       "unknown_reference_rows": [
-        "\u003cAudio 1\u003e"
+        "<Audio 1>"
       ],
       "in_trained_band": true
     },
@@ -249,22 +183,12 @@
       {
         "rule": "R5-unanalysed-subject",
         "severity": "WARN",
-        "msg": "\u003cSubject 1\u003e defined but absent from retention_analysis"
-      },
-      {
-        "rule": "P3-too-long",
-        "severity": "WARN",
-        "msg": "main description is 856 words; spec guidance 350-500"
+        "msg": "<Subject 1> defined but absent from retention_analysis"
       },
       {
         "rule": "A2-sound-duplicated",
         "severity": "WARN",
         "msg": "overall_soundscape repeats content already in the description rather than a separate layer"
-      },
-      {
-        "rule": "H3-token-band",
-        "severity": "WARN",
-        "msg": "prompt is 1888 tokens, outside the 350-1400 band"
       }
     ],
     "status": "compiled",
@@ -426,16 +350,11 @@
         {
           "id": "shot-1",
           "start_ms": 0,
-          "end_ms": 2800
+          "end_ms": 4000
         },
         {
           "id": "shot-2",
-          "start_ms": 2800,
-          "end_ms": 5400
-        },
-        {
-          "id": "shot-3",
-          "start_ms": 5400,
+          "start_ms": 4000,
           "end_ms": 8000
         }
       ],
@@ -451,7 +370,7 @@
           "asset_id": "asset-1",
           "text": "We close at six, not half past.",
           "language": "English",
-          "speaker_hint": "man at the counter",
+          "speaker_hint": "the man at the counter",
           "voiceover": false
         }
       ],
@@ -468,17 +387,17 @@
       "shots": [
         {
           "subjects": [
-            "man at the counter"
+            "the man at the counter"
           ],
           "sync_sound": [
-            "low room tone",
-            "faint counter ambience"
+            "the soft slap of a cloth set on a counter",
+            "a low refrigerator hum from off-screen"
           ],
           "start_ms": 0,
           "purpose": "establish",
           "framing": "medium wide",
-          "action": "A man at the counter looks up from what he is doing, squares his posture and settles his attention on the person facing him across the counter, mouth set and ready to speak.",
-          "what_changes": "The scene and the man's attentive posture are established.",
+          "action": "Late afternoon light falls across a small shop interior; the man at the counter, alone, finishes wiping the countertop and sets the cloth down, then lifts his head and looks toward the front of the shop as the light shifts on his face.",
+          "what_changes": "The man stops wiping and raises his head to look up from the counter.",
           "camera": {
             "type": "Static Shot",
             "amplitude": "",
@@ -487,39 +406,21 @@
         },
         {
           "subjects": [
-            "man at the counter"
+            "the man at the counter"
           ],
           "sync_sound": [
-            "flat spoken delivery",
-            "quiet room tone"
+            "the flat spoken line carrying in a quiet room",
+            "the click of a till drawer settling"
           ],
-          "start_ms": 2800,
+          "start_ms": 4000,
           "purpose": "develop",
           "framing": "medium close",
-          "action": "The man at the counter speaks the line evenly and flatly, one hand resting on the counter, eyes steady on the person he is addressing.",
-          "what_changes": "The spoken line is delivered and the framing tightens on the speaker.",
+          "action": "The man at the counter holds his gaze forward and says the line evenly and without emphasis, hands resting flat on the counter, then lowers his eyes and turns his attention back to the till beside him.",
+          "what_changes": "He delivers the spoken line and then returns his attention to the till, closing the exchange.",
           "camera": {
             "type": "Push In",
             "amplitude": "small",
             "speed": "slow"
-          }
-        },
-        {
-          "subjects": [
-            "man at the counter"
-          ],
-          "sync_sound": [
-            "settling room tone"
-          ],
-          "start_ms": 5400,
-          "purpose": "close",
-          "framing": "close",
-          "action": "The man holds his steady gaze for a beat after the last word, lips closing, letting the statement stand without further elaboration.",
-          "what_changes": "The delivery ends and the moment resolves in a held, quiet look.",
-          "camera": {
-            "type": "Static Shot",
-            "amplitude": "",
-            "speed": ""
           }
         }
       ],
@@ -527,7 +428,7 @@
         {
           "text": "We close at six, not half past.",
           "language": "English",
-          "speaker_hint": "man at the counter",
+          "speaker_hint": "the man at the counter",
           "voiceover": false,
           "kind": "",
           "delivery": ""
@@ -546,7 +447,7 @@
         "onscreen_text": false,
         "magnitude": ""
       },
-      "reasoning": "Only an audio reference is supplied, contributing voice timbre and delivery for a flat, close-mic male register; it never supplies or reuses its signal and offers no visual, framing, lighting or wardrobe authority. The caller asks for the man at the counter to repeat the recorded line word for word, so the shot plan is a single continuous counter exchange built around that one utterance, with no music and no visible lettering. Three shots divide the eight seconds: an establishing look at the counter, the spoken line delivered in a closer register, and a short held beat after the words land, so the one spoken statement reads clearly without invented plot."
+      "reasoning": "The caller supplies only an audio attachment, wired as a voice-timbre and delivery property reference for a new vocal performance; no signal is copied, so the recording itself is not reused or laid into the mix. Nothing visual is attached: there is no frame anchor, no subject sheet, no environment plate, so the setting, framing, lighting and look of the counter and its shop are invented fresh under the request's action licence rather than inherited from any reference. The requested action is narrow and scoped: the man at the counter performs the supplied line word for word, so the spoken content is fixed and the delivery is flat and close-mic in character, matching the property the reference governs. A single continuous setting is cut once, from a static establishing view to a slow push in as he speaks, keeping the 8-second budget with both shots comfortably above the minimum length; the cut serves the line rather than repeating a stated change. Balanced creativity permits a score but does not require one, and none is added because the request is a plain spoken beat; only diegetic room and handling sound are described. No visible lettering appears anywhere in the scene and none is added, the supplied line stays exactly as typed, and no prohibited element is introduced."
     },
     "scope": {
       "speech": true,
@@ -640,19 +541,17 @@
       "subjects": [
         {
           "kind": "person",
-          "descriptor": "man at the counter",
           "attributes": [
-            "adult man",
-            "plain dark work shirt",
-            "calm and deliberate"
+            "adult male shopkeeper",
+            "calm, even manner",
+            "on-screen English speaker"
           ],
           "origin": "user",
-          "id": "subject-man",
-          "description": "A man working behind the shop counter; an adult with a plain dark work shirt and a calm, deliberate manner.",
+          "id": "man-at-counter",
+          "description": "An adult male shopkeeper working alone behind the counter of a small independent shop, wearing a simple dark apron over a pale shirt with the sleeves rolled back.",
           "shot_ids": [
             "shot-1",
-            "shot-2",
-            "shot-3"
+            "shot-2"
           ]
         }
       ],
@@ -667,13 +566,12 @@
           "roles": [
             "voice"
           ],
-          "description": "Voice timbre and delivery property reference only. Caller-provided reference metadata: a flat male voice, close mic. This description does not establish an auditory observation, authorize additional speech, or change the declared copy/property relationship.",
+          "description": "Voice timbre and delivery property reference for the reciprocally bound target vocal speaker only; it does not supply mechanical sound, ambience, music or timing. Caller-provided reference metadata: a flat male voice, close mic. This description does not establish an auditory observation, authorize additional speech, or change the declared copy/property relationship.",
           "retention": "reference",
-          "retention_details": "Only timbre and delivery are referenced; the source recording and its words are not copied.",
+          "retention_details": "Only that target speaker's vocal timbre and delivery are referenced; the source recording and its words are not copied. Without an authorized vocal performance the binding remains dormant, while independent newly generated ambience remains allowed.",
           "shot_ids": [
             "shot-1",
-            "shot-2",
-            "shot-3"
+            "shot-2"
           ],
           "speaker_id": "speaker-1"
         }
@@ -682,8 +580,8 @@
         {
           "onscreen": true,
           "id": "speaker-1",
-          "description": "The man at the counter, whose voice timbre and delivery follow the supplied voice reference.",
-          "subject_id": "subject-man",
+          "description": "The man at the counter, an adult male shopkeeper with a calm, even manner; he speaks on-screen in English.",
+          "subject_id": "man-at-counter",
           "voice_reference_id": "reference-asset-1-1"
         }
       ],
@@ -697,21 +595,32 @@
           "text": "We close at six, not half past."
         }
       ],
+      "summary": [
+        {
+          "text": "In a small late-afternoon shop, "
+        },
+        {
+          "subject_id": "man-at-counter"
+        },
+        {
+          "text": " sets down his cloth, speaks a short line evenly, then turns back to the till as the camera slowly pushes in."
+        }
+      ],
       "style": "Live-action, cinematic",
       "shots": [
         {
           "id": "shot-1",
           "start_ms": 0,
-          "end_ms": 2800,
+          "end_ms": 4000,
           "description": [
             {
-              "text": "Inside a modest shop, a worn wooden counter runs across the foreground, its edge scuffed and softly lit by warm overhead practicals. Behind it, "
+              "text": "A small independent shop interior in late afternoon, with a worn wooden counter, shelves of neatly stacked goods, and warm sunlight raking across the countertop from the front windows. "
             },
             {
-              "subject_id": "subject-man"
+              "subject_id": "man-at-counter"
             },
             {
-              "text": " looks up from a till or ledger, shoulders squaring as he turns his attention to the person facing him across the counter. He is an adult man in a plain dark work shirt, his posture calm and deliberate; one hand settles on the countertop while the other comes to rest at his side. Shelves and muted wall tones recede into low interior shadow, leaving dust motes and a faint sheen on the wood to catch the light. His expression is level, mouth set, and as his lips part he begins the flat, even delivery requested for the single line. The room feels quiet and workaday, with the counter forming a clear boundary between him and the listener. The scene settles into a direct, attentive exchange, and the man's steady focus makes the moment feel matter-of-fact rather than theatrical."
+              "text": " stands alone behind the counter, a middle-aged shopkeeper in a simple dark apron over a pale shirt, his sleeves rolled back. He finishes wiping the counter with a soft cloth, sets the cloth down, and lifts his head toward the front of the shop as the light shifts across his face. He speaks a short line evenly and without emphasis, hands resting on the counter. The camera holds a static shot, keeping the counter, the man, and the depth of the shop visible; the room is quiet, with a low refrigerator hum off-screen and the small handling sounds of the cloth and counter."
             }
           ],
           "events": [
@@ -720,13 +629,7 @@
               "at_ms": 0,
               "description": [
                 {
-                  "text": "Warm practical light falls across a scuffed wooden counter, with shelves and muted wall tones receding into soft shadow. "
-                },
-                {
-                  "subject_id": "subject-man"
-                },
-                {
-                  "text": " stands behind the counter in a plain dark work shirt, one hand settling on the wood."
+                  "text": "Late afternoon sunlight lies across the wooden counter and the shelves; the shop is still and quiet."
                 }
               ]
             },
@@ -735,7 +638,7 @@
               "at_ms": 0,
               "description": [
                 {
-                  "text": "Low interior room tone with faint counter ambience."
+                  "text": "A low refrigerator hum runs continuously from off-screen."
                 }
               ]
             },
@@ -744,10 +647,19 @@
               "at_ms": 1200,
               "description": [
                 {
-                  "subject_id": "subject-man"
+                  "subject_id": "man-at-counter"
                 },
                 {
-                  "text": " looks up from the till, squares his posture, and settles his attention on the person across the counter."
+                  "text": " finishes wiping the countertop and sets the cloth down."
+                }
+              ]
+            },
+            {
+              "kind": "sound",
+              "at_ms": 1200,
+              "description": [
+                {
+                  "text": "A soft slap as the cloth settles on the counter."
                 }
               ]
             },
@@ -756,10 +668,19 @@
               "at_ms": 2200,
               "description": [
                 {
-                  "subject_id": "subject-man"
+                  "subject_id": "man-at-counter"
                 },
                 {
-                  "text": " parts his lips and begins to speak with a flat, even delivery."
+                  "text": " lifts his head toward the front of the shop and speaks the fixed line evenly, without emphasis."
+                }
+              ]
+            },
+            {
+              "kind": "visual",
+              "at_ms": 3200,
+              "description": [
+                {
+                  "text": "The warm light remains across the counter as he holds his position."
                 }
               ]
             },
@@ -782,65 +703,71 @@
         },
         {
           "id": "shot-2",
-          "start_ms": 2800,
-          "end_ms": 5400,
+          "start_ms": 4000,
+          "end_ms": 8000,
           "description": [
             {
-              "text": "In a closer view, "
+              "text": "The camera pushes in with small amplitude at slow speed. From a medium close view, "
             },
             {
-              "subject_id": "subject-man"
+              "subject_id": "man-at-counter"
             },
             {
-              "text": " fills the foreground, the countertop cutting low across the bottom of the scene. His hand rests flat on the worn wood; the other remains still at his side. Warm practical light picks out the texture of his dark work shirt, the line of his jaw, and the steady focus in his eyes as he continues the flat, close-mic delivery. His lips move evenly around the sentence, without flourish or rising emphasis, and his gaze stays fixed on the person across from him. Behind him the shelves and wall fall into soft shadow, keeping attention on his face and the small movements of his delivery. A slight shift of weight and a slow blink mark the passing beat; the low room tone remains steady, and the counter edge gives the close composition a grounded, everyday anchor."
+              "text": " lowers his eyes after the spoken line has ended, lets a quiet beat pass, then turns his attention to the till beside him and presses the drawer closed with one hand. The line is not repeated; only the room tone, the small click of the till drawer settling, and the refrigerator hum remain. His expression is calm and businesslike, and the warm late light continues to fall across the counter and his sleeve."
             }
           ],
           "events": [
             {
-              "kind": "visual",
-              "at_ms": 2800,
+              "kind": "action",
+              "at_ms": 4000,
               "description": [
                 {
-                  "text": "A close composition centers "
+                  "subject_id": "man-at-counter"
                 },
                 {
-                  "subject_id": "subject-man"
+                  "text": " lowers his eyes and lets a quiet beat pass after speaking."
+                }
+              ]
+            },
+            {
+              "kind": "action",
+              "at_ms": 5200,
+              "description": [
+                {
+                  "subject_id": "man-at-counter"
                 },
                 {
-                  "text": " against the worn counter, his dark work shirt and steady gaze picked out by warm practical light while the background shelves fall into shadow."
+                  "text": " turns toward the till beside him."
+                }
+              ]
+            },
+            {
+              "kind": "action",
+              "at_ms": 6000,
+              "description": [
+                {
+                  "subject_id": "man-at-counter"
+                },
+                {
+                  "text": " presses the till drawer closed with one hand."
                 }
               ]
             },
             {
               "kind": "sound",
-              "at_ms": 2800,
+              "at_ms": 6000,
               "description": [
                 {
-                  "text": "Quiet room tone continues at a low, steady level."
+                  "text": "A small click as the till drawer settles."
                 }
               ]
             },
             {
-              "kind": "action",
-              "at_ms": 3600,
+              "kind": "sound",
+              "at_ms": 7000,
               "description": [
                 {
-                  "subject_id": "subject-man"
-                },
-                {
-                  "text": " continues speaking evenly, one hand flat on the counter and his gaze fixed on the listener."
-                }
-              ]
-            },
-            {
-              "kind": "action",
-              "at_ms": 4700,
-              "description": [
-                {
-                  "subject_id": "subject-man"
-                },
-                {
-                  "text": " gives a slow blink and a slight shift of weight without breaking his attentive focus."
+                  "text": "The low refrigerator hum continues under the quiet room tone."
                 }
               ]
             },
@@ -853,110 +780,35 @@
               ]
             }
           ]
-        },
-        {
-          "id": "shot-3",
-          "start_ms": 5400,
-          "end_ms": 8000,
-          "description": [
-            {
-              "text": "A quiet, close composition holds on "
-            },
-            {
-              "subject_id": "subject-man"
-            },
-            {
-              "text": " after the final word. His lips close, his jaw settles, and his steady gaze remains on the person opposite, letting the statement stand without embellishment. The counter edge and his resting hand anchor the lower frame; warm light traces the fabric of his dark shirt and the subtle texture of his skin. The background shelves stay dim and undisturbed, and the room tone settles into a softer hush. For a beat he is still, then his shoulders ease slightly while his attention stays attentive rather than dismissive. No further speech follows, and no music enters. The moment resolves in a held, quiet look, with the shop's everyday stillness around him and the worn counter between the two people."
-            }
-          ],
-          "events": [
-            {
-              "kind": "visual",
-              "at_ms": 5400,
-              "description": [
-                {
-                  "text": "The close view holds on "
-                },
-                {
-                  "subject_id": "subject-man"
-                },
-                {
-                  "text": " in the warm shop light, the counter edge and his resting hand anchoring the foreground while the shelves recede into dim shadow."
-                }
-              ]
-            },
-            {
-              "kind": "sound",
-              "at_ms": 5400,
-              "description": [
-                {
-                  "text": "The low room tone settles into a softer hush."
-                }
-              ]
-            },
-            {
-              "kind": "action",
-              "at_ms": 6200,
-              "description": [
-                {
-                  "subject_id": "subject-man"
-                },
-                {
-                  "text": " closes his lips and lets his jaw settle, his steady gaze remaining on the person opposite."
-                }
-              ]
-            },
-            {
-              "kind": "action",
-              "at_ms": 7200,
-              "description": [
-                {
-                  "subject_id": "subject-man"
-                },
-                {
-                  "text": " eases his shoulders slightly while keeping his attention attentive and still."
-                }
-              ]
-            },
-            {
-              "kind": "camera",
-              "description": [
-                {
-                  "text": "The camera holds a static shot."
-                }
-              ]
-            }
-          ]
         }
       ],
-      "soundscape": "Low interior room tone with faint counter ambience, carrying a flat, close-mic male delivery.",
+      "soundscape": "Quiet small-shop room tone: a low refrigerator hum from off-screen, faint street presence through the front windows, the soft handling of cloth on a wooden counter, and the small click of a till drawer settling.",
       "music": "N/A",
       "claims": [
         {
-          "id": "claim-user-1",
+          "id": "claim-user-line",
           "origin": "user",
-          "text": "The man at the counter must repeat the recorded line word for word."
+          "text": "The man at the counter repeats the recorded line word for word."
         },
         {
-          "id": "claim-observed-1",
-          "origin": "observed",
-          "text": "The supplied audio reference is described as a flat male voice, close mic, with the transcript \"We close at six, not half past.\"",
-          "sources": [
-            {
-              "asset_id": "asset-1",
-              "track": "audio"
-            }
-          ]
+          "id": "claim-user-delivery",
+          "origin": "user",
+          "text": "The man at the counter performs the line on-screen in shot-1."
         },
         {
-          "id": "claim-creative-1",
+          "id": "claim-creative-setting",
           "origin": "creative",
-          "text": "The setting is a modest shop interior with a worn wooden counter, shelves, warm overhead practicals, and soft interior shadow."
+          "text": "The shop interior is a small independent store with a worn wooden counter, shelves of stacked goods, and warm late-afternoon sunlight."
         },
         {
-          "id": "claim-creative-2",
+          "id": "claim-creative-appearance",
           "origin": "creative",
-          "text": "The man is an adult with a plain dark work shirt and a calm, deliberate manner."
+          "text": "The man wears a simple dark apron over a pale shirt with sleeves rolled back."
+        },
+        {
+          "id": "claim-creative-sounds",
+          "origin": "creative",
+          "text": "The room carries a low refrigerator hum, soft cloth handling, faint street presence, and a till drawer click."
         }
       ]
     },
@@ -977,7 +829,7 @@
         "height": 768
       },
       "profile": {
-        "name": "h3-comfyui-17k5-v1",
+        "name": "h3-published-format-v1",
         "format": "minimax-h3/prompt-v1",
         "fps": {
           "numerator": 24,
@@ -990,23 +842,16 @@
           "fl2va",
           "ref2va"
         ],
-        "frame_grid": {
-          "modulus": 17,
-          "remainder": 5
-        },
-        "min_frames": 5,
-        "max_frames": 3600,
-        "canvas_multiple": 32,
         "limits": {
-          "pictures": 9,
-          "videos": 3,
-          "video_audio": 3,
-          "standalone_audio": 3
+          "pictures": 0,
+          "videos": 0,
+          "video_audio": 0,
+          "standalone_audio": 0
         },
-        "supports_reference_frame_anchors": false,
-        "supports_source_intervals": false
+        "supports_reference_frame_anchors": true,
+        "supports_source_intervals": true
       },
-      "prompt": "subject_definitions:\n\u003cSubject 1\u003e is A man working behind the shop counter; an adult with a plain dark work shirt and a calm, deliberate manner.\n\u003cAudio 1\u003e is Voice timbre and delivery property reference only. Caller-provided reference metadata: a flat male voice, close mic. This description does not establish an auditory observation, authorize additional speech, or change the declared copy/property relationship. Its role is voice timbre and delivery. It supplies the voice reference for \u003cSubject 1\u003e (S1).\n\nsummary:\n[reference generation + audio reference] Inside a modest shop, a worn wooden counter runs across the foreground, its edge scuffed and softly lit by warm overhead practicals. Behind it, \u003cSubject 1\u003e looks up from a till or ledger, shoulders squaring as he turns his attention to the person facing him across the counter. He is an adult man in a plain dark work shirt, his posture calm and deliberate; one hand settles on the countertop while the other comes to rest at his side. Shelves and muted wall tones recede into low interior shadow, leaving dust motes and a faint sheen on the wood to catch the light. His expression is level, mouth set, and as his lips part he begins the flat, even delivery requested for the single line. The room feels quiet and workaday, with the counter forming a clear boundary between him and the listener. The scene settles into a direct, attentive exchange, and the man's steady focus makes the moment feel matter-of-fact rather than theatrical. In a closer view, \u003cSubject 1\u003e fills the foreground, the countertop cutting low across the bottom of the scene. His hand rests flat on the worn wood; the other remains still at his side. Warm practical light picks out the texture of his dark work shirt, the line of his jaw, and the steady focus in his eyes as he continues the flat, close-mic delivery. His lips move evenly around the sentence, without flourish or rising emphasis, and his gaze stays fixed on the person across from him. Behind him the shelves and wall fall into soft shadow, keeping attention on his face and the small movements of his delivery. A slight shift of weight and a slow blink mark the passing beat; the low room tone remains steady, and the counter edge gives the close composition a grounded, everyday anchor. A quiet, close composition holds on \u003cSubject 1\u003e after the final word. His lips close, his jaw settles, and his steady gaze remains on the person opposite, letting the statement stand without embellishment. The counter edge and his resting hand anchor the lower frame; warm light traces the fabric of his dark shirt and the subtle texture of his skin. The background shelves stay dim and undisturbed, and the room tone settles into a softer hush. For a beat he is still, then his shoulders ease slightly while his attention stays attentive rather than dismissive. No further speech follows, and no music enters. The moment resolves in a held, quiet look, with the shop's everyday stillness around him and the worn counter between the two people.\n\nretention_analysis:\n\u003cAudio 1\u003e: reference - Only timbre and delivery are referenced; the source recording and its words are not copied. Applicable scope: ([Shot 1], [Shot 2], [Shot 3]; voice timbre and delivery).\n\ndetailed_description:\nThe target video is in live-action style, cinematic.\n[Shot 1] Inside a modest shop, a worn wooden counter runs across the foreground, its edge scuffed and softly lit by warm overhead practicals. Behind it, \u003cSubject 1\u003e looks up from a till or ledger, shoulders squaring as he turns his attention to the person facing him across the counter. He is an adult man in a plain dark work shirt, his posture calm and deliberate; one hand settles on the countertop while the other comes to rest at his side. Shelves and muted wall tones recede into low interior shadow, leaving dust motes and a faint sheen on the wood to catch the light. His expression is level, mouth set, and as his lips part he begins the flat, even delivery requested for the single line. The room feels quiet and workaday, with the counter forming a clear boundary between him and the listener. The scene settles into a direct, attentive exchange, and the man's steady focus makes the moment feel matter-of-fact rather than theatrical. \u003cAudio 1\u003e applies in this shot as voice timbre and delivery. Its defined audible characteristics are referenced without copying the source signal. At 00:00.000, Warm practical light falls across a scuffed wooden counter, with shelves and muted wall tones receding into soft shadow. \u003cSubject 1\u003e stands behind the counter in a plain dark work shirt, one hand settling on the wood. At 00:00.000, Low interior room tone with faint counter ambience. At 00:01.200, \u003cSubject 1\u003e looks up from the till, squares his posture, and settles his attention on the person across the counter. At 00:02.200, \u003cSubject 1\u003e parts his lips and begins to speak with a flat, even delivery. The camera holds a static shot. The man at the counter, whose voice timbre and delivery follow the supplied voice reference. \u003cSubject 1\u003e, using the voice timbre referenced from \u003cAudio 1\u003e (S1) says: \u003cd\u003e[English] We close at six, not half past.\u003c/d\u003e\n[Shot 2] At 00:02.800, the shot cuts to In a closer view, \u003cSubject 1\u003e fills the foreground, the countertop cutting low across the bottom of the scene. His hand rests flat on the worn wood; the other remains still at his side. Warm practical light picks out the texture of his dark work shirt, the line of his jaw, and the steady focus in his eyes as he continues the flat, close-mic delivery. His lips move evenly around the sentence, without flourish or rising emphasis, and his gaze stays fixed on the person across from him. Behind him the shelves and wall fall into soft shadow, keeping attention on his face and the small movements of his delivery. A slight shift of weight and a slow blink mark the passing beat; the low room tone remains steady, and the counter edge gives the close composition a grounded, everyday anchor. \u003cAudio 1\u003e applies in this shot as voice timbre and delivery. Its defined audible characteristics are referenced without copying the source signal. At 00:02.800, A close composition centers \u003cSubject 1\u003e against the worn counter, his dark work shirt and steady gaze picked out by warm practical light while the background shelves fall into shadow. At 00:02.800, Quiet room tone continues at a low, steady level. At 00:03.600, \u003cSubject 1\u003e continues speaking evenly, one hand flat on the counter and his gaze fixed on the listener. At 00:04.700, \u003cSubject 1\u003e gives a slow blink and a slight shift of weight without breaking his attentive focus. The camera pushes in with small amplitude at slow speed.\n[Shot 3] At 00:05.400, the shot cuts to A quiet, close composition holds on \u003cSubject 1\u003e after the final word. His lips close, his jaw settles, and his steady gaze remains on the person opposite, letting the statement stand without embellishment. The counter edge and his resting hand anchor the lower frame; warm light traces the fabric of his dark shirt and the subtle texture of his skin. The background shelves stay dim and undisturbed, and the room tone settles into a softer hush. For a beat he is still, then his shoulders ease slightly while his attention stays attentive rather than dismissive. No further speech follows, and no music enters. The moment resolves in a held, quiet look, with the shop's everyday stillness around him and the worn counter between the two people. \u003cAudio 1\u003e applies in this shot as voice timbre and delivery. Its defined audible characteristics are referenced without copying the source signal. At 00:05.400, The close view holds on \u003cSubject 1\u003e in the warm shop light, the counter edge and his resting hand anchoring the foreground while the shelves recede into dim shadow. At 00:05.400, The low room tone settles into a softer hush. At 00:06.200, \u003cSubject 1\u003e closes his lips and lets his jaw settle, his steady gaze remaining on the person opposite. At 00:07.200, \u003cSubject 1\u003e eases his shoulders slightly while keeping his attention attentive and still. The camera holds a static shot.\n\noverall_soundscape:\nLow interior room tone with faint counter ambience, carrying a flat, close-mic male delivery.\n\nnon_diegetic_music:\nN/A\n",
+      "prompt": "subject_definitions:\n<Subject 1> is An adult male shopkeeper working alone behind the counter of a small independent shop, wearing a simple dark apron over a pale shirt with the sleeves rolled back.\n<Audio 1> is Voice timbre and delivery property reference for the reciprocally bound target vocal speaker only; it does not supply mechanical sound, ambience, music or timing. Caller-provided reference metadata: a flat male voice, close mic. This description does not establish an auditory observation, authorize additional speech, or change the declared copy/property relationship. Its role is voice timbre and delivery. It supplies the voice reference for <Subject 1> (S1).\n\nsummary:\n[reference generation + audio reference] In a small late-afternoon shop, <Subject 1> sets down his cloth, speaks a short line evenly, then turns back to the till as the camera slowly pushes in.\n\nretention_analysis:\n<Audio 1>: reference - Only that target speaker's vocal timbre and delivery are referenced; the source recording and its words are not copied. Without an authorized vocal performance the binding remains dormant, while independent newly generated ambience remains allowed. Applicable scope: ([Shot 1], [Shot 2]; voice timbre and delivery).\n\ndetailed_description:\nThe target video is in live-action style, cinematic.\n[Shot 1] A small independent shop interior in late afternoon, with a worn wooden counter, shelves of neatly stacked goods, and warm sunlight raking across the countertop from the front windows. <Subject 1> stands alone behind the counter, a middle-aged shopkeeper in a simple dark apron over a pale shirt, his sleeves rolled back. He finishes wiping the counter with a soft cloth, sets the cloth down, and lifts his head toward the front of the shop as the light shifts across his face. He speaks a short line evenly and without emphasis, hands resting on the counter. The camera holds a static shot, keeping the counter, the man, and the depth of the shop visible; the room is quiet, with a low refrigerator hum off-screen and the small handling sounds of the cloth and counter. <Audio 1> applies in this shot as voice timbre and delivery. Its defined audible characteristics are referenced without copying the source signal. At 00:00.000, Late afternoon sunlight lies across the wooden counter and the shelves; the shop is still and quiet. At 00:00.000, A low refrigerator hum runs continuously from off-screen. At 00:01.200, <Subject 1> finishes wiping the countertop and sets the cloth down. At 00:01.200, A soft slap as the cloth settles on the counter. At 00:02.200, <Subject 1> lifts his head toward the front of the shop and speaks the fixed line evenly, without emphasis. At 00:03.200, The warm light remains across the counter as he holds his position. The camera holds a static shot. The man at the counter, an adult male shopkeeper with a calm, even manner; he speaks on-screen in English. <Subject 1>, using the voice timbre referenced from <Audio 1> (S1) says: <d>[English] We close at six, not half past.</d>\n[Shot 2] At 00:04.000, the shot cuts to The camera pushes in with small amplitude at slow speed. From a medium close view, <Subject 1> lowers his eyes after the spoken line has ended, lets a quiet beat pass, then turns his attention to the till beside him and presses the drawer closed with one hand. The line is not repeated; only the room tone, the small click of the till drawer settling, and the refrigerator hum remain. His expression is calm and businesslike, and the warm late light continues to fall across the counter and his sleeve. <Audio 1> applies in this shot as voice timbre and delivery. Its defined audible characteristics are referenced without copying the source signal. At 00:04.000, <Subject 1> lowers his eyes and lets a quiet beat pass after speaking. At 00:05.200, <Subject 1> turns toward the till beside him. At 00:06.000, <Subject 1> presses the till drawer closed with one hand. At 00:06.000, A small click as the till drawer settles. At 00:07.000, The low refrigerator hum continues under the quiet room tone. The camera pushes in with small amplitude at slow speed.\n\noverall_soundscape:\nQuiet small-shop room tone: a low refrigerator hum from off-screen, faint street presence through the front windows, the soft handling of cloth on a wooden counter, and the small click of a till drawer settling.\n\nnon_diegetic_music:\nN/A\n",
       "manifest": {
         "media": [
           {
@@ -1018,7 +863,7 @@
                 "denominator": 0
               }
             },
-            "label": "\u003cAudio 1\u003e",
+            "label": "<Audio 1>",
             "kind": "audio",
             "source": {
               "asset_id": "asset-1",
@@ -1039,22 +884,14 @@
                     "index": 1,
                     "interval": {
                       "start_ms": 0,
-                      "end_ms": 2800
+                      "end_ms": 4000
                     }
                   },
                   {
                     "id": "shot-2",
                     "index": 2,
                     "interval": {
-                      "start_ms": 2800,
-                      "end_ms": 5400
-                    }
-                  },
-                  {
-                    "id": "shot-3",
-                    "index": 3,
-                    "interval": {
-                      "start_ms": 5400,
+                      "start_ms": 4000,
                       "end_ms": 8000
                     }
                   }
@@ -1065,14 +902,14 @@
         ],
         "subjects": [
           {
-            "id": "subject-man",
-            "label": "\u003cSubject 1\u003e"
+            "id": "man-at-counter",
+            "label": "<Subject 1>"
           }
         ],
         "references": [
           {
             "id": "reference-asset-1-1",
-            "label": "\u003cAudio 1\u003e"
+            "label": "<Audio 1>"
           }
         ],
         "speakers": [
@@ -1087,11 +924,11 @@
         "numerator": 8,
         "denominator": 1
       },
-      "document_sha256": "33cf70235f39ac0a6bee4117ac12a93103a29f6841397c76b160de9a4f3dfcbd",
-      "profile_sha256": "234d423c54663839ad8ef0aab7924d4da6d8bb212ced940e0b240639c3dcbed4",
-      "prompt_sha256": "a2362624a19e39c2222d2dd4a546a32ea8f7b4943affcc63bf12cbd0a9c8f7ab",
-      "manifest_sha256": "f6b9bc67710498be3477d2eeb1177be9308f0f21c4da3d605584f45003af581b",
-      "sha256": "df9518d97041520b782e6ddd44469b16aaa9d48bd535f46143fb3828925f49ba"
+      "document_sha256": "e35cb608b8448873bd6c6ebc8ff6e7699dcfc09a36ba87e1b98232b9718c9651",
+      "profile_sha256": "ce4364d3f1242f5aeb2216db44195fb3897f4828dd9e145c4c16c64315786ab6",
+      "prompt_sha256": "fbe8e0e7a8fe7ef06ab0fa92e215a1a86e56da1654f1a6e83bb63dba03817b24",
+      "manifest_sha256": "1ea5c67305012b02a300f17675d9321bca7e04895c87efba4e31cb10e4a9510a",
+      "sha256": "fa05625032e2d3a7bae2154e1b2096fe7b6bf3a38ba8953efad3868dafc994da"
     },
     "evidence": [
       {
@@ -1202,7 +1039,7 @@
               "asset_id": "asset-1",
               "text": "We close at six, not half past.",
               "language": "English",
-              "speaker_hint": "man at the counter",
+              "speaker_hint": "the man at the counter",
               "voiceover": false
             }
           ],
@@ -1229,14 +1066,14 @@
             {
               "text": "We close at six, not half past.",
               "language": "English",
-              "speaker_hint": "man at the counter",
+              "speaker_hint": "the man at the counter",
               "voiceover": false,
               "kind": "",
               "delivery": ""
             }
           ],
           "onscreen_text": [],
-          "reasoning": "The caller explicitly asks the man at the counter to repeat the recorded line word for word, so speech is requested. The exact words come from the supplied audio transcript and should be selected as a transcript use rather than duplicated in dialogue. No music, onscreen text, or forbidden content classes are requested.",
+          "reasoning": "The caller requests a new word-for-word performance of the recorded line, so speech is requested and the exact line is selected from asset-1 for transcript use rather than duplicated in dialogue. No music or onscreen text is requested, and no explicit prohibitions are given.",
           "calls": [
             {
               "stage": "scope",
@@ -1244,7 +1081,7 @@
               "model": "deepseek-flash",
               "usage": {
                 "input_tokens": 1386,
-                "output_tokens": 516
+                "output_tokens": 646
               },
               "valid": true
             }
@@ -1271,7 +1108,7 @@
             "reference_medium": "",
             "requested_medium": "",
             "treatments": [],
-            "reasoning": "The only supplied reference is an audio voice-timbre recording; it does not specify or authorize any visual rendering medium or style. The request is to repeat a spoken line, with no requested visual rendition phrase, so the requested medium and style remain empty and no treatments are requested.",
+            "reasoning": "The only supplied reference is an audio clip (voice timbre), not a visual reference; there is no medium-governing visual reference and no explicit structured style. The intent concerns replicating a spoken line's delivery, not any rendering process, so requested_medium, requested_style and treatments are all empty, and the host-owned no_reference permission is copied verbatim.",
             "calls": [
               {
                 "stage": "medium",
@@ -1279,7 +1116,7 @@
                 "model": "deepseek-flash",
                 "usage": {
                   "input_tokens": 1226,
-                  "output_tokens": 219
+                  "output_tokens": 150
                 },
                 "valid": true
               }
@@ -1295,12 +1132,12 @@
             "wardrobe": "request"
           },
           "reasons": {
-            "action": "The caller explicitly asks the man at the counter to perform an intelligible spoken line again, word for word, matching the recorded vocal reference; this requested performance governs action, while the audio reference only supplies voice timbre and delivery rather than pose or behaviour.",
-            "framing": "No visual reference provides a shot scale, viewpoint or camera movement, and the 16:9 canvas ratio is not itself a framing instruction; with no conditioning image, framing is request-governed.",
-            "lighting": "The only supplied reference is audio and describes no illuminant, direction or quality of light; no source has authority over lighting, so it remains with the request.",
-            "medium": "The recording permission decision is already fixed as no_reference with no requested style phrase; the sole asset is an audio voice-timbre clip with no authority over visual rendition, so the medium is request-governed.",
-            "palette": "The audio reference carries no colour, saturation or tonal-contrast information, and no director note resolves it; the scene's colour and grading therefore rest with the request.",
-            "wardrobe": "No visual reference supplies any garment, and nothing in the supplied material observes or describes attire; clothing therefore falls to the request's own (unstated) terms rather than to any reference."
+            "action": "The intent explicitly asks the man at the counter to speak the recorded line again, a performed vocal behavior, so the requested action governs.",
+            "framing": "No visual reference establishes a composition and the request specifies only duration and canvas ratio, not shot scale or viewpoint, so framing remains request-governed.",
+            "lighting": "No visual reference establishes lighting and the request gives no instruction about light or its sources, so lighting remains request-governed.",
+            "medium": "The only supplied reference is an audio clip for voice timbre; no visual reference exists, and the medium decision is no_reference, so the request governs rendering.",
+            "palette": "No visual reference supplies color or tonal grading and the request asks for none, so palette remains request-governed.",
+            "wardrobe": "No visual reference supplies clothing and the request names no garment, so wardrobe remains request-governed."
           },
           "transform_phrase": null,
           "transform_target": "",
@@ -1321,7 +1158,7 @@
               "model": "deepseek-flash",
               "usage": {
                 "input_tokens": 1226,
-                "output_tokens": 219
+                "output_tokens": 150
               },
               "valid": true
             },
@@ -1330,8 +1167,8 @@
               "attempt": 1,
               "model": "deepseek-flash",
               "usage": {
-                "input_tokens": 1661,
-                "output_tokens": 448
+                "input_tokens": 1681,
+                "output_tokens": 321
               },
               "valid": true
             }
@@ -1350,7 +1187,7 @@
             "speaker_ids": [
               "speaker-1"
             ],
-            "speaker_hint": "man at the counter",
+            "speaker_hint": "the man at the counter",
             "language": "English",
             "voiceover": false,
             "words": 7
@@ -1364,17 +1201,17 @@
         "value": [
           {
             "subjects": [
-              "man at the counter"
+              "the man at the counter"
             ],
             "sync_sound": [
-              "low room tone",
-              "faint counter ambience"
+              "the soft slap of a cloth set on a counter",
+              "a low refrigerator hum from off-screen"
             ],
             "start_ms": 0,
             "purpose": "establish",
             "framing": "medium wide",
-            "action": "A man at the counter looks up from what he is doing, squares his posture and settles his attention on the person facing him across the counter, mouth set and ready to speak.",
-            "what_changes": "The scene and the man's attentive posture are established.",
+            "action": "Late afternoon light falls across a small shop interior; the man at the counter, alone, finishes wiping the countertop and sets the cloth down, then lifts his head and looks toward the front of the shop as the light shifts on his face.",
+            "what_changes": "The man stops wiping and raises his head to look up from the counter.",
             "camera": {
               "type": "Static Shot",
               "amplitude": "",
@@ -1383,39 +1220,21 @@
           },
           {
             "subjects": [
-              "man at the counter"
+              "the man at the counter"
             ],
             "sync_sound": [
-              "flat spoken delivery",
-              "quiet room tone"
+              "the flat spoken line carrying in a quiet room",
+              "the click of a till drawer settling"
             ],
-            "start_ms": 2800,
+            "start_ms": 4000,
             "purpose": "develop",
             "framing": "medium close",
-            "action": "The man at the counter speaks the line evenly and flatly, one hand resting on the counter, eyes steady on the person he is addressing.",
-            "what_changes": "The spoken line is delivered and the framing tightens on the speaker.",
+            "action": "The man at the counter holds his gaze forward and says the line evenly and without emphasis, hands resting flat on the counter, then lowers his eyes and turns his attention back to the till beside him.",
+            "what_changes": "He delivers the spoken line and then returns his attention to the till, closing the exchange.",
             "camera": {
               "type": "Push In",
               "amplitude": "small",
               "speed": "slow"
-            }
-          },
-          {
-            "subjects": [
-              "man at the counter"
-            ],
-            "sync_sound": [
-              "settling room tone"
-            ],
-            "start_ms": 5400,
-            "purpose": "close",
-            "framing": "close",
-            "action": "The man holds his steady gaze for a beat after the last word, lips closing, letting the statement stand without further elaboration.",
-            "what_changes": "The delivery ends and the moment resolves in a held, quiet look.",
-            "camera": {
-              "type": "Static Shot",
-              "amplitude": "",
-              "speed": ""
             }
           }
         ],
@@ -1427,19 +1246,17 @@
         "value": [
           {
             "kind": "person",
-            "descriptor": "man at the counter",
             "attributes": [
-              "adult man",
-              "plain dark work shirt",
-              "calm and deliberate"
+              "adult male shopkeeper",
+              "calm, even manner",
+              "on-screen English speaker"
             ],
             "origin": "user",
-            "id": "subject-man",
-            "description": "A man working behind the shop counter; an adult with a plain dark work shirt and a calm, deliberate manner.",
+            "id": "man-at-counter",
+            "description": "An adult male shopkeeper working alone behind the counter of a small independent shop, wearing a simple dark apron over a pale shirt with the sleeves rolled back.",
             "shot_ids": [
               "shot-1",
-              "shot-2",
-              "shot-3"
+              "shot-2"
             ]
           }
         ],
@@ -1464,7 +1281,7 @@
         "model": "deepseek-flash",
         "usage": {
           "input_tokens": 1386,
-          "output_tokens": 516
+          "output_tokens": 646
         },
         "valid": true
       },
@@ -1474,7 +1291,7 @@
         "model": "deepseek-flash",
         "usage": {
           "input_tokens": 1226,
-          "output_tokens": 219
+          "output_tokens": 150
         },
         "valid": true
       },
@@ -1483,8 +1300,8 @@
         "attempt": 1,
         "model": "deepseek-flash",
         "usage": {
-          "input_tokens": 1661,
-          "output_tokens": 448
+          "input_tokens": 1681,
+          "output_tokens": 321
         },
         "valid": true
       },
@@ -1493,8 +1310,8 @@
         "attempt": 1,
         "model": "deepseek-flash",
         "usage": {
-          "input_tokens": 4087,
-          "output_tokens": 1037
+          "input_tokens": 3970,
+          "output_tokens": 1313
         },
         "valid": true
       },
@@ -1503,8 +1320,8 @@
         "attempt": 1,
         "model": "deepseek-flash",
         "usage": {
-          "input_tokens": 9709,
-          "output_tokens": 9728
+          "input_tokens": 10515,
+          "output_tokens": 12005
         },
         "valid": true
       },
@@ -1513,8 +1330,8 @@
         "attempt": 1,
         "model": "deepseek-flash",
         "usage": {
-          "input_tokens": 2976,
-          "output_tokens": 1899
+          "input_tokens": 4417,
+          "output_tokens": 1003
         },
         "valid": true
       }

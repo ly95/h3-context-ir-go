@@ -1,0 +1,920 @@
+{
+  "composition_reviews": [
+    {
+      "version": "contextir/composition-review/v10",
+      "required": true,
+      "passed": true,
+      "calls": [
+        {
+          "stage": "semantic_review",
+          "attempt": 1,
+          "model": "deepseek-flash",
+          "usage": {
+            "input_tokens": 2815,
+            "output_tokens": 202
+          },
+          "valid": true
+        }
+      ]
+    }
+  ],
+  "usage_complete": true,
+  "clarification_policy": "continue_with_recorded_choice",
+  "mode_decision": {
+    "clarification_policy": "continue_with_recorded_choice",
+    "confidence_kind": "routing_policy",
+    "aspect_mismatch": false,
+    "needs_clarification": false,
+    "mode": "t2va",
+    "confidence": 1,
+    "rule": "caller-override",
+    "signals": [
+      "Mode follows explicit structured choices and media socket requirements."
+    ]
+  },
+  "scope_decision": {
+    "music_constraint": "no_music",
+    "conflict_policy": "supplied_content_wins",
+    "requested": {
+      "speech": true,
+      "music": false,
+      "onscreen_text": true,
+      "magnitude": ""
+    },
+    "forbidden": {
+      "speech": false,
+      "music": true,
+      "onscreen_text": false,
+      "magnitude": ""
+    },
+    "allowed": {
+      "speech": true,
+      "music": false,
+      "onscreen_text": true,
+      "magnitude": "plain"
+    },
+    "dialogue": [
+      {
+        "text": "我们明天见，好吗？",
+        "language": "Chinese",
+        "speaker_hint": "off-screen narrator",
+        "voiceover": true,
+        "kind": "",
+        "delivery": ""
+      }
+    ],
+    "onscreen_text": [
+      "出口 EXIT 07"
+    ],
+    "reasoning": "The intent explicitly requests the supplied off-screen line, so speech is requested and the exact dialogue is preserved. The supplied sign text is requested as visible lettering. \"No other dialogue or music\" forbids added music; it also restricts additional dialogue but does not erase the explicitly requested supplied line, so speech is not recorded as wholly forbidden. \"Show only the supplied sign text\" restricts extra lettering but does not forbid the requested supplied onscreen text.",
+    "calls": [
+      {
+        "stage": "scope",
+        "attempt": 1,
+        "model": "deepseek-flash",
+        "usage": {
+          "input_tokens": 974,
+          "output_tokens": 2966
+        },
+        "valid": true
+      }
+    ]
+  },
+  "licence": {
+    "medium_decision": {
+      "rendering_permission": {
+        "kind": "no_reference",
+        "disposition": "no_reference",
+        "operation_quote": "",
+        "target": "",
+        "reasoning": "No supplied reference has authority over the rendering medium."
+      },
+      "disposition": "no_reference",
+      "operation_quote": "",
+      "target": "",
+      "requested_style": "",
+      "reference_medium": "",
+      "requested_medium": "",
+      "treatments": [],
+      "reasoning": "No visual reference is supplied and no rendering medium or style phrase is requested; the intent only describes live-action-like shot content, dialogue, and sign text, not a rendering process.",
+      "calls": [
+        {
+          "stage": "medium",
+          "attempt": 1,
+          "model": "deepseek-flash",
+          "usage": {
+            "input_tokens": 1142,
+            "output_tokens": 145
+          },
+          "valid": true
+        }
+      ]
+    },
+    "identity": [],
+    "governs": {
+      "action": "request",
+      "framing": "request",
+      "lighting": "request",
+      "medium": "request",
+      "palette": "request",
+      "wardrobe": "request"
+    },
+    "reasons": {
+      "action": "The brief explicitly requests a two-shot sequence with an empty station followed by a departing train and a continuous off-screen vocal line, so performed action and behavior are request-governed.",
+      "framing": "No visual reference supplies camera composition, and the brief gives only shot count, cut timing and aspect ratio rather than an observed framing source; framing is request-governed.",
+      "lighting": "No visual reference or director note supplies lighting, and the brief does not describe an illuminating source or light quality; lighting remains request-governed.",
+      "medium": "No visual reference is supplied and the medium decision records no_reference, so no reference medium has authority; rendering medium remains request-governed.",
+      "palette": "No visual reference supplies color or tonal grading, and no observed palette has authority; palette remains request-governed.",
+      "wardrobe": "No visual reference supplies wardrobe, and no subject identity or clothing requirements are present; wardrobe is therefore request-governed."
+    },
+    "transform_phrase": null,
+    "transform_target": "",
+    "medium_transferred": false,
+    "style": {
+      "observed_phrase": "",
+      "phrase": "Live-action, cinematic",
+      "source": "default",
+      "reference_medium": "",
+      "requested_medium": "",
+      "discrepancy": false,
+      "note": ""
+    },
+    "calls": [
+      {
+        "stage": "medium",
+        "attempt": 1,
+        "model": "deepseek-flash",
+        "usage": {
+          "input_tokens": 1142,
+          "output_tokens": 145
+        },
+        "valid": true
+      },
+      {
+        "stage": "licence",
+        "attempt": 1,
+        "model": "deepseek-flash",
+        "usage": {
+          "input_tokens": 1324,
+          "output_tokens": 641
+        },
+        "valid": true
+      }
+    ]
+  },
+  "budget": {
+    "prompt_tokens": 527,
+    "target_video_rows": 57456,
+    "target_audio_rows": 640,
+    "known_reference_rows": 0,
+    "in_trained_band": true
+  },
+  "findings": [
+    {
+      "rule": "P5b-camera-no-amplitude",
+      "severity": "INFO",
+      "msg": "a motion type appears but without the amplitude/speed idiom"
+    },
+    {
+      "rule": "A2-sound-duplicated",
+      "severity": "WARN",
+      "msg": "overall_soundscape repeats content already in the description rather than a separate layer"
+    }
+  ],
+  "status": "compiled",
+  "version": "contextir/compiler/v1",
+  "brief": {
+    "intent": "Two shots: an empty railway station, then a train departing. A continuous off-screen voice says exactly the supplied line across both shots, starting in shot one and finishing in shot two. Show only the supplied sign text in shot one. No other dialogue or music.",
+    "seconds": 8,
+    "aspect": "16:9",
+    "dialogue": [
+      {
+        "text": "我们明天见，好吗？",
+        "language": "Chinese",
+        "speaker_hint": "off-screen narrator",
+        "voiceover": true,
+        "kind": "",
+        "delivery": ""
+      }
+    ],
+    "onscreen_text": [
+      "出口 EXIT 07"
+    ],
+    "shots": 2,
+    "cuts_ms": [
+      4000
+    ],
+    "mode": "t2va",
+    "silent": true,
+    "creativity": "restrained"
+  },
+  "request": {
+    "instruction": "Two shots: an empty railway station, then a train departing. A continuous off-screen voice says exactly the supplied line across both shots, starting in shot one and finishing in shot two. Show only the supplied sign text in shot one. No other dialogue or music.",
+    "mode": "t2va",
+    "target": {
+      "duration_ms": 8000,
+      "frame_count": 192,
+      "aspect_ratio": "16:9",
+      "fps": {
+        "numerator": 24,
+        "denominator": 1
+      },
+      "width": 1344,
+      "height": 768
+    },
+    "dialogue": [
+      {
+        "id": "line-1",
+        "speaker_ids": [
+          "speaker-1"
+        ],
+        "language": "Chinese",
+        "text": "我们明天见，好吗？",
+        "voiceover": true
+      }
+    ],
+    "constraints": [
+      {
+        "id": "compiler-no-music",
+        "kind": "no_music",
+        "text": "The target contains no music, including copied background music."
+      }
+    ],
+    "allow_creative_additions": false,
+    "allow_generated_dialogue": false,
+    "pinned_shots": [
+      {
+        "id": "shot-1",
+        "start_ms": 0,
+        "end_ms": 4000
+      },
+      {
+        "id": "shot-2",
+        "start_ms": 4000,
+        "end_ms": 8000
+      }
+    ],
+    "onscreen_text": [
+      "出口 EXIT 07"
+    ],
+    "addition_scope": {
+      "dialogue": true,
+      "music": false,
+      "visible_text": true
+    }
+  },
+  "structure": {
+    "music_constraint": "no_music",
+    "dialogue_placements": [
+      {
+        "line_index": 0,
+        "shot_index": 0,
+        "text": "我们明天见，"
+      },
+      {
+        "line_index": 0,
+        "shot_index": 1,
+        "text": "好吗？"
+      }
+    ],
+    "replacement_targets": {},
+    "style": "Live-action, cinematic",
+    "mode": "t2va",
+    "assets": [],
+    "shots": [
+      {
+        "subjects": [
+          "empty railway station platform",
+          "wall-mounted sign reading 出口 EXIT 07"
+        ],
+        "sync_sound": [
+          "quiet station ambience",
+          "distant rail hum"
+        ],
+        "start_ms": 0,
+        "purpose": "establish",
+        "framing": "wide",
+        "action": "A static wide view of an empty railway station platform in daylight, with bare benches, a tiled floor, and a single wall-mounted sign reading 出口 EXIT 07. No people are present; the off-screen narrator begins the supplied line.",
+        "what_changes": "The otherwise empty platform is established, with the sign visible and the off-screen narration beginning.",
+        "camera": {
+          "type": "Static Shot",
+          "amplitude": "",
+          "speed": ""
+        }
+      },
+      {
+        "subjects": [
+          "departing train",
+          "empty platform edge"
+        ],
+        "sync_sound": [
+          "train wheels and carriage rumble fading with the departure"
+        ],
+        "start_ms": 4000,
+        "purpose": "close",
+        "framing": "wide",
+        "action": "The shot cuts to the same station as a train pulls out from the platform and recedes down the track. The platform edge and departing carriages show the departure, while the off-screen narrator’s line finishes over the moving train; no sign lettering is visible.",
+        "what_changes": "The train is present at the platform and then departs, receding down the track as the narration concludes.",
+        "camera": {
+          "type": "Static Shot",
+          "amplitude": "",
+          "speed": ""
+        }
+      }
+    ],
+    "dialogue": [
+      {
+        "text": "我们明天见，好吗？",
+        "language": "Chinese",
+        "speaker_hint": "off-screen narrator",
+        "voiceover": true,
+        "kind": "",
+        "delivery": ""
+      }
+    ],
+    "onscreen_text": [
+      "出口 EXIT 07"
+    ],
+    "requested": {
+      "speech": true,
+      "music": false,
+      "onscreen_text": true,
+      "magnitude": ""
+    },
+    "forbidden": {
+      "speech": false,
+      "music": true,
+      "onscreen_text": false,
+      "magnitude": ""
+    },
+    "reasoning": "The caller pins exactly two shots at 0 ms and 4000 ms with a total duration of 8000 ms. The supplied off-screen Chinese line is preserved exactly and split across the cut as two consecutive placements whose text concatenates byte-for-byte into the complete line. The supplied sign text is requested and appears only in shot one. Music is forbidden and no extra dialogue or lettering is added under the restrained setting."
+  },
+  "scope": {
+    "speech": true,
+    "music": false,
+    "onscreen_text": true,
+    "magnitude": "plain"
+  },
+  "document": {
+    "version": "contextir/v1",
+    "mode": "t2va",
+    "target": {
+      "duration_ms": 8000,
+      "frame_count": 192,
+      "aspect_ratio": "16:9",
+      "fps": {
+        "numerator": 24,
+        "denominator": 1
+      },
+      "width": 1344,
+      "height": 768
+    },
+    "speakers": [
+      {
+        "onscreen": false,
+        "id": "speaker-1",
+        "description": "An off-screen narrator, never visible on the platform, speaking in Chinese."
+      }
+    ],
+    "dialogue": [
+      {
+        "id": "line-1",
+        "speaker_ids": [
+          "speaker-1"
+        ],
+        "language": "Chinese",
+        "text": "我们明天见，好吗？",
+        "voiceover": true
+      }
+    ],
+    "style": "Live-action, cinematic",
+    "shots": [
+      {
+        "id": "shot-1",
+        "start_ms": 0,
+        "end_ms": 4000,
+        "description": [
+          {
+            "text": "A wide view of an empty railway station platform in flat daylight. Long pale tiles run toward bare benches set along the wall, and a single wall-mounted sign hangs above them on the tiled surface. No people stand on the platform; the space is clean and still, with muted gray and cream surfaces, soft daylight spreading across the floor, and clear architectural lines receding into the distance. The off-screen narrator begins the supplied line while quiet station ambience and a faint distant rail hum sit under the image. The composition stays wide and steady, keeping the empty platform and the sign in view."
+          }
+        ],
+        "events": [
+          {
+            "kind": "sound",
+            "at_ms": 0,
+            "description": [
+              {
+                "text": "Quiet station ambience and a faint distant rail hum fill the space."
+              }
+            ]
+          },
+          {
+            "kind": "visible_text",
+            "at_ms": 800,
+            "visible_text": "出口 EXIT 07"
+          },
+          {
+            "kind": "camera",
+            "description": [
+              {
+                "text": "The camera holds a static shot."
+              }
+            ]
+          },
+          {
+            "kind": "dialogue",
+            "dialogue": {
+              "line_id": "line-1",
+              "text": "我们明天见，",
+              "continues_to_next": true
+            }
+          }
+        ]
+      },
+      {
+        "id": "shot-2",
+        "start_ms": 4000,
+        "end_ms": 8000,
+        "description": [
+          {
+            "text": "The shot cuts to the same station as a train pulls out from the platform. The carriages slide away along the track, wheels rolling and the rumble fading with the departure. The platform edge stays visible, empty except for the receding train and the station's tiled surface; no legible sign lettering is visible. The off-screen narrator's line finishes over the moving train, and the view remains wide and steady as the last carriage recedes into the distance."
+          }
+        ],
+        "events": [
+          {
+            "kind": "sound",
+            "at_ms": 4000,
+            "description": [
+              {
+                "text": "Train wheels and carriage rumble rise as the train pulls out."
+              }
+            ]
+          },
+          {
+            "kind": "sound",
+            "at_ms": 7000,
+            "description": [
+              {
+                "text": "The rail rumble thins as the last carriage recedes."
+              }
+            ]
+          },
+          {
+            "kind": "camera",
+            "description": [
+              {
+                "text": "The camera holds a static shot."
+              }
+            ]
+          },
+          {
+            "kind": "dialogue",
+            "dialogue": {
+              "line_id": "line-1",
+              "text": "好吗？",
+              "continues_from_previous": true
+            }
+          }
+        ]
+      }
+    ],
+    "soundscape": "Quiet station ambience with a faint distant rail hum gives way to the rolling rumble of departing train wheels and fading carriage noise.",
+    "music": "N/A",
+    "constraints": [
+      {
+        "id": "compiler-no-music",
+        "kind": "no_music",
+        "text": "The target contains no music, including copied background music."
+      }
+    ],
+    "claims": [
+      {
+        "id": "claim-1",
+        "origin": "user",
+        "text": "The target is exactly two shots: an empty railway station, then a departing train."
+      },
+      {
+        "id": "claim-2",
+        "origin": "user",
+        "text": "A continuous off-screen voice speaks the supplied line across the cut, beginning in shot one and finishing in shot two."
+      },
+      {
+        "id": "claim-3",
+        "origin": "user",
+        "text": "The only visible on-screen text is the supplied sign text, shown in shot one."
+      },
+      {
+        "id": "claim-4",
+        "origin": "user",
+        "text": "No other dialogue or music is present."
+      }
+    ]
+  },
+  "artifact": {
+    "version": "contextir-h3/artifact-v1",
+    "compiler_version": "contextir-h3/v1.2",
+    "format_version": "minimax-h3/prompt-v1",
+    "mode": "t2va",
+    "target": {
+      "duration_ms": 8000,
+      "frame_count": 192,
+      "aspect_ratio": "16:9",
+      "fps": {
+        "numerator": 24,
+        "denominator": 1
+      },
+      "width": 1344,
+      "height": 768
+    },
+    "profile": {
+      "name": "h3-published-format-v1",
+      "format": "minimax-h3/prompt-v1",
+      "fps": {
+        "numerator": 24,
+        "denominator": 1
+      },
+      "modes": [
+        "t2va",
+        "i2va",
+        "l2va",
+        "fl2va",
+        "ref2va"
+      ],
+      "limits": {
+        "pictures": 0,
+        "videos": 0,
+        "video_audio": 0,
+        "standalone_audio": 0
+      },
+      "supports_reference_frame_anchors": true,
+      "supports_source_intervals": true
+    },
+    "prompt": "integrated_multimodal_description: [Shot 1] Live-action, cinematic, A wide view of an empty railway station platform in flat daylight. Long pale tiles run toward bare benches set along the wall, and a single wall-mounted sign hangs above them on the tiled surface. No people stand on the platform; the space is clean and still, with muted gray and cream surfaces, soft daylight spreading across the floor, and clear architectural lines receding into the distance. The off-screen narrator begins the supplied line while quiet station ambience and a faint distant rail hum sit under the image. The composition stays wide and steady, keeping the empty platform and the sign in view. At 00:00.000, Quiet station ambience and a faint distant rail hum fill the space. At 00:00.800, The visible text reads \"出口 EXIT 07\". The camera holds a static shot. An off-screen narrator, never visible on the platform, speaking in Chinese. (S1) says in an off-screen voiceover: \u003cd\u003e[Chinese] 我们明天见，\u003c/d\u003e \u003cscenetrans\u003e The audio continues seamlessly across the cut. Throughout the target video: The target contains no music, including copied background music. [Shot 2] At 00:04.000, the shot cuts to The shot cuts to the same station as a train pulls out from the platform. The carriages slide away along the track, wheels rolling and the rumble fading with the departure. The platform edge stays visible, empty except for the receding train and the station's tiled surface; no legible sign lettering is visible. The off-screen narrator's line finishes over the moving train, and the view remains wide and steady as the last carriage recedes into the distance. At 00:04.000, Train wheels and carriage rumble rise as the train pulls out. At 00:07.000, The rail rumble thins as the last carriage recedes. The camera holds a static shot. An off-screen narrator, never visible on the platform, speaking in Chinese. (S1) says in an off-screen voiceover: \u003cscenetrans\u003e \u003cd\u003e[Chinese] 好吗？\u003c/d\u003e The audio continues seamlessly across the cut.\n\noverall_soundscape: Quiet station ambience with a faint distant rail hum gives way to the rolling rumble of departing train wheels and fading carriage noise.\n\nnon_diegetic_music: N/A\n",
+    "manifest": {
+      "media": [],
+      "subjects": [],
+      "references": [],
+      "speakers": [
+        {
+          "id": "speaker-1",
+          "label": "(S1)"
+        }
+      ]
+    },
+    "frames": 192,
+    "effective_duration_seconds": {
+      "numerator": 8,
+      "denominator": 1
+    },
+    "document_sha256": "0a03b636518ccdc19c6c20a845d2c39d5570f0eb869cb372578898a3676107d8",
+    "profile_sha256": "ce4364d3f1242f5aeb2216db44195fb3897f4828dd9e145c4c16c64315786ab6",
+    "prompt_sha256": "3301058fcccb189f9391ea319af6a4f8a5af21035d3e796849cc121c5a8cb0a8",
+    "manifest_sha256": "022e578d7f9f1227847c61f7f924da669135617e5b6e7098c89c7e147afe894b",
+    "sha256": "05536153de5d886f406894808b0b0bbd61a0704eaceb431cdb78b6336d799658"
+  },
+  "decisions": [
+    {
+      "field": "target",
+      "source": "computed",
+      "value": {
+        "effective_seconds": 8,
+        "frame_count": 192,
+        "nominal_seconds": 8,
+        "policy": "snap_up"
+      },
+      "explanation": "Effective timing and nominal duration are recorded separately; generated cuts use effective timing."
+    },
+    {
+      "field": "canvas",
+      "source": "computed",
+      "value": [
+        1344,
+        768
+      ],
+      "explanation": "Native short-edge canvas is aligned to 32 pixels; explicit megapixels replaces the native area budget."
+    },
+    {
+      "field": "execution",
+      "source": "explicit_adapter_policy",
+      "value": {
+        "effort": "standard"
+      },
+      "explanation": "The injected adapters and explicit compiler repair configuration implement standard effort."
+    },
+    {
+      "field": "mode",
+      "source": "caller-override",
+      "value": {
+        "clarification_policy": "continue_with_recorded_choice",
+        "confidence_kind": "routing_policy",
+        "aspect_mismatch": false,
+        "needs_clarification": false,
+        "mode": "t2va",
+        "confidence": 1,
+        "rule": "caller-override",
+        "signals": [
+          "Mode follows explicit structured choices and media socket requirements."
+        ]
+      },
+      "explanation": "Mode follows the production typed routing contract; publication capabilities are checked separately."
+    },
+    {
+      "field": "content_scope",
+      "source": "typed_request_interpretation",
+      "value": {
+        "music_constraint": "no_music",
+        "conflict_policy": "supplied_content_wins",
+        "requested": {
+          "speech": true,
+          "music": false,
+          "onscreen_text": true,
+          "magnitude": ""
+        },
+        "forbidden": {
+          "speech": false,
+          "music": true,
+          "onscreen_text": false,
+          "magnitude": ""
+        },
+        "allowed": {
+          "speech": true,
+          "music": false,
+          "onscreen_text": true,
+          "magnitude": "plain"
+        },
+        "dialogue": [
+          {
+            "text": "我们明天见，好吗？",
+            "language": "Chinese",
+            "speaker_hint": "off-screen narrator",
+            "voiceover": true,
+            "kind": "",
+            "delivery": ""
+          }
+        ],
+        "onscreen_text": [
+          "出口 EXIT 07"
+        ],
+        "reasoning": "The intent explicitly requests the supplied off-screen line, so speech is requested and the exact dialogue is preserved. The supplied sign text is requested as visible lettering. \"No other dialogue or music\" forbids added music; it also restricts additional dialogue but does not erase the explicitly requested supplied line, so speech is not recorded as wholly forbidden. \"Show only the supplied sign text\" restricts extra lettering but does not forbid the requested supplied onscreen text.",
+        "calls": [
+          {
+            "stage": "scope",
+            "attempt": 1,
+            "model": "deepseek-flash",
+            "usage": {
+              "input_tokens": 974,
+              "output_tokens": 2966
+            },
+            "valid": true
+          }
+        ]
+      },
+      "explanation": "Caller requests and prohibitions are interpreted before code applies the explicit creativity level."
+    },
+    {
+      "field": "reference_licence",
+      "source": "typed_attribute_precedence",
+      "value": {
+        "medium_decision": {
+          "rendering_permission": {
+            "kind": "no_reference",
+            "disposition": "no_reference",
+            "operation_quote": "",
+            "target": "",
+            "reasoning": "No supplied reference has authority over the rendering medium."
+          },
+          "disposition": "no_reference",
+          "operation_quote": "",
+          "target": "",
+          "requested_style": "",
+          "reference_medium": "",
+          "requested_medium": "",
+          "treatments": [],
+          "reasoning": "No visual reference is supplied and no rendering medium or style phrase is requested; the intent only describes live-action-like shot content, dialogue, and sign text, not a rendering process.",
+          "calls": [
+            {
+              "stage": "medium",
+              "attempt": 1,
+              "model": "deepseek-flash",
+              "usage": {
+                "input_tokens": 1142,
+                "output_tokens": 145
+              },
+              "valid": true
+            }
+          ]
+        },
+        "identity": [],
+        "governs": {
+          "action": "request",
+          "framing": "request",
+          "lighting": "request",
+          "medium": "request",
+          "palette": "request",
+          "wardrobe": "request"
+        },
+        "reasons": {
+          "action": "The brief explicitly requests a two-shot sequence with an empty station followed by a departing train and a continuous off-screen vocal line, so performed action and behavior are request-governed.",
+          "framing": "No visual reference supplies camera composition, and the brief gives only shot count, cut timing and aspect ratio rather than an observed framing source; framing is request-governed.",
+          "lighting": "No visual reference or director note supplies lighting, and the brief does not describe an illuminating source or light quality; lighting remains request-governed.",
+          "medium": "No visual reference is supplied and the medium decision records no_reference, so no reference medium has authority; rendering medium remains request-governed.",
+          "palette": "No visual reference supplies color or tonal grading, and no observed palette has authority; palette remains request-governed.",
+          "wardrobe": "No visual reference supplies wardrobe, and no subject identity or clothing requirements are present; wardrobe is therefore request-governed."
+        },
+        "transform_phrase": null,
+        "transform_target": "",
+        "medium_transferred": false,
+        "style": {
+          "observed_phrase": "",
+          "phrase": "Live-action, cinematic",
+          "source": "default",
+          "reference_medium": "",
+          "requested_medium": "",
+          "discrepancy": false,
+          "note": ""
+        },
+        "calls": [
+          {
+            "stage": "medium",
+            "attempt": 1,
+            "model": "deepseek-flash",
+            "usage": {
+              "input_tokens": 1142,
+              "output_tokens": 145
+            },
+            "valid": true
+          },
+          {
+            "stage": "licence",
+            "attempt": 1,
+            "model": "deepseek-flash",
+            "usage": {
+              "input_tokens": 1324,
+              "output_tokens": 641
+            },
+            "valid": true
+          }
+        ]
+      },
+      "explanation": "Each attribute follows explicit request or observed reference; poses and reference-sheet presentation are not subject identity."
+    },
+    {
+      "field": "dialogue",
+      "source": "host_literal_slots",
+      "value": [
+        {
+          "placeholder": "{{D1}}",
+          "line_id": "line-1",
+          "shot_id": "shot-1",
+          "speaker_ids": [
+            "speaker-1"
+          ],
+          "speaker_hint": "off-screen narrator",
+          "language": "Chinese",
+          "voiceover": true,
+          "words": 1,
+          "continues_to_next": true
+        },
+        {
+          "placeholder": "{{D2}}",
+          "line_id": "line-1",
+          "shot_id": "shot-2",
+          "speaker_ids": [
+            "speaker-1"
+          ],
+          "speaker_hint": "off-screen narrator",
+          "language": "Chinese",
+          "voiceover": true,
+          "words": 1,
+          "continues_from_previous": true
+        }
+      ],
+      "explanation": "The structure stage fixes placement; the host restores exact dialogue after prose. The writer does not author the supplied words."
+    },
+    {
+      "field": "shots.camera",
+      "source": "host_template",
+      "value": [
+        {
+          "subjects": [
+            "empty railway station platform",
+            "wall-mounted sign reading 出口 EXIT 07"
+          ],
+          "sync_sound": [
+            "quiet station ambience",
+            "distant rail hum"
+          ],
+          "start_ms": 0,
+          "purpose": "establish",
+          "framing": "wide",
+          "action": "A static wide view of an empty railway station platform in daylight, with bare benches, a tiled floor, and a single wall-mounted sign reading 出口 EXIT 07. No people are present; the off-screen narrator begins the supplied line.",
+          "what_changes": "The otherwise empty platform is established, with the sign visible and the off-screen narration beginning.",
+          "camera": {
+            "type": "Static Shot",
+            "amplitude": "",
+            "speed": ""
+          }
+        },
+        {
+          "subjects": [
+            "departing train",
+            "empty platform edge"
+          ],
+          "sync_sound": [
+            "train wheels and carriage rumble fading with the departure"
+          ],
+          "start_ms": 4000,
+          "purpose": "close",
+          "framing": "wide",
+          "action": "The shot cuts to the same station as a train pulls out from the platform and recedes down the track. The platform edge and departing carriages show the departure, while the off-screen narrator’s line finishes over the moving train; no sign lettering is visible.",
+          "what_changes": "The train is present at the platform and then departs, receding down the track as the narration concludes.",
+          "camera": {
+            "type": "Static Shot",
+            "amplitude": "",
+            "speed": ""
+          }
+        }
+      ],
+      "explanation": "Canonical camera events are assembled from the typed structural plan after prose."
+    },
+    {
+      "field": "subjects.shot_ids",
+      "source": "typed_actual_use_projection",
+      "value": null,
+      "explanation": "High-level target appearances derive only from actual RichText and speaker-dialogue bindings. Removed figures carry their incoming replacement's transfer scope; unused source observations remain in Evidence."
+    },
+    {
+      "field": "creativity",
+      "source": "caller_or_default",
+      "value": {
+        "speech": true,
+        "music": false,
+        "onscreen_text": true,
+        "magnitude": "plain"
+      },
+      "explanation": "Scope reflects requested elements, explicit prohibitions, and the selected four-position creativity control."
+    }
+  ],
+  "calls": [
+    {
+      "stage": "scope",
+      "attempt": 1,
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 974,
+        "output_tokens": 2966
+      },
+      "valid": true
+    },
+    {
+      "stage": "medium",
+      "attempt": 1,
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 1142,
+        "output_tokens": 145
+      },
+      "valid": true
+    },
+    {
+      "stage": "licence",
+      "attempt": 1,
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 1324,
+        "output_tokens": 641
+      },
+      "valid": true
+    },
+    {
+      "stage": "structure",
+      "attempt": 1,
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 3001,
+        "output_tokens": 1992
+      },
+      "valid": true
+    },
+    {
+      "stage": "plan",
+      "attempt": 1,
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 9355,
+        "output_tokens": 6023
+      },
+      "valid": true
+    },
+    {
+      "stage": "semantic_review",
+      "attempt": 1,
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 2815,
+        "output_tokens": 202
+      },
+      "valid": true
+    }
+  ]
+}

@@ -23,7 +23,7 @@ import (
 // Independently pin the complete file inventory/provenance, rather than trusting
 // response files and their editable checksums alone. Refresh only from a new
 // actual frozen-binary recording; old recordings remain in the audit archive.
-const remainingHighlevelManifestSHA256 = "6eedad3ba25328b06c9b21b7c1ed838f46fa933b9f6bf8b3c2fa641e8e800dc9"
+const remainingHighlevelManifestSHA256 = "27c415cde6d02e381192747ba7eacbf3140fc8a905fa1d29dbb9094ab17e06f6"
 
 type remainingHighlevelContext struct {
 	Schema  string `json:"schema"`
@@ -58,6 +58,7 @@ func TestRemainingHighlevelRecordedCompile(t *testing.T) {
 		t.Fatal("missing or changed actual recording provenance", err)
 	}
 	tape.Directory = "remaining_highlevel"
+	remainingCompleteRecordingInventory(t, tape)
 	var recording remainingHighlevelContext
 	if _, current := tape.Files["recording_context.json"]; current {
 		if err := json.Unmarshal(remainingSemanticFile(t, tape, "recording_context.json"), &recording); err != nil || recording.Schema != "contextir-release-highlevel-recording/v2" || recording.Binary != tape.Binary || recording.Archive != tape.Archive || len(recording.Cases) != 3 {

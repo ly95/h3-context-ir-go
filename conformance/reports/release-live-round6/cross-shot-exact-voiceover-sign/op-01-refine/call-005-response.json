@@ -1,0 +1,91 @@
+{
+  "response": {
+    "json": {
+      "assets": [],
+      "dialogue": [
+        {
+          "text": "我们明天见，好吗？",
+          "language": "Chinese",
+          "speaker_hint": "off-screen narrator",
+          "voiceover": true,
+          "kind": "",
+          "delivery": ""
+        }
+      ],
+      "dialogue_placements": [
+        {
+          "line_index": 0,
+          "shot_index": 0,
+          "text": "我们明天见，"
+        },
+        {
+          "line_index": 0,
+          "shot_index": 1,
+          "text": "好吗？"
+        }
+      ],
+      "forbidden": {
+        "speech": false,
+        "music": true,
+        "onscreen_text": false,
+        "magnitude": ""
+      },
+      "mode": "t2va",
+      "onscreen_text": [
+        "出口 EXIT 07"
+      ],
+      "reasoning": "Pure text-to-video with no attached pictures, so no frame anchors, no assets and no replacements; the empty assets list and empty replacement_targets are fixed. The caller pins exactly two shots with a 4000 ms cut inside a 12000 ms target, so Shot 1 starts at 0 and Shot 2 at 4000, both far above the 1200 ms floor. The single supplied off-screen line must run continuously across the cut, so it is split into two byte-exact consecutive segments, '我们明天见，' in Shot 1 and '好吗？' in Shot 2, which concatenate back to the complete line with no ellipsis or repeated tail. Shot 1 establishes the empty railway platform and carries the only visible lettering, the supplied sign text 出口 EXIT 07, with no added signage. Shot 2 delivers the requested change, a train departing. Creativity is restrained, so no speech, music or lettering is added beyond what was supplied; silence beyond the requested voice is respected and no score or ambience is invented, and camera work stays static. On-screen text is requested only in Shot 1, and all on-screen text is forbidden as an addition elsewhere.",
+      "replacement_targets": {},
+      "requested": {
+        "speech": true,
+        "music": false,
+        "onscreen_text": true,
+        "magnitude": ""
+      },
+      "shots": [
+        {
+          "action": "An empty railway station platform at dusk, seen along its length: bare benches, a tiled floor, overhead lamps lit, and the sign reading 出口 EXIT 07 hanging above the walkway. No travellers or staff are present, and nothing in the frame moves.",
+          "camera": {
+            "amplitude": "",
+            "speed": "",
+            "type": "Static Shot"
+          },
+          "framing": "wide",
+          "purpose": "establish",
+          "start_ms": 0,
+          "subjects": [
+            "an empty railway platform with benches and a tiled floor",
+            "overhead station lamps at dusk",
+            "the hanging sign reading 出口 EXIT 07"
+          ],
+          "sync_sound": [],
+          "what_changes": "The deserted platform and its sign are established as the setting."
+        },
+        {
+          "action": "From the same platform viewpoint, a train draws away along the track, its carriages sliding off into the distance until only the empty rails and the silent platform remain.",
+          "camera": {
+            "amplitude": "",
+            "speed": "",
+            "type": "Static Shot"
+          },
+          "framing": "wide",
+          "purpose": "transition",
+          "start_ms": 4000,
+          "subjects": [
+            "a train departing along the track",
+            "the emptying railway platform"
+          ],
+          "sync_sound": [],
+          "what_changes": "The train departs and leaves the platform behind."
+        }
+      ]
+    },
+    "model": "deepseek-flash",
+    "usage": {
+      "input_tokens": 2987,
+      "output_tokens": 1284
+    }
+  },
+  "elapsed_ms": 7822,
+  "images": []
+}

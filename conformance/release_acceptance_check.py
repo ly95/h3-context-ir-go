@@ -276,7 +276,7 @@ def inspect(result, semantic, previous=None):
             require(all(speakers[s].get("onscreen") is False and not speakers[s].get("subject_id")
                         for s in line.get("speaker_ids", []) if s in speakers), "voiceover invented a visual speaker")
     if "visible_text" in semantic:
-        errors.extend(visible_text_errors(document, prompt, semantic))
+        problems.extend(visible_text_errors(document, prompt, semantic))
     for source in semantic.get("dormant_voice_bindings", []):
         voice_references = [r for r in references.values()
                             if r.get("source", {}).get("asset_id") == source
@@ -563,13 +563,27 @@ def self_test():
         mutate(wrong)
         assert visible_text_errors(wrong, same_sign_prompt, sign_semantic), name + " escaped typed display contract"
     assert visible_text_errors(same_sign, "The rendered fixed words disappeared.", sign_semantic)
+    # Exercise the complete inspect branch on the real archived echo candidate,
+    # including publication hashes. Helper-only tests missed a local-name error.
+    visible_result = json.loads((release / "release-live-round5/cross-shot-exact-voiceover-sign/op-01-refine/result.json").read_text())
+    assert visible_result["artifact"]["prompt"].count("出口 EXIT 07") == 2
+    assert not inspect(visible_result, sign_semantic), "full visible-text inspect rejected the same prop echo"
+    for name, mutate, expected_error in [
+        ("duplicate", lambda d: d["shots"][0]["events"].append({"kind": "visible_text", "visible_text": "出口 EXIT 07"}), "visible lettering changed, duplicated or was omitted"),
+        ("word drift", lambda d: next(e for e in d["shots"][0]["events"] if e.get("visible_text")).update(visible_text="出口 EXIT 08"), "visible lettering changed, duplicated or was omitted"),
+        ("wrong shot", lambda d: d["shots"][1]["events"].append(d["shots"][0]["events"].pop(0)), "visible lettering is in an unauthorized shot"),
+    ]:
+        wrong = copy.deepcopy(visible_result)
+        mutate(wrong["document"])
+        assert expected_error in inspect(wrong, sign_semantic), "full visible path failed to check " + name
     print(json.dumps({"self_test": "passed", "positive_publication": 1, "negative_mutations": 5,
                       "independent_sources_positive_and_negative": True,
                       "semantic_dialogue_id_change_and_word_drift": True,
                       "source_bound_equivalent_wheels_positive_and_firstwave_negative": True,
                       "paired_frame_official_addresses_and_header_drift": True,
                       "caller_property_provenance_and_final_target": True,
-                      "same_prop_echo_allowed_typed_display_word_count_shot_still_strict": True}))
+                      "same_prop_echo_allowed_typed_display_word_count_shot_still_strict": True,
+                      "complete_inspect_visible_branch_positive_and_negative": True}))
 
 
 if __name__ == "__main__":

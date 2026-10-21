@@ -1,0 +1,64 @@
+{
+  "schema": "contextir-release-native-fixture-import/v1",
+  "run_report_sha256": "99071a6900c8a459a322e48b7f315ac31468e924c4d71bda0fb8eae35c50933c",
+  "binary_sha256": "2b34869092e0110606f3a071c18af4f6183e565e4237b8612d28c455d91b7bfa",
+  "source_archive_sha256": "94216845eb4157a13aa6212b78a311806f74b43c22ef5cf83a2e71aa61cb18b1",
+  "files": {
+    "compiler/remaining_highlevel_replay_test.go": "d56f4c1fcbda2ab2351244179109143e3fb034d6d2d332e2b96abeaf70a46ab8",
+    "compiler/remaining_wardrobe_contract_test.go": "fd2f7b5a849fc66ccf2af27dcb0fa9e1ce794d2c7427a3b510582a6759ac6e49",
+    "compiler/remaining_wardrobe_fresh_replay_test.go": "0d235c5983ccd80804553f2992bcc87617e3642d1af6693df2e14c324e06355e",
+    "conformance/adaptations/remaining_wardrobe.json": "20a39d9d1afe46ebd9cfea2890b7bfc164b278f66e51110b8a6d1e44b1634e9e"
+  },
+  "manifests": {
+    "compiler/testdata/remaining_highlevel/manifest.json": {
+      "sha256": "27c415cde6d02e381192747ba7eacbf3140fc8a905fa1d29dbb9094ab17e06f6",
+      "file_count": 93
+    },
+    "compiler/testdata/remaining_wardrobe_fresh/manifest.json": {
+      "sha256": "a367581a8d0f07b82852d5727536e203ea000c9356ab159aa2c7667d075fb227",
+      "file_count": 48
+    }
+  },
+  "validation_command": [
+    "go",
+    "test",
+    "./compiler",
+    "-run",
+    "TestRemainingHighlevel|TestRemainingWardrobe",
+    "-count=1",
+    "-v"
+  ],
+  "validation_exit_code": 0,
+  "comparison": "Complete original FromOriginal Brief equality before Compile and complete normalized Result JSON equality after strict same-stage/system/input/schema/full-response replay. Native source-specific property, fixed words, and unchanged wardrobe authority/contrary-control assertions passed.",
+  "cases": [
+    {
+      "case_id": "transcript-explicit-selection",
+      "actual_compile_call_count": 6,
+      "original_input_sha256": "36e72c25a466bae905a482ee3e1b80b6c7a79a727d51869627cc6ee83979477c",
+      "complete_request_and_response_replay_passed": true,
+      "complete_normalized_result_equal": true
+    },
+    {
+      "case_id": "transcript-model-selection",
+      "actual_compile_call_count": 6,
+      "original_input_sha256": "667a5d4272c1b5f3ced6ebd3fb7b89a865d5acff7d1b53acaef879eac4b10917",
+      "complete_request_and_response_replay_passed": true,
+      "complete_normalized_result_equal": true
+    },
+    {
+      "case_id": "single-target-model-merge",
+      "actual_compile_call_count": 10,
+      "original_input_sha256": "7a932fd23f2cce88fd81945510739d99ed2598deed90aa00460b5effe7f529ef",
+      "complete_request_and_response_replay_passed": true,
+      "complete_normalized_result_equal": true
+    },
+    {
+      "case_id": "original-wardrobe-request-authority",
+      "actual_compile_call_count": 12,
+      "original_input_sha256": "966730e96f5e1e88e954e6702ddf1134ff932babe29ab23112ea5e025f853add",
+      "complete_request_and_response_replay_passed": true,
+      "complete_normalized_result_equal": true
+    }
+  ],
+  "runtime_files_changed": false
+}

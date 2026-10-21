@@ -20,7 +20,7 @@ import (
 
 // Filled only after a complete, independently reviewed frozen live run ends.
 // The prior DecideLicence recording stays preserved in its original directory.
-const remainingWardrobeFreshManifestSHA256 = "pending-actual-finished-release-live-run"
+const remainingWardrobeFreshManifestSHA256 = "a367581a8d0f07b82852d5727536e203ea000c9356ab159aa2c7667d075fb227"
 
 func remainingCompleteRecordingInventory(t *testing.T, tape remainingSemanticTape) {
 	t.Helper()

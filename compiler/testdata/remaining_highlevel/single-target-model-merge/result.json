@@ -1,94 +1,8 @@
 {
-  "case_id": "single-target-model-merge",
-  "input_sha256": "7a932fd23f2cce88fd81945510739d99ed2598deed90aa00460b5effe7f529ef",
-  "status": "compiled",
-  "calls": [
-    {
-      "stage": "scope",
-      "model": "deepseek-flash",
-      "usage": {
-        "input_tokens": 1123,
-        "output_tokens": 171
-      },
-      "usage_valid": true,
-      "images": 0
-    },
-    {
-      "stage": "rendering_permission",
-      "model": "deepseek-flash",
-      "usage": {
-        "input_tokens": 452,
-        "output_tokens": 153
-      },
-      "usage_valid": true,
-      "images": 0
-    },
-    {
-      "stage": "medium",
-      "model": "deepseek-flash",
-      "usage": {
-        "input_tokens": 1377,
-        "output_tokens": 458
-      },
-      "usage_valid": true,
-      "images": 0
-    },
-    {
-      "stage": "identity_requirements",
-      "model": "deepseek-flash",
-      "usage": {
-        "input_tokens": 1989,
-        "output_tokens": 5047
-      },
-      "usage_valid": true,
-      "images": 0
-    },
-    {
-      "stage": "licence",
-      "model": "deepseek-flash",
-      "usage": {
-        "input_tokens": 2591,
-        "output_tokens": 288
-      },
-      "usage_valid": true,
-      "images": 0
-    },
-    {
-      "stage": "structure",
-      "model": "deepseek-flash",
-      "usage": {
-        "input_tokens": 5716,
-        "output_tokens": 2246
-      },
-      "usage_valid": true,
-      "images": 0
-    },
-    {
-      "stage": "plan",
-      "model": "deepseek-flash",
-      "usage": {
-        "input_tokens": 10650,
-        "output_tokens": 5486
-      },
-      "usage_valid": true,
-      "images": 0
-    },
-    {
-      "stage": "semantic_review",
-      "model": "deepseek-flash",
-      "usage": {
-        "input_tokens": 2801,
-        "output_tokens": 1485
-      },
-      "usage_valid": true,
-      "images": 0
-    }
-  ],
-  "elapsed_ms": 80060,
   "result": {
     "composition_reviews": [
       {
-        "version": "contextir/composition-review/v3",
+        "version": "contextir/composition-review/v10",
         "required": true,
         "passed": true,
         "calls": [
@@ -97,8 +11,8 @@
             "attempt": 1,
             "model": "deepseek-flash",
             "usage": {
-              "input_tokens": 2801,
-              "output_tokens": 1485
+              "input_tokens": 4234,
+              "output_tokens": 6264
             },
             "valid": true
           }
@@ -141,7 +55,7 @@
       },
       "dialogue": [],
       "onscreen_text": [],
-      "reasoning": "The intent only describes composing a single subject from two image assets. It does not request or prohibit speech, music, or onscreen text.",
+      "reasoning": "The intent only defines a composite subject from two images. It does not request or forbid speech, music, or onscreen text, and supplies no dialogue or visible words.",
       "calls": [
         {
           "stage": "scope",
@@ -149,7 +63,7 @@
           "model": "deepseek-flash",
           "usage": {
             "input_tokens": 1123,
-            "output_tokens": 171
+            "output_tokens": 176
           },
           "valid": true
         }
@@ -170,7 +84,7 @@
           "disposition": "preserve",
           "operation_quote": "",
           "target": "",
-          "reasoning": "The caller asks to combine depicted subject parts from two references into one subject; this concerns subject composition, not an authorized rendering transformation or a specified target style/medium. No instruction authorizes departing from the attached reference's rendering.",
+          "reasoning": "The caller asks to compose a subject by taking body from one picture and wheels from another; this changes depicted content/composition, not the rendering style or medium. No authorizing rendering transformation or target-rendition instruction is present.",
           "calls": [
             {
               "stage": "rendering_permission",
@@ -178,7 +92,7 @@
               "model": "deepseek-flash",
               "usage": {
                 "input_tokens": 452,
-                "output_tokens": 153
+                "output_tokens": 175
               },
               "valid": true
             }
@@ -191,7 +105,7 @@
         "reference_medium": "live-action",
         "requested_medium": "",
         "treatments": [],
-        "reasoning": "Both references are observed as live-action, and the instruction only combines body and wheels into a single subject without requesting a rendering transformation. No explicit style phrase or compatible treatments are supplied, so requested_medium and requested_style remain empty.",
+        "reasoning": "Both supplied subject images are observed as live-action, and the request only combines body and wheel content from them without requesting a rendering-medium transformation. No explicit style phrase or compatible treatments are supplied.",
         "calls": [
           {
             "stage": "rendering_permission",
@@ -199,7 +113,7 @@
             "model": "deepseek-flash",
             "usage": {
               "input_tokens": 452,
-              "output_tokens": 153
+              "output_tokens": 175
             },
             "valid": true
           },
@@ -208,8 +122,8 @@
             "attempt": 1,
             "model": "deepseek-flash",
             "usage": {
-              "input_tokens": 1377,
-              "output_tokens": 458
+              "input_tokens": 1378,
+              "output_tokens": 232
             },
             "valid": true
           }
@@ -217,67 +131,37 @@
       },
       "identity": [
         {
-          "descriptor_source": "request",
-          "target_mention": "a single subject",
+          "descriptor_source": "reference",
           "kind": "object",
-          "claims": [
-            {
-              "dimension": "identity",
-              "value": "single subject",
-              "quote": "Define it once as a single subject"
-            },
-            {
-              "dimension": "stable_attribute",
-              "value": "body from the first picture",
-              "quote": "draws its body from the first picture"
-            },
-            {
-              "dimension": "stable_attribute",
-              "value": "wheels from the second picture",
-              "quote": "its wheels from the second"
-            }
-          ],
-          "label": "\u003cSubject 1\u003e",
-          "descriptor": "a single black sports car combining the carbon fibre body from the first picture with the wheels from the second picture",
+          "label": "<Subject 1>",
+          "descriptor": "the black sports car",
           "retained_attributes": [
             "carbon fibre body"
           ],
-          "requested_attributes": [
-            "wheels from the second picture"
-          ],
-          "request_quote": "Define it once as a single subject that draws its body from the first picture and its wheels from the second.",
+          "requested_attributes": [],
+          "request_quote": "",
           "wardrobe_attributes": []
         },
         {
           "descriptor_source": "request",
-          "target_mention": "a single subject",
+          "target_mention": "it",
           "kind": "object",
           "claims": [
-            {
-              "dimension": "identity",
-              "value": "single subject",
-              "quote": "Define it once as a single subject"
-            },
-            {
-              "dimension": "stable_attribute",
-              "value": "body from the first picture",
-              "quote": "draws its body from the first picture"
-            },
             {
               "dimension": "stable_attribute",
               "value": "wheels from the second picture",
               "quote": "its wheels from the second"
             }
           ],
-          "label": "\u003cSubject 2\u003e",
-          "descriptor": "a single black sports car combining the carbon fibre body from the first picture with the wheels from the second picture",
+          "label": "<Subject 2>",
+          "descriptor": "the black sports car with carbon fibre body and wheels from the second picture",
           "retained_attributes": [
             "carbon fibre body"
           ],
           "requested_attributes": [
             "wheels from the second picture"
           ],
-          "request_quote": "Define it once as a single subject that draws its body from the first picture and its wheels from the second.",
+          "request_quote": "its wheels from the second",
           "wardrobe_attributes": []
         }
       ],
@@ -290,12 +174,12 @@
         "wardrobe": "reference"
       },
       "reasons": {
-        "action": "No new action or performed behavior is requested; the instruction only merges body and wheel identity parts, so action stays with the source clips.",
-        "framing": "The request specifies only subject composition, not shot scale, viewpoint, angle, or camera movement, so framing remains reference-governed.",
-        "lighting": "No instruction concerns the light, its source, direction, or visible quality; lighting remains reference-governed.",
-        "medium": "Rendering medium is pinned by the medium decision: the live-action reference rendering is preserved with no authorized transformation.",
-        "palette": "No requested grade, hue, saturation, or tonal contrast treatment is given, so palette remains reference-governed.",
-        "wardrobe": "No clothing, accessory, or part-specific change beyond the requested body/wheel combination is asked, so wardrobe/appearance defaults to the reference."
+        "action": "No new action, behavior, or performance is requested; the source reference governs the subject's observed static state.",
+        "framing": "No camera composition, shot scale, viewpoint, or camera movement is requested; canvas ratio does not specify framing.",
+        "lighting": "The request contains no instruction about lighting, an illuminating source, its direction, or visible quality.",
+        "medium": "The medium decision preserves the supplied live-action rendering; no rendering transformation is requested.",
+        "palette": "No scene color grade, hue change, saturation, or contrast treatment is requested.",
+        "wardrobe": "No clothing or accessory change is requested; body and wheel sourcing are identity attributes, so observed reference wardrobe/appearance remains governing."
       },
       "transform_phrase": null,
       "transform_target": "",
@@ -311,10 +195,10 @@
       },
       "subjects": [
         {
-          "label": "\u003cSubject 1\u003e",
+          "label": "<Subject 1>",
           "kind": "object",
           "sources": [
-            "\u003cPicture 1\u003e"
+            "<Picture 1>"
           ],
           "descriptor": "the black sports car",
           "attributes": [
@@ -328,10 +212,10 @@
           "taken_over_by": ""
         },
         {
-          "label": "\u003cSubject 2\u003e",
+          "label": "<Subject 2>",
           "kind": "object",
           "sources": [
-            "\u003cPicture 2\u003e"
+            "<Picture 2>"
           ],
           "descriptor": "the black sports car",
           "attributes": [
@@ -352,7 +236,7 @@
           "model": "deepseek-flash",
           "usage": {
             "input_tokens": 452,
-            "output_tokens": 153
+            "output_tokens": 175
           },
           "valid": true
         },
@@ -361,8 +245,8 @@
           "attempt": 1,
           "model": "deepseek-flash",
           "usage": {
-            "input_tokens": 1377,
-            "output_tokens": 458
+            "input_tokens": 1378,
+            "output_tokens": 232
           },
           "valid": true
         },
@@ -371,8 +255,28 @@
           "attempt": 1,
           "model": "deepseek-flash",
           "usage": {
-            "input_tokens": 1989,
-            "output_tokens": 5047
+            "input_tokens": 2880,
+            "output_tokens": 3862
+          },
+          "valid": true
+        },
+        {
+          "stage": "identity_requirements",
+          "attempt": 2,
+          "model": "deepseek-flash",
+          "usage": {
+            "input_tokens": 2927,
+            "output_tokens": 5942
+          },
+          "valid": true
+        },
+        {
+          "stage": "identity_requirements",
+          "attempt": 3,
+          "model": "deepseek-flash",
+          "usage": {
+            "input_tokens": 2941,
+            "output_tokens": 4146
           },
           "valid": true
         },
@@ -381,20 +285,27 @@
           "attempt": 1,
           "model": "deepseek-flash",
           "usage": {
-            "input_tokens": 2591,
-            "output_tokens": 288
+            "input_tokens": 2380,
+            "output_tokens": 482
           },
           "valid": true
         }
       ]
     },
     "budget": {
-      "prompt_tokens": 1355,
+      "prompt_tokens": 1380,
       "target_video_rows": 57456,
       "target_audio_rows": 640,
       "known_reference_rows": 1152,
       "in_trained_band": true
     },
+    "findings": [
+      {
+        "rule": "A2-sound-duplicated",
+        "severity": "WARN",
+        "msg": "overall_soundscape repeats content already in the description rather than a separate layer"
+      }
+    ],
     "status": "compiled",
     "version": "contextir/compiler/v1",
     "brief": {
@@ -690,16 +601,16 @@
         {
           "id": "shot-1",
           "start_ms": 0,
-          "end_ms": 3000
+          "end_ms": 2700
         },
         {
           "id": "shot-2",
-          "start_ms": 3000,
-          "end_ms": 5600
+          "start_ms": 2700,
+          "end_ms": 5400
         },
         {
           "id": "shot-3",
-          "start_ms": 5600,
+          "start_ms": 5400,
           "end_ms": 8000
         }
       ],
@@ -712,8 +623,8 @@
     "structure": {
       "subject_projections": [
         {
-          "subject_id": "subject-1",
-          "descriptor": "the black sports car",
+          "subject_id": "subject-2",
+          "descriptor": "a single black sports car with a carbon fibre body and the wheels taken from the second picture",
           "sources": [
             {
               "subject_id": "subject-1",
@@ -748,30 +659,38 @@
       "shots": [
         {
           "subjects": [
-            "\u003cSubject 1\u003e"
+            "<Subject 1>",
+            "<Subject 2>"
           ],
-          "sync_sound": [],
+          "sync_sound": [
+            "a low idling engine note",
+            "faint tyre contact hum"
+          ],
           "start_ms": 0,
           "purpose": "establish",
-          "framing": "wide",
-          "action": "The single black sports car sits whole in a clean, softly lit space, carbon-fibre bodywork and four wheels reading as one continuous machine; the camera holds still and lets the assembled form fill the wide frame.",
-          "what_changes": "The combined subject is established as one complete car rather than two separate reference vehicles.",
+          "framing": "medium wide",
+          "action": "The black sports car with its carbon fibre body and its second-picture wheels sits low on smooth dark asphalt, engine idling, while light slides along the bodywork and the camera eases nearer.",
+          "what_changes": "the single composite car first becomes fully readable, body and wheels together",
           "camera": {
-            "type": "Static Shot",
-            "amplitude": "",
-            "speed": ""
+            "type": "Push In",
+            "amplitude": "small",
+            "speed": "slow"
           }
         },
         {
           "subjects": [
-            "\u003cSubject 1\u003e"
+            "<Subject 1>",
+            "<Subject 2>"
           ],
-          "sync_sound": [],
-          "start_ms": 3000,
+          "sync_sound": [
+            "tyres rolling over asphalt",
+            "engine revs rising"
+          ],
+          "start_ms": 2700,
           "purpose": "develop",
-          "framing": "medium",
-          "action": "The camera tracks slowly alongside the car's flank, keeping the low body in medium framing while the carbon-fibre weave passes through the light and the dark wheel arches slide toward the edge of frame.",
-          "what_changes": "Attention shifts from the whole silhouette to the carbon-fibre body surface as the camera moves along the car.",
+          "framing": "close",
+          "action": "The framing tightens onto the wheels from the second picture; the tyres flex and begin to rotate, and the car rolls forward as the camera moves alongside the turning wheels.",
+          "what_changes": "the wheels start turning and the car transitions from standing to rolling",
           "camera": {
             "type": "Tracking Shot",
             "amplitude": "small",
@@ -780,18 +699,22 @@
         },
         {
           "subjects": [
-            "\u003cSubject 1\u003e"
+            "<Subject 1>",
+            "<Subject 2>"
           ],
-          "sync_sound": [],
-          "start_ms": 5600,
-          "purpose": "reveal",
-          "framing": "close",
-          "action": "The camera settles close on the front wheel, showing the wheel seated cleanly against the carbon-fibre bodywork, with the tyre and rim sharply defined and the body framing it above.",
-          "what_changes": "The wheels become the clear focal detail, confirming the second source's contribution fitted to the first source's body.",
+          "sync_sound": [
+            "engine note climbing",
+            "air rush over the bodywork"
+          ],
+          "start_ms": 5400,
+          "purpose": "resolve",
+          "framing": "medium",
+          "action": "The camera swings in a wide arc around the accelerating car, carbon fibre flanks flashing with passing light as the car drives out towards the far edge of the frame.",
+          "what_changes": "the car accelerates away and clears the frame edge",
           "camera": {
-            "type": "Static Shot",
-            "amplitude": "",
-            "speed": ""
+            "type": "Arc Shot",
+            "amplitude": "small",
+            "speed": "slow"
           }
         }
       ],
@@ -809,7 +732,7 @@
         "onscreen_text": false,
         "magnitude": ""
       },
-      "reasoning": "The caller asks for one subject defined once: a car whose body comes from the first picture and whose wheels come from the second. Both pictures are content references, not anchored frames, so their studio presentation is redrawn rather than preserved. I define a single canonical target, the black sports car, with the first source contributing its carbon-fibre body and the second contributing its wheels, and I do not duplicate it into two identities. No speech, visible lettering, or other text is requested; the scope permits music only, so the shots carry no dialogue or on-screen text and describe no reused source audio. Two source references are complete visual observations; nothing supports claims about sound or unseen motion, so the camera language is newly shaped within the balanced allowance while the merged car remains the only depicted subject."
+      "reasoning": "Both attached pictures are content references rather than anchored frames (actual_frame=false for each), so neither contributes a preserved frame, a panel layout, a backdrop or a pose; they only supply the reusable identity of the vehicle and its wheels. The caller's one-line intent defines a single composite subject once: the black sports car keeps the car category and takes its carbon fibre body from the first picture while taking its wheels from the second picture. This is expressed as a single subject projection, not two separate vehicles, and no unrelated backdrop, lighting or presentation from either sheet is imported. No speech, singing or visible lettering is requested and none is supplied, so dialogue and onscreen text stay empty; the balanced permission to add score is not an obligation and nothing in the shots claims source audio, since no audio attachment exists. The two pictures give no observed framing, action or timing, so the shot plan is a licensed creative presentation of the composite car: it is revealed standing, its second-picture wheels begin to turn as it rolls away, and a wide arc shot closes on the departure. Camera choices are independent and no source framing is asserted. Sound is newly generated engine and tyre texture only, with no claim of reuse or reference. No replacement of a named figure is requested, so the replacement map stays empty."
     },
     "scope": {
       "speech": false,
@@ -986,14 +909,14 @@
       "subjects": [
         {
           "kind": "object",
-          "descriptor": "the black sports car",
+          "descriptor": "a single black sports car with a carbon fibre body and the wheels taken from the second picture",
           "attributes": [
             "carbon fibre body",
             "wheels from the second picture"
           ],
           "origin": "user",
-          "id": "subject-1",
-          "description": "the black sports car; carbon fibre body, wheels from the second picture",
+          "id": "subject-2",
+          "description": "a single black sports car with a carbon fibre body and the wheels taken from the second picture; carbon fibre body, wheels from the second picture",
           "sources": [
             {
               "source": {
@@ -1026,24 +949,57 @@
         {
           "id": "shot-1",
           "start_ms": 0,
-          "end_ms": 3000,
+          "end_ms": 2700,
           "description": [
             {
-              "text": "A clean, softly lit studio floor stretches around the assembled car, its surface a matte gray with a faint sheen from broad overhead panels. "
+              "text": "The scene opens in a low, wide industrial bay with a smooth dark asphalt floor and distant cool overhead strips. "
             },
             {
-              "subject_id": "subject-1"
+              "subject_id": "subject-2"
             },
             {
-              "text": " sits centered and complete in the composition, its long hood, low roofline and taut rear haunches reading as one continuous machine. The carbon-fibre bodywork shows a fine woven pattern under diffused light, with dark highlights running along the fenders and door panel. Four wheels are fitted cleanly into the arches, their rims catching narrow rings of light while the tires sit heavy on the floor. The vehicle remains stationary, but small reflections travel across the clear-coat as the light shifts; the full silhouette stays visible from a front three-quarter angle, with generous empty floor to either side. There are no people, no set dressing and no visible lettering."
+              "text": " sits settled on the asphalt, the carbon fibre body catching long bands of pale light while the selected wheels remain planted and clearly readable at the corners. A faint amber warmth from far lamps touches the roofline, and the glossy floor holds a soft reflection beneath the car. The engine is already running at a low, even idle, and the whole vehicle reads as one composite machine rather than two separate references. Small vibrations travel through the bodywork, but the wheels stay still and the stance remains composed."
             }
           ],
           "events": [
             {
+              "kind": "action",
+              "at_ms": 0,
+              "description": [
+                {
+                  "text": "The engine settles into a low idle while the "
+                },
+                {
+                  "subject_id": "subject-2"
+                },
+                {
+                  "text": " remains still on the asphalt."
+                }
+              ]
+            },
+            {
+              "kind": "sound",
+              "at_ms": 600,
+              "description": [
+                {
+                  "text": "A low idling engine note and a faint tyre contact hum fill the bay."
+                }
+              ]
+            },
+            {
+              "kind": "action",
+              "at_ms": 1500,
+              "description": [
+                {
+                  "text": "A brief vibration passes through the bodywork and the reflection on the floor trembles."
+                }
+              ]
+            },
+            {
               "kind": "camera",
               "description": [
                 {
-                  "text": "The camera holds a static shot."
+                  "text": "The camera pushes in with small amplitude at slow speed."
                 }
               ]
             }
@@ -1051,20 +1007,62 @@
         },
         {
           "id": "shot-2",
-          "start_ms": 3000,
-          "end_ms": 5600,
+          "start_ms": 2700,
+          "end_ms": 5400,
           "description": [
             {
-              "text": "The composition moves along the car's low flank, where the carbon-fibre weave becomes the dominant surface. "
+              "text": "The view moves closer to the lower body of "
             },
             {
-              "subject_id": "subject-1"
+              "subject_id": "subject-2"
             },
             {
-              "text": " holds its position as long bands of soft light slide over the clear-coat, revealing the curve of the door, the tight side skirt and the muscular rear haunch. The front and rear wheel arches anchor opposite sides of the image, with the fitted wheels seated deep in the bodywork; the rims show a clean circular edge, and the dark tires meet the studio floor with a slight compression. Reflections sharpen briefly near the door crease, then soften across the rear quarter. No mechanical parts move; the only change is in what the surface reveals, as attention shifts from the complete silhouette to the woven texture and the fit of the wheels inside the arches. The surrounding space stays quiet and uncluttered, with the vehicle's reflection faintly repeated in the polished floor."
+              "text": ", where the selected wheels dominate the frame. The tyres flex against the asphalt, then begin to rotate, their tread and rims turning with the forward motion. The car eases ahead in a steady roll, the carbon fibre flanks drawing bright streaks from the overhead lights as the wheels gather speed. Dust and fine grit lift lightly from the floor, and the reflection under the car stretches and breaks. The body stays low and controlled while the rotation of the wheels becomes the clearest sign that the vehicle is now moving."
             }
           ],
           "events": [
+            {
+              "kind": "action",
+              "at_ms": 2700,
+              "description": [
+                {
+                  "text": "The tyres flex, then begin to rotate as the "
+                },
+                {
+                  "subject_id": "subject-2"
+                },
+                {
+                  "text": " rolls forward."
+                }
+              ]
+            },
+            {
+              "kind": "sound",
+              "at_ms": 2800,
+              "description": [
+                {
+                  "text": "Tyres roll over asphalt with a soft, gritty hum."
+                }
+              ]
+            },
+            {
+              "kind": "action",
+              "at_ms": 3900,
+              "description": [
+                {
+                  "text": "The car eases ahead in a steady roll, the carbon fibre flanks catching bright streaks."
+                }
+              ]
+            },
+            {
+              "kind": "sound",
+              "at_ms": 4700,
+              "description": [
+                {
+                  "text": "The engine note rises as the wheels gather speed."
+                }
+              ]
+            },
             {
               "kind": "camera",
               "description": [
@@ -1077,38 +1075,107 @@
         },
         {
           "id": "shot-3",
-          "start_ms": 5600,
+          "start_ms": 5400,
           "end_ms": 8000,
           "description": [
             {
-              "text": "A close, sharply defined view settles on the front wheel of "
+              "text": "The car drives out across the open floor, "
             },
             {
-              "subject_id": "subject-1"
+              "subject_id": "subject-2"
             },
             {
-              "text": ", showing the rim and tire tucked into the dark arch. The carbon-fibre body above the wheel curves inward with a clean edge, and the woven surface catches a narrow highlight that traces the fender line. The wheel stands vertical against the floor, its tire compressed just enough to suggest weight; the rim's face is cleanly lit, with small specular points around its circumference and deep shadow inside the spokes. Behind and below, the studio floor falls into soft gray, keeping the mechanical detail isolated. Nothing in the scene rushes: the car is still, the light steady, and the composition holds on the precise join between the wheel and the carbon-fibre body, confirming a single assembled machine rather than two separate vehicles."
+              "text": " accelerating smoothly as the carbon fibre body flashes with passing light. The wheels spin faster, throwing a thin scatter of grit and a short pulse of air across the asphalt. The vehicle rolls toward the far edge, its reflection slipping away behind it, while the engine note climbs and the cool bay light rakes along the roof and rear haunches. The car clears the far edge of the frame, leaving the dark floor, the last amber rim light and a fading trail of tyre noise behind."
             }
           ],
           "events": [
             {
+              "kind": "action",
+              "at_ms": 5400,
+              "description": [
+                {
+                  "text": "The "
+                },
+                {
+                  "subject_id": "subject-2"
+                },
+                {
+                  "text": " accelerates smoothly across the open floor, light sliding over the carbon fibre body."
+                }
+              ]
+            },
+            {
+              "kind": "sound",
+              "at_ms": 6200,
+              "description": [
+                {
+                  "text": "The engine note climbs while a short rush of air crosses the bodywork."
+                }
+              ]
+            },
+            {
+              "kind": "action",
+              "at_ms": 7100,
+              "description": [
+                {
+                  "text": "The wheels spin faster and a thin scatter of grit lifts from the asphalt."
+                }
+              ]
+            },
+            {
+              "kind": "sound",
+              "at_ms": 7800,
+              "description": [
+                {
+                  "text": "Tyre noise fades toward the far edge of the bay."
+                }
+              ]
+            },
+            {
               "kind": "camera",
               "description": [
                 {
-                  "text": "The camera holds a static shot."
+                  "text": "The camera arcs around the subject with small amplitude at slow speed."
                 }
               ]
             }
           ]
         }
       ],
-      "soundscape": "A low, even studio room tone with faint ventilation hum and subtle floor reflections, never masking a quiet mechanical stillness.",
-      "music": "A restrained, slow-building electronic underscore with a soft low pulse, kept quiet beneath the room tone and resolving gently at the end.",
+      "soundscape": "A low, newly generated engine idle that rises into a measured rev, with soft tyre contact hum over asphalt and a light rush of air across the bodywork.",
+      "music": "A restrained low electronic pulse and faint metallic shimmer at a slow tempo, mixed beneath the engine and tyre sounds.",
       "constraints": [
         {
           "id": "compiler-no-dialogue",
           "kind": "no_dialogue",
           "text": "Do not add spoken or sung lines."
+        }
+      ],
+      "claims": [
+        {
+          "id": "user-1",
+          "origin": "user",
+          "text": "Define it once as a single subject that draws its body from the first picture and its wheels from the second."
+        },
+        {
+          "id": "creative-setting",
+          "origin": "creative",
+          "text": "The car is presented in a dim industrial bay with dark asphalt, cool overhead light and distant amber warmth."
+        },
+        {
+          "id": "creative-action",
+          "origin": "creative",
+          "text": "The car idles, rolls forward and accelerates away, leaving the frame."
+        },
+        {
+          "id": "creative-sound",
+          "origin": "creative",
+          "text": "Newly generated engine and tyre sounds accompany the movement."
+        },
+        {
+          "id": "creative-music",
+          "origin": "creative",
+          "text": "A restrained low electronic score plays quietly beneath the vehicle sounds."
         }
       ]
     },
@@ -1129,7 +1196,7 @@
         "height": 768
       },
       "profile": {
-        "name": "h3-comfyui-17k5-v1",
+        "name": "h3-published-format-v1",
         "format": "minimax-h3/prompt-v1",
         "fps": {
           "numerator": 24,
@@ -1142,23 +1209,16 @@
           "fl2va",
           "ref2va"
         ],
-        "frame_grid": {
-          "modulus": 17,
-          "remainder": 5
-        },
-        "min_frames": 5,
-        "max_frames": 3600,
-        "canvas_multiple": 32,
         "limits": {
-          "pictures": 9,
-          "videos": 3,
-          "video_audio": 3,
-          "standalone_audio": 3
+          "pictures": 0,
+          "videos": 0,
+          "video_audio": 0,
+          "standalone_audio": 0
         },
-        "supports_reference_frame_anchors": false,
-        "supports_source_intervals": false
+        "supports_reference_frame_anchors": true,
+        "supports_source_intervals": true
       },
-      "prompt": "subject_definitions:\n\u003cSubject 1\u003e is the black sports car; carbon fibre body, wheels from the second picture. Its identity is referenced from \u003cPicture 1\u003e Use only these explicitly selected target characteristics: carbon fibre body. Source observations and caller-requested target claims retain their separate recorded provenance. Its identity is referenced from \u003cPicture 2\u003e Use only these explicitly selected target characteristics: wheels from the second picture. Source observations and caller-requested target claims retain their separate recorded provenance.\n\nsummary:\n[reference generation] A clean, softly lit studio floor stretches around the assembled car, its surface a matte gray with a faint sheen from broad overhead panels. \u003cSubject 1\u003e sits centered and complete in the composition, its long hood, low roofline and taut rear haunches reading as one continuous machine. The carbon-fibre bodywork shows a fine woven pattern under diffused light, with dark highlights running along the fenders and door panel. Four wheels are fitted cleanly into the arches, their rims catching narrow rings of light while the tires sit heavy on the floor. The vehicle remains stationary, but small reflections travel across the clear-coat as the light shifts; the full silhouette stays visible from a front three-quarter angle, with generous empty floor to either side. There are no people, no set dressing and no visible lettering. The composition moves along the car's low flank, where the carbon-fibre weave becomes the dominant surface. \u003cSubject 1\u003e holds its position as long bands of soft light slide over the clear-coat, revealing the curve of the door, the tight side skirt and the muscular rear haunch. The front and rear wheel arches anchor opposite sides of the image, with the fitted wheels seated deep in the bodywork; the rims show a clean circular edge, and the dark tires meet the studio floor with a slight compression. Reflections sharpen briefly near the door crease, then soften across the rear quarter. No mechanical parts move; the only change is in what the surface reveals, as attention shifts from the complete silhouette to the woven texture and the fit of the wheels inside the arches. The surrounding space stays quiet and uncluttered, with the vehicle's reflection faintly repeated in the polished floor. A close, sharply defined view settles on the front wheel of \u003cSubject 1\u003e, showing the rim and tire tucked into the dark arch. The carbon-fibre body above the wheel curves inward with a clean edge, and the woven surface catches a narrow highlight that traces the fender line. The wheel stands vertical against the floor, its tire compressed just enough to suggest weight; the rim's face is cleanly lit, with small specular points around its circumference and deep shadow inside the spokes. Behind and below, the studio floor falls into soft gray, keeping the mechanical detail isolated. Nothing in the scene rushes: the car is still, the light steady, and the composition holds on the precise join between the wheel and the carbon-fibre body, confirming a single assembled machine rather than two separate vehicles.\n\nretention_analysis:\n\u003cSubject 1\u003e (appears in [Shot 1], [Shot 2], [Shot 3]): partially_preserved - One target identity combines only the explicitly selected target characteristics from its named sources; source observations and caller-requested target claims remain separately recorded, and unrelated source appearance is not imported.\n\ndetailed_description:\nThe target video is in live-action style.\n[Shot 1] A clean, softly lit studio floor stretches around the assembled car, its surface a matte gray with a faint sheen from broad overhead panels. \u003cSubject 1\u003e sits centered and complete in the composition, its long hood, low roofline and taut rear haunches reading as one continuous machine. The carbon-fibre bodywork shows a fine woven pattern under diffused light, with dark highlights running along the fenders and door panel. Four wheels are fitted cleanly into the arches, their rims catching narrow rings of light while the tires sit heavy on the floor. The vehicle remains stationary, but small reflections travel across the clear-coat as the light shifts; the full silhouette stays visible from a front three-quarter angle, with generous empty floor to either side. There are no people, no set dressing and no visible lettering. The camera holds a static shot. Throughout the target video: Do not add spoken or sung lines.\n[Shot 2] At 00:03.000, the shot cuts to The composition moves along the car's low flank, where the carbon-fibre weave becomes the dominant surface. \u003cSubject 1\u003e holds its position as long bands of soft light slide over the clear-coat, revealing the curve of the door, the tight side skirt and the muscular rear haunch. The front and rear wheel arches anchor opposite sides of the image, with the fitted wheels seated deep in the bodywork; the rims show a clean circular edge, and the dark tires meet the studio floor with a slight compression. Reflections sharpen briefly near the door crease, then soften across the rear quarter. No mechanical parts move; the only change is in what the surface reveals, as attention shifts from the complete silhouette to the woven texture and the fit of the wheels inside the arches. The surrounding space stays quiet and uncluttered, with the vehicle's reflection faintly repeated in the polished floor. The camera tracks with the subject with small amplitude at slow speed.\n[Shot 3] At 00:05.600, the shot cuts to A close, sharply defined view settles on the front wheel of \u003cSubject 1\u003e, showing the rim and tire tucked into the dark arch. The carbon-fibre body above the wheel curves inward with a clean edge, and the woven surface catches a narrow highlight that traces the fender line. The wheel stands vertical against the floor, its tire compressed just enough to suggest weight; the rim's face is cleanly lit, with small specular points around its circumference and deep shadow inside the spokes. Behind and below, the studio floor falls into soft gray, keeping the mechanical detail isolated. Nothing in the scene rushes: the car is still, the light steady, and the composition holds on the precise join between the wheel and the carbon-fibre body, confirming a single assembled machine rather than two separate vehicles. The camera holds a static shot.\n\noverall_soundscape:\nA low, even studio room tone with faint ventilation hum and subtle floor reflections, never masking a quiet mechanical stillness.\n\nnon_diegetic_music:\nA restrained, slow-building electronic underscore with a soft low pulse, kept quiet beneath the room tone and resolving gently at the end.\n",
+      "prompt": "subject_definitions:\n<Subject 1> is a single black sports car with a carbon fibre body and the wheels taken from the second picture; carbon fibre body, wheels from the second picture. Its identity is referenced from <Picture 1> Use only these explicitly selected target characteristics: carbon fibre body. Source observations and caller-requested target claims retain their separate recorded provenance. Its identity is referenced from <Picture 2> Use only these explicitly selected target characteristics: wheels from the second picture. Source observations and caller-requested target claims retain their separate recorded provenance.\n\nsummary:\n[reference generation] The scene opens in a low, wide industrial bay with a smooth dark asphalt floor and distant cool overhead strips. <Subject 1> sits settled on the asphalt, the carbon fibre body catching long bands of pale light while the selected wheels remain planted and clearly readable at the corners. A faint amber warmth from far lamps touches the roofline, and the glossy floor holds a soft reflection beneath the car. The engine is already running at a low, even idle, and the whole vehicle reads as one composite machine rather than two separate references. Small vibrations travel through the bodywork, but the wheels stay still and the stance remains composed. The view moves closer to the lower body of <Subject 1>, where the selected wheels dominate the frame. The tyres flex against the asphalt, then begin to rotate, their tread and rims turning with the forward motion. The car eases ahead in a steady roll, the carbon fibre flanks drawing bright streaks from the overhead lights as the wheels gather speed. Dust and fine grit lift lightly from the floor, and the reflection under the car stretches and breaks. The body stays low and controlled while the rotation of the wheels becomes the clearest sign that the vehicle is now moving. The car drives out across the open floor, <Subject 1> accelerating smoothly as the carbon fibre body flashes with passing light. The wheels spin faster, throwing a thin scatter of grit and a short pulse of air across the asphalt. The vehicle rolls toward the far edge, its reflection slipping away behind it, while the engine note climbs and the cool bay light rakes along the roof and rear haunches. The car clears the far edge of the frame, leaving the dark floor, the last amber rim light and a fading trail of tyre noise behind.\n\nretention_analysis:\n<Subject 1> (appears in [Shot 1], [Shot 2], [Shot 3]): partially_preserved - One target identity combines only the explicitly selected target characteristics from its named sources; source observations and caller-requested target claims remain separately recorded, and unrelated source appearance is not imported.\n\ndetailed_description:\nThe target video is in live-action style.\n[Shot 1] The scene opens in a low, wide industrial bay with a smooth dark asphalt floor and distant cool overhead strips. <Subject 1> sits settled on the asphalt, the carbon fibre body catching long bands of pale light while the selected wheels remain planted and clearly readable at the corners. A faint amber warmth from far lamps touches the roofline, and the glossy floor holds a soft reflection beneath the car. The engine is already running at a low, even idle, and the whole vehicle reads as one composite machine rather than two separate references. Small vibrations travel through the bodywork, but the wheels stay still and the stance remains composed. At 00:00.000, The engine settles into a low idle while the <Subject 1> remains still on the asphalt. At 00:00.600, A low idling engine note and a faint tyre contact hum fill the bay. At 00:01.500, A brief vibration passes through the bodywork and the reflection on the floor trembles. The camera pushes in with small amplitude at slow speed. Throughout the target video: Do not add spoken or sung lines.\n[Shot 2] At 00:02.700, the shot cuts to The view moves closer to the lower body of <Subject 1>, where the selected wheels dominate the frame. The tyres flex against the asphalt, then begin to rotate, their tread and rims turning with the forward motion. The car eases ahead in a steady roll, the carbon fibre flanks drawing bright streaks from the overhead lights as the wheels gather speed. Dust and fine grit lift lightly from the floor, and the reflection under the car stretches and breaks. The body stays low and controlled while the rotation of the wheels becomes the clearest sign that the vehicle is now moving. At 00:02.700, The tyres flex, then begin to rotate as the <Subject 1> rolls forward. At 00:02.800, Tyres roll over asphalt with a soft, gritty hum. At 00:03.900, The car eases ahead in a steady roll, the carbon fibre flanks catching bright streaks. At 00:04.700, The engine note rises as the wheels gather speed. The camera tracks with the subject with small amplitude at slow speed.\n[Shot 3] At 00:05.400, the shot cuts to The car drives out across the open floor, <Subject 1> accelerating smoothly as the carbon fibre body flashes with passing light. The wheels spin faster, throwing a thin scatter of grit and a short pulse of air across the asphalt. The vehicle rolls toward the far edge, its reflection slipping away behind it, while the engine note climbs and the cool bay light rakes along the roof and rear haunches. The car clears the far edge of the frame, leaving the dark floor, the last amber rim light and a fading trail of tyre noise behind. At 00:05.400, The <Subject 1> accelerates smoothly across the open floor, light sliding over the carbon fibre body. At 00:06.200, The engine note climbs while a short rush of air crosses the bodywork. At 00:07.100, The wheels spin faster and a thin scatter of grit lifts from the asphalt. At 00:07.800, Tyre noise fades toward the far edge of the bay. The camera arcs around the subject with small amplitude at slow speed.\n\noverall_soundscape:\nA low, newly generated engine idle that rises into a measured rev, with soft tyre contact hum over asphalt and a light rush of air across the bodywork.\n\nnon_diegetic_music:\nA restrained low electronic pulse and faint metallic shimmer at a slow tempo, mixed beneath the engine and tyre sounds.\n",
       "manifest": {
         "media": [
           {
@@ -1175,7 +1235,7 @@
                 "denominator": 0
               }
             },
-            "label": "\u003cPicture 1\u003e",
+            "label": "<Picture 1>",
             "kind": "picture",
             "source": {
               "asset_id": "asset-1",
@@ -1197,7 +1257,7 @@
                 "denominator": 0
               }
             },
-            "label": "\u003cPicture 2\u003e",
+            "label": "<Picture 2>",
             "kind": "picture",
             "source": {
               "asset_id": "asset-2",
@@ -1208,8 +1268,8 @@
         ],
         "subjects": [
           {
-            "id": "subject-1",
-            "label": "\u003cSubject 1\u003e"
+            "id": "subject-2",
+            "label": "<Subject 1>"
           }
         ],
         "references": [],
@@ -1220,11 +1280,11 @@
         "numerator": 8,
         "denominator": 1
       },
-      "document_sha256": "7dc1b1653595339ad95243aff2300437e6832acccec4d78688b3aa5d3b3161bc",
-      "profile_sha256": "234d423c54663839ad8ef0aab7924d4da6d8bb212ced940e0b240639c3dcbed4",
-      "prompt_sha256": "e3dce9668dca797789c49bc2d3dd1e5fd47c46e7a0309c3d259bfcef192f9f8c",
-      "manifest_sha256": "30d2137c3da0a95a4e40b6c72fa39e4e92ca30f6424693c1983e72cc145d65f3",
-      "sha256": "eed557ab3197e0b2dbff6c466e04662d10334cf4974d671125621554fb72988d"
+      "document_sha256": "6cb7ae60cb3d4fb5cd88d6ff16ff1e507cf08fc05565f30df3e3677c67dd5bed",
+      "profile_sha256": "ce4364d3f1242f5aeb2216db44195fb3897f4828dd9e145c4c16c64315786ab6",
+      "prompt_sha256": "52f7b44ee6c9f36a56c5252a476b51aa8d86f52c5e1208c203347d6ce700c90b",
+      "manifest_sha256": "c4e485c766538132171cee558634c4a9a1093f2444487cfe2268621d33bf94fd",
+      "sha256": "f2d7216c22be843277267fa795a9472af1618060e5c3b5e8c4079314480cc441"
     },
     "evidence": [
       {
@@ -1433,7 +1493,7 @@
           },
           "dialogue": [],
           "onscreen_text": [],
-          "reasoning": "The intent only describes composing a single subject from two image assets. It does not request or prohibit speech, music, or onscreen text.",
+          "reasoning": "The intent only defines a composite subject from two images. It does not request or forbid speech, music, or onscreen text, and supplies no dialogue or visible words.",
           "calls": [
             {
               "stage": "scope",
@@ -1441,7 +1501,7 @@
               "model": "deepseek-flash",
               "usage": {
                 "input_tokens": 1123,
-                "output_tokens": 171
+                "output_tokens": 176
               },
               "valid": true
             }
@@ -1467,7 +1527,7 @@
               "disposition": "preserve",
               "operation_quote": "",
               "target": "",
-              "reasoning": "The caller asks to combine depicted subject parts from two references into one subject; this concerns subject composition, not an authorized rendering transformation or a specified target style/medium. No instruction authorizes departing from the attached reference's rendering.",
+              "reasoning": "The caller asks to compose a subject by taking body from one picture and wheels from another; this changes depicted content/composition, not the rendering style or medium. No authorizing rendering transformation or target-rendition instruction is present.",
               "calls": [
                 {
                   "stage": "rendering_permission",
@@ -1475,7 +1535,7 @@
                   "model": "deepseek-flash",
                   "usage": {
                     "input_tokens": 452,
-                    "output_tokens": 153
+                    "output_tokens": 175
                   },
                   "valid": true
                 }
@@ -1488,7 +1548,7 @@
             "reference_medium": "live-action",
             "requested_medium": "",
             "treatments": [],
-            "reasoning": "Both references are observed as live-action, and the instruction only combines body and wheels into a single subject without requesting a rendering transformation. No explicit style phrase or compatible treatments are supplied, so requested_medium and requested_style remain empty.",
+            "reasoning": "Both supplied subject images are observed as live-action, and the request only combines body and wheel content from them without requesting a rendering-medium transformation. No explicit style phrase or compatible treatments are supplied.",
             "calls": [
               {
                 "stage": "rendering_permission",
@@ -1496,7 +1556,7 @@
                 "model": "deepseek-flash",
                 "usage": {
                   "input_tokens": 452,
-                  "output_tokens": 153
+                  "output_tokens": 175
                 },
                 "valid": true
               },
@@ -1505,8 +1565,8 @@
                 "attempt": 1,
                 "model": "deepseek-flash",
                 "usage": {
-                  "input_tokens": 1377,
-                  "output_tokens": 458
+                  "input_tokens": 1378,
+                  "output_tokens": 232
                 },
                 "valid": true
               }
@@ -1514,67 +1574,37 @@
           },
           "identity": [
             {
-              "descriptor_source": "request",
-              "target_mention": "a single subject",
+              "descriptor_source": "reference",
               "kind": "object",
-              "claims": [
-                {
-                  "dimension": "identity",
-                  "value": "single subject",
-                  "quote": "Define it once as a single subject"
-                },
-                {
-                  "dimension": "stable_attribute",
-                  "value": "body from the first picture",
-                  "quote": "draws its body from the first picture"
-                },
-                {
-                  "dimension": "stable_attribute",
-                  "value": "wheels from the second picture",
-                  "quote": "its wheels from the second"
-                }
-              ],
-              "label": "\u003cSubject 1\u003e",
-              "descriptor": "a single black sports car combining the carbon fibre body from the first picture with the wheels from the second picture",
+              "label": "<Subject 1>",
+              "descriptor": "the black sports car",
               "retained_attributes": [
                 "carbon fibre body"
               ],
-              "requested_attributes": [
-                "wheels from the second picture"
-              ],
-              "request_quote": "Define it once as a single subject that draws its body from the first picture and its wheels from the second.",
+              "requested_attributes": [],
+              "request_quote": "",
               "wardrobe_attributes": []
             },
             {
               "descriptor_source": "request",
-              "target_mention": "a single subject",
+              "target_mention": "it",
               "kind": "object",
               "claims": [
-                {
-                  "dimension": "identity",
-                  "value": "single subject",
-                  "quote": "Define it once as a single subject"
-                },
-                {
-                  "dimension": "stable_attribute",
-                  "value": "body from the first picture",
-                  "quote": "draws its body from the first picture"
-                },
                 {
                   "dimension": "stable_attribute",
                   "value": "wheels from the second picture",
                   "quote": "its wheels from the second"
                 }
               ],
-              "label": "\u003cSubject 2\u003e",
-              "descriptor": "a single black sports car combining the carbon fibre body from the first picture with the wheels from the second picture",
+              "label": "<Subject 2>",
+              "descriptor": "the black sports car with carbon fibre body and wheels from the second picture",
               "retained_attributes": [
                 "carbon fibre body"
               ],
               "requested_attributes": [
                 "wheels from the second picture"
               ],
-              "request_quote": "Define it once as a single subject that draws its body from the first picture and its wheels from the second.",
+              "request_quote": "its wheels from the second",
               "wardrobe_attributes": []
             }
           ],
@@ -1587,12 +1617,12 @@
             "wardrobe": "reference"
           },
           "reasons": {
-            "action": "No new action or performed behavior is requested; the instruction only merges body and wheel identity parts, so action stays with the source clips.",
-            "framing": "The request specifies only subject composition, not shot scale, viewpoint, angle, or camera movement, so framing remains reference-governed.",
-            "lighting": "No instruction concerns the light, its source, direction, or visible quality; lighting remains reference-governed.",
-            "medium": "Rendering medium is pinned by the medium decision: the live-action reference rendering is preserved with no authorized transformation.",
-            "palette": "No requested grade, hue, saturation, or tonal contrast treatment is given, so palette remains reference-governed.",
-            "wardrobe": "No clothing, accessory, or part-specific change beyond the requested body/wheel combination is asked, so wardrobe/appearance defaults to the reference."
+            "action": "No new action, behavior, or performance is requested; the source reference governs the subject's observed static state.",
+            "framing": "No camera composition, shot scale, viewpoint, or camera movement is requested; canvas ratio does not specify framing.",
+            "lighting": "The request contains no instruction about lighting, an illuminating source, its direction, or visible quality.",
+            "medium": "The medium decision preserves the supplied live-action rendering; no rendering transformation is requested.",
+            "palette": "No scene color grade, hue change, saturation, or contrast treatment is requested.",
+            "wardrobe": "No clothing or accessory change is requested; body and wheel sourcing are identity attributes, so observed reference wardrobe/appearance remains governing."
           },
           "transform_phrase": null,
           "transform_target": "",
@@ -1608,10 +1638,10 @@
           },
           "subjects": [
             {
-              "label": "\u003cSubject 1\u003e",
+              "label": "<Subject 1>",
               "kind": "object",
               "sources": [
-                "\u003cPicture 1\u003e"
+                "<Picture 1>"
               ],
               "descriptor": "the black sports car",
               "attributes": [
@@ -1625,10 +1655,10 @@
               "taken_over_by": ""
             },
             {
-              "label": "\u003cSubject 2\u003e",
+              "label": "<Subject 2>",
               "kind": "object",
               "sources": [
-                "\u003cPicture 2\u003e"
+                "<Picture 2>"
               ],
               "descriptor": "the black sports car",
               "attributes": [
@@ -1649,7 +1679,7 @@
               "model": "deepseek-flash",
               "usage": {
                 "input_tokens": 452,
-                "output_tokens": 153
+                "output_tokens": 175
               },
               "valid": true
             },
@@ -1658,8 +1688,8 @@
               "attempt": 1,
               "model": "deepseek-flash",
               "usage": {
-                "input_tokens": 1377,
-                "output_tokens": 458
+                "input_tokens": 1378,
+                "output_tokens": 232
               },
               "valid": true
             },
@@ -1668,8 +1698,28 @@
               "attempt": 1,
               "model": "deepseek-flash",
               "usage": {
-                "input_tokens": 1989,
-                "output_tokens": 5047
+                "input_tokens": 2880,
+                "output_tokens": 3862
+              },
+              "valid": true
+            },
+            {
+              "stage": "identity_requirements",
+              "attempt": 2,
+              "model": "deepseek-flash",
+              "usage": {
+                "input_tokens": 2927,
+                "output_tokens": 5942
+              },
+              "valid": true
+            },
+            {
+              "stage": "identity_requirements",
+              "attempt": 3,
+              "model": "deepseek-flash",
+              "usage": {
+                "input_tokens": 2941,
+                "output_tokens": 4146
               },
               "valid": true
             },
@@ -1678,8 +1728,8 @@
               "attempt": 1,
               "model": "deepseek-flash",
               "usage": {
-                "input_tokens": 2591,
-                "output_tokens": 288
+                "input_tokens": 2380,
+                "output_tokens": 482
               },
               "valid": true
             }
@@ -1693,30 +1743,38 @@
         "value": [
           {
             "subjects": [
-              "\u003cSubject 1\u003e"
+              "<Subject 1>",
+              "<Subject 2>"
             ],
-            "sync_sound": [],
+            "sync_sound": [
+              "a low idling engine note",
+              "faint tyre contact hum"
+            ],
             "start_ms": 0,
             "purpose": "establish",
-            "framing": "wide",
-            "action": "The single black sports car sits whole in a clean, softly lit space, carbon-fibre bodywork and four wheels reading as one continuous machine; the camera holds still and lets the assembled form fill the wide frame.",
-            "what_changes": "The combined subject is established as one complete car rather than two separate reference vehicles.",
+            "framing": "medium wide",
+            "action": "The black sports car with its carbon fibre body and its second-picture wheels sits low on smooth dark asphalt, engine idling, while light slides along the bodywork and the camera eases nearer.",
+            "what_changes": "the single composite car first becomes fully readable, body and wheels together",
             "camera": {
-              "type": "Static Shot",
-              "amplitude": "",
-              "speed": ""
+              "type": "Push In",
+              "amplitude": "small",
+              "speed": "slow"
             }
           },
           {
             "subjects": [
-              "\u003cSubject 1\u003e"
+              "<Subject 1>",
+              "<Subject 2>"
             ],
-            "sync_sound": [],
-            "start_ms": 3000,
+            "sync_sound": [
+              "tyres rolling over asphalt",
+              "engine revs rising"
+            ],
+            "start_ms": 2700,
             "purpose": "develop",
-            "framing": "medium",
-            "action": "The camera tracks slowly alongside the car's flank, keeping the low body in medium framing while the carbon-fibre weave passes through the light and the dark wheel arches slide toward the edge of frame.",
-            "what_changes": "Attention shifts from the whole silhouette to the carbon-fibre body surface as the camera moves along the car.",
+            "framing": "close",
+            "action": "The framing tightens onto the wheels from the second picture; the tyres flex and begin to rotate, and the car rolls forward as the camera moves alongside the turning wheels.",
+            "what_changes": "the wheels start turning and the car transitions from standing to rolling",
             "camera": {
               "type": "Tracking Shot",
               "amplitude": "small",
@@ -1725,18 +1783,22 @@
           },
           {
             "subjects": [
-              "\u003cSubject 1\u003e"
+              "<Subject 1>",
+              "<Subject 2>"
             ],
-            "sync_sound": [],
-            "start_ms": 5600,
-            "purpose": "reveal",
-            "framing": "close",
-            "action": "The camera settles close on the front wheel, showing the wheel seated cleanly against the carbon-fibre bodywork, with the tyre and rim sharply defined and the body framing it above.",
-            "what_changes": "The wheels become the clear focal detail, confirming the second source's contribution fitted to the first source's body.",
+            "sync_sound": [
+              "engine note climbing",
+              "air rush over the bodywork"
+            ],
+            "start_ms": 5400,
+            "purpose": "resolve",
+            "framing": "medium",
+            "action": "The camera swings in a wide arc around the accelerating car, carbon fibre flanks flashing with passing light as the car drives out towards the far edge of the frame.",
+            "what_changes": "the car accelerates away and clears the frame edge",
             "camera": {
-              "type": "Static Shot",
-              "amplitude": "",
-              "speed": ""
+              "type": "Arc Shot",
+              "amplitude": "small",
+              "speed": "slow"
             }
           }
         ],
@@ -1748,14 +1810,14 @@
         "value": [
           {
             "kind": "object",
-            "descriptor": "the black sports car",
+            "descriptor": "a single black sports car with a carbon fibre body and the wheels taken from the second picture",
             "attributes": [
               "carbon fibre body",
               "wheels from the second picture"
             ],
             "origin": "user",
-            "id": "subject-1",
-            "description": "the black sports car; carbon fibre body, wheels from the second picture",
+            "id": "subject-2",
+            "description": "a single black sports car with a carbon fibre body and the wheels taken from the second picture; carbon fibre body, wheels from the second picture",
             "sources": [
               {
                 "source": {
@@ -1804,7 +1866,7 @@
         "model": "deepseek-flash",
         "usage": {
           "input_tokens": 1123,
-          "output_tokens": 171
+          "output_tokens": 176
         },
         "valid": true
       },
@@ -1814,7 +1876,7 @@
         "model": "deepseek-flash",
         "usage": {
           "input_tokens": 452,
-          "output_tokens": 153
+          "output_tokens": 175
         },
         "valid": true
       },
@@ -1823,8 +1885,8 @@
         "attempt": 1,
         "model": "deepseek-flash",
         "usage": {
-          "input_tokens": 1377,
-          "output_tokens": 458
+          "input_tokens": 1378,
+          "output_tokens": 232
         },
         "valid": true
       },
@@ -1833,8 +1895,28 @@
         "attempt": 1,
         "model": "deepseek-flash",
         "usage": {
-          "input_tokens": 1989,
-          "output_tokens": 5047
+          "input_tokens": 2880,
+          "output_tokens": 3862
+        },
+        "valid": true
+      },
+      {
+        "stage": "identity_requirements",
+        "attempt": 2,
+        "model": "deepseek-flash",
+        "usage": {
+          "input_tokens": 2927,
+          "output_tokens": 5942
+        },
+        "valid": true
+      },
+      {
+        "stage": "identity_requirements",
+        "attempt": 3,
+        "model": "deepseek-flash",
+        "usage": {
+          "input_tokens": 2941,
+          "output_tokens": 4146
         },
         "valid": true
       },
@@ -1843,8 +1925,8 @@
         "attempt": 1,
         "model": "deepseek-flash",
         "usage": {
-          "input_tokens": 2591,
-          "output_tokens": 288
+          "input_tokens": 2380,
+          "output_tokens": 482
         },
         "valid": true
       },
@@ -1853,8 +1935,8 @@
         "attempt": 1,
         "model": "deepseek-flash",
         "usage": {
-          "input_tokens": 5716,
-          "output_tokens": 2246
+          "input_tokens": 4974,
+          "output_tokens": 2137
         },
         "valid": true
       },
@@ -1863,8 +1945,8 @@
         "attempt": 1,
         "model": "deepseek-flash",
         "usage": {
-          "input_tokens": 10650,
-          "output_tokens": 5486
+          "input_tokens": 10741,
+          "output_tokens": 5797
         },
         "valid": true
       },
@@ -1873,8 +1955,8 @@
         "attempt": 1,
         "model": "deepseek-flash",
         "usage": {
-          "input_tokens": 2801,
-          "output_tokens": 1485
+          "input_tokens": 4234,
+          "output_tokens": 6264
         },
         "valid": true
       }

@@ -4,9 +4,11 @@
 
 验收依据是 [OpenH3-IR 固定提交 fd031e1](https://github.com/ruashots/open-h3-ir/tree/fd031e136ae3d89147324c0d1b2aa65e838c21f5) 的完整功能与原始测试。原测试输入、原断言、历次失败和真实 DeepSeek 输出分别保存在 [conformance](conformance/README.md)，未把早期三个自编 smoke cases 当作功能验收。具体通过范围和剩余差异见 [验收清单](docs/UPSTREAM_TESTS.md) 与 [当前状态](docs/READINESS.md)。
 
-验收按上游单测保护的业务行为重写，使用 Go 的接口、类型和显式依赖。原清单 **991 个条目都有通过的验证映射**：672 项由原断言验证实际 Go 主输出，319 项由记录原意及接口/输入调整的 Go 测试验证，N/A 为 0。本轮补强了契约升级门卫、公共 Compile 的镜头数优先级、最终素材绑定/姿态和合法双图首尾帧保留；见 [本轮逐项报告](conformance/reports/native-functionality-intent-review-v1.json) 与 [意图说明](docs/UPSTREAM_TESTS.md#go-测试怎样保留上游意图)。原样 Python 桥接诊断保留 **981 passed / 10 failed**；固定 Python 版本、命令及输入设置不同的结果，与 Go 业务验收分别报告。
+验收按上游单测保护的业务行为重写，使用 Go 的接口、类型和显式依赖。原清单 **991 个条目全部通过验证，N/A 为 0**：672 项由未修改的原断言验证实际 Go 主输出，319 项由 Go API 测试验证原意及必要的接口/输入调整。见 [最终逐项报告](conformance/reports/native-functionality-release-v1.json)。原样 Python 桥接诊断另存 **981 passed / 10 failed**；十项差异及对应 Go 正反例见 [说明](docs/UPSTREAM_TESTS.md#原样重跑保留的十项差异)。
 
-真实最低 Go 1.25.0 的全库测试与 vet 已通过，见 [本轮兼容性证据](conformance/reports/go-minimum-intent-review-v1.json)。旧验收报告及其失败和 N/A 记录作为历史保留。
+真实最低 Go 1.25.0 的全库测试与 vet 已通过；全库 race 也通过：**442 个主测试、7957 个子测试，0 失败、0 跳过**。见 [最低版本](conformance/reports/go-minimum-release-v1.json) 与 [质量记录](conformance/reports/local-quality-release-v1.json)。
+
+同一冻结实现完成真实 DeepSeek 的 **35 次 Compile + 5 次 Refine，40/40 符合预期**：36 次成功产出、4 次正确拒绝。277 次实际调用、全部失败候选、重试和用量均保留；独立检查与语义复核分别报告，见 [实测结果](conformance/reports/release-live-round6/report.json)、[独立检查](conformance/reports/release-live-round6-verification.json) 和 [当前状态](docs/READINESS.md)。
 
 这是公开协议的独立实现，没有 MiniMax 托管 Context-IR 的内部代码、训练数据或生成质量等价证据。
 
@@ -15,12 +17,10 @@
 需要 Go 1.25+。私有仓库调用方需要相应 GitHub 访问权限，可按环境设置 `GOPRIVATE=github.com/ly95/*`，不要把凭据放进 module URL。
 
 ```sh
-go get github.com/ly95/contextir@v0.1.1-0.20261021024005-84c82a35fe9f
+go get github.com/ly95/contextir@v0.2.0
 ```
 
-已发布产品基线固定提交 `84c82a35fe9f84b9179522f3925ff1d1d7e15324`，已从 GitHub 私有远端下载验证，ZIP 为 9,385,184 字节。该下载包的独立消费者构建、IR/H3/哈希/评分重放，以及 **372 个主测试、7813 个子测试全部通过，0 失败、0 跳过**。没有 `replace`、工作区源码或历史报告依赖；下载源码匹配当轮真实 Go 1.25.0 测试输入。本轮增加验收测试，未改运行时代码；新增测试结果以上述本轮报告为准。见 [消费者验证](conformance/reports/private-consumer-go-compatibility-v4.json)、[下载包基线测试](conformance/reports/private-native-go-compatibility-v1.json) 与 [当轮汇总](conformance/reports/completion-go-compatibility-v1.json)。
-
-当前实现与证据位于 `codex/readiness-audit` 分支。此前 `874c5ee` 的 989/2 N/A 验收和分发记录作为历史保留；旧标签 `v0.1.0` 不包含后续实现。
+发布目标为 `v0.2.0`。发布验证要求从 GitHub 私有远端安装、下载包全库测试和完整 40 项严格重放；实际进度及来源证明见 [发布验收](docs/READINESS.md#发布与外部验证)。旧标签 `v0.1.0` 和旧伪版本的证据作为历史保留。
 
 历史模型输出、源码快照和测试报告保存在独立的审计 module `conformance/reports`。安装 Go 库不下载这些历史文件；需要完整证据时克隆 Git 仓库。
 
@@ -32,15 +32,15 @@ client, err := deepseek.New(deepseek.Config{
     Model: "deepseek-flash",
     APIKey: apiKey, // 宿主显式取得；库不读环境变量或 dotenv。
     ReasoningEffort: "low",
-    MaxOutputTokens: 12288,
+    MaxOutputTokens: 16384,
 })
 if err != nil { return err }
 
 c, err := compiler.New(client, myPerceiver, compiler.Options{
-    Profile: h3.ComfyUIProfile(),
-    FramePolicy: compiler.FramePolicySnapUp,
-    MaxStructureRetries: 1,
-    Planner: planner.Options{MaxRetries: 1},
+    Profile: h3.OfficialProfile(),
+    FramePolicy: compiler.FramePolicyExact,
+    MaxStructureRetries: 3,
+    Planner: planner.Options{MaxRetries: 3},
 })
 if err != nil { return err }
 r, err := c.Compile(ctx, compiler.Brief{
@@ -95,7 +95,7 @@ if r.Status == "needs_input" {
 
 IR 使用整数毫秒和有理数 FPS。低层 `h3.Compile` 不改变时长；`OfficialProfile` 负责公开格式，`ComfyUIProfile` 另外检查实际运行时的帧网格、尺寸和输入限制。
 
-高层默认 `FramePolicyExact`。示例明确选择 `FramePolicySnapUp` 来匹配原项目的 `17k+5` 网格：结果同时报告 nominal/effective duration、实际帧数与对齐策略，没有隐式取整。`budget` 计算画布与 latent rows；`tokens` 内嵌原项目的完整 Qwen2.5 词表并作精确 BPE 计数，离线运行。
+高层默认 `FramePolicyExact`。ComfyUI 调用方可以显式选择 `FramePolicySnapUp` 匹配原项目的 `17k+5` 网格：结果同时报告 nominal/effective duration、实际帧数与对齐策略，没有隐式取整。`budget` 计算画布与 latent rows；`tokens` 内嵌原项目的完整 Qwen2.5 词表并作精确 BPE 计数，离线运行。
 
 `contextir.Decode` / `DecodeEvidence` 拒绝未知字段、大小写别名、重复 keys、尾随 JSON、无效 UTF-8 与不成对 surrogate。`Validate` 检查时间、跨引用、来源和请求合同。默认上限 8 MiB，超限明确报错，不截短。发布 Schema 由 Go 类型生成并受同步测试保护。
 
@@ -117,7 +117,7 @@ go test -race ./...
 go vet ./...
 ```
 
-全部适用原要求的复验入口是 `conformance/run_native_functionality.py --require-all --go-compatibility-report <最低版本报告>`。它同时核查独立 Go 测试和 fresh 原断言报告中的主 Go API 调用、实际 validator 调用、不可变 bridge/runtime/fixture/录音请求来源；命令和完整前置条件见 [复验说明](conformance/README.md)。普通 Go 测试不调用付费服务，最终本地质量检查见 [记录](conformance/reports/local-quality-go-compatibility-v1.json)。
+全部适用原要求的复验入口是 `conformance/run_native_functionality.py --require-all --go-compatibility-report <最低版本报告>`。它同时核查独立 Go 测试和 fresh 原断言报告中的主 Go API 调用、实际 validator 调用、不可变 bridge/runtime/fixture/录音请求来源；命令和完整前置条件见 [复验说明](conformance/README.md)。普通 Go 测试不调用付费服务，最终本地质量检查见 [记录](conformance/reports/local-quality-release-v1.json)。
 
 高层 `brief` / `draft` 及预算、token、原始 H3 校验命令的参数见 `go run ./cmd/contextir <command> -h`。付费模型验证是单独命令，不在普通单元测试中触发：
 

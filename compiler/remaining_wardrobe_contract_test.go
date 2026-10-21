@@ -9,6 +9,9 @@ import (
 
 func remainingWardrobeReplay(t *testing.T, id string) (Brief, LicenceDecision) {
 	t.Helper()
+	if id == "licence-01108" {
+		return remainingWardrobeFreshCompile(t)
+	}
 	b, l, _ := remainingRecordingReplay(t, "remaining_wardrobe", "licence", id)
 	return b, l
 }

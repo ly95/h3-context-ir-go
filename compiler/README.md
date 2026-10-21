@@ -255,6 +255,15 @@ subjects keep their separate appearance obligations. Combining selected sources
 is not deletion of the others. Structure and prose receive the same real target
 and source IDs; missing-appearance diagnostics identify the absent subject.
 
+Projection attributes are exact selectors on the named source identity. Physical
+source authority comes from the typed subject/asset IDs and rendered media
+bindings. The library does not interpret an attribute's prose as another media
+address. A caller-supplied name such as `wheels from the second picture` therefore
+remains a property name when inserting another input renumbers pictures; it can
+remain ambiguous in prose even though the explicit source binding is correct.
+Use stable, source-independent trait names such as `wheels` in new integrations.
+The original selection and accepted target adjustment remain separately recorded.
+
 Fixed dialogue slots expose their shot IDs, shared line IDs and continuation
 flags, while keeping original words hidden from the writer. Render validation
 compares actual fragments byte-for-byte without inserting boundary spaces. An
