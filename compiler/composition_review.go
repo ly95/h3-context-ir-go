@@ -9,7 +9,7 @@ import (
 	"github.com/ly95/contextir"
 )
 
-const CompositionReviewVersion = "contextir/composition-review/v5"
+const CompositionReviewVersion = "contextir/composition-review/v7"
 
 type CompositionFinding struct {
 	Code       string `json:"code"`
@@ -97,7 +97,12 @@ func compositionFragments(d contextir.Document) (map[string]string, []string) {
 		add("subject:"+subject.ID+":definition", string(definition))
 	}
 	for _, claim := range d.Claims {
-		add("claim:"+claim.ID, claim.Text)
+		// Caller claims record authorization, not a promise that the source
+		// recording or any other requested material is actually executed.
+		// They remain visible with provenance in the typed claims input.
+		if claim.Origin != contextir.OriginUser {
+			add("claim:"+claim.ID, claim.Text)
+		}
 	}
 	for _, shot := range d.Shots {
 		add("shot:"+shot.ID+":description", reviewRich(shot.Description))
@@ -211,7 +216,7 @@ func (c *Compiler) ReviewComposition(ctx context.Context, b Brief, st Structure,
 		}
 		inheritance = append(inheritance, map[string]any{"removed_subject_id": removed.ID, "replacement_subject_id": removed.TakenOverBy, "source_motion_contexts": contexts})
 	}
-	input, _ := json.Marshal(map[string]any{"composition_facts": compositionFacts(b, st, actualFramePreservations(b, d.Target)), "version": CompositionReviewVersion, "intent": b.Intent, "constraints": b.Constraints, "mode": d.Mode, "target": d.Target, "assets": assets, "declared_roles": st.Assets, "target_subjects": d.Subjects, "references": d.References, "source_evidence": d.Evidence, "replacement_motion_obligations": motionObligations, "replacement_inheritance": inheritance, "fragments": fragments})
+	input, _ := json.Marshal(map[string]any{"composition_facts": compositionFacts(b, st, actualFramePreservations(b, d.Target)), "version": CompositionReviewVersion, "intent": b.Intent, "constraints": b.Constraints, "mode": d.Mode, "target": d.Target, "assets": assets, "declared_roles": st.Assets, "target_subjects": d.Subjects, "references": d.References, "source_evidence": d.Evidence, "claims": d.Claims, "replacement_motion_obligations": motionObligations, "replacement_inheritance": inheritance, "fragments": fragments})
 	const system = `Audit this final H3 composition against its typed responsibilities. Return findings only for clear contradictions, not aesthetic preferences, prose length, optional creative choices, or unknown video quality. The supplied fragments are the actual final narrative, with typed subject/reference IDs printed explicitly. Read their full context and the target subject kinds: a floor or other environment must not become a moving vehicle merely because it is Subject 1. A subject/placed_subject/replacement_subject reference supplies its selected identity properties, not its original background, pose or photographic lighting. An environment reference supplies its scene, not the depicted actor identity or actor-specific appearance. An observed claim copying a mixed source summary must obey the same responsibility: citing the source does not authorize importing all its content. Independently requested or creative content is allowed; a generic car or room resembling a source is not itself evidence of misuse. A source structure/storyboard provides only its declared camera/cutting/planning properties, not its people, objects, world, lighting or palette. A placed subject adds to the edited scene; a replacement takes over the identified source figure. Both must actually appear in prose/actions, not only definitions. Accepted target identity outranks raw source observations. A visual source video does not wire its soundtrack. composition_facts.audio declares the actually wired audio relationships. If its attachments are empty, an explicit claim that the original soundtrack is preserved, reused, played or carried over is audio_signal_misuse even if the task prefix omits reuse. Newly generated sound is permitted and a similar sound does not demonstrate copying. Property-only voice, music-style, beat and sound-texture references condition a new sound; they do not play the original recording. BGM music references with partially_copy copy the supplied signal, and prose must not deny that. Music=N/A under no_added_music only prohibits adding a new score; it does not cancel an explicitly copied BGM. References with no actual dialogue do not authorize inventing spoken words. For actual first/last frame responsibilities, the whole supplied still is that frame: reference-sheet panels/labels/background are frame pixels, not packaging to silently remove. Moving one panel within an otherwise preserved sheet is legitimate. A recorded aspect-ratio warning alone is not a contradiction and does not authorize a crop. Do not invent preparation IO or assume its execution. Every finding must identify an actual fragment and an exact nonempty quote from that fragment demonstrating the contradiction, plus the implicated target subject ID when relevant. Empty findings means no clear supported contradiction was found, not proof of overall quality. No Markdown.`
 	if ctx.Err() != nil {
 		return out, failure(contextir.CodeCanceled, "semantic_review", "context", "Composition review was canceled.", ctx.Err())
@@ -219,6 +224,7 @@ func (c *Compiler) ReviewComposition(ctx context.Context, b Brief, st Structure,
 	systemInstructions := system + `
 Positive replacement obligations: inspect replacement_inheritance and its observed_motion_contexts, not only exclusions. The replacement must inherit the identified source figure's observed motion, position and timing. A global action-governs=request entry authorizes only the actor/action actually requested; changing the car's action does not change the driver's action. Compare the final replacement narrative with the identified figure's motion in context. Standing still is not inheriting an observed crossing action unless the caller explicitly changes that same figure's action. Do not invent timing facts outside the declared coverage.
 Finding thresholds: similar sounds are not evidence of copying a recording. Generic newly generated engine ambience, a matching pulse, or an appropriate sound texture is legitimate without an assertion that the source recording is played. For audio_signal_misuse quote an explicit source-signal relationship contradicting the typed copy/property role; never infer copying solely from sonic resemblance. Likewise camera movement after an anchored instant is legitimate. A push-in, pan or other dynamic camera event alone does not demonstrate that the initial or final anchor frame was changed. Report frame_content_changed only when actual narrative asserts incompatible frame content or a crop/removal at that anchored instant. These constraints are mandatory; do not report speculative contradictions.`
+	systemInstructions += "\nThe typed claims preserve their explicit origins. A user-origin claim records caller authorization or a requested outcome; it is not itself evidence that the final narrative executes that outcome or copies an original signal. User claims are deliberately absent from executable fragment addresses. Compare the actual final narrative, source bindings and typed performance events to that authorization. Observed and creative claims remain auditable executable assertions."
 	if len(d.Dialogue) > 0 || len(st.Dialogue) > 0 {
 		var fields map[string]json.RawMessage
 		_ = json.Unmarshal(input, &fields)
@@ -233,15 +239,34 @@ Finding thresholds: similar sounds are not evidence of copying a recording. Gene
 			shots = append(shots, map[string]any{"shot_id": shot.ID, "start_ms": shot.Start, "end_ms": shot.End, "dialogue_parts": parts})
 		}
 		fields["dialogue_contract"], _ = json.Marshal(map[string]any{"lines": assessmentDialogueContract(st, d).Lines, "speakers": d.Speakers, "shots": shots})
+		if len(st.TranscriptUses) > 0 {
+			fields["transcript_uses"], _ = json.Marshal(st.TranscriptUses)
+		}
 		input, _ = json.Marshal(fields)
-		systemInstructions += "\nThe dialogue_contract gives caller-fixed utterances, explicit voiceover/speaker metadata and the actual dialogue parts emitted in each target shot. Match performance descriptions in each shot/event fragment to those actual parts. Report dialogue_placement_mismatch for a clear contradiction: a shot with no dialogue event explicitly says the actor delivers or finishes the fixed line, a later shot directs another performance after the line is already complete, or the narrative assigns the utterance to the wrong speaker/shot. Quote the actual contradictory narrative fragment. Mere presence of the actor, a listening reaction, breathing, ambient sound, or a camera view after speech is not an additional performance. A line explicitly split across shots is one performance whose parts carry the continuity flags; narration outside the picture never requires inventing a visible actor. Unknown precise sub-shot vocal timing is not itself a failure. Do not rewrite or invent dialogue, infer placement from user keywords, or replace the supplied typed events with prose guesses."
+		systemInstructions += "\nThe dialogue_contract gives caller-fixed utterances, explicit voiceover/speaker metadata and the actual dialogue parts emitted in each target shot. Match performance descriptions in each shot/event fragment to those actual parts. Report dialogue_placement_mismatch for a clear contradiction: a shot with no dialogue event explicitly directs vocal delivery of the fixed line, a later shot directs another performance after the line is already complete, or the narrative assigns the utterance to the wrong speaker/shot. Quote the actual contradictory narrative fragment. Mere presence of the actor, a listening reaction, breathing, ambient sound, or a camera view after speech is not an additional performance. Post-speech mouth closing or settling, a final nod and other residual physical reactions at a cut do not by themselves establish an audible continuation or repeated delivery. Read the entire shot and adjacent performance context; ambiguous end-of-speech body movement is not enough for a finding. Still reject an explicit direction to deliver the fixed line in a shot with no corresponding dialogue part. A line explicitly split across shots is one performance whose parts carry the continuity flags; narration outside the picture never requires inventing a visible actor. Unknown precise sub-shot vocal timing is not itself a failure. Do not rewrite or invent dialogue, infer placement from user keywords, or replace the supplied typed events with prose guesses. When transcript_uses is present, it records the selected exact source words and requested performer for a new performance. Reperforming these authorized words is independent of copying or playing the original recorded signal: words-only selection cannot alter composition_facts.audio or the actual voice-property/copy relationship. An actual final narrative promise to play the original recording remains audio_signal_misuse unless the typed signal-copy relationship authorizes it."
 	}
 	if hasProjectionCandidates(b) || len(st.SubjectProjections) > 0 {
 		var fields map[string]json.RawMessage
 		_ = json.Unmarshal(input, &fields)
 		fields["subject_projections"], _ = json.Marshal(st.SubjectProjections)
+		if len(st.SubjectProjections) > 0 {
+			bindings, bindingErr := projectionReviewBindings(b, st)
+			if bindingErr != nil {
+				return out, bindingErr
+			}
+			fields["projection_source_bindings"], _ = json.Marshal(bindings)
+		}
+		if len(b.SubjectProjections) > 0 {
+			fields["caller_subject_projections"], _ = json.Marshal(b.SubjectProjections)
+		}
 		input, _ = json.Marshal(fields)
 		systemInstructions += "\nThe request has multiple identity-source candidates. Check subject_projections and the caller's complete request: one identifiable target may combine separately selected properties from several sources. Every requested source/property contribution must be present in that target's actual typed attributes and source attribution details, consistent with subject_projections and the quoted caller requirements. A descriptor or summary claiming a contribution does not replace a missing typed attribute or the wrong source/property selection. The subject definition fragments expose the complete ledger for exact finding quotes. Reject subject_projection_mismatch when a requested contribution is missing or assigned to the wrong source, or when the final actual narrative clearly duplicates that same requested target as separate actors, combines distinct requested actors contrary to the request, changes the selected target category (for example a car into an unspecified object), or imports source properties that its accepted projection excluded, including properties sneaked into its target descriptor. A new unrelated permitted actor is not automatically a duplicate. Cite the exact contradictory final fragment. Source resemblance alone is not identity authorization."
+		if len(st.SubjectProjections) > 0 {
+			systemInstructions += "\nprojection_source_bindings is the host-owned PRE-projection subject-ID/conditioning-label/asset-ID graph. Source IDs in subject_projections refer to that graph, whereas target_subjects contains only the final surviving identities after selected sources are merged. A consumed source ID need not survive as a separate target; do not mistake that absence for lost provenance or use final target positions to reassign sources. Source asset IDs and typed edges settle the selected source, not ordinal words inside an attribute's original caller wording. Audit the actual source/property edges using these bindings and the final attribution details."
+		}
+		if len(b.SubjectProjections) > 0 {
+			systemInstructions += "\ncaller_subject_projections is explicit structured CALLER authorization, distinct from the model's accepted subject_projections. Each complete caller-selected descriptor is authoritative, including its expressly selected category, color or other descriptor properties, even when those properties are absent from free-text intent or the separate source-attribute lists. A final descriptor exactly equal to that caller-selected complete descriptor does not import an unselected source property; quoting that authorized descriptor alone cannot demonstrate a contradiction. The authorization applies only to the caller's exact descriptor and declared target/source/property choices. Continue to reject any actual extra or changed descriptor property, wrong or missing source contribution, duplicated target, or other contradictory narrative. When caller_subject_projections is absent, a model-written projection descriptor is not caller authorization and remains subject to the existing unselected-property checks."
+		}
 	}
 	response, err := c.model.Generate(ctx, contextir.ModelRequest{Stage: "semantic_review", System: systemInstructions, Input: input, ResponseSchema: schema})
 	valid := !response.UsageInvalid && response.Usage.InputTokens >= 0 && response.Usage.OutputTokens >= 0

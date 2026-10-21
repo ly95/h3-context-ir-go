@@ -1,0 +1,176 @@
+{
+  "schema": "contextir-live-diagnostic/v1",
+  "case_id": "identity-projection-unrelated-prefix",
+  "classification": "critic_false_positive_from_missing_caller_authority_and_source_graph",
+  "evidence": [
+    {
+      "path": "conformance/reports/release-live-round2/identity-projection-unrelated-prefix/op-00-compile/call-004-request.json",
+      "sha256": "60ae33a1f21659e77daf0cae86a80eaf89a5c97eed2f9c0a781a79b54074d7dd"
+    },
+    {
+      "path": "conformance/reports/release-live-round2/identity-projection-unrelated-prefix/op-00-compile/call-004-output.json",
+      "sha256": "1f6ef045647cb9477308a42fe63d29222dc0f0ff6d7fb77c501b55817762555d"
+    },
+    {
+      "path": "conformance/reports/release-live-round2/identity-projection-unrelated-prefix/op-00-compile/call-006-request.json",
+      "sha256": "767ab250220cdcf3eb2bbd44085f8e30382cfff9dab23d19793038560940dd00"
+    },
+    {
+      "path": "conformance/reports/release-live-round2/identity-projection-unrelated-prefix/op-00-compile/call-006-output.json",
+      "sha256": "42ca056c5a33d1bd7e577d08a3507f818e9a3fdbfa7a6a6e40b97c4fa5ebda80"
+    },
+    {
+      "path": "conformance/reports/release-live-round2/identity-projection-unrelated-prefix/op-00-compile/call-008-request.json",
+      "sha256": "e103e258b4a5444d2f6dcf18926775042a99f13dcd277b996369d68c2c1a7346"
+    },
+    {
+      "path": "conformance/reports/release-live-round2/identity-projection-unrelated-prefix/op-00-compile/call-008-output.json",
+      "sha256": "43cd144ef45ee91a72a8c34c96628b6a17c1750db61069278fddf1733b8f06c2"
+    },
+    {
+      "path": "conformance/reports/release-live-round2/identity-projection-unrelated-prefix/op-00-compile/call-009-request.json",
+      "sha256": "7d717dfa55f7693ee792bff7455b16716695e1d820f85ca15f534ad5a26f3dd9"
+    },
+    {
+      "path": "conformance/reports/release-live-round2/identity-projection-unrelated-prefix/op-00-compile/call-009-output.json",
+      "sha256": "09733a34aa29ec481cbc1e378fea7a0e07efca2821ab076d855cc24cd7191c22"
+    },
+    {
+      "path": "conformance/reports/release-live-round2/identity-projection-unrelated-prefix/op-00-compile/call-009-response.json",
+      "sha256": "87d42830a405b7b28b924d609f6ec08cbb04d55c24fc283dd0f2d130b34981ba"
+    }
+  ],
+  "actual_finding": [
+    {
+      "code": "subject_projection_mismatch",
+      "fragment_id": "subject:subject-2:definition",
+      "quote": "the black sports car",
+      "subject_id": "subject-2"
+    }
+  ],
+  "explicit_caller_projection": [
+    {
+      "subject_id": "subject-2",
+      "descriptor": "the black sports car",
+      "sources": [
+        {
+          "subject_id": "subject-2",
+          "attributes": [
+            "carbon fibre body"
+          ]
+        },
+        {
+          "subject_id": "subject-3",
+          "attributes": [
+            "wheels from the second picture"
+          ]
+        }
+      ]
+    }
+  ],
+  "actual_merged_target": {
+    "kind": "object",
+    "descriptor": "the black sports car",
+    "attributes": [
+      "carbon fibre body",
+      "wheels from the second picture"
+    ],
+    "origin": "user",
+    "id": "subject-2",
+    "description": "the black sports car; carbon fibre body, wheels from the second picture",
+    "sources": [
+      {
+        "source": {
+          "asset_id": "asset-1",
+          "track": "visual"
+        },
+        "role": "identity",
+        "details": "Use only these explicitly selected target characteristics: carbon fibre body. Source observations and caller-requested target claims retain their separate recorded provenance."
+      },
+      {
+        "source": {
+          "asset_id": "asset-2",
+          "track": "visual"
+        },
+        "role": "identity",
+        "details": "Use only these explicitly selected target characteristics: wheels from the second picture. Source observations and caller-requested target claims retain their separate recorded provenance."
+      }
+    ],
+    "retention": "partially_preserved",
+    "retention_details": "One target identity combines only the explicitly selected target characteristics from its named sources; source observations and caller-requested target claims remain separately recorded, and unrelated source appearance is not imported.",
+    "shot_ids": [
+      "shot-1",
+      "shot-2",
+      "shot-3",
+      "shot-4"
+    ]
+  },
+  "canonical_plan_target": {
+    "kind": "object",
+    "descriptor": "the black sports car",
+    "attributes": [
+      "carbon fibre body",
+      "wheels from the second picture"
+    ],
+    "origin": "user",
+    "id": "subject-2",
+    "description": "the black sports car; carbon fibre body, wheels from the second picture",
+    "sources": [
+      {
+        "source": {
+          "asset_id": "asset-1",
+          "track": "visual"
+        },
+        "role": "identity",
+        "details": "Use only these explicitly selected target characteristics: carbon fibre body. Source observations and caller-requested target claims retain their separate recorded provenance."
+      },
+      {
+        "source": {
+          "asset_id": "asset-2",
+          "track": "visual"
+        },
+        "role": "identity",
+        "details": "Use only these explicitly selected target characteristics: wheels from the second picture. Source observations and caller-requested target claims retain their separate recorded provenance."
+      }
+    ],
+    "retention": "partially_preserved",
+    "retention_details": "One target identity combines only the explicitly selected target characteristics from its named sources; source observations and caller-requested target claims remain separately recorded, and unrelated source appearance is not imported."
+  },
+  "typed_source_contributions": [
+    {
+      "quote": "The single sports car draws its carbon fibre body from asset-1 and wheels from asset-2.",
+      "sources": [
+        {
+          "asset_id": "asset-1",
+          "attribute": "carbon fibre body",
+          "origin": "observed",
+          "quote": "carbon fibre body from asset-1",
+          "source_label": "<Picture 2>",
+          "subject_label": "<Subject 2>"
+        },
+        {
+          "asset_id": "asset-2",
+          "attribute": "wheels from the second picture",
+          "origin": "caller_requested",
+          "quote": "wheels from asset-2",
+          "source_label": "<Picture 3>",
+          "subject_label": "<Subject 3>"
+        }
+      ],
+      "target_mention": "The single sports car",
+      "target_subject_id": "subject-2"
+    }
+  ],
+  "critic_input_omissions": [
+    "caller_subject_projections authority was absent",
+    "pre-projection subject-3 to asset-2 binding was absent; final targets contain only subject-1 and subject-2"
+  ],
+  "conclusion": "Final typed target descriptor exactly equals the explicitly caller-selected descriptor. Final attributes and source attribution details correctly bind asset-1 to carbon fibre body and asset-2 to wheels. The reported noun-phrase-only quote does not demonstrate a missing property, wrong source, duplication or unauthorized descriptor. The old critic input did not distinguish caller from model-selected descriptors or expose consumed source IDs.",
+  "limits": "The recorded final reviewer response contains no explanation/reasoning field. Provider reasoning items were not retained, so the precise internal reason for this false positive cannot be established; color and ordinal confusion are plausible mechanisms, not asserted observations.",
+  "repair": "Composition review v6 exposes original caller projections separately and supplies mechanical pre-projection source bindings. Instructions preserve exact caller-selected descriptor authority while retaining checks for any extra/changed descriptor property, wrong/missing contribution, duplicate target and model-selected unlicensed descriptors. Exact quote validation and all actual findings remain enforced.",
+  "new_tests": [
+    "TestProjectionReviewCarriesCallerDescriptorAuthorityAndOriginalSourceGraph",
+    "TestProjectionReviewStillRejectsUnauthorizedDescriptorAndModelSelectedColor"
+  ],
+  "paid_calls_by_diagnostic": 0
+}

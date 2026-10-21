@@ -1,0 +1,162 @@
+{
+  "version": "contextir-h3/artifact-v1",
+  "compiler_version": "contextir-h3/v1.2",
+  "format_version": "minimax-h3/prompt-v1",
+  "mode": "ref2va",
+  "target": {
+    "duration_ms": 5000,
+    "frame_count": 120,
+    "aspect_ratio": "16:9",
+    "fps": {
+      "numerator": 24,
+      "denominator": 1
+    },
+    "width": 1344,
+    "height": 768
+  },
+  "profile": {
+    "name": "h3-published-format-v1",
+    "format": "minimax-h3/prompt-v1",
+    "fps": {
+      "numerator": 24,
+      "denominator": 1
+    },
+    "modes": [
+      "t2va",
+      "i2va",
+      "l2va",
+      "fl2va",
+      "ref2va"
+    ],
+    "limits": {
+      "pictures": 0,
+      "videos": 0,
+      "video_audio": 0,
+      "standalone_audio": 0
+    },
+    "supports_reference_frame_anchors": true,
+    "supports_source_intervals": true
+  },
+  "prompt": "subject_definitions:\n\u003cSubject 1\u003e is the driver in red; a red jacket. Its replacement of a source figure in the edited video is referenced from \u003cPicture 1\u003e\n\u003cSubject 2\u003e is the source figure the driver in the edited clip, whose position in frame, actions and timing are transferred to \u003cSubject 1\u003e. Its source appearance is not retained. Its source video for the target video edit is referenced from \u003cVideo 1\u003e\n\u003cSubject 3\u003e is the black sports car; carbon fibre body. Its source video for the target video edit is referenced from \u003cVideo 1\u003e\n\u003cPicture 1\u003e is The incoming identity replacing the explicitly resolved source figure. Its role is replacement of a source figure in the edited video. \u003cPicture 1\u003e takes the place of the driver in \u003cVideo 1\u003e, inheriting that figure's position in frame, actions and timing. The picture contributes its replacement identity, never its background, pose, or lighting.\n\u003cVideo 1\u003e is The source video being edited. Its role is source video for the target video edit.\n\nsummary:\n[video editing + reference generation] The target video is an edited version of \u003cVideo 1\u003e. In a concrete road tunnel under overhead sodium strip lights, the far end receding into darkness, \u003cSubject 1\u003e crosses frame left to right past \u003cSubject 3\u003e. The car pulls forward out of the dark toward the viewer, its carbon fibre body catching the strip lights as it advances.\n\nretention_analysis:\n\u003cSubject 1\u003e (appears in [Shot 1]): fully_preserved - Preserve this canonical target identity and its listed stable attributes.\n\u003cSubject 2\u003e (appears in [Shot 1]): attribute_transfer - Only the original figure's position, actions, and timing are transferred; its appearance is not retained. This scope describes transferred behavior, not the removed figure appearing as a separate actor. Its position in frame, actions and timing are transferred to \u003cSubject 1\u003e; its source appearance is not retained.\n\u003cSubject 3\u003e (appears in [Shot 1]): fully_preserved - Preserve this canonical target identity and its listed stable attributes.\n\u003cPicture 1\u003e ([Shot 1]; replacement of a source figure in the edited video): fully_preserved - Preserve the incoming identity; transfer only the removed figure's position, actions and timing, never its appearance.\n\u003cVideo 1\u003e ([Shot 1]; source video for the target video edit): fully_preserved - The original camera movement, timing and setting are maintained while \u003cSubject 1\u003e takes the place of \u003cSubject 2\u003e. Preserve the source except for the caller's explicitly authorised edit; do not introduce unrelated replacements.\n\ndetailed_description:\nThe target video is in live-action style, cinematic.\n[Shot 1] In a concrete road tunnel under overhead sodium strip lights, the far end receding into darkness, \u003cSubject 1\u003e crosses frame left to right past \u003cSubject 3\u003e. The car pulls forward out of the dark toward the viewer, its carbon fibre body catching the strip lights as it advances. At 00:00.000, Low, reverberant tunnel ambience. At 00:00.000, \u003cSubject 1\u003e crosses frame left to right, while \u003cSubject 3\u003e waits ahead in the tunnel. At 00:01.200, A low engine note rises. At 00:01.800, \u003cSubject 3\u003e pulls forward out of the dark toward the viewer, emerging from the tunnel shadows. At 00:03.200, Tyres roll over concrete. At 00:04.200, Strip lights slide across the car's carbon fibre body as it advances. The camera pushes in with small amplitude at slow speed. Throughout the target video: Do not add spoken or sung lines.\n\noverall_soundscape:\nLow tunnel ambience; a low engine note rising as the black sports car advances; tyres rolling over concrete.\n\nnon_diegetic_music:\nN/A\n",
+  "manifest": {
+    "media": [
+      {
+        "preparation": {
+          "sizing": "match",
+          "width": 1024,
+          "height": 576
+        },
+        "source_metadata": {
+          "width": 1024,
+          "height": 576,
+          "fps": {
+            "numerator": 0,
+            "denominator": 0
+          }
+        },
+        "label": "\u003cPicture 1\u003e",
+        "kind": "picture",
+        "source": {
+          "asset_id": "asset-1",
+          "track": "visual"
+        },
+        "socket": "ref_image_1",
+        "target_uses": [
+          {
+            "reference_id": "reference-asset-1-1",
+            "roles": [
+              "replacement_subject"
+            ],
+            "retention": "fully_preserved",
+            "shots": [
+              {
+                "id": "shot-1",
+                "index": 1,
+                "interval": {
+                  "start_ms": 0,
+                  "end_ms": 5000
+                }
+              }
+            ],
+            "replaces": "the driver"
+          }
+        ]
+      },
+      {
+        "preparation": {
+          "width": 1344,
+          "height": 768,
+          "frames": 120
+        },
+        "source_metadata": {
+          "duration_ms": 5000,
+          "fps": {
+            "numerator": 0,
+            "denominator": 0
+          }
+        },
+        "label": "\u003cVideo 1\u003e",
+        "kind": "video",
+        "source": {
+          "asset_id": "asset-2",
+          "track": "visual"
+        },
+        "socket": "ref_video_1",
+        "target_uses": [
+          {
+            "reference_id": "reference-asset-2-2",
+            "roles": [
+              "edit_source"
+            ],
+            "retention": "fully_preserved",
+            "shots": [
+              {
+                "id": "shot-1",
+                "index": 1,
+                "interval": {
+                  "start_ms": 0,
+                  "end_ms": 5000
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "subjects": [
+      {
+        "id": "subject-1",
+        "label": "\u003cSubject 1\u003e"
+      },
+      {
+        "id": "subject-2",
+        "label": "\u003cSubject 2\u003e"
+      },
+      {
+        "id": "subject-3",
+        "label": "\u003cSubject 3\u003e"
+      }
+    ],
+    "references": [
+      {
+        "id": "reference-asset-1-1",
+        "label": "\u003cPicture 1\u003e"
+      },
+      {
+        "id": "reference-asset-2-2",
+        "label": "\u003cVideo 1\u003e"
+      }
+    ],
+    "speakers": []
+  },
+  "frames": 120,
+  "effective_duration_seconds": {
+    "numerator": 5,
+    "denominator": 1
+  },
+  "document_sha256": "7134605968fd964bd0364c708c5119d6ce4d5add78f0513b22082c7374362fdd",
+  "profile_sha256": "ce4364d3f1242f5aeb2216db44195fb3897f4828dd9e145c4c16c64315786ab6",
+  "prompt_sha256": "db824dfd39888cd205ee38b8c1326240c8648bf87d2a49528d0fad6ed68f7e30",
+  "manifest_sha256": "ba741d791c1a32abafa7ace0caa88ebbed8dd914e309991c7f1c5ceaf909b4c5",
+  "sha256": "3b237e221d11aca8072cba8bb175a62bb3c48112caab1c32797ce268cad04b56"
+}

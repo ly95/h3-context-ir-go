@@ -1,0 +1,2579 @@
+{
+  "composition_reviews": [
+    {
+      "version": "contextir/composition-review/v5",
+      "required": true,
+      "passed": true,
+      "calls": [
+        {
+          "stage": "semantic_review",
+          "attempt": 1,
+          "model": "deepseek-flash",
+          "usage": {
+            "input_tokens": 5383,
+            "output_tokens": 6183
+          },
+          "valid": true
+        }
+      ]
+    }
+  ],
+  "usage_complete": true,
+  "clarification_policy": "continue_with_recorded_choice",
+  "mode_decision": {
+    "clarification_policy": "continue_with_recorded_choice",
+    "confidence_kind": "routing_policy",
+    "aspect_mismatch": true,
+    "needs_clarification": false,
+    "mode": "fl2va",
+    "confidence": 1,
+    "rule": "caller-override",
+    "signals": [
+      "Mode follows explicit structured choices and media socket requirements.",
+      "aspect mismatch: Image asset-1 aspect 0.666364 differs from requested 16:9 by more than 20%. The anchor choice is preserved; exact-frame conditioning requires an explicit crop/resize/canvas decision."
+    ],
+    "alternatives": [
+      "ref2va"
+    ]
+  },
+  "scope_decision": {
+    "conflict_policy": "supplied_content_wins",
+    "requested": {
+      "speech": false,
+      "music": false,
+      "onscreen_text": false,
+      "magnitude": ""
+    },
+    "forbidden": {
+      "speech": false,
+      "music": false,
+      "onscreen_text": false,
+      "magnitude": ""
+    },
+    "allowed": {
+      "speech": false,
+      "music": true,
+      "onscreen_text": false,
+      "magnitude": "measured"
+    },
+    "dialogue": [],
+    "onscreen_text": [],
+    "reasoning": "The intent requests only a visual dissolve between two supplied endpoint images. It contains no spoken words, no request for added music, and no visible lettering. It also contains no free-text prohibitions on speech, music, or onscreen text.",
+    "calls": [
+      {
+        "stage": "scope",
+        "attempt": 1,
+        "model": "deepseek-flash",
+        "usage": {
+          "input_tokens": 1341,
+          "output_tokens": 194
+        },
+        "valid": true
+      }
+    ]
+  },
+  "licence": {
+    "reference_permissions": {
+      "action": true,
+      "framing": true,
+      "lighting": true,
+      "medium": true,
+      "palette": true,
+      "wardrobe": true
+    },
+    "medium_decision": {
+      "rendering_permission": {
+        "kind": "structured_style",
+        "disposition": "convert",
+        "operation_quote": "",
+        "target": "1990s cel animation",
+        "reasoning": "The caller explicitly supplied the authoritative structured Style field."
+      },
+      "disposition": "convert",
+      "operation_quote": "",
+      "target": "1990s cel animation",
+      "requested_style": "1990s cel animation",
+      "reference_medium": "live-action",
+      "requested_medium": "2d-animation",
+      "treatments": [],
+      "reasoning": "The host-owned rendering permission is authoritative and already authorizes conversion to the supplied structured target, so no departure analysis is re-authored. The first observed actual-frame reference is photorealistic cinematic live-action rendering; the requested style phrase is the complete named rendition \"1990s cel animation,\" which maps to the 2d-animation family. Both endpoint reference sheets remain anchored as actual frames, including their sheet packaging.",
+      "calls": [
+        {
+          "stage": "medium",
+          "attempt": 1,
+          "model": "deepseek-flash",
+          "usage": {
+            "input_tokens": 2226,
+            "output_tokens": 604
+          },
+          "valid": true
+        }
+      ]
+    },
+    "identity": [
+      {
+        "descriptor_source": "reference",
+        "kind": "person",
+        "label": "\u003cSubject 1\u003e",
+        "descriptor": "Rainy nighttime urban walkway or bridge with streetlights and wet pavement",
+        "retained_attributes": [
+          "Short dark hair, shaved at the sides and gathered at the back",
+          "Diagonal scar through the eyebrow on the viewer's left side in the face panel",
+          "Black high-collared jacket with zippers, straps and buckles",
+          "Dark shirt underneath",
+          "Dark cargo trousers",
+          "Black lace-up combat boots",
+          "Metal railings",
+          "Wet reflective ground",
+          "Dark building facades",
+          "Glowing streetlamps",
+          "Falling rain visible in the hero panel"
+        ],
+        "requested_attributes": [],
+        "request_quote": "",
+        "wardrobe_attributes": [
+          "Black high-collared jacket with zippers, straps and buckles",
+          "Dark shirt underneath",
+          "Dark cargo trousers",
+          "Black lace-up combat boots"
+        ]
+      },
+      {
+        "descriptor_source": "reference",
+        "kind": "animal",
+        "label": "\u003cSubject 2\u003e",
+        "descriptor": "Large black dragon with pale horns and large membranous wings",
+        "retained_attributes": [
+          "Black, heavily scaled body with a subtle blue-gray sheen",
+          "Multiple long, pale horns projecting from the head",
+          "Long snout and a glowing orange eye",
+          "Large dark membranous wings with finger-like struts",
+          "Four legs ending in prominent claws",
+          "Long tail and spiny ridge along the back"
+        ],
+        "requested_attributes": [],
+        "request_quote": "",
+        "wardrobe_attributes": []
+      }
+    ],
+    "governs": {
+      "action": "reference",
+      "framing": "reference",
+      "lighting": "reference",
+      "medium": "request",
+      "palette": "reference",
+      "wardrobe": "reference"
+    },
+    "reasons": {
+      "action": "Both supplied pictures are actual frame anchors whose pixels must be preserved, so their observed poses are licensed for those anchored instants. The brief asks only for a visual dissolve between the endpoints, not for any new behavior, performance or locomotion, so action stays with the references.",
+      "framing": "No shot scale, viewpoint, camera movement or composition is requested; aspect ratio alone does not set framing. The anchored sheets and their complete layouts therefore govern the frame.",
+      "lighting": "There is no instruction about the light, an illuminating source, its direction or visible quality. Rain, night and volcanic glow are scene content, not lighting directions, so the references' low-key practical lighting governs.",
+      "medium": "The host-owned medium decision pins the rendering permission and taxonomy; the explicit structured style phrase '1990s cel animation' is authoritative and converts the rendition to 2d-animation.",
+      "palette": "No grade, saturation or contrast treatment is requested; the dissolve is a transition, not a palette instruction. The references' black/charcoal/cool blue-gray with warm amber and orange tones govern.",
+      "wardrobe": "No clothing or accessory change is requested; the caller only asks for a dissolve between endpoints, so the observed outfits of the first figure (black high-collared jacket, dark shirt, cargo trousers, combat boots) are retained."
+    },
+    "transform_phrase": null,
+    "transform_target": "1990s cel animation",
+    "medium_transferred": true,
+    "style": {
+      "observed_phrase": "Photorealistic cinematic character concept/reference sheet with an urban noir mood, low-key cinematic lighting; cool blue-gray ambient tones in the hero panel with warm amber practical lights, rain streaks, and wet-surface reflections; soft directional light in the studio-style panels",
+      "phrase": "1990s cel animation",
+      "source": "request",
+      "reference_medium": "live-action",
+      "requested_medium": "2d-animation",
+      "discrepancy": true,
+      "note": "The request explicitly changes the rendering medium while retaining the referenced identity; this does not by itself select an attribute-transfer relationship."
+    },
+    "subjects": [
+      {
+        "label": "\u003cSubject 1\u003e",
+        "kind": "person",
+        "sources": [
+          "\u003cPicture 1\u003e"
+        ],
+        "descriptor": "Rainy nighttime urban walkway or bridge with streetlights and wet pavement",
+        "attributes": [
+          "Short dark hair, shaved at the sides and gathered at the back",
+          "Diagonal scar through the eyebrow on the viewer's left side in the face panel",
+          "Black high-collared jacket with zippers, straps and buckles",
+          "Dark shirt underneath",
+          "Dark cargo trousers",
+          "Black lace-up combat boots",
+          "Metal railings",
+          "Wet reflective ground",
+          "Dark building facades",
+          "Glowing streetlamps",
+          "Falling rain visible in the hero panel"
+        ],
+        "pose": [],
+        "pose_licensed": false,
+        "retention": "fully_preserved",
+        "retention_note": "",
+        "appears_in": [],
+        "taken_over_by": ""
+      },
+      {
+        "label": "\u003cSubject 2\u003e",
+        "kind": "animal",
+        "sources": [
+          "\u003cPicture 2\u003e"
+        ],
+        "descriptor": "Large black dragon with pale horns and large membranous wings",
+        "attributes": [
+          "Black, heavily scaled body with a subtle blue-gray sheen",
+          "Multiple long, pale horns projecting from the head",
+          "Long snout and a glowing orange eye",
+          "Large dark membranous wings with finger-like struts",
+          "Four legs ending in prominent claws",
+          "Long tail and spiny ridge along the back"
+        ],
+        "pose": [
+          "Hero view: crouched on four legs with wings spread and head lowered",
+          "Front panel: facing forward with wings spread",
+          "Side profile panel: standing with wings extended",
+          "Rear panel: viewed from behind with wings spread",
+          "Head close panel: head shown in profile"
+        ],
+        "pose_licensed": true,
+        "retention": "fully_preserved",
+        "retention_note": "",
+        "appears_in": [],
+        "taken_over_by": ""
+      }
+    ],
+    "calls": [
+      {
+        "stage": "medium",
+        "attempt": 1,
+        "model": "deepseek-flash",
+        "usage": {
+          "input_tokens": 2226,
+          "output_tokens": 604
+        },
+        "valid": true
+      },
+      {
+        "stage": "identity_requirements",
+        "attempt": 1,
+        "model": "deepseek-flash",
+        "usage": {
+          "input_tokens": 2834,
+          "output_tokens": 530
+        },
+        "valid": true
+      },
+      {
+        "stage": "licence",
+        "attempt": 1,
+        "model": "deepseek-flash",
+        "usage": {
+          "input_tokens": 4568,
+          "output_tokens": 508
+        },
+        "valid": true
+      }
+    ]
+  },
+  "budget": {
+    "prompt_tokens": 788,
+    "target_video_rows": 57456,
+    "target_audio_rows": 640,
+    "known_reference_rows": 1564,
+    "in_trained_band": true
+  },
+  "findings": [
+    {
+      "rule": "R13-sheet-artefact",
+      "severity": "WARN",
+      "msg": "the brief describes a reference sheet artefact that does not belong to the character"
+    },
+    {
+      "rule": "P5b-camera-no-amplitude",
+      "severity": "INFO",
+      "msg": "a motion type appears but without the amplitude/speed idiom"
+    },
+    {
+      "rule": "A2-sound-duplicated",
+      "severity": "WARN",
+      "msg": "overall_soundscape repeats content already in the description rather than a separate layer"
+    }
+  ],
+  "status": "compiled",
+  "version": "contextir/compiler/v1",
+  "brief": {
+    "effort": "standard",
+    "seconds_explicit": true,
+    "aspect_explicit": true,
+    "style": "1990s cel animation",
+    "intent": "Start with the first supplied picture exactly and end on the second supplied picture exactly. Between those endpoints the scene transforms with a slow visual dissolve. Preserve the complete pixels of both endpoint pictures.",
+    "assets": [
+      {
+        "preparation_computed": true,
+        "id": "asset-1",
+        "kind": "image",
+        "uri": "third_party/open-h3-ir/testdata/golden/assets/ref1.png",
+        "sha256": "e23d00458c9c493d6a8bd2f539a58e180e8caaeabf31d288e7c0d1ee4d648237",
+        "description": "the woman",
+        "metadata": {
+          "width": 733,
+          "height": 1100,
+          "fps": {
+            "numerator": 0,
+            "denominator": 0
+          }
+        },
+        "preparation": {
+          "sizing": "match",
+          "width": 736,
+          "height": 1088
+        },
+        "role": "frame_anchor_first",
+        "composition": "unknown",
+        "sizing": "match"
+      },
+      {
+        "preparation_computed": true,
+        "id": "asset-2",
+        "kind": "image",
+        "uri": "third_party/open-h3-ir/testdata/golden/assets/ref2.png",
+        "sha256": "55e2c2b8a943a89eec33608ff359b8cc7fb4af62edd3d0fe13a420073c6403c1",
+        "description": "the dragon",
+        "metadata": {
+          "width": 1100,
+          "height": 733,
+          "fps": {
+            "numerator": 0,
+            "denominator": 0
+          }
+        },
+        "preparation": {
+          "sizing": "match",
+          "width": 1088,
+          "height": 736
+        },
+        "role": "frame_anchor_last",
+        "composition": "unknown",
+        "sizing": "match"
+      }
+    ],
+    "seconds": 8,
+    "aspect": "16:9",
+    "shots": 2,
+    "mode": "fl2va",
+    "creativity": "balanced",
+    "frame_anchors": [
+      {
+        "asset_id": "asset-1",
+        "role": "frame_anchor_first",
+        "at_ms": 0
+      },
+      {
+        "asset_id": "asset-2",
+        "role": "frame_anchor_last",
+        "at_ms": 8000
+      }
+    ],
+    "evidence": [
+      {
+        "card": {
+          "asset_id": "asset-1",
+          "summary": "A cinematic character reference sheet for a dark-clad adult figure, with a rainy nighttime hero image at top, front/side/back turnaround views, and close-up detail panels for the face, jacket collar, hands, and boots.",
+          "subjects": [
+            {
+              "kind": "person",
+              "descriptor": "Adult figure with East Asian facial features, dark hair and a facial scar",
+              "attributes": [
+                "Short dark hair, shaved at the sides and gathered at the back",
+                "Diagonal scar through the eyebrow on the viewer's left side in the face panel",
+                "Black high-collared jacket with zippers, straps and buckles",
+                "Dark shirt underneath",
+                "Dark cargo trousers",
+                "Black lace-up combat boots"
+              ],
+              "pose": [
+                "Standing upright with arms relaxed at the sides in the hero and turnaround views",
+                "Head turned toward the viewer's left in the hero and side-profile views",
+                "Neutral expression in the front and face views"
+              ]
+            },
+            {
+              "kind": "environment",
+              "descriptor": "Rainy nighttime urban walkway or bridge with streetlights and wet pavement",
+              "attributes": [
+                "Metal railings",
+                "Wet reflective ground",
+                "Dark building facades",
+                "Glowing streetlamps",
+                "Falling rain visible in the hero panel"
+              ]
+            }
+          ],
+          "environment": "Hero panel: rainy nighttime urban walkway or bridge with wet reflective pavement, metal railings, dark building facades, and streetlights. Turnaround and detail panels: dark neutral studio-like background.",
+          "lighting": "Low-key cinematic lighting; cool blue-gray ambient tones in the hero panel with warm amber practical lights, rain streaks, and wet-surface reflections; soft directional light in the studio-style panels.",
+          "palette": [
+            "black",
+            "charcoal",
+            "cool blue-gray",
+            "warm amber"
+          ],
+          "framing": "Vertical reference-sheet layout: large full-body hero at top; three full-body turnaround panels in the middle; four close-up detail crops at the bottom.",
+          "style": "Photorealistic cinematic character concept/reference sheet with an urban noir mood.",
+          "visible_text": [
+            "HERO",
+            "FRONT",
+            "SIDE PROFILE",
+            "BACK",
+            "FACE",
+            "JACKET COLLAR",
+            "HANDS",
+            "BOOTS"
+          ],
+          "characterisation": "Adult figure in black utility clothing and combat boots, with a facial scar; presented as a character reference across multiple views.",
+          "composition": "composed_scene",
+          "is_reference_sheet": true,
+          "language": "English",
+          "analyzer_version": "contextir-image-card/v2/deepseek-flash",
+          "model": "deepseek-flash",
+          "coverage": {
+            "status": "complete",
+            "tracks": [
+              "visual"
+            ]
+          }
+        },
+        "asset_id": "asset-1",
+        "facts": [
+          {
+            "analyzer_version": "contextir-image-perception/v1/deepseek-flash",
+            "id": "asset-1.fact1",
+            "text": "The image is a multi-panel character reference sheet: a large cinematic hero image at the top, three full-body turnaround views in the middle row, and four detail crops along the bottom.",
+            "source": {
+              "asset_id": "asset-1",
+              "track": "visual"
+            }
+          },
+          {
+            "analyzer_version": "contextir-image-perception/v1/deepseek-flash",
+            "id": "asset-1.fact2",
+            "text": "The large top panel is labeled \"HERO\" and shows a full-body figure standing centered on a wet bridge or walkway at night, with rain falling and city lights and streetlamps glowing behind.",
+            "source": {
+              "asset_id": "asset-1",
+              "track": "visual"
+            }
+          },
+          {
+            "analyzer_version": "contextir-image-perception/v1/deepseek-flash",
+            "id": "asset-1.fact3",
+            "text": "The figure has short dark hair that is shaved at the sides and gathered at the back, visible in the side-profile view.",
+            "source": {
+              "asset_id": "asset-1",
+              "track": "visual"
+            }
+          },
+          {
+            "analyzer_version": "contextir-image-perception/v1/deepseek-flash",
+            "id": "asset-1.fact4",
+            "text": "The figure wears a black high-collared jacket with visible zippers, straps and buckles, a dark shirt, dark cargo trousers, and black lace-up combat boots.",
+            "source": {
+              "asset_id": "asset-1",
+              "track": "visual"
+            }
+          },
+          {
+            "analyzer_version": "contextir-image-perception/v1/deepseek-flash",
+            "id": "asset-1.fact5",
+            "text": "The middle row contains full-body views labeled \"FRONT\", \"SIDE PROFILE\", and \"BACK\" against a dark neutral studio-like background.",
+            "source": {
+              "asset_id": "asset-1",
+              "track": "visual"
+            }
+          },
+          {
+            "analyzer_version": "contextir-image-perception/v1/deepseek-flash",
+            "id": "asset-1.fact6",
+            "text": "The bottom row contains detail crops labeled \"FACE\", \"JACKET COLLAR\", \"HANDS\", and \"BOOTS\".",
+            "source": {
+              "asset_id": "asset-1",
+              "track": "visual"
+            }
+          },
+          {
+            "analyzer_version": "contextir-image-perception/v1/deepseek-flash",
+            "id": "asset-1.fact7",
+            "text": "In the \"FACE\" crop, a diagonal scar is visible through the eyebrow on the viewer's left side of the face.",
+            "source": {
+              "asset_id": "asset-1",
+              "track": "visual"
+            }
+          },
+          {
+            "analyzer_version": "contextir-image-perception/v1/deepseek-flash",
+            "id": "asset-1.fact8",
+            "text": "The hero panel uses low-key cinematic lighting with cool blue-gray ambient tones, warm amber highlights from lights, rain streaks, and reflections on wet pavement.",
+            "source": {
+              "asset_id": "asset-1",
+              "track": "visual"
+            }
+          },
+          {
+            "analyzer_version": "contextir-image-perception/v1/deepseek-flash",
+            "id": "asset-1.fact9",
+            "text": "The visible labels on the sheet are \"HERO\", \"FRONT\", \"SIDE PROFILE\", \"BACK\", \"FACE\", \"JACKET COLLAR\", \"HANDS\", and \"BOOTS\".",
+            "source": {
+              "asset_id": "asset-1",
+              "track": "visual"
+            }
+          },
+          {
+            "analyzer_version": "contextir-image-perception/v1/deepseek-flash",
+            "id": "asset-1.fact10",
+            "text": "The bottom detail crops show close views of the jacket collar with a strap and buckle, two hands, and the laced boots.",
+            "source": {
+              "asset_id": "asset-1",
+              "track": "visual"
+            }
+          }
+        ],
+        "model": "deepseek-flash",
+        "analyzer_version": "contextir-image-perception/v1/deepseek-flash",
+        "limitations": [
+          "Some detail crops and dark areas are low-resolution or heavily shadowed, so fine textures and small markings are not fully legible.",
+          "The rainy urban environment appears only in the hero panel; the turnaround and detail panels use a neutral dark background."
+        ],
+        "coverage": {
+          "status": "complete",
+          "tracks": [
+            "visual"
+          ]
+        }
+      },
+      {
+        "card": {
+          "asset_id": "asset-2",
+          "summary": "Reference sheet for a black horned dragon, featuring a large atmospheric hero view above labeled front, side, rear, and close-up detail panels.",
+          "subjects": [
+            {
+              "kind": "animal",
+              "descriptor": "Large black dragon with pale horns and large membranous wings",
+              "attributes": [
+                "Black, heavily scaled body with a subtle blue-gray sheen",
+                "Multiple long, pale horns projecting from the head",
+                "Long snout and a glowing orange eye",
+                "Large dark membranous wings with finger-like struts",
+                "Four legs ending in prominent claws",
+                "Long tail and spiny ridge along the back"
+              ],
+              "pose": [
+                "Hero view: crouched on four legs with wings spread and head lowered",
+                "Front panel: facing forward with wings spread",
+                "Side profile panel: standing with wings extended",
+                "Rear panel: viewed from behind with wings spread",
+                "Head close panel: head shown in profile"
+              ]
+            }
+          ],
+          "environment": "Hero view: dark volcanic terrain with rocky mountains, reflective wet ground, smoke or mist, and glowing orange patches; the detail panels use a plain dark background.",
+          "lighting": "Low-key, high-contrast cinematic lighting; cool gray highlights define the scales while warm orange glow appears in the background.",
+          "palette": [
+            "black",
+            "charcoal gray",
+            "bone white",
+            "dull brown",
+            "orange",
+            "cool blue-gray"
+          ],
+          "framing": "Reference-sheet layout with one large hero image across the top and six smaller labeled panels arranged in two rows below, separated by thin dividers.",
+          "style": "Dark fantasy creature concept art with photorealistic rendering and high surface detail.",
+          "visible_text": [
+            "FRONT",
+            "SIDE PROFILE",
+            "REAR",
+            "HEAD CLOSE",
+            "WING MEMBRANE",
+            "CLAW AND FOOT",
+            "SCALE DETAIL"
+          ],
+          "characterisation": "A massive black dragon design with a horned, heavily scaled, armored-looking silhouette.",
+          "composition": "composed_scene",
+          "is_reference_sheet": true,
+          "language": "English",
+          "analyzer_version": "contextir-image-card/v2/deepseek-flash",
+          "model": "deepseek-flash",
+          "coverage": {
+            "status": "complete",
+            "tracks": [
+              "visual"
+            ]
+          }
+        },
+        "asset_id": "asset-2",
+        "facts": [
+          {
+            "analyzer_version": "contextir-image-perception/v1/deepseek-flash",
+            "id": "asset-2.fact1",
+            "text": "The image is a dragon reference sheet: a wide hero view spans the top, with two rows of smaller panels beneath.",
+            "source": {
+              "asset_id": "asset-2",
+              "track": "visual"
+            }
+          },
+          {
+            "analyzer_version": "contextir-image-perception/v1/deepseek-flash",
+            "id": "asset-2.fact2",
+            "text": "In the hero view, a large black, heavily scaled dragon is crouched on four legs with its wings spread, its horned head lowered, and its long tail extending behind it.",
+            "source": {
+              "asset_id": "asset-2",
+              "track": "visual"
+            }
+          },
+          {
+            "analyzer_version": "contextir-image-perception/v1/deepseek-flash",
+            "id": "asset-2.fact3",
+            "text": "The dragon has multiple long, pale horns projecting from its head, a long snout, and a glowing orange eye visible in the head close-up.",
+            "source": {
+              "asset_id": "asset-2",
+              "track": "visual"
+            }
+          },
+          {
+            "analyzer_version": "contextir-image-perception/v1/deepseek-flash",
+            "id": "asset-2.fact4",
+            "text": "The wings are large, dark, and membranous, with visible finger-like struts; a lower panel isolates the wing membrane.",
+            "source": {
+              "asset_id": "asset-2",
+              "track": "visual"
+            }
+          },
+          {
+            "analyzer_version": "contextir-image-perception/v1/deepseek-flash",
+            "id": "asset-2.fact5",
+            "text": "The dragon has four clawed feet; a close-up panel shows a foot with curved claws.",
+            "source": {
+              "asset_id": "asset-2",
+              "track": "visual"
+            }
+          },
+          {
+            "analyzer_version": "contextir-image-perception/v1/deepseek-flash",
+            "id": "asset-2.fact6",
+            "text": "A scale-detail panel shows overlapping dark scales with subtle blue-gray highlights.",
+            "source": {
+              "asset_id": "asset-2",
+              "track": "visual"
+            }
+          },
+          {
+            "analyzer_version": "contextir-image-perception/v1/deepseek-flash",
+            "id": "asset-2.fact7",
+            "text": "The middle row contains FRONT, SIDE PROFILE, and REAR full-body views; the bottom row contains HEAD CLOSE, WING MEMBRANE, CLAW AND FOOT, and SCALE DETAIL panels.",
+            "source": {
+              "asset_id": "asset-2",
+              "track": "visual"
+            }
+          },
+          {
+            "analyzer_version": "contextir-image-perception/v1/deepseek-flash",
+            "id": "asset-2.fact8",
+            "text": "The hero view is set in dark volcanic terrain with rocky mountains, a misty or smoky atmosphere, reflective wet ground, and scattered glowing orange patches.",
+            "source": {
+              "asset_id": "asset-2",
+              "track": "visual"
+            }
+          }
+        ],
+        "model": "deepseek-flash",
+        "analyzer_version": "contextir-image-perception/v1/deepseek-flash",
+        "limitations": [
+          "The image is static; no motion, camera movement, sound, music, voice, or transcript can be established.",
+          "Exact material composition, scale, and details outside the visible surfaces cannot be determined."
+        ],
+        "coverage": {
+          "status": "complete",
+          "tracks": [
+            "visual"
+          ]
+        }
+      }
+    ],
+    "cards": [
+      {
+        "asset_id": "asset-1",
+        "summary": "A cinematic character reference sheet for a dark-clad adult figure, with a rainy nighttime hero image at top, front/side/back turnaround views, and close-up detail panels for the face, jacket collar, hands, and boots.",
+        "subjects": [
+          {
+            "kind": "person",
+            "descriptor": "Adult figure with East Asian facial features, dark hair and a facial scar",
+            "attributes": [
+              "Short dark hair, shaved at the sides and gathered at the back",
+              "Diagonal scar through the eyebrow on the viewer's left side in the face panel",
+              "Black high-collared jacket with zippers, straps and buckles",
+              "Dark shirt underneath",
+              "Dark cargo trousers",
+              "Black lace-up combat boots"
+            ],
+            "pose": [
+              "Standing upright with arms relaxed at the sides in the hero and turnaround views",
+              "Head turned toward the viewer's left in the hero and side-profile views",
+              "Neutral expression in the front and face views"
+            ]
+          },
+          {
+            "kind": "environment",
+            "descriptor": "Rainy nighttime urban walkway or bridge with streetlights and wet pavement",
+            "attributes": [
+              "Metal railings",
+              "Wet reflective ground",
+              "Dark building facades",
+              "Glowing streetlamps",
+              "Falling rain visible in the hero panel"
+            ]
+          }
+        ],
+        "environment": "Hero panel: rainy nighttime urban walkway or bridge with wet reflective pavement, metal railings, dark building facades, and streetlights. Turnaround and detail panels: dark neutral studio-like background.",
+        "lighting": "Low-key cinematic lighting; cool blue-gray ambient tones in the hero panel with warm amber practical lights, rain streaks, and wet-surface reflections; soft directional light in the studio-style panels.",
+        "palette": [
+          "black",
+          "charcoal",
+          "cool blue-gray",
+          "warm amber"
+        ],
+        "framing": "Vertical reference-sheet layout: large full-body hero at top; three full-body turnaround panels in the middle; four close-up detail crops at the bottom.",
+        "style": "Photorealistic cinematic character concept/reference sheet with an urban noir mood.",
+        "visible_text": [
+          "HERO",
+          "FRONT",
+          "SIDE PROFILE",
+          "BACK",
+          "FACE",
+          "JACKET COLLAR",
+          "HANDS",
+          "BOOTS"
+        ],
+        "characterisation": "Adult figure in black utility clothing and combat boots, with a facial scar; presented as a character reference across multiple views.",
+        "composition": "composed_scene",
+        "is_reference_sheet": true,
+        "language": "English",
+        "analyzer_version": "contextir-image-card/v2/deepseek-flash",
+        "model": "deepseek-flash",
+        "coverage": {
+          "status": "complete",
+          "tracks": [
+            "visual"
+          ]
+        }
+      },
+      {
+        "asset_id": "asset-2",
+        "summary": "Reference sheet for a black horned dragon, featuring a large atmospheric hero view above labeled front, side, rear, and close-up detail panels.",
+        "subjects": [
+          {
+            "kind": "animal",
+            "descriptor": "Large black dragon with pale horns and large membranous wings",
+            "attributes": [
+              "Black, heavily scaled body with a subtle blue-gray sheen",
+              "Multiple long, pale horns projecting from the head",
+              "Long snout and a glowing orange eye",
+              "Large dark membranous wings with finger-like struts",
+              "Four legs ending in prominent claws",
+              "Long tail and spiny ridge along the back"
+            ],
+            "pose": [
+              "Hero view: crouched on four legs with wings spread and head lowered",
+              "Front panel: facing forward with wings spread",
+              "Side profile panel: standing with wings extended",
+              "Rear panel: viewed from behind with wings spread",
+              "Head close panel: head shown in profile"
+            ]
+          }
+        ],
+        "environment": "Hero view: dark volcanic terrain with rocky mountains, reflective wet ground, smoke or mist, and glowing orange patches; the detail panels use a plain dark background.",
+        "lighting": "Low-key, high-contrast cinematic lighting; cool gray highlights define the scales while warm orange glow appears in the background.",
+        "palette": [
+          "black",
+          "charcoal gray",
+          "bone white",
+          "dull brown",
+          "orange",
+          "cool blue-gray"
+        ],
+        "framing": "Reference-sheet layout with one large hero image across the top and six smaller labeled panels arranged in two rows below, separated by thin dividers.",
+        "style": "Dark fantasy creature concept art with photorealistic rendering and high surface detail.",
+        "visible_text": [
+          "FRONT",
+          "SIDE PROFILE",
+          "REAR",
+          "HEAD CLOSE",
+          "WING MEMBRANE",
+          "CLAW AND FOOT",
+          "SCALE DETAIL"
+        ],
+        "characterisation": "A massive black dragon design with a horned, heavily scaled, armored-looking silhouette.",
+        "composition": "composed_scene",
+        "is_reference_sheet": true,
+        "language": "English",
+        "analyzer_version": "contextir-image-card/v2/deepseek-flash",
+        "model": "deepseek-flash",
+        "coverage": {
+          "status": "complete",
+          "tracks": [
+            "visual"
+          ]
+        }
+      }
+    ]
+  },
+  "request": {
+    "instruction": "Start with the first supplied picture exactly and end on the second supplied picture exactly. Between those endpoints the scene transforms with a slow visual dissolve. Preserve the complete pixels of both endpoint pictures.",
+    "mode": "fl2va",
+    "target": {
+      "duration_ms": 8000,
+      "frame_count": 192,
+      "aspect_ratio": "16:9",
+      "fps": {
+        "numerator": 24,
+        "denominator": 1
+      },
+      "width": 1344,
+      "height": 768
+    },
+    "assets": [
+      {
+        "id": "asset-1",
+        "kind": "image",
+        "uri": "third_party/open-h3-ir/testdata/golden/assets/ref1.png",
+        "sha256": "e23d00458c9c493d6a8bd2f539a58e180e8caaeabf31d288e7c0d1ee4d648237",
+        "description": "the woman",
+        "metadata": {
+          "width": 733,
+          "height": 1100,
+          "fps": {
+            "numerator": 0,
+            "denominator": 0
+          }
+        },
+        "preparation": {
+          "sizing": "match",
+          "width": 736,
+          "height": 1088
+        }
+      },
+      {
+        "id": "asset-2",
+        "kind": "image",
+        "uri": "third_party/open-h3-ir/testdata/golden/assets/ref2.png",
+        "sha256": "55e2c2b8a943a89eec33608ff359b8cc7fb4af62edd3d0fe13a420073c6403c1",
+        "description": "the dragon",
+        "metadata": {
+          "width": 1100,
+          "height": 733,
+          "fps": {
+            "numerator": 0,
+            "denominator": 0
+          }
+        },
+        "preparation": {
+          "sizing": "match",
+          "width": 1088,
+          "height": 736
+        }
+      }
+    ],
+    "bindings": [
+      {
+        "source": {
+          "asset_id": "asset-1",
+          "track": "visual"
+        },
+        "role": "first_frame",
+        "anchor_ms": 0
+      },
+      {
+        "source": {
+          "asset_id": "asset-2",
+          "track": "visual"
+        },
+        "role": "last_frame",
+        "anchor_ms": 8000
+      }
+    ],
+    "constraints": [
+      {
+        "id": "compiler-no-dialogue",
+        "kind": "no_dialogue",
+        "text": "Do not add spoken or sung lines."
+      }
+    ],
+    "allow_creative_additions": true,
+    "allow_generated_dialogue": false,
+    "pinned_shots": [
+      {
+        "id": "shot-1",
+        "start_ms": 0,
+        "end_ms": 4000
+      },
+      {
+        "id": "shot-2",
+        "start_ms": 4000,
+        "end_ms": 8000
+      }
+    ],
+    "addition_scope": {
+      "dialogue": false,
+      "music": true,
+      "visible_text": false
+    }
+  },
+  "structure": {
+    "replacement_targets": {},
+    "style": "1990s cel animation",
+    "mode": "fl2va",
+    "assets": [
+      {
+        "asset_id": "asset-1",
+        "role": "frame_anchor_first",
+        "replaces": ""
+      },
+      {
+        "asset_id": "asset-2",
+        "role": "frame_anchor_last",
+        "replaces": ""
+      }
+    ],
+    "shots": [
+      {
+        "subjects": [
+          "the complete first reference sheet with its hero panel, turnaround row and detail crops",
+          "the dark-clad scarred adult figure in black high-collared jacket and combat boots",
+          "the rainy nighttime walkway with railings, wet pavement and glowing streetlamps"
+        ],
+        "sync_sound": [
+          "soft steady rainfall",
+          "faint distant city hum"
+        ],
+        "start_ms": 0,
+        "purpose": "establish",
+        "framing": "wide",
+        "action": "The frame opens holding the complete first supplied picture exactly as delivered: a full-sheet character reference layout filling the entire frame. Across the top runs the wide rainy-night hero panel, its dark-clad, scarred adult figure with short dark hair and black high-collared utility jacket and boots standing on wet reflective pavement before metal railings and glowing streetlamps in falling rain. Below it, the full-body turnaround row shows the same figure in front, side-profile and back views on a dark neutral studio ground, and beneath that the row of close detail crops shows the face, the buckled jacket collar, the hands and the lace-up boots. Every panel border, divider and printed panel label remains exactly where the source placed it. Nothing within the sheet moves; only the rain streaks in the hero panel drift and the wet ground shimmers faintly.",
+        "what_changes": "Nothing changes yet; the first supplied sheet is held whole, with only the pictured rain and wet-surface shimmer alive.",
+        "camera": {
+          "type": "Static Shot",
+          "amplitude": "",
+          "speed": ""
+        }
+      },
+      {
+        "subjects": [
+          "the complete second reference sheet with its hero view and two rows of labeled panels",
+          "the massive black dragon with pale horns, membranous wings and clawed feet",
+          "the dark volcanic terrain with rocky mountains, smoke and glowing orange patches"
+        ],
+        "sync_sound": [
+          "low volcanic rumble",
+          "thin wind through smoke"
+        ],
+        "start_ms": 4000,
+        "purpose": "resolve",
+        "framing": "wide",
+        "action": "The held sheet dissolves slowly and evenly, its hero image, panel grid and labels softening and giving way as the second supplied picture rises through it, and the change completes exactly on the whole second sheet filling the frame. The arriving layout carries a wide atmospheric hero view across the top of a massive black dragon, heavily scaled and sheened blue-gray, crouched on four legs with dark membranous wings spread wide, its long pale-horned head lowered and its spined tail trailing across dark volcanic ground under drifting smoke and scattered glowing orange patches. Under that hero view sit the two rows of labeled panels — front, side profile and rear full-body views above head close, wing membrane, claw and foot, and scale detail crops — each divider and printed caption intact and unaltered. By the final instant not a trace of the first sheet remains and the second sheet is present in full, edge to edge.",
+        "what_changes": "The first sheet dissolves away and is fully replaced by the second supplied sheet, which is complete and exact at the closing instant.",
+        "camera": {
+          "type": "Static Shot",
+          "amplitude": "",
+          "speed": ""
+        }
+      }
+    ],
+    "dialogue": [],
+    "onscreen_text": [],
+    "requested": {
+      "speech": false,
+      "music": false,
+      "onscreen_text": false,
+      "magnitude": ""
+    },
+    "forbidden": {
+      "speech": false,
+      "music": false,
+      "onscreen_text": false,
+      "magnitude": ""
+    },
+    "reasoning": "The request is a two-endpoint transform: the result must open on the entirety of the first supplied picture at 0 ms and close on the entirety of the second supplied picture at 8000 ms, with a slow visual dissolve carrying the change in between. Both pictures are actual frames at their declared anchors, so each is preserved as the complete supplied sheet — hero image on top, the turnaround row in the middle, and the labeled detail crops along the bottom — with all panel labels exactly as supplied. Neither sheet is treated as a subject plate to be cropped or re-staged; the figure in the first sheet and the dragon in the second remain inside their panel layouts. Two shots are pinned: the first holds the first sheet whole, the second performs the slow dissolve and lands exactly on the second sheet at the target endpoint. Camera stays static so the dissolve supplies all visible change. No spoken lines, no visible lettering is added (the existing panel labels belong to the supplied frames), and no replacement is requested, so the replacement map is empty. Creativity is balanced, permitting an unobtrusive score, which the host handles; diegetic ambience stays sparse and tied to the two pictured environments. Style is host-owned and omitted here."
+  },
+  "scope": {
+    "speech": false,
+    "music": true,
+    "onscreen_text": false,
+    "magnitude": "measured"
+  },
+  "document": {
+    "version": "contextir/v1",
+    "mode": "fl2va",
+    "target": {
+      "duration_ms": 8000,
+      "frame_count": 192,
+      "aspect_ratio": "16:9",
+      "fps": {
+        "numerator": 24,
+        "denominator": 1
+      },
+      "width": 1344,
+      "height": 768
+    },
+    "assets": [
+      {
+        "id": "asset-1",
+        "kind": "image",
+        "uri": "third_party/open-h3-ir/testdata/golden/assets/ref1.png",
+        "sha256": "e23d00458c9c493d6a8bd2f539a58e180e8caaeabf31d288e7c0d1ee4d648237",
+        "description": "the woman",
+        "metadata": {
+          "width": 733,
+          "height": 1100,
+          "fps": {
+            "numerator": 0,
+            "denominator": 0
+          }
+        },
+        "preparation": {
+          "sizing": "match",
+          "width": 736,
+          "height": 1088
+        }
+      },
+      {
+        "id": "asset-2",
+        "kind": "image",
+        "uri": "third_party/open-h3-ir/testdata/golden/assets/ref2.png",
+        "sha256": "55e2c2b8a943a89eec33608ff359b8cc7fb4af62edd3d0fe13a420073c6403c1",
+        "description": "the dragon",
+        "metadata": {
+          "width": 1100,
+          "height": 733,
+          "fps": {
+            "numerator": 0,
+            "denominator": 0
+          }
+        },
+        "preparation": {
+          "sizing": "match",
+          "width": 1088,
+          "height": 736
+        }
+      }
+    ],
+    "evidence": [
+      {
+        "card": {
+          "asset_id": "asset-1",
+          "summary": "A cinematic character reference sheet for a dark-clad adult figure, with a rainy nighttime hero image at top, front/side/back turnaround views, and close-up detail panels for the face, jacket collar, hands, and boots.",
+          "subjects": [
+            {
+              "kind": "person",
+              "descriptor": "Adult figure with East Asian facial features, dark hair and a facial scar",
+              "attributes": [
+                "Short dark hair, shaved at the sides and gathered at the back",
+                "Diagonal scar through the eyebrow on the viewer's left side in the face panel",
+                "Black high-collared jacket with zippers, straps and buckles",
+                "Dark shirt underneath",
+                "Dark cargo trousers",
+                "Black lace-up combat boots"
+              ],
+              "pose": [
+                "Standing upright with arms relaxed at the sides in the hero and turnaround views",
+                "Head turned toward the viewer's left in the hero and side-profile views",
+                "Neutral expression in the front and face views"
+              ]
+            },
+            {
+              "kind": "environment",
+              "descriptor": "Rainy nighttime urban walkway or bridge with streetlights and wet pavement",
+              "attributes": [
+                "Metal railings",
+                "Wet reflective ground",
+                "Dark building facades",
+                "Glowing streetlamps",
+                "Falling rain visible in the hero panel"
+              ]
+            }
+          ],
+          "environment": "Hero panel: rainy nighttime urban walkway or bridge with wet reflective pavement, metal railings, dark building facades, and streetlights. Turnaround and detail panels: dark neutral studio-like background.",
+          "lighting": "Low-key cinematic lighting; cool blue-gray ambient tones in the hero panel with warm amber practical lights, rain streaks, and wet-surface reflections; soft directional light in the studio-style panels.",
+          "palette": [
+            "black",
+            "charcoal",
+            "cool blue-gray",
+            "warm amber"
+          ],
+          "framing": "Vertical reference-sheet layout: large full-body hero at top; three full-body turnaround panels in the middle; four close-up detail crops at the bottom.",
+          "style": "Photorealistic cinematic character concept/reference sheet with an urban noir mood.",
+          "visible_text": [
+            "HERO",
+            "FRONT",
+            "SIDE PROFILE",
+            "BACK",
+            "FACE",
+            "JACKET COLLAR",
+            "HANDS",
+            "BOOTS"
+          ],
+          "characterisation": "Adult figure in black utility clothing and combat boots, with a facial scar; presented as a character reference across multiple views.",
+          "composition": "composed_scene",
+          "is_reference_sheet": true,
+          "language": "English",
+          "analyzer_version": "contextir-image-card/v2/deepseek-flash",
+          "model": "deepseek-flash",
+          "coverage": {
+            "status": "complete",
+            "tracks": [
+              "visual"
+            ]
+          }
+        },
+        "asset_id": "asset-1",
+        "facts": [
+          {
+            "analyzer_version": "contextir-image-perception/v1/deepseek-flash",
+            "id": "asset-1.fact1",
+            "text": "The image is a multi-panel character reference sheet: a large cinematic hero image at the top, three full-body turnaround views in the middle row, and four detail crops along the bottom.",
+            "source": {
+              "asset_id": "asset-1",
+              "track": "visual"
+            }
+          },
+          {
+            "analyzer_version": "contextir-image-perception/v1/deepseek-flash",
+            "id": "asset-1.fact2",
+            "text": "The large top panel is labeled \"HERO\" and shows a full-body figure standing centered on a wet bridge or walkway at night, with rain falling and city lights and streetlamps glowing behind.",
+            "source": {
+              "asset_id": "asset-1",
+              "track": "visual"
+            }
+          },
+          {
+            "analyzer_version": "contextir-image-perception/v1/deepseek-flash",
+            "id": "asset-1.fact3",
+            "text": "The figure has short dark hair that is shaved at the sides and gathered at the back, visible in the side-profile view.",
+            "source": {
+              "asset_id": "asset-1",
+              "track": "visual"
+            }
+          },
+          {
+            "analyzer_version": "contextir-image-perception/v1/deepseek-flash",
+            "id": "asset-1.fact4",
+            "text": "The figure wears a black high-collared jacket with visible zippers, straps and buckles, a dark shirt, dark cargo trousers, and black lace-up combat boots.",
+            "source": {
+              "asset_id": "asset-1",
+              "track": "visual"
+            }
+          },
+          {
+            "analyzer_version": "contextir-image-perception/v1/deepseek-flash",
+            "id": "asset-1.fact5",
+            "text": "The middle row contains full-body views labeled \"FRONT\", \"SIDE PROFILE\", and \"BACK\" against a dark neutral studio-like background.",
+            "source": {
+              "asset_id": "asset-1",
+              "track": "visual"
+            }
+          },
+          {
+            "analyzer_version": "contextir-image-perception/v1/deepseek-flash",
+            "id": "asset-1.fact6",
+            "text": "The bottom row contains detail crops labeled \"FACE\", \"JACKET COLLAR\", \"HANDS\", and \"BOOTS\".",
+            "source": {
+              "asset_id": "asset-1",
+              "track": "visual"
+            }
+          },
+          {
+            "analyzer_version": "contextir-image-perception/v1/deepseek-flash",
+            "id": "asset-1.fact7",
+            "text": "In the \"FACE\" crop, a diagonal scar is visible through the eyebrow on the viewer's left side of the face.",
+            "source": {
+              "asset_id": "asset-1",
+              "track": "visual"
+            }
+          },
+          {
+            "analyzer_version": "contextir-image-perception/v1/deepseek-flash",
+            "id": "asset-1.fact8",
+            "text": "The hero panel uses low-key cinematic lighting with cool blue-gray ambient tones, warm amber highlights from lights, rain streaks, and reflections on wet pavement.",
+            "source": {
+              "asset_id": "asset-1",
+              "track": "visual"
+            }
+          },
+          {
+            "analyzer_version": "contextir-image-perception/v1/deepseek-flash",
+            "id": "asset-1.fact9",
+            "text": "The visible labels on the sheet are \"HERO\", \"FRONT\", \"SIDE PROFILE\", \"BACK\", \"FACE\", \"JACKET COLLAR\", \"HANDS\", and \"BOOTS\".",
+            "source": {
+              "asset_id": "asset-1",
+              "track": "visual"
+            }
+          },
+          {
+            "analyzer_version": "contextir-image-perception/v1/deepseek-flash",
+            "id": "asset-1.fact10",
+            "text": "The bottom detail crops show close views of the jacket collar with a strap and buckle, two hands, and the laced boots.",
+            "source": {
+              "asset_id": "asset-1",
+              "track": "visual"
+            }
+          }
+        ],
+        "model": "deepseek-flash",
+        "analyzer_version": "contextir-image-perception/v1/deepseek-flash",
+        "limitations": [
+          "Some detail crops and dark areas are low-resolution or heavily shadowed, so fine textures and small markings are not fully legible.",
+          "The rainy urban environment appears only in the hero panel; the turnaround and detail panels use a neutral dark background."
+        ],
+        "coverage": {
+          "status": "complete",
+          "tracks": [
+            "visual"
+          ]
+        }
+      },
+      {
+        "card": {
+          "asset_id": "asset-2",
+          "summary": "Reference sheet for a black horned dragon, featuring a large atmospheric hero view above labeled front, side, rear, and close-up detail panels.",
+          "subjects": [
+            {
+              "kind": "animal",
+              "descriptor": "Large black dragon with pale horns and large membranous wings",
+              "attributes": [
+                "Black, heavily scaled body with a subtle blue-gray sheen",
+                "Multiple long, pale horns projecting from the head",
+                "Long snout and a glowing orange eye",
+                "Large dark membranous wings with finger-like struts",
+                "Four legs ending in prominent claws",
+                "Long tail and spiny ridge along the back"
+              ],
+              "pose": [
+                "Hero view: crouched on four legs with wings spread and head lowered",
+                "Front panel: facing forward with wings spread",
+                "Side profile panel: standing with wings extended",
+                "Rear panel: viewed from behind with wings spread",
+                "Head close panel: head shown in profile"
+              ]
+            }
+          ],
+          "environment": "Hero view: dark volcanic terrain with rocky mountains, reflective wet ground, smoke or mist, and glowing orange patches; the detail panels use a plain dark background.",
+          "lighting": "Low-key, high-contrast cinematic lighting; cool gray highlights define the scales while warm orange glow appears in the background.",
+          "palette": [
+            "black",
+            "charcoal gray",
+            "bone white",
+            "dull brown",
+            "orange",
+            "cool blue-gray"
+          ],
+          "framing": "Reference-sheet layout with one large hero image across the top and six smaller labeled panels arranged in two rows below, separated by thin dividers.",
+          "style": "Dark fantasy creature concept art with photorealistic rendering and high surface detail.",
+          "visible_text": [
+            "FRONT",
+            "SIDE PROFILE",
+            "REAR",
+            "HEAD CLOSE",
+            "WING MEMBRANE",
+            "CLAW AND FOOT",
+            "SCALE DETAIL"
+          ],
+          "characterisation": "A massive black dragon design with a horned, heavily scaled, armored-looking silhouette.",
+          "composition": "composed_scene",
+          "is_reference_sheet": true,
+          "language": "English",
+          "analyzer_version": "contextir-image-card/v2/deepseek-flash",
+          "model": "deepseek-flash",
+          "coverage": {
+            "status": "complete",
+            "tracks": [
+              "visual"
+            ]
+          }
+        },
+        "asset_id": "asset-2",
+        "facts": [
+          {
+            "analyzer_version": "contextir-image-perception/v1/deepseek-flash",
+            "id": "asset-2.fact1",
+            "text": "The image is a dragon reference sheet: a wide hero view spans the top, with two rows of smaller panels beneath.",
+            "source": {
+              "asset_id": "asset-2",
+              "track": "visual"
+            }
+          },
+          {
+            "analyzer_version": "contextir-image-perception/v1/deepseek-flash",
+            "id": "asset-2.fact2",
+            "text": "In the hero view, a large black, heavily scaled dragon is crouched on four legs with its wings spread, its horned head lowered, and its long tail extending behind it.",
+            "source": {
+              "asset_id": "asset-2",
+              "track": "visual"
+            }
+          },
+          {
+            "analyzer_version": "contextir-image-perception/v1/deepseek-flash",
+            "id": "asset-2.fact3",
+            "text": "The dragon has multiple long, pale horns projecting from its head, a long snout, and a glowing orange eye visible in the head close-up.",
+            "source": {
+              "asset_id": "asset-2",
+              "track": "visual"
+            }
+          },
+          {
+            "analyzer_version": "contextir-image-perception/v1/deepseek-flash",
+            "id": "asset-2.fact4",
+            "text": "The wings are large, dark, and membranous, with visible finger-like struts; a lower panel isolates the wing membrane.",
+            "source": {
+              "asset_id": "asset-2",
+              "track": "visual"
+            }
+          },
+          {
+            "analyzer_version": "contextir-image-perception/v1/deepseek-flash",
+            "id": "asset-2.fact5",
+            "text": "The dragon has four clawed feet; a close-up panel shows a foot with curved claws.",
+            "source": {
+              "asset_id": "asset-2",
+              "track": "visual"
+            }
+          },
+          {
+            "analyzer_version": "contextir-image-perception/v1/deepseek-flash",
+            "id": "asset-2.fact6",
+            "text": "A scale-detail panel shows overlapping dark scales with subtle blue-gray highlights.",
+            "source": {
+              "asset_id": "asset-2",
+              "track": "visual"
+            }
+          },
+          {
+            "analyzer_version": "contextir-image-perception/v1/deepseek-flash",
+            "id": "asset-2.fact7",
+            "text": "The middle row contains FRONT, SIDE PROFILE, and REAR full-body views; the bottom row contains HEAD CLOSE, WING MEMBRANE, CLAW AND FOOT, and SCALE DETAIL panels.",
+            "source": {
+              "asset_id": "asset-2",
+              "track": "visual"
+            }
+          },
+          {
+            "analyzer_version": "contextir-image-perception/v1/deepseek-flash",
+            "id": "asset-2.fact8",
+            "text": "The hero view is set in dark volcanic terrain with rocky mountains, a misty or smoky atmosphere, reflective wet ground, and scattered glowing orange patches.",
+            "source": {
+              "asset_id": "asset-2",
+              "track": "visual"
+            }
+          }
+        ],
+        "model": "deepseek-flash",
+        "analyzer_version": "contextir-image-perception/v1/deepseek-flash",
+        "limitations": [
+          "The image is static; no motion, camera movement, sound, music, voice, or transcript can be established.",
+          "Exact material composition, scale, and details outside the visible surfaces cannot be determined."
+        ],
+        "coverage": {
+          "status": "complete",
+          "tracks": [
+            "visual"
+          ]
+        }
+      }
+    ],
+    "references": [
+      {
+        "id": "reference-asset-1-1",
+        "kind": "picture",
+        "source": {
+          "asset_id": "asset-1",
+          "track": "visual"
+        },
+        "roles": [
+          "first_frame"
+        ],
+        "description": "The complete supplied image is the actual target frame, including its full layout, panels, labels, background, subject placement and lighting.",
+        "retention": "fully_preserved",
+        "retention_details": "Preserve the entire supplied frame at the exact anchor; do not extract a hero panel, discard sheet presentation, or redraw a new composition.",
+        "shot_ids": [
+          "shot-1"
+        ],
+        "anchor_ms": 0
+      },
+      {
+        "id": "reference-asset-2-2",
+        "kind": "picture",
+        "source": {
+          "asset_id": "asset-2",
+          "track": "visual"
+        },
+        "roles": [
+          "last_frame"
+        ],
+        "description": "The complete supplied image is the actual target frame, including its full layout, panels, labels, background, subject placement and lighting.",
+        "retention": "fully_preserved",
+        "retention_details": "Preserve the entire supplied frame at the exact anchor; do not extract a hero panel, discard sheet presentation, or redraw a new composition.",
+        "shot_ids": [
+          "shot-2"
+        ],
+        "anchor_ms": 8000
+      }
+    ],
+    "style": "1990s cel animation",
+    "shots": [
+      {
+        "id": "shot-1",
+        "start_ms": 0,
+        "end_ms": 4000,
+        "description": [
+          {
+            "text": "The frame opens on the complete first supplied picture, held whole and edge to edge as a character reference sheet. Across the top, the wide HERO panel places a dark-clad adult figure on a wet night walkway: short dark hair shaved at the sides and gathered at the back, a black high-collared jacket with zippers, straps and buckles over a dark shirt, dark cargo trousers and black lace-up combat boots, the figure standing upright and centered before metal railings and dark building facades while streetlamps glow warm amber against cool blue-gray rain. Below the hero panel, the turnaround row shows the same figure from FRONT, SIDE PROFILE and BACK against a neutral dark studio ground, and the bottom row holds the FACE, JACKET COLLAR, HANDS and BOOTS detail crops, the diagonal scar through the eyebrow legible in the face panel. Every panel divider, border and printed label stays exactly where the source placed it. Nothing inside the sheet is cropped, extracted or rearranged."
+          }
+        ],
+        "events": [
+          {
+            "kind": "visual",
+            "at_ms": 0,
+            "description": [
+              {
+                "text": "The sheet holds completely still; only the rain streaks in the hero panel drift and the wet pavement shimmers faintly under the amber lamps."
+              }
+            ]
+          },
+          {
+            "kind": "sound",
+            "at_ms": 600,
+            "description": [
+              {
+                "text": "Soft steady rainfall and a faint distant city hum sit low under the held image."
+              }
+            ]
+          },
+          {
+            "kind": "camera",
+            "description": [
+              {
+                "text": "The camera holds a static shot."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "shot-2",
+        "start_ms": 4000,
+        "end_ms": 8000,
+        "description": [
+          {
+            "text": "A slow, even dissolve spreads across the whole frame, the first sheet softening and giving way as the second supplied picture rises through it. Through the middle of the change the rainy walkway and the labeled turnaround panels thin into drifting smoke, rock and a dull orange glow. The arriving layout carries a wide hero view of a massive black dragon crouched on four legs with its wings spread, long pale horns projecting from a lowered head and a long tail trailing across dark volcanic terrain, mist passing over reflective wet ground and scattered glowing orange patches. Beneath that hero view sit the two rows of labeled panels: FRONT, SIDE PROFILE and REAR full-body views above HEAD CLOSE, WING MEMBRANE, CLAW AND FOOT and SCALE DETAIL crops, overlapping dark scales with pale blue-gray highlights legible in the scale panel and curved claws in the foot panel. By the final instant no trace of the first sheet remains and the complete second sheet fills the frame edge to edge, every divider, panel border and printed caption intact and unaltered."
+          }
+        ],
+        "events": [
+          {
+            "kind": "visual",
+            "at_ms": 4000,
+            "description": [
+              {
+                "text": "The dissolve begins, the first sheet paling evenly from edge to edge as smoke and dark rock start to show through its panels."
+              }
+            ]
+          },
+          {
+            "kind": "sound",
+            "at_ms": 5200,
+            "description": [
+              {
+                "text": "A low volcanic rumble and thin wind through smoke swell beneath the fading rainfall."
+              }
+            ]
+          },
+          {
+            "kind": "visual",
+            "at_ms": 7200,
+            "description": [
+              {
+                "text": "The last veils of the first sheet thin away, leaving the dragon sheet almost whole, its hero view, panel grid and printed captions settling into place."
+              }
+            ]
+          },
+          {
+            "kind": "camera",
+            "description": [
+              {
+                "text": "The camera holds a static shot."
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "soundscape": "Soft steady rainfall and a faint distant city hum under the opening half, crossfading into a low volcanic rumble and thin wind through smoke as the second picture arrives.",
+    "music": "A restrained, slow ambient score of sustained low strings and sparse shimmering tones, kept well beneath the ambience.",
+    "constraints": [
+      {
+        "id": "compiler-no-dialogue",
+        "kind": "no_dialogue",
+        "text": "Do not add spoken or sung lines."
+      }
+    ],
+    "claims": [
+      {
+        "id": "user-endpoints",
+        "origin": "user",
+        "text": "Open exactly on the first supplied picture and end exactly on the second supplied picture, preserving the complete pixels of both endpoint pictures."
+      },
+      {
+        "id": "user-dissolve",
+        "origin": "user",
+        "text": "Between the two endpoints the scene transforms with a slow visual dissolve."
+      },
+      {
+        "id": "observed-asset-1-layout",
+        "origin": "observed",
+        "text": "The first picture is a multi-panel character reference sheet: a large HERO panel at the top, a FRONT, SIDE PROFILE and BACK turnaround row in the middle, and FACE, JACKET COLLAR, HANDS and BOOTS detail crops along the bottom.",
+        "sources": [
+          {
+            "asset_id": "asset-1",
+            "track": "visual"
+          }
+        ]
+      },
+      {
+        "id": "observed-asset-1-figure",
+        "origin": "observed",
+        "text": "The hero figure is an adult with short dark hair shaved at the sides and gathered at the back, wearing a black high-collared jacket with zippers, straps and buckles, dark cargo trousers and black lace-up combat boots, standing on a rainy night walkway with metal railings and glowing streetlamps.",
+        "sources": [
+          {
+            "asset_id": "asset-1",
+            "track": "visual"
+          }
+        ]
+      },
+      {
+        "id": "observed-asset-2-layout",
+        "origin": "observed",
+        "text": "The second picture is a dragon reference sheet with a wide hero view across the top and two rows of labeled panels below: FRONT, SIDE PROFILE and REAR, then HEAD CLOSE, WING MEMBRANE, CLAW AND FOOT and SCALE DETAIL.",
+        "sources": [
+          {
+            "asset_id": "asset-2",
+            "track": "visual"
+          }
+        ]
+      },
+      {
+        "id": "observed-asset-2-dragon",
+        "origin": "observed",
+        "text": "In the hero view a large black, heavily scaled dragon crouches on four legs with spread membranous wings, long pale horns and a lowered head, set on dark volcanic terrain with mist, wet reflective ground and scattered glowing orange patches.",
+        "sources": [
+          {
+            "asset_id": "asset-2",
+            "track": "visual"
+          }
+        ]
+      },
+      {
+        "id": "creative-ambient-motion",
+        "origin": "creative",
+        "text": "Within the held first sheet the pictured rain streaks drift and the wet pavement shimmers, accompanied by soft steady rainfall and a faint distant city hum that gives way to a low volcanic rumble and thin wind through smoke."
+      }
+    ]
+  },
+  "artifact": {
+    "version": "contextir-h3/artifact-v1",
+    "compiler_version": "contextir-h3/v1.2",
+    "format_version": "minimax-h3/prompt-v1",
+    "mode": "fl2va",
+    "target": {
+      "duration_ms": 8000,
+      "frame_count": 192,
+      "aspect_ratio": "16:9",
+      "fps": {
+        "numerator": 24,
+        "denominator": 1
+      },
+      "width": 1344,
+      "height": 768
+    },
+    "profile": {
+      "name": "h3-published-format-v1",
+      "format": "minimax-h3/prompt-v1",
+      "fps": {
+        "numerator": 24,
+        "denominator": 1
+      },
+      "modes": [
+        "t2va",
+        "i2va",
+        "l2va",
+        "fl2va",
+        "ref2va"
+      ],
+      "limits": {
+        "pictures": 0,
+        "videos": 0,
+        "video_audio": 0,
+        "standalone_audio": 0
+      },
+      "supports_reference_frame_anchors": true,
+      "supports_source_intervals": true
+    },
+    "prompt": "How the reference pictures align with the target video — Picture 1 (from Shot 1) aligns with the 0.00-second mark of the target video; Picture 2 (from Shot 2) aligns with the 8.00-second mark of the target video.\n\nintegrated_multimodal_description: [Shot 1] 1990s cel animation, The frame opens on the complete first supplied picture, held whole and edge to edge as a character reference sheet. Across the top, the wide HERO panel places a dark-clad adult figure on a wet night walkway: short dark hair shaved at the sides and gathered at the back, a black high-collared jacket with zippers, straps and buckles over a dark shirt, dark cargo trousers and black lace-up combat boots, the figure standing upright and centered before metal railings and dark building facades while streetlamps glow warm amber against cool blue-gray rain. Below the hero panel, the turnaround row shows the same figure from FRONT, SIDE PROFILE and BACK against a neutral dark studio ground, and the bottom row holds the FACE, JACKET COLLAR, HANDS and BOOTS detail crops, the diagonal scar through the eyebrow legible in the face panel. Every panel divider, border and printed label stays exactly where the source placed it. Nothing inside the sheet is cropped, extracted or rearranged. At 00:00.000, The sheet holds completely still; only the rain streaks in the hero panel drift and the wet pavement shimmers faintly under the amber lamps. At 00:00.600, Soft steady rainfall and a faint distant city hum sit low under the held image. The camera holds a static shot. Throughout the target video: Do not add spoken or sung lines. [Shot 2] At 00:04.000, the shot cuts to A slow, even dissolve spreads across the whole frame, the first sheet softening and giving way as the second supplied picture rises through it. Through the middle of the change the rainy walkway and the labeled turnaround panels thin into drifting smoke, rock and a dull orange glow. The arriving layout carries a wide hero view of a massive black dragon crouched on four legs with its wings spread, long pale horns projecting from a lowered head and a long tail trailing across dark volcanic terrain, mist passing over reflective wet ground and scattered glowing orange patches. Beneath that hero view sit the two rows of labeled panels: FRONT, SIDE PROFILE and REAR full-body views above HEAD CLOSE, WING MEMBRANE, CLAW AND FOOT and SCALE DETAIL crops, overlapping dark scales with pale blue-gray highlights legible in the scale panel and curved claws in the foot panel. By the final instant no trace of the first sheet remains and the complete second sheet fills the frame edge to edge, every divider, panel border and printed caption intact and unaltered. At 00:04.000, The dissolve begins, the first sheet paling evenly from edge to edge as smoke and dark rock start to show through its panels. At 00:05.200, A low volcanic rumble and thin wind through smoke swell beneath the fading rainfall. At 00:07.200, The last veils of the first sheet thin away, leaving the dragon sheet almost whole, its hero view, panel grid and printed captions settling into place. The camera holds a static shot.\n\noverall_soundscape: Soft steady rainfall and a faint distant city hum under the opening half, crossfading into a low volcanic rumble and thin wind through smoke as the second picture arrives.\n\nnon_diegetic_music: A restrained, slow ambient score of sustained low strings and sparse shimmering tones, kept well beneath the ambience.\n",
+    "manifest": {
+      "media": [
+        {
+          "preparation": {
+            "sizing": "match",
+            "width": 736,
+            "height": 1088
+          },
+          "source_metadata": {
+            "width": 733,
+            "height": 1100,
+            "fps": {
+              "numerator": 0,
+              "denominator": 0
+            }
+          },
+          "label": "\u003cPicture 1\u003e",
+          "kind": "picture",
+          "source": {
+            "asset_id": "asset-1",
+            "track": "visual"
+          },
+          "uri": "third_party/open-h3-ir/testdata/golden/assets/ref1.png",
+          "sha256": "e23d00458c9c493d6a8bd2f539a58e180e8caaeabf31d288e7c0d1ee4d648237",
+          "socket": "first_frame",
+          "target_uses": [
+            {
+              "reference_id": "reference-asset-1-1",
+              "roles": [
+                "first_frame"
+              ],
+              "retention": "fully_preserved",
+              "anchor_ms": 0,
+              "shots": [
+                {
+                  "id": "shot-1",
+                  "index": 1,
+                  "interval": {
+                    "start_ms": 0,
+                    "end_ms": 4000
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "preparation": {
+            "sizing": "match",
+            "width": 1088,
+            "height": 736
+          },
+          "source_metadata": {
+            "width": 1100,
+            "height": 733,
+            "fps": {
+              "numerator": 0,
+              "denominator": 0
+            }
+          },
+          "label": "\u003cPicture 2\u003e",
+          "kind": "picture",
+          "source": {
+            "asset_id": "asset-2",
+            "track": "visual"
+          },
+          "uri": "third_party/open-h3-ir/testdata/golden/assets/ref2.png",
+          "sha256": "55e2c2b8a943a89eec33608ff359b8cc7fb4af62edd3d0fe13a420073c6403c1",
+          "socket": "last_frame",
+          "target_uses": [
+            {
+              "reference_id": "reference-asset-2-2",
+              "roles": [
+                "last_frame"
+              ],
+              "retention": "fully_preserved",
+              "anchor_ms": 8000,
+              "shots": [
+                {
+                  "id": "shot-2",
+                  "index": 2,
+                  "interval": {
+                    "start_ms": 4000,
+                    "end_ms": 8000
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "subjects": [],
+      "references": [
+        {
+          "id": "reference-asset-1-1",
+          "label": "\u003cPicture 1\u003e"
+        },
+        {
+          "id": "reference-asset-2-2",
+          "label": "\u003cPicture 2\u003e"
+        }
+      ],
+      "speakers": []
+    },
+    "frames": 192,
+    "effective_duration_seconds": {
+      "numerator": 8,
+      "denominator": 1
+    },
+    "document_sha256": "9411c63a82a017db286e61e29f62c916ab4ed2fc52d9b549ba33abefc9d933fb",
+    "profile_sha256": "ce4364d3f1242f5aeb2216db44195fb3897f4828dd9e145c4c16c64315786ab6",
+    "prompt_sha256": "90d1b5cbfe9ae4e24174baa78a898b5652db0c1634a5fb4008ac1b4b366dc5f8",
+    "manifest_sha256": "3472ed8432bc5999ad7a3d756eea07e6a2abfef61b4047fbd9815ddf4f316896",
+    "sha256": "6d9a91df06031b4c05891ac732226d6838151561691d98c542ffc9e1aceb24c6"
+  },
+  "evidence": [
+    {
+      "card": {
+        "asset_id": "asset-1",
+        "summary": "A cinematic character reference sheet for a dark-clad adult figure, with a rainy nighttime hero image at top, front/side/back turnaround views, and close-up detail panels for the face, jacket collar, hands, and boots.",
+        "subjects": [
+          {
+            "kind": "person",
+            "descriptor": "Adult figure with East Asian facial features, dark hair and a facial scar",
+            "attributes": [
+              "Short dark hair, shaved at the sides and gathered at the back",
+              "Diagonal scar through the eyebrow on the viewer's left side in the face panel",
+              "Black high-collared jacket with zippers, straps and buckles",
+              "Dark shirt underneath",
+              "Dark cargo trousers",
+              "Black lace-up combat boots"
+            ],
+            "pose": [
+              "Standing upright with arms relaxed at the sides in the hero and turnaround views",
+              "Head turned toward the viewer's left in the hero and side-profile views",
+              "Neutral expression in the front and face views"
+            ]
+          },
+          {
+            "kind": "environment",
+            "descriptor": "Rainy nighttime urban walkway or bridge with streetlights and wet pavement",
+            "attributes": [
+              "Metal railings",
+              "Wet reflective ground",
+              "Dark building facades",
+              "Glowing streetlamps",
+              "Falling rain visible in the hero panel"
+            ]
+          }
+        ],
+        "environment": "Hero panel: rainy nighttime urban walkway or bridge with wet reflective pavement, metal railings, dark building facades, and streetlights. Turnaround and detail panels: dark neutral studio-like background.",
+        "lighting": "Low-key cinematic lighting; cool blue-gray ambient tones in the hero panel with warm amber practical lights, rain streaks, and wet-surface reflections; soft directional light in the studio-style panels.",
+        "palette": [
+          "black",
+          "charcoal",
+          "cool blue-gray",
+          "warm amber"
+        ],
+        "framing": "Vertical reference-sheet layout: large full-body hero at top; three full-body turnaround panels in the middle; four close-up detail crops at the bottom.",
+        "style": "Photorealistic cinematic character concept/reference sheet with an urban noir mood.",
+        "visible_text": [
+          "HERO",
+          "FRONT",
+          "SIDE PROFILE",
+          "BACK",
+          "FACE",
+          "JACKET COLLAR",
+          "HANDS",
+          "BOOTS"
+        ],
+        "characterisation": "Adult figure in black utility clothing and combat boots, with a facial scar; presented as a character reference across multiple views.",
+        "composition": "composed_scene",
+        "is_reference_sheet": true,
+        "language": "English",
+        "analyzer_version": "contextir-image-card/v2/deepseek-flash",
+        "model": "deepseek-flash",
+        "coverage": {
+          "status": "complete",
+          "tracks": [
+            "visual"
+          ]
+        }
+      },
+      "asset_id": "asset-1",
+      "facts": [
+        {
+          "analyzer_version": "contextir-image-perception/v1/deepseek-flash",
+          "id": "asset-1.fact1",
+          "text": "The image is a multi-panel character reference sheet: a large cinematic hero image at the top, three full-body turnaround views in the middle row, and four detail crops along the bottom.",
+          "source": {
+            "asset_id": "asset-1",
+            "track": "visual"
+          }
+        },
+        {
+          "analyzer_version": "contextir-image-perception/v1/deepseek-flash",
+          "id": "asset-1.fact2",
+          "text": "The large top panel is labeled \"HERO\" and shows a full-body figure standing centered on a wet bridge or walkway at night, with rain falling and city lights and streetlamps glowing behind.",
+          "source": {
+            "asset_id": "asset-1",
+            "track": "visual"
+          }
+        },
+        {
+          "analyzer_version": "contextir-image-perception/v1/deepseek-flash",
+          "id": "asset-1.fact3",
+          "text": "The figure has short dark hair that is shaved at the sides and gathered at the back, visible in the side-profile view.",
+          "source": {
+            "asset_id": "asset-1",
+            "track": "visual"
+          }
+        },
+        {
+          "analyzer_version": "contextir-image-perception/v1/deepseek-flash",
+          "id": "asset-1.fact4",
+          "text": "The figure wears a black high-collared jacket with visible zippers, straps and buckles, a dark shirt, dark cargo trousers, and black lace-up combat boots.",
+          "source": {
+            "asset_id": "asset-1",
+            "track": "visual"
+          }
+        },
+        {
+          "analyzer_version": "contextir-image-perception/v1/deepseek-flash",
+          "id": "asset-1.fact5",
+          "text": "The middle row contains full-body views labeled \"FRONT\", \"SIDE PROFILE\", and \"BACK\" against a dark neutral studio-like background.",
+          "source": {
+            "asset_id": "asset-1",
+            "track": "visual"
+          }
+        },
+        {
+          "analyzer_version": "contextir-image-perception/v1/deepseek-flash",
+          "id": "asset-1.fact6",
+          "text": "The bottom row contains detail crops labeled \"FACE\", \"JACKET COLLAR\", \"HANDS\", and \"BOOTS\".",
+          "source": {
+            "asset_id": "asset-1",
+            "track": "visual"
+          }
+        },
+        {
+          "analyzer_version": "contextir-image-perception/v1/deepseek-flash",
+          "id": "asset-1.fact7",
+          "text": "In the \"FACE\" crop, a diagonal scar is visible through the eyebrow on the viewer's left side of the face.",
+          "source": {
+            "asset_id": "asset-1",
+            "track": "visual"
+          }
+        },
+        {
+          "analyzer_version": "contextir-image-perception/v1/deepseek-flash",
+          "id": "asset-1.fact8",
+          "text": "The hero panel uses low-key cinematic lighting with cool blue-gray ambient tones, warm amber highlights from lights, rain streaks, and reflections on wet pavement.",
+          "source": {
+            "asset_id": "asset-1",
+            "track": "visual"
+          }
+        },
+        {
+          "analyzer_version": "contextir-image-perception/v1/deepseek-flash",
+          "id": "asset-1.fact9",
+          "text": "The visible labels on the sheet are \"HERO\", \"FRONT\", \"SIDE PROFILE\", \"BACK\", \"FACE\", \"JACKET COLLAR\", \"HANDS\", and \"BOOTS\".",
+          "source": {
+            "asset_id": "asset-1",
+            "track": "visual"
+          }
+        },
+        {
+          "analyzer_version": "contextir-image-perception/v1/deepseek-flash",
+          "id": "asset-1.fact10",
+          "text": "The bottom detail crops show close views of the jacket collar with a strap and buckle, two hands, and the laced boots.",
+          "source": {
+            "asset_id": "asset-1",
+            "track": "visual"
+          }
+        }
+      ],
+      "model": "deepseek-flash",
+      "analyzer_version": "contextir-image-perception/v1/deepseek-flash",
+      "limitations": [
+        "Some detail crops and dark areas are low-resolution or heavily shadowed, so fine textures and small markings are not fully legible.",
+        "The rainy urban environment appears only in the hero panel; the turnaround and detail panels use a neutral dark background."
+      ],
+      "coverage": {
+        "status": "complete",
+        "tracks": [
+          "visual"
+        ]
+      }
+    },
+    {
+      "card": {
+        "asset_id": "asset-2",
+        "summary": "Reference sheet for a black horned dragon, featuring a large atmospheric hero view above labeled front, side, rear, and close-up detail panels.",
+        "subjects": [
+          {
+            "kind": "animal",
+            "descriptor": "Large black dragon with pale horns and large membranous wings",
+            "attributes": [
+              "Black, heavily scaled body with a subtle blue-gray sheen",
+              "Multiple long, pale horns projecting from the head",
+              "Long snout and a glowing orange eye",
+              "Large dark membranous wings with finger-like struts",
+              "Four legs ending in prominent claws",
+              "Long tail and spiny ridge along the back"
+            ],
+            "pose": [
+              "Hero view: crouched on four legs with wings spread and head lowered",
+              "Front panel: facing forward with wings spread",
+              "Side profile panel: standing with wings extended",
+              "Rear panel: viewed from behind with wings spread",
+              "Head close panel: head shown in profile"
+            ]
+          }
+        ],
+        "environment": "Hero view: dark volcanic terrain with rocky mountains, reflective wet ground, smoke or mist, and glowing orange patches; the detail panels use a plain dark background.",
+        "lighting": "Low-key, high-contrast cinematic lighting; cool gray highlights define the scales while warm orange glow appears in the background.",
+        "palette": [
+          "black",
+          "charcoal gray",
+          "bone white",
+          "dull brown",
+          "orange",
+          "cool blue-gray"
+        ],
+        "framing": "Reference-sheet layout with one large hero image across the top and six smaller labeled panels arranged in two rows below, separated by thin dividers.",
+        "style": "Dark fantasy creature concept art with photorealistic rendering and high surface detail.",
+        "visible_text": [
+          "FRONT",
+          "SIDE PROFILE",
+          "REAR",
+          "HEAD CLOSE",
+          "WING MEMBRANE",
+          "CLAW AND FOOT",
+          "SCALE DETAIL"
+        ],
+        "characterisation": "A massive black dragon design with a horned, heavily scaled, armored-looking silhouette.",
+        "composition": "composed_scene",
+        "is_reference_sheet": true,
+        "language": "English",
+        "analyzer_version": "contextir-image-card/v2/deepseek-flash",
+        "model": "deepseek-flash",
+        "coverage": {
+          "status": "complete",
+          "tracks": [
+            "visual"
+          ]
+        }
+      },
+      "asset_id": "asset-2",
+      "facts": [
+        {
+          "analyzer_version": "contextir-image-perception/v1/deepseek-flash",
+          "id": "asset-2.fact1",
+          "text": "The image is a dragon reference sheet: a wide hero view spans the top, with two rows of smaller panels beneath.",
+          "source": {
+            "asset_id": "asset-2",
+            "track": "visual"
+          }
+        },
+        {
+          "analyzer_version": "contextir-image-perception/v1/deepseek-flash",
+          "id": "asset-2.fact2",
+          "text": "In the hero view, a large black, heavily scaled dragon is crouched on four legs with its wings spread, its horned head lowered, and its long tail extending behind it.",
+          "source": {
+            "asset_id": "asset-2",
+            "track": "visual"
+          }
+        },
+        {
+          "analyzer_version": "contextir-image-perception/v1/deepseek-flash",
+          "id": "asset-2.fact3",
+          "text": "The dragon has multiple long, pale horns projecting from its head, a long snout, and a glowing orange eye visible in the head close-up.",
+          "source": {
+            "asset_id": "asset-2",
+            "track": "visual"
+          }
+        },
+        {
+          "analyzer_version": "contextir-image-perception/v1/deepseek-flash",
+          "id": "asset-2.fact4",
+          "text": "The wings are large, dark, and membranous, with visible finger-like struts; a lower panel isolates the wing membrane.",
+          "source": {
+            "asset_id": "asset-2",
+            "track": "visual"
+          }
+        },
+        {
+          "analyzer_version": "contextir-image-perception/v1/deepseek-flash",
+          "id": "asset-2.fact5",
+          "text": "The dragon has four clawed feet; a close-up panel shows a foot with curved claws.",
+          "source": {
+            "asset_id": "asset-2",
+            "track": "visual"
+          }
+        },
+        {
+          "analyzer_version": "contextir-image-perception/v1/deepseek-flash",
+          "id": "asset-2.fact6",
+          "text": "A scale-detail panel shows overlapping dark scales with subtle blue-gray highlights.",
+          "source": {
+            "asset_id": "asset-2",
+            "track": "visual"
+          }
+        },
+        {
+          "analyzer_version": "contextir-image-perception/v1/deepseek-flash",
+          "id": "asset-2.fact7",
+          "text": "The middle row contains FRONT, SIDE PROFILE, and REAR full-body views; the bottom row contains HEAD CLOSE, WING MEMBRANE, CLAW AND FOOT, and SCALE DETAIL panels.",
+          "source": {
+            "asset_id": "asset-2",
+            "track": "visual"
+          }
+        },
+        {
+          "analyzer_version": "contextir-image-perception/v1/deepseek-flash",
+          "id": "asset-2.fact8",
+          "text": "The hero view is set in dark volcanic terrain with rocky mountains, a misty or smoky atmosphere, reflective wet ground, and scattered glowing orange patches.",
+          "source": {
+            "asset_id": "asset-2",
+            "track": "visual"
+          }
+        }
+      ],
+      "model": "deepseek-flash",
+      "analyzer_version": "contextir-image-perception/v1/deepseek-flash",
+      "limitations": [
+        "The image is static; no motion, camera movement, sound, music, voice, or transcript can be established.",
+        "Exact material composition, scale, and details outside the visible surfaces cannot be determined."
+      ],
+      "coverage": {
+        "status": "complete",
+        "tracks": [
+          "visual"
+        ]
+      }
+    }
+  ],
+  "decisions": [
+    {
+      "field": "target",
+      "source": "computed",
+      "value": {
+        "effective_seconds": 8,
+        "frame_count": 192,
+        "nominal_seconds": 8,
+        "policy": "snap_up"
+      },
+      "explanation": "Effective timing and nominal duration are recorded separately; generated cuts use effective timing."
+    },
+    {
+      "field": "canvas",
+      "source": "computed",
+      "value": [
+        1344,
+        768
+      ],
+      "explanation": "Native short-edge canvas is aligned to 32 pixels; explicit megapixels replaces the native area budget."
+    },
+    {
+      "field": "assets.asset-1.preparation",
+      "source": "required_adapter_instruction",
+      "value": {
+        "sizing": "match",
+        "width": 736,
+        "height": 1088
+      },
+      "explanation": "These required input transforms are recorded separately from the original source metadata; the compiler has not executed media IO."
+    },
+    {
+      "field": "assets.asset-2.preparation",
+      "source": "required_adapter_instruction",
+      "value": {
+        "sizing": "match",
+        "width": 1088,
+        "height": 736
+      },
+      "explanation": "These required input transforms are recorded separately from the original source metadata; the compiler has not executed media IO."
+    },
+    {
+      "field": "execution",
+      "source": "explicit_adapter_policy",
+      "value": {
+        "effort": "standard"
+      },
+      "explanation": "The injected adapters and explicit compiler repair configuration implement standard effort."
+    },
+    {
+      "field": "mode",
+      "source": "caller-override",
+      "value": {
+        "clarification_policy": "continue_with_recorded_choice",
+        "confidence_kind": "routing_policy",
+        "aspect_mismatch": true,
+        "needs_clarification": false,
+        "mode": "fl2va",
+        "confidence": 1,
+        "rule": "caller-override",
+        "signals": [
+          "Mode follows explicit structured choices and media socket requirements.",
+          "aspect mismatch: Image asset-1 aspect 0.666364 differs from requested 16:9 by more than 20%. The anchor choice is preserved; exact-frame conditioning requires an explicit crop/resize/canvas decision."
+        ],
+        "alternatives": [
+          "ref2va"
+        ]
+      },
+      "explanation": "Mode follows the production typed routing contract; publication capabilities are checked separately."
+    },
+    {
+      "field": "frame_preservation",
+      "source": "actual_frame_responsibility",
+      "value": [
+        {
+          "asset_id": "asset-1",
+          "at_ms": 0,
+          "entire_source_frame": true,
+          "is_reference_sheet": true,
+          "observed_framing": "Vertical reference-sheet layout: large full-body hero at top; three full-body turnaround panels in the middle; four close-up detail crops at the bottom.",
+          "existing_visible_text": [
+            "HERO",
+            "FRONT",
+            "SIDE PROFILE",
+            "BACK",
+            "FACE",
+            "JACKET COLLAR",
+            "HANDS",
+            "BOOTS"
+          ]
+        },
+        {
+          "asset_id": "asset-2",
+          "at_ms": 8000,
+          "entire_source_frame": true,
+          "is_reference_sheet": true,
+          "observed_framing": "Reference-sheet layout with one large hero image across the top and six smaller labeled panels arranged in two rows below, separated by thin dividers.",
+          "existing_visible_text": [
+            "FRONT",
+            "SIDE PROFILE",
+            "REAR",
+            "HEAD CLOSE",
+            "WING MEMBRANE",
+            "CLAW AND FOOT",
+            "SCALE DETAIL"
+          ]
+        }
+      ],
+      "explanation": "Each actual frame anchor preserves the entire supplied image at its exact target time; reference-sheet cleanup does not apply to that frame."
+    },
+    {
+      "field": "content_scope",
+      "source": "typed_request_interpretation",
+      "value": {
+        "conflict_policy": "supplied_content_wins",
+        "requested": {
+          "speech": false,
+          "music": false,
+          "onscreen_text": false,
+          "magnitude": ""
+        },
+        "forbidden": {
+          "speech": false,
+          "music": false,
+          "onscreen_text": false,
+          "magnitude": ""
+        },
+        "allowed": {
+          "speech": false,
+          "music": true,
+          "onscreen_text": false,
+          "magnitude": "measured"
+        },
+        "dialogue": [],
+        "onscreen_text": [],
+        "reasoning": "The intent requests only a visual dissolve between two supplied endpoint images. It contains no spoken words, no request for added music, and no visible lettering. It also contains no free-text prohibitions on speech, music, or onscreen text.",
+        "calls": [
+          {
+            "stage": "scope",
+            "attempt": 1,
+            "model": "deepseek-flash",
+            "usage": {
+              "input_tokens": 1341,
+              "output_tokens": 194
+            },
+            "valid": true
+          }
+        ]
+      },
+      "explanation": "Caller requests and prohibitions are interpreted before code applies the explicit creativity level."
+    },
+    {
+      "field": "reference_licence",
+      "source": "typed_attribute_precedence",
+      "value": {
+        "reference_permissions": {
+          "action": true,
+          "framing": true,
+          "lighting": true,
+          "medium": true,
+          "palette": true,
+          "wardrobe": true
+        },
+        "medium_decision": {
+          "rendering_permission": {
+            "kind": "structured_style",
+            "disposition": "convert",
+            "operation_quote": "",
+            "target": "1990s cel animation",
+            "reasoning": "The caller explicitly supplied the authoritative structured Style field."
+          },
+          "disposition": "convert",
+          "operation_quote": "",
+          "target": "1990s cel animation",
+          "requested_style": "1990s cel animation",
+          "reference_medium": "live-action",
+          "requested_medium": "2d-animation",
+          "treatments": [],
+          "reasoning": "The host-owned rendering permission is authoritative and already authorizes conversion to the supplied structured target, so no departure analysis is re-authored. The first observed actual-frame reference is photorealistic cinematic live-action rendering; the requested style phrase is the complete named rendition \"1990s cel animation,\" which maps to the 2d-animation family. Both endpoint reference sheets remain anchored as actual frames, including their sheet packaging.",
+          "calls": [
+            {
+              "stage": "medium",
+              "attempt": 1,
+              "model": "deepseek-flash",
+              "usage": {
+                "input_tokens": 2226,
+                "output_tokens": 604
+              },
+              "valid": true
+            }
+          ]
+        },
+        "identity": [
+          {
+            "descriptor_source": "reference",
+            "kind": "person",
+            "label": "\u003cSubject 1\u003e",
+            "descriptor": "Rainy nighttime urban walkway or bridge with streetlights and wet pavement",
+            "retained_attributes": [
+              "Short dark hair, shaved at the sides and gathered at the back",
+              "Diagonal scar through the eyebrow on the viewer's left side in the face panel",
+              "Black high-collared jacket with zippers, straps and buckles",
+              "Dark shirt underneath",
+              "Dark cargo trousers",
+              "Black lace-up combat boots",
+              "Metal railings",
+              "Wet reflective ground",
+              "Dark building facades",
+              "Glowing streetlamps",
+              "Falling rain visible in the hero panel"
+            ],
+            "requested_attributes": [],
+            "request_quote": "",
+            "wardrobe_attributes": [
+              "Black high-collared jacket with zippers, straps and buckles",
+              "Dark shirt underneath",
+              "Dark cargo trousers",
+              "Black lace-up combat boots"
+            ]
+          },
+          {
+            "descriptor_source": "reference",
+            "kind": "animal",
+            "label": "\u003cSubject 2\u003e",
+            "descriptor": "Large black dragon with pale horns and large membranous wings",
+            "retained_attributes": [
+              "Black, heavily scaled body with a subtle blue-gray sheen",
+              "Multiple long, pale horns projecting from the head",
+              "Long snout and a glowing orange eye",
+              "Large dark membranous wings with finger-like struts",
+              "Four legs ending in prominent claws",
+              "Long tail and spiny ridge along the back"
+            ],
+            "requested_attributes": [],
+            "request_quote": "",
+            "wardrobe_attributes": []
+          }
+        ],
+        "governs": {
+          "action": "reference",
+          "framing": "reference",
+          "lighting": "reference",
+          "medium": "request",
+          "palette": "reference",
+          "wardrobe": "reference"
+        },
+        "reasons": {
+          "action": "Both supplied pictures are actual frame anchors whose pixels must be preserved, so their observed poses are licensed for those anchored instants. The brief asks only for a visual dissolve between the endpoints, not for any new behavior, performance or locomotion, so action stays with the references.",
+          "framing": "No shot scale, viewpoint, camera movement or composition is requested; aspect ratio alone does not set framing. The anchored sheets and their complete layouts therefore govern the frame.",
+          "lighting": "There is no instruction about the light, an illuminating source, its direction or visible quality. Rain, night and volcanic glow are scene content, not lighting directions, so the references' low-key practical lighting governs.",
+          "medium": "The host-owned medium decision pins the rendering permission and taxonomy; the explicit structured style phrase '1990s cel animation' is authoritative and converts the rendition to 2d-animation.",
+          "palette": "No grade, saturation or contrast treatment is requested; the dissolve is a transition, not a palette instruction. The references' black/charcoal/cool blue-gray with warm amber and orange tones govern.",
+          "wardrobe": "No clothing or accessory change is requested; the caller only asks for a dissolve between endpoints, so the observed outfits of the first figure (black high-collared jacket, dark shirt, cargo trousers, combat boots) are retained."
+        },
+        "transform_phrase": null,
+        "transform_target": "1990s cel animation",
+        "medium_transferred": true,
+        "style": {
+          "observed_phrase": "Photorealistic cinematic character concept/reference sheet with an urban noir mood, low-key cinematic lighting; cool blue-gray ambient tones in the hero panel with warm amber practical lights, rain streaks, and wet-surface reflections; soft directional light in the studio-style panels",
+          "phrase": "1990s cel animation",
+          "source": "request",
+          "reference_medium": "live-action",
+          "requested_medium": "2d-animation",
+          "discrepancy": true,
+          "note": "The request explicitly changes the rendering medium while retaining the referenced identity; this does not by itself select an attribute-transfer relationship."
+        },
+        "subjects": [
+          {
+            "label": "\u003cSubject 1\u003e",
+            "kind": "person",
+            "sources": [
+              "\u003cPicture 1\u003e"
+            ],
+            "descriptor": "Rainy nighttime urban walkway or bridge with streetlights and wet pavement",
+            "attributes": [
+              "Short dark hair, shaved at the sides and gathered at the back",
+              "Diagonal scar through the eyebrow on the viewer's left side in the face panel",
+              "Black high-collared jacket with zippers, straps and buckles",
+              "Dark shirt underneath",
+              "Dark cargo trousers",
+              "Black lace-up combat boots",
+              "Metal railings",
+              "Wet reflective ground",
+              "Dark building facades",
+              "Glowing streetlamps",
+              "Falling rain visible in the hero panel"
+            ],
+            "pose": [],
+            "pose_licensed": false,
+            "retention": "fully_preserved",
+            "retention_note": "",
+            "appears_in": [],
+            "taken_over_by": ""
+          },
+          {
+            "label": "\u003cSubject 2\u003e",
+            "kind": "animal",
+            "sources": [
+              "\u003cPicture 2\u003e"
+            ],
+            "descriptor": "Large black dragon with pale horns and large membranous wings",
+            "attributes": [
+              "Black, heavily scaled body with a subtle blue-gray sheen",
+              "Multiple long, pale horns projecting from the head",
+              "Long snout and a glowing orange eye",
+              "Large dark membranous wings with finger-like struts",
+              "Four legs ending in prominent claws",
+              "Long tail and spiny ridge along the back"
+            ],
+            "pose": [
+              "Hero view: crouched on four legs with wings spread and head lowered",
+              "Front panel: facing forward with wings spread",
+              "Side profile panel: standing with wings extended",
+              "Rear panel: viewed from behind with wings spread",
+              "Head close panel: head shown in profile"
+            ],
+            "pose_licensed": true,
+            "retention": "fully_preserved",
+            "retention_note": "",
+            "appears_in": [],
+            "taken_over_by": ""
+          }
+        ],
+        "calls": [
+          {
+            "stage": "medium",
+            "attempt": 1,
+            "model": "deepseek-flash",
+            "usage": {
+              "input_tokens": 2226,
+              "output_tokens": 604
+            },
+            "valid": true
+          },
+          {
+            "stage": "identity_requirements",
+            "attempt": 1,
+            "model": "deepseek-flash",
+            "usage": {
+              "input_tokens": 2834,
+              "output_tokens": 530
+            },
+            "valid": true
+          },
+          {
+            "stage": "licence",
+            "attempt": 1,
+            "model": "deepseek-flash",
+            "usage": {
+              "input_tokens": 4568,
+              "output_tokens": 508
+            },
+            "valid": true
+          }
+        ]
+      },
+      "explanation": "Each attribute follows explicit request or observed reference; poses and reference-sheet presentation are not subject identity."
+    },
+    {
+      "field": "shots.camera",
+      "source": "host_template",
+      "value": [
+        {
+          "subjects": [
+            "the complete first reference sheet with its hero panel, turnaround row and detail crops",
+            "the dark-clad scarred adult figure in black high-collared jacket and combat boots",
+            "the rainy nighttime walkway with railings, wet pavement and glowing streetlamps"
+          ],
+          "sync_sound": [
+            "soft steady rainfall",
+            "faint distant city hum"
+          ],
+          "start_ms": 0,
+          "purpose": "establish",
+          "framing": "wide",
+          "action": "The frame opens holding the complete first supplied picture exactly as delivered: a full-sheet character reference layout filling the entire frame. Across the top runs the wide rainy-night hero panel, its dark-clad, scarred adult figure with short dark hair and black high-collared utility jacket and boots standing on wet reflective pavement before metal railings and glowing streetlamps in falling rain. Below it, the full-body turnaround row shows the same figure in front, side-profile and back views on a dark neutral studio ground, and beneath that the row of close detail crops shows the face, the buckled jacket collar, the hands and the lace-up boots. Every panel border, divider and printed panel label remains exactly where the source placed it. Nothing within the sheet moves; only the rain streaks in the hero panel drift and the wet ground shimmers faintly.",
+          "what_changes": "Nothing changes yet; the first supplied sheet is held whole, with only the pictured rain and wet-surface shimmer alive.",
+          "camera": {
+            "type": "Static Shot",
+            "amplitude": "",
+            "speed": ""
+          }
+        },
+        {
+          "subjects": [
+            "the complete second reference sheet with its hero view and two rows of labeled panels",
+            "the massive black dragon with pale horns, membranous wings and clawed feet",
+            "the dark volcanic terrain with rocky mountains, smoke and glowing orange patches"
+          ],
+          "sync_sound": [
+            "low volcanic rumble",
+            "thin wind through smoke"
+          ],
+          "start_ms": 4000,
+          "purpose": "resolve",
+          "framing": "wide",
+          "action": "The held sheet dissolves slowly and evenly, its hero image, panel grid and labels softening and giving way as the second supplied picture rises through it, and the change completes exactly on the whole second sheet filling the frame. The arriving layout carries a wide atmospheric hero view across the top of a massive black dragon, heavily scaled and sheened blue-gray, crouched on four legs with dark membranous wings spread wide, its long pale-horned head lowered and its spined tail trailing across dark volcanic ground under drifting smoke and scattered glowing orange patches. Under that hero view sit the two rows of labeled panels — front, side profile and rear full-body views above head close, wing membrane, claw and foot, and scale detail crops — each divider and printed caption intact and unaltered. By the final instant not a trace of the first sheet remains and the second sheet is present in full, edge to edge.",
+          "what_changes": "The first sheet dissolves away and is fully replaced by the second supplied sheet, which is complete and exact at the closing instant.",
+          "camera": {
+            "type": "Static Shot",
+            "amplitude": "",
+            "speed": ""
+          }
+        }
+      ],
+      "explanation": "Canonical camera events are assembled from the typed structural plan after prose."
+    },
+    {
+      "field": "subjects.shot_ids",
+      "source": "typed_actual_use_projection",
+      "value": null,
+      "explanation": "High-level target appearances derive only from actual RichText and speaker-dialogue bindings. Removed figures carry their incoming replacement's transfer scope; unused source observations remain in Evidence."
+    },
+    {
+      "field": "creativity",
+      "source": "caller_or_default",
+      "value": {
+        "speech": false,
+        "music": true,
+        "onscreen_text": false,
+        "magnitude": "measured"
+      },
+      "explanation": "Scope reflects requested elements, explicit prohibitions, and the selected four-position creativity control."
+    }
+  ],
+  "calls": [
+    {
+      "asset_id": "asset-1",
+      "stage": "image_perception",
+      "attempt": 1,
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 2364,
+        "output_tokens": 4628
+      },
+      "valid": true
+    },
+    {
+      "asset_id": "asset-2",
+      "stage": "image_perception",
+      "attempt": 1,
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 2355,
+        "output_tokens": 4295
+      },
+      "valid": true
+    },
+    {
+      "stage": "scope",
+      "attempt": 1,
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 1341,
+        "output_tokens": 194
+      },
+      "valid": true
+    },
+    {
+      "stage": "medium",
+      "attempt": 1,
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 2226,
+        "output_tokens": 604
+      },
+      "valid": true
+    },
+    {
+      "stage": "identity_requirements",
+      "attempt": 1,
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 2834,
+        "output_tokens": 530
+      },
+      "valid": true
+    },
+    {
+      "stage": "licence",
+      "attempt": 1,
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 4568,
+        "output_tokens": 508
+      },
+      "valid": true
+    },
+    {
+      "stage": "structure",
+      "attempt": 1,
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 7551,
+        "output_tokens": 1706
+      },
+      "valid": true
+    },
+    {
+      "stage": "plan",
+      "attempt": 1,
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 12922,
+        "output_tokens": 3641
+      },
+      "valid": true
+    },
+    {
+      "stage": "semantic_review",
+      "attempt": 1,
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 5383,
+        "output_tokens": 6183
+      },
+      "valid": true
+    }
+  ]
+}

@@ -48,6 +48,9 @@ func TestOriginalFixedDialogueBypassesProse(t *testing.T) {
 					out = map[string]any{"findings": []CompositionFinding{}}
 				} else if m.Stage == "plan" {
 					writerCalls++
+					if !strings.Contains(m.System, "final host-owned performance schedule") || !strings.Contains(m.System, "schedule takes precedence") {
+						t.Fatal("writer did not receive fixed performance schedule precedence")
+					}
 					if strings.Contains(string(m.Input), tc.text) {
 						t.Fatal("fixed words exposed to prose instead of slots")
 					}
@@ -143,6 +146,23 @@ func TestOriginalCrossCutLineHostSegments(t *testing.T) {
 	}
 	if joined != line || count != 2 {
 		t.Fatal(joined, count)
+	}
+	slots, err := fixedDialogueSlots(result.Request, st)
+	if err != nil {
+		t.Fatal(err)
+	}
+	wire, err := json.Marshal(slots)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var metadata []struct {
+		LineID string `json:"line_id"`
+		ShotID string `json:"shot_id"`
+		From   bool   `json:"continues_from_previous"`
+		To     bool   `json:"continues_to_next"`
+	}
+	if json.Unmarshal(wire, &metadata) != nil || len(metadata) != 2 || metadata[0].LineID != metadata[1].LineID || metadata[0].ShotID == metadata[1].ShotID || metadata[0].From || !metadata[0].To || !metadata[1].From || metadata[1].To || strings.Contains(string(wire), "If it turns halfway") {
+		t.Fatal("writer lost typed continuity or received caller words", string(wire))
 	}
 	st.DialoguePlacements[1].Text = "so you change the pin and not the whole lock."
 	if _, err = fixedDialogueSlots(result.Request, st); err == nil {

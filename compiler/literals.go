@@ -20,8 +20,8 @@ type DialogueSlot struct {
 	Voiceover   bool                `json:"voiceover"`
 	Words       int                 `json:"words"`
 	Text        string              `json:"-"`
-	From        bool                `json:"-"`
-	To          bool                `json:"-"`
+	From        bool                `json:"continues_from_previous,omitempty"`
+	To          bool                `json:"continues_to_next,omitempty"`
 }
 
 func fixedDialogueSlots(req contextir.Request, st Structure) ([]DialogueSlot, error) {
@@ -270,3 +270,5 @@ func unexpandedWriterSlots(raw json.RawMessage, slots []DialogueSlot) error {
 	}
 	return nil
 }
+
+const fixedDialoguePerformanceInstruction = `The fixed_dialogue_slots are the final host-owned performance schedule. Each shot_id is where that utterance or continuation part is actually performed; line_id identifies the same utterance across parts and the continues_from_previous/continues_to_next flags identify its continuity. Align all acting, mouth movement and speech descriptions with that schedule. If an earlier structural action implied a different speech shot, the actual fixed slot schedule takes precedence: describe the other shot as a reaction or subsequent action, not another delivery. Do not describe a line starting, continuing or ending in a shot with no matching part; after a completed line, describe an unambiguous post-speech pause or reaction instead. These slots authorize newly performing the selected words. They do not authorize playing the supplied recording's signal. Keep the words hidden behind the supplied placeholders; never copy them into visual prose, claims or on-screen lettering.`

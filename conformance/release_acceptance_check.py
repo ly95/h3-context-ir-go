@@ -79,6 +79,49 @@ def dialogue_semantics(document):
             for line in document.get("dialogue", [])]
 
 
+def selected_source_attributes(result, source, accepted):
+    """Trace a selected property through pre-projection IDs to physical media.
+
+    Subject/picture labels are graph addresses here, not expected descriptions.
+    A property in a target descriptor alone cannot satisfy this assertion.
+    """
+    media = {row.get("label"): row.get("source", {}).get("asset_id")
+             for row in result.get("artifact", {}).get("manifest", {}).get("media", [])}
+    source_ids = set()
+    for row in result.get("licence", {}).get("subjects", []):
+        label = re.fullmatch(r"<Subject ([1-9][0-9]*)>", row.get("label", ""))
+        if label and any(media.get(address) == source for address in row.get("sources", [])):
+            source_ids.add("subject-" + label.group(1))
+    targets = {row["id"]: row for row in result.get("document", {}).get("subjects", [])}
+    for projection in result.get("structure", {}).get("subject_projections", []):
+        target = targets.get(projection.get("subject_id"), {})
+        selected = {attribute for row in projection.get("sources", [])
+                    if row.get("subject_id") in source_ids for attribute in row.get("attributes", [])}
+        final = set(target.get("attributes", []))
+        bound = any(row.get("source", {}).get("asset_id") == source
+                    for row in target.get("sources", []))
+        if bound and any(attribute in selected and attribute in final for attribute in accepted):
+            return True
+    return False
+
+
+def media_address_is_rendered(row, document, prompt):
+    # The published paired-frame protocol addresses its pictures without angle
+    # brackets in the instruction header. Those addresses are still bound media.
+    if document.get("mode") == "fl2va" and row.get("socket") in ("first_frame", "last_frame"):
+        last = len(document.get("shots", []))
+        duration = document.get("target", {}).get("duration_ms", 0)
+        expected = ("How the reference pictures align with the target video — "
+                    "Picture 1 (from Shot 1) aligns with the 0.00-second mark of the target video; "
+                    f"Picture 2 (from Shot {last}) aligns with the {duration/1000:.2f}-second mark of the target video.")
+        first = row["socket"] == "first_frame"
+        role, anchor, label = ("first_frame", 0, "<Picture 1>") if first else ("last_frame", duration, "<Picture 2>")
+        return (row.get("label") == label and prompt.startswith(expected + "\n")
+                and any(role in use.get("roles", []) and use.get("anchor_ms") == anchor
+                        for use in row.get("target_uses", [])))
+    return bool(row.get("label")) and row["label"] in prompt
+
+
 def inspect(result, semantic, previous=None):
     problems = []
     def require(ok, message):
@@ -138,7 +181,7 @@ def inspect(result, semantic, previous=None):
             "manifest media source set differs from final Document source set")
     for row in media:
         require(row.get("source", {}).get("asset_id") in assets, "manifest names an unattached asset")
-        require(bool(row.get("label")) and row["label"] in prompt, "manifest media label never occurs in prompt")
+        require(media_address_is_rendered(row, document, prompt), "manifest media address is absent or incorrectly rendered")
         for use in row.get("target_uses", []):
             for target in use.get("shots", []):
                 require(target.get("id") in shot_ids, "manifest use names a missing shot")
@@ -250,6 +293,13 @@ def inspect(result, semantic, previous=None):
     attributes = {attribute for s in subjects.values() for attribute in s.get("attributes", [])}
     for attribute in semantic.get("required_subject_attributes", []):
         require(attribute in attributes, "required accepted target property absent: " + attribute)
+    for alternatives in semantic.get("required_subject_attribute_alternatives", []):
+        require(bool(attributes & set(alternatives)),
+                "required accepted target property absent: " + " or ".join(alternatives))
+    for source, alternatives in semantic.get("required_source_attributes", {}).items():
+        for accepted in alternatives:
+            require(selected_source_attributes(result, source, accepted),
+                    "selected target property missing from exact source " + source + ": " + " or ".join(accepted))
     if semantic.get("no_subject_pose"):
         require(all(not s.get("pose") and not s.get("pose_licensed") for s in subjects.values() if s.get("sources")),
                 "content reference was promoted into source-pose lock")
@@ -399,9 +449,36 @@ def self_test():
     assert dialogue_semantics(renamed) == dialogue_semantics(r["document"])
     renamed["dialogue"][0]["text"] = "changed words"
     assert dialogue_semantics(renamed) != dialogue_semantics(r["document"])
+    release = Path(__file__).parent / "reports"
+    positive_path = release / "release-live-round2/single-target-model-merge/op-00-compile/result.json"
+    negative_path = release / "release-live-round1/single-target-model-merge/op-00-compile/result.json"
+    positive = json.loads(positive_path.read_text())
+    accepted = ["wheels", "wheels from the second picture"]
+    assert selected_source_attributes(positive, "asset-2", accepted)
+    assert not selected_source_attributes(positive, "asset-1", accepted), "wheel source swapped"
+    old_failure = json.loads(negative_path.read_text())
+    assert not selected_source_attributes(old_failure, "asset-2", accepted), "first-wave missing wheels accepted"
+    for name, value in [("descriptor only", []), ("unselected body", ["carbon fibre body"])]:
+        wrong = copy.deepcopy(positive)
+        wrong["structure"]["subject_projections"][0]["sources"][1]["attributes"] = value
+        assert not selected_source_attributes(wrong, "asset-2", accepted), name + " satisfied source property"
+    long_form = copy.deepcopy(positive)
+    long_form["structure"]["subject_projections"][0]["sources"][1]["attributes"] = [accepted[1]]
+    long_form["document"]["subjects"][0]["attributes"][1] = accepted[1]
+    assert selected_source_attributes(long_form, "asset-2", accepted)
+    paired = json.loads((release / "release-live-round2/paired-first-last-style-transform/op-00-compile/result.json").read_text())
+    for row in paired["artifact"]["manifest"]["media"]:
+        assert media_address_is_rendered(row, paired["document"], paired["artifact"]["prompt"])
+        wrong_header = paired["artifact"]["prompt"].replace("8.00-second mark", "7.00-second mark", 1)
+        assert not media_address_is_rendered(row, paired["document"], wrong_header)
+        wrong_label = copy.deepcopy(row)
+        wrong_label["label"] = "<Picture 9>"
+        assert not media_address_is_rendered(wrong_label, paired["document"], paired["artifact"]["prompt"])
     print(json.dumps({"self_test": "passed", "positive_publication": 1, "negative_mutations": 5,
                       "independent_sources_positive_and_negative": True,
-                      "semantic_dialogue_id_change_and_word_drift": True}))
+                      "semantic_dialogue_id_change_and_word_drift": True,
+                      "source_bound_equivalent_wheels_positive_and_firstwave_negative": True,
+                      "paired_frame_official_addresses_and_header_drift": True}))
 
 
 if __name__ == "__main__":

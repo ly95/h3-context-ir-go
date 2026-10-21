@@ -1,0 +1,177 @@
+{
+  "version": "contextir-h3/artifact-v1",
+  "compiler_version": "contextir-h3/v1.2",
+  "format_version": "minimax-h3/prompt-v1",
+  "mode": "ref2va",
+  "target": {
+    "duration_ms": 5000,
+    "frame_count": 120,
+    "aspect_ratio": "16:9",
+    "fps": {
+      "numerator": 24,
+      "denominator": 1
+    },
+    "width": 1344,
+    "height": 768
+  },
+  "profile": {
+    "name": "h3-published-format-v1",
+    "format": "minimax-h3/prompt-v1",
+    "fps": {
+      "numerator": 24,
+      "denominator": 1
+    },
+    "modes": [
+      "t2va",
+      "i2va",
+      "l2va",
+      "fl2va",
+      "ref2va"
+    ],
+    "limits": {
+      "pictures": 0,
+      "videos": 0,
+      "video_audio": 0,
+      "standalone_audio": 0
+    },
+    "supports_reference_frame_anchors": true,
+    "supports_source_intervals": true
+  },
+  "prompt": "subject_definitions:\n\u003cSubject 1\u003e is the driver in red; a red jacket. Its a subject placed into the edited scene is referenced from \u003cPicture 1\u003e\n\u003cSubject 2\u003e is the driver; a grey overall. Its source video for the target video edit is referenced from \u003cVideo 1\u003e\n\u003cSubject 3\u003e is the black sports car; carbon fibre body. Its source video for the target video edit is referenced from \u003cVideo 1\u003e\n\u003cPicture 1\u003e is The subject identity to add to the edited scene. Its role is a subject placed into the edited scene. \u003cPicture 1\u003e is placed into \u003cVideo 1\u003e; the picture contributes its subject only, never its background, pose, or photographic lighting.\n\u003cVideo 1\u003e is The source video being edited. Its role is source video for the target video edit.\n\nsummary:\n[video editing + reference generation] The target video is an edited version of \u003cVideo 1\u003e. The unlit end of a concrete road tunnel, where overhead sodium strip lights run in receding lines toward darkness. \u003cSubject 3\u003e sits in shadow, its carbon fibre body picking up only faint sodium reflections while \u003cSubject 2\u003e crosses left to right in front of it, grey overalls catching the edge of the light, and clears the frame. The idle is low and even; soft footsteps and the engine's echo carry through the concrete. The \u003cSubject 3\u003e pulls forward out of the dark and rolls into the overhead sodium strip lights, its carbon fibre body brightening as it enters the lit roadway. Behind the wheel, \u003cSubject 1\u003e is visible in a red jacket, the red fabric catching the sodium light as the engine note rises and tyre hiss spreads across the concrete.\n\nretention_analysis:\n\u003cSubject 1\u003e (appears in [Shot 2]): fully_preserved - Preserve this canonical target identity and its listed stable attributes.\n\u003cSubject 2\u003e (appears in [Shot 1]): fully_preserved - Preserve this canonical target identity and its listed stable attributes.\n\u003cSubject 3\u003e (appears in [Shot 1], [Shot 2]): fully_preserved - Preserve this canonical target identity and its listed stable attributes.\n\u003cPicture 1\u003e ([Shot 1], [Shot 2]; a subject placed into the edited scene): fully_preserved - \u003cPicture 1\u003e is placed into the scene. Preserve the incoming identity, without its picture background, pose or photographic lighting; do not remove the source actors.\n\u003cVideo 1\u003e ([Shot 1], [Shot 2]; source video for the target video edit): fully_preserved - The original camera movement, timing and setting are maintained while \u003cPicture 1\u003e is placed into the scene. Preserve the source except for the caller's explicitly authorised edit; do not introduce unrelated replacements.\n\ndetailed_description:\nThe target video is in live-action style, cinematic, overhead sodium strip lights.\n[Shot 1] The unlit end of a concrete road tunnel, where overhead sodium strip lights run in receding lines toward darkness. \u003cSubject 3\u003e sits in shadow, its carbon fibre body picking up only faint sodium reflections while \u003cSubject 2\u003e crosses left to right in front of it, grey overalls catching the edge of the light, and clears the frame. The idle is low and even; soft footsteps and the engine's echo carry through the concrete. At 00:00.000, \u003cSubject 2\u003e crosses left to right in front of \u003cSubject 3\u003e and clears the frame. At 00:00.000, A low engine idle echoes through the tunnel. At 00:00.500, Soft footsteps sound on the concrete. The camera holds a static shot. Throughout the target video: Do not add spoken or sung lines.\n[Shot 2] At 00:02.500, the shot cuts to The \u003cSubject 3\u003e pulls forward out of the dark and rolls into the overhead sodium strip lights, its carbon fibre body brightening as it enters the lit roadway. Behind the wheel, \u003cSubject 1\u003e is visible in a red jacket, the red fabric catching the sodium light as the engine note rises and tyre hiss spreads across the concrete. At 00:02.500, \u003cSubject 3\u003e pulls forward out of the dark into the sodium strip lights, with \u003cSubject 1\u003e visible at the wheel. At 00:02.500, The engine note rises as the car accelerates. At 00:02.500, A low sustained cinematic score begins under the tunnel ambience. At 00:03.200, Tyre hiss spreads over the concrete. The camera pushes in with small amplitude at slow speed.\n\noverall_soundscape:\nLow engine idle echoing through the tunnel, soft footsteps on concrete, a rising engine note and tyre hiss.\n\nnon_diegetic_music:\nA restrained low cinematic score beneath the tunnel ambience.\n",
+  "manifest": {
+    "media": [
+      {
+        "preparation": {
+          "sizing": "match",
+          "width": 1024,
+          "height": 576
+        },
+        "source_metadata": {
+          "width": 1024,
+          "height": 576,
+          "fps": {
+            "numerator": 0,
+            "denominator": 0
+          }
+        },
+        "label": "\u003cPicture 1\u003e",
+        "kind": "picture",
+        "source": {
+          "asset_id": "asset-1",
+          "track": "visual"
+        },
+        "socket": "ref_image_1",
+        "target_uses": [
+          {
+            "reference_id": "reference-asset-1-1",
+            "roles": [
+              "placed_subject"
+            ],
+            "retention": "fully_preserved",
+            "shots": [
+              {
+                "id": "shot-1",
+                "index": 1,
+                "interval": {
+                  "start_ms": 0,
+                  "end_ms": 2500
+                }
+              },
+              {
+                "id": "shot-2",
+                "index": 2,
+                "interval": {
+                  "start_ms": 2500,
+                  "end_ms": 5000
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "preparation": {
+          "width": 1344,
+          "height": 768,
+          "frames": 120
+        },
+        "source_metadata": {
+          "duration_ms": 5000,
+          "fps": {
+            "numerator": 0,
+            "denominator": 0
+          }
+        },
+        "label": "\u003cVideo 1\u003e",
+        "kind": "video",
+        "source": {
+          "asset_id": "asset-2",
+          "track": "visual"
+        },
+        "socket": "ref_video_1",
+        "target_uses": [
+          {
+            "reference_id": "reference-asset-2-2",
+            "roles": [
+              "edit_source"
+            ],
+            "retention": "fully_preserved",
+            "shots": [
+              {
+                "id": "shot-1",
+                "index": 1,
+                "interval": {
+                  "start_ms": 0,
+                  "end_ms": 2500
+                }
+              },
+              {
+                "id": "shot-2",
+                "index": 2,
+                "interval": {
+                  "start_ms": 2500,
+                  "end_ms": 5000
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "subjects": [
+      {
+        "id": "subject-1",
+        "label": "\u003cSubject 1\u003e"
+      },
+      {
+        "id": "subject-2",
+        "label": "\u003cSubject 2\u003e"
+      },
+      {
+        "id": "subject-3",
+        "label": "\u003cSubject 3\u003e"
+      }
+    ],
+    "references": [
+      {
+        "id": "reference-asset-1-1",
+        "label": "\u003cPicture 1\u003e"
+      },
+      {
+        "id": "reference-asset-2-2",
+        "label": "\u003cVideo 1\u003e"
+      }
+    ],
+    "speakers": []
+  },
+  "frames": 120,
+  "effective_duration_seconds": {
+    "numerator": 5,
+    "denominator": 1
+  },
+  "document_sha256": "6ab293ef11b334ea2b00b37cdf2a6ee97c9ce39cb681678de2639b34a4bd7186",
+  "profile_sha256": "ce4364d3f1242f5aeb2216db44195fb3897f4828dd9e145c4c16c64315786ab6",
+  "prompt_sha256": "1e10c5c015a29efd24331788a1006850989c6dec6f5a44c621f1060c3f710f45",
+  "manifest_sha256": "05b0bbeeffb758882b245a850f9e53057ba1b2cab0d0805c6597881460a1a9f9",
+  "sha256": "d8da6e1080b2f94c5db7dda8faff6d5dffe90ed8bd7951e244d3771379784756"
+}

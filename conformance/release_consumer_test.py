@@ -96,6 +96,23 @@ func TestFailedAttemptsAreReproducedWithUsage(t *testing.T) {
  if !errors.As(err,&typed)||typed.Code!=contextir.CodeModelOutput||typed.Stage!="deepseek.response"||response.Usage.InputTokens!=3||model.Position!=1||model.Mismatch!=nil {t.Fatal("original failed attempt disappeared",err)}
 }
 
+func TestExplicitMediaMayBeBesideFixtureButRecordingMembersCannotEscape(t *testing.T) {
+ root:=t.TempDir();fixture:=filepath.Join(root,"conformance");media:=filepath.Join(root,"third_party","image.png")
+ if err:=os.Mkdir(fixture,0700);err!=nil {t.Fatal(err)}
+ if err:=os.Mkdir(filepath.Dir(media),0700);err!=nil {t.Fatal(err)}
+ if err:=os.WriteFile(media,[]byte("pinned image fixture"),0600);err!=nil {t.Fatal(err)}
+ path,err:=explicitMediaFile(fixture,"../third_party/image.png")
+ if err!=nil||path!=media {t.Fatal("explicit producer media path was rejected",path,err)}
+ hash:=digest([]byte("pinned image fixture"))
+ image,err:=resolveFixtureImage(fixture,"../third_party/image.png",hash)
+ if err!=nil||image.Detail!="original"||image.URI=="" {t.Fatal("original pinned media bytes did not resolve",err)}
+ if _,err:=resolveFixtureImage(fixture,"../third_party/image.png",digest([]byte("other content")));err==nil {t.Fatal("wrong pinned fixture hash was accepted")}
+ if err:=os.WriteFile(filepath.Join(filepath.Dir(media),"wrong.png"),[]byte("other content"),0600);err!=nil {t.Fatal(err)}
+ if _,err:=resolveFixtureImage(fixture,"../third_party/wrong.png",hash);err==nil {t.Fatal("wrong source path reused original image hash")}
+ if _,err:=resolveFixtureImage(fixture,"../third_party/missing.png",hash);err==nil {t.Fatal("missing explicit media source was accepted")}
+ if _,err:=relativeFile(fixture,"../third_party/image.png");err==nil {t.Fatal("recording member escaped its immutable root")}
+}
+
 func TestRealDiskPersistenceRecompilesTheSameArtifact(t *testing.T) {
  document:=contextir.Document{Version:contextir.Version,Mode:contextir.ModeText,Target:contextir.Target{Duration:8000,AspectRatio:"16:9",FPS:contextir.Rational{Numerator:24,Denominator:1}},Style:"live-action photographic",Shots:[]contextir.Shot{{ID:"opening",Start:0,End:8000,Description:contextir.Text("A ceramic cup rests on a table.")}},Soundscape:"Rain taps against the window.",Music:"N/A"}
  artifact,err:=h3.Compile(document,h3.OfficialProfile());if err!=nil {t.Fatal(err)}

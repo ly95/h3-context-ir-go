@@ -166,6 +166,34 @@ func readRelative(root, relative string, value any) error {
 	return readJSON(path, value)
 }
 
+// A caller-selected media fixture may legitimately live beside its input
+// directory (for example ../third_party/...). This is distinct from a recording
+// member, which must stay inside the recording root. Its exact bytes are still
+// pinned by the explicit fixture SHA before any replayed image call is made.
+func explicitMediaFile(root, relative string) (string, error) {
+	if relative == "" || filepath.IsAbs(relative) {
+		return "", errors.New("media requires an explicit relative fixture path")
+	}
+	path := filepath.Clean(filepath.Join(root, relative))
+	info, err := os.Stat(path)
+	if err != nil || !info.Mode().IsRegular() {
+		return "", errors.New("explicit media fixture is unavailable or nonregular")
+	}
+	return path, nil
+}
+
+func resolveFixtureImage(root, relative, expectedSHA256 string) (deepseek.Image, error) {
+	path, err := explicitMediaFile(root, relative)
+	if err != nil {
+		return deepseek.Image{}, err
+	}
+	data, err := os.ReadFile(path)
+	if err != nil || len(data) > 32<<20 || digest(data) != expectedSHA256 {
+		return deepseek.Image{}, errors.New("local image fixture hash differs or exceeds the producer size limit")
+	}
+	return deepseek.Image{URI: "data:" + http.DetectContentType(data) + ";base64," + base64.StdEncoding.EncodeToString(data), Detail: "original"}, nil
+}
+
 func equalJSON(a, b []byte) bool {
 	var left, right any
 	ld, rd := json.NewDecoder(bytes.NewReader(a)), json.NewDecoder(bytes.NewReader(b))
@@ -365,15 +393,7 @@ func runCase(input fixtureCase, recorded recordedCase, root, fixtureRoot, output
 		if !ok {
 			return deepseek.Image{}, errors.New("no explicit local image fixture exists for asset")
 		}
-		path, err := relativeFile(fixtureRoot, media.Path)
-		if err != nil {
-			return deepseek.Image{}, err
-		}
-		data, err := os.ReadFile(path)
-		if err != nil || digest(data) != media.SHA256 {
-			return deepseek.Image{}, errors.New("local image fixture hash differs")
-		}
-		return deepseek.Image{URI: "data:" + http.DetectContentType(data) + ";base64," + base64.StdEncoding.EncodeToString(data), Detail: "original"}, nil
+		return resolveFixtureImage(fixtureRoot, media.Path, media.SHA256)
 	}, deepseek.PerceptionOptions{IncludeCard: true, MaxRetries: 1})
 	if err != nil {
 		return nil, err

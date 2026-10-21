@@ -1,0 +1,989 @@
+{
+  "usage_complete": true,
+  "clarification_policy": "continue_with_recorded_choice",
+  "mode_decision": {
+    "clarification_policy": "continue_with_recorded_choice",
+    "confidence_kind": "routing_policy",
+    "aspect_mismatch": false,
+    "needs_clarification": false,
+    "mode": "t2va",
+    "confidence": 1,
+    "rule": "12.2#3",
+    "signals": [
+      "Mode follows explicit structured choices and media socket requirements."
+    ]
+  },
+  "scope_decision": {
+    "conflict_policy": "supplied_content_wins",
+    "requested": {
+      "speech": false,
+      "music": false,
+      "onscreen_text": false,
+      "magnitude": ""
+    },
+    "forbidden": {
+      "speech": false,
+      "music": false,
+      "onscreen_text": false,
+      "magnitude": ""
+    },
+    "allowed": {
+      "speech": false,
+      "music": true,
+      "onscreen_text": false,
+      "magnitude": "measured"
+    },
+    "dialogue": [],
+    "onscreen_text": [],
+    "reasoning": "The intent describes a lighthouse keeper climbing stairs and lighting a lamp during a storm. It does not request spoken/sung words, added music, or visible lettering, and it contains no free-text prohibitions for those classes.",
+    "calls": [
+      {
+        "stage": "scope",
+        "attempt": 1,
+        "model": "deepseek-flash",
+        "usage": {
+          "input_tokens": 956,
+          "output_tokens": 199
+        },
+        "valid": true
+      }
+    ]
+  },
+  "licence": {
+    "medium_decision": {
+      "rendering_permission": {
+        "kind": "no_reference",
+        "disposition": "no_reference",
+        "operation_quote": "",
+        "target": "",
+        "reasoning": "No supplied reference has authority over the rendering medium."
+      },
+      "disposition": "no_reference",
+      "operation_quote": "",
+      "target": "",
+      "requested_style": "",
+      "reference_medium": "",
+      "requested_medium": "",
+      "treatments": [],
+      "reasoning": "There is no visual reference and no explicit rendering medium or style phrase. The intent only describes a scene and action, which does not specify a rendering process or compatible treatments.",
+      "calls": [
+        {
+          "stage": "medium",
+          "attempt": 1,
+          "model": "deepseek-flash",
+          "usage": {
+            "input_tokens": 1103,
+            "output_tokens": 197
+          },
+          "valid": true
+        }
+      ]
+    },
+    "identity": [],
+    "governs": {
+      "action": "request",
+      "framing": "request",
+      "lighting": "request",
+      "medium": "request",
+      "palette": "request",
+      "wardrobe": "request"
+    },
+    "reasons": {
+      "action": "The brief explicitly asks for a performance: the keeper climbs the tower stairs and lights the lamp, so the action is set by the request.",
+      "framing": "No reference image or camera composition exists, so shot scale, viewpoint and camera movement are governed by the request alone.",
+      "lighting": "The storm is a weather condition and the lamp is a story object, neither of which authorizes reference lighting; with no reference, lighting falls to the request.",
+      "medium": "No visual reference and no explicit style phrase exist, so the rendering medium is request-governed per the medium decision.",
+      "palette": "No reference grade or hue is present, so the scene's color and tonal treatment belong to the request.",
+      "wardrobe": "No reference supplies observed clothing and no wardrobe is described, so any keeper attire is left to the request."
+    },
+    "transform_phrase": null,
+    "transform_target": "",
+    "medium_transferred": false,
+    "style": {
+      "observed_phrase": "",
+      "phrase": "Live-action, cinematic",
+      "source": "default",
+      "reference_medium": "",
+      "requested_medium": "",
+      "discrepancy": false,
+      "note": ""
+    },
+    "calls": [
+      {
+        "stage": "medium",
+        "attempt": 1,
+        "model": "deepseek-flash",
+        "usage": {
+          "input_tokens": 1103,
+          "output_tokens": 197
+        },
+        "valid": true
+      },
+      {
+        "stage": "licence",
+        "attempt": 1,
+        "model": "deepseek-flash",
+        "usage": {
+          "input_tokens": 1226,
+          "output_tokens": 287
+        },
+        "valid": true
+      }
+    ]
+  },
+  "budget": {
+    "prompt_tokens": 1198,
+    "target_video_rows": 102816,
+    "target_audio_rows": 1200,
+    "known_reference_rows": 0,
+    "in_trained_band": true
+  },
+  "findings": [
+    {
+      "rule": "P3-too-long",
+      "severity": "WARN",
+      "msg": "main description is 788 words; spec guidance 350-500"
+    },
+    {
+      "rule": "A2-sound-duplicated",
+      "severity": "WARN",
+      "msg": "overall_soundscape repeats content already in the description rather than a separate layer"
+    }
+  ],
+  "status": "compiled",
+  "version": "contextir/compiler/v1",
+  "brief": {
+    "effort": "standard",
+    "seconds_explicit": true,
+    "aspect_explicit": true,
+    "intent": "a lighthouse keeper climbs the tower stairs in a storm and lights the lamp",
+    "seconds": 15,
+    "aspect": "16:9",
+    "creativity": "balanced"
+  },
+  "request": {
+    "instruction": "a lighthouse keeper climbs the tower stairs in a storm and lights the lamp",
+    "mode": "t2va",
+    "target": {
+      "duration_ms": 15000,
+      "frame_count": 360,
+      "aspect_ratio": "16:9",
+      "fps": {
+        "numerator": 24,
+        "denominator": 1
+      },
+      "width": 1344,
+      "height": 768
+    },
+    "constraints": [
+      {
+        "id": "compiler-no-dialogue",
+        "kind": "no_dialogue",
+        "text": "Do not add spoken or sung lines."
+      }
+    ],
+    "allow_creative_additions": true,
+    "allow_generated_dialogue": false,
+    "pinned_shots": [
+      {
+        "id": "shot-1",
+        "start_ms": 0,
+        "end_ms": 4000
+      },
+      {
+        "id": "shot-2",
+        "start_ms": 4000,
+        "end_ms": 8000
+      },
+      {
+        "id": "shot-3",
+        "start_ms": 8000,
+        "end_ms": 11500
+      },
+      {
+        "id": "shot-4",
+        "start_ms": 11500,
+        "end_ms": 15000
+      }
+    ],
+    "addition_scope": {
+      "dialogue": false,
+      "music": true,
+      "visible_text": false
+    }
+  },
+  "structure": {
+    "replacement_targets": {},
+    "style": "Live-action, cinematic",
+    "mode": "t2va",
+    "assets": [],
+    "shots": [
+      {
+        "subjects": [
+          "the stone lighthouse on a rocky headland",
+          "the storm-driven sea and breaking waves",
+          "the dark sky with lightning"
+        ],
+        "sync_sound": [
+          "howling wind",
+          "rain hammering stone",
+          "surf crashing against the rocks",
+          "a distant low thunder roll"
+        ],
+        "start_ms": 0,
+        "purpose": "establish",
+        "framing": "extreme wide",
+        "action": "Rain lashes a tall stone lighthouse standing on a black rocky headland; huge waves burst white against the base and a fork of lightning flares behind the tower, briefly throwing the whole structure into silhouette before the dark closes back in.",
+        "what_changes": "The shot opens on the storm-battered lighthouse and pushes gradually closer as lightning flares and the waves surge.",
+        "camera": {
+          "type": "Push In",
+          "amplitude": "small",
+          "speed": "slow"
+        }
+      },
+      {
+        "subjects": [
+          "the lighthouse keeper in a heavy coat and cap",
+          "the swinging lantern in his hand",
+          "the spiral stone staircase and iron rail"
+        ],
+        "sync_sound": [
+          "wind buffeting the tower",
+          "rain against the shutters",
+          "boots on stone steps",
+          "the creak of the lantern handle",
+          "the keeper's heavy breathing"
+        ],
+        "start_ms": 4000,
+        "purpose": "develop",
+        "framing": "medium wide",
+        "action": "Inside the tower, a soaked lighthouse keeper in a heavy coat and cap climbs the tight spiral staircase, one hand on the cold iron rail and the other holding a swaying lantern; the flame gutters with each gust that rattles the shuttered windows, and his boots strike the worn stone steps in a steady, laboring rhythm as he works his way upward.",
+        "what_changes": "The keeper ascends the spiral staircase, the lantern swinging and the storm audible against the shutters.",
+        "camera": {
+          "type": "Tracking Shot",
+          "amplitude": "small",
+          "speed": "slow"
+        }
+      },
+      {
+        "subjects": [
+          "the lighthouse keeper at the lamp mechanism",
+          "the brass clockwork and Fresnel lens",
+          "the rising lamp flame"
+        ],
+        "sync_sound": [
+          "the clack and whirr of the clockwork crank",
+          "the hiss of the wick catching",
+          "glass and brass rattling in the wind",
+          "the muffled roar of the storm outside"
+        ],
+        "start_ms": 8000,
+        "purpose": "reveal",
+        "framing": "medium close",
+        "action": "In the lamp room the keeper sets the lantern down, grips the brass clockwork mechanism with both hands and turns the crank until it catches; he lifts the glass chimney, shields the wick from the draft with his palm, and the flame takes with a soft roar, swelling bright and throwing his face into warm relief as the great Fresnel lens begins to turn.",
+        "what_changes": "The lamp ignites and brightens, the lens begins rotating, and the keeper's face is lit warm against the cold blue storm light.",
+        "camera": {
+          "type": "Push In",
+          "amplitude": "small",
+          "speed": "slow"
+        }
+      },
+      {
+        "subjects": [
+          "the rotating lighthouse beam",
+          "the silhouetted keeper in the lamp room",
+          "the storm-covered sea below"
+        ],
+        "sync_sound": [
+          "the low moan of wind around the tower",
+          "rain on the glass",
+          "surf pounding the rocks",
+          "a faint mechanical hum from the turning lens"
+        ],
+        "start_ms": 11500,
+        "purpose": "resolve",
+        "framing": "wide",
+        "action": "The camera draws back through the lamp-room glass to the outside of the tower as the beam sweeps out in a long white arc across the heaving sea, cutting through the rain; the keeper stands small and silhouetted behind the turning lens, one hand still on the mechanism.",
+        "what_changes": "The beam swings out across the sea and the view widens to reveal the illuminated lighthouse holding its light against the storm.",
+        "camera": {
+          "type": "Pull Out",
+          "amplitude": "large",
+          "speed": "slow"
+        }
+      }
+    ],
+    "dialogue": [],
+    "onscreen_text": [],
+    "requested": {
+      "speech": false,
+      "music": false,
+      "onscreen_text": false,
+      "magnitude": ""
+    },
+    "forbidden": {
+      "speech": false,
+      "music": false,
+      "onscreen_text": false,
+      "magnitude": ""
+    },
+    "reasoning": "No pictures, audio, or frame anchors are supplied, so this is a pure text-to-video build with no image responsibilities and no replacement targets. The request asks only for a lighthouse keeper climbing the tower stairs in a storm and lighting the lamp; it does not request spoken or sung words, visible lettering, or score, so those scope slots remain false and no creative additions of speech or text are made. Balanced creativity permits shaping and ambience, so the fifteen seconds are broken into four shots that carry the climb and the lighting in a clear progression: the storm-bound tower, the ascent, the lamp catching, and the beam sweeping out. Camera modifiers are all explicit within the closed vocabulary."
+  },
+  "scope": {
+    "speech": false,
+    "music": true,
+    "onscreen_text": false,
+    "magnitude": "measured"
+  },
+  "document": {
+    "version": "contextir/v1",
+    "mode": "t2va",
+    "target": {
+      "duration_ms": 15000,
+      "frame_count": 360,
+      "aspect_ratio": "16:9",
+      "fps": {
+        "numerator": 24,
+        "denominator": 1
+      },
+      "width": 1344,
+      "height": 768
+    },
+    "style": "Live-action, cinematic",
+    "shots": [
+      {
+        "id": "shot-1",
+        "start_ms": 0,
+        "end_ms": 4000,
+        "description": [
+          {
+            "text": "Rain lashes a tall stone lighthouse standing on a black rocky headland. Huge waves burst white against its base, and a fork of lightning flares behind the tower, briefly throwing the whole structure into silhouette before the dark closes back in. In the extreme wide view, the tower holds its ground while the storm-driven sea churns around the rocks and the sky presses low and heavy. Salt spray streaks the wet stone, and the lantern room glass is dark above the rocks."
+          }
+        ],
+        "events": [
+          {
+            "kind": "sound",
+            "at_ms": 0,
+            "description": [
+              {
+                "text": "Howling wind, rain hammering stone, surf crashing against the rocks, and a distant low thunder roll."
+              }
+            ]
+          },
+          {
+            "kind": "visual",
+            "at_ms": 0,
+            "description": [
+              {
+                "text": "A tall stone lighthouse stands on a black rocky headland as rain lashes the stone and huge waves burst white against its base."
+              }
+            ]
+          },
+          {
+            "kind": "action",
+            "at_ms": 1600,
+            "description": [
+              {
+                "text": "Lightning flares behind the tower and throws the structure into silhouette; the waves surge and break again."
+              }
+            ]
+          },
+          {
+            "kind": "action",
+            "at_ms": 2800,
+            "description": [
+              {
+                "text": "Salt spray streaks the wet stone and the dark closes back around the tower."
+              }
+            ]
+          },
+          {
+            "kind": "camera",
+            "description": [
+              {
+                "text": "The camera pushes in with small amplitude at slow speed."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "shot-2",
+        "start_ms": 4000,
+        "end_ms": 8000,
+        "description": [
+          {
+            "text": "Inside the tower, a soaked lighthouse keeper in a heavy coat and cap climbs a tight spiral staircase. One hand grips the cold iron rail while the other holds a swaying lantern; the flame gutters with each gust that rattles the shuttered windows. His boots strike the worn stone steps in a steady, laboring rhythm as he works upward through the drafty tower. The stairwell is narrow, its curved wall slick with damp, and cold blue storm light leaks through the shutters in thin bars."
+          }
+        ],
+        "events": [
+          {
+            "kind": "visual",
+            "at_ms": 4000,
+            "description": [
+              {
+                "text": "The soaked keeper climbs the tight spiral staircase, one hand on the iron rail and the other holding a swaying lantern."
+              }
+            ]
+          },
+          {
+            "kind": "sound",
+            "at_ms": 4000,
+            "description": [
+              {
+                "text": "Wind buffets the tower, rain ticks against the shutters, boots sound on stone steps, the lantern handle creaks, and the keeper breathes heavily."
+              }
+            ]
+          },
+          {
+            "kind": "action",
+            "at_ms": 5600,
+            "description": [
+              {
+                "text": "The lantern flame gutters as gusts rattle the shutters; cold blue light leaks through in thin bars."
+              }
+            ]
+          },
+          {
+            "kind": "action",
+            "at_ms": 7000,
+            "description": [
+              {
+                "text": "His boots strike the worn stone steps in a steady, laboring rhythm as he works upward."
+              }
+            ]
+          },
+          {
+            "kind": "camera",
+            "description": [
+              {
+                "text": "The camera tracks with the subject with small amplitude at slow speed."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "shot-3",
+        "start_ms": 8000,
+        "end_ms": 11500,
+        "description": [
+          {
+            "text": "In the lamp room, the keeper sets the lantern down and grips the brass clockwork mechanism with both hands, turning the crank until it catches. He lifts the glass chimney and shields the wick from the draft with his palm. The flame takes with a soft roar, swelling bright and throwing his face into warm relief as the great Fresnel lens begins to turn. Brass fittings gleam in the first warm light, and the lens prisms flash as they start to rotate."
+          }
+        ],
+        "events": [
+          {
+            "kind": "visual",
+            "at_ms": 8000,
+            "description": [
+              {
+                "text": "In the lamp room the keeper sets the lantern down and grips the brass clockwork with both hands, turning the crank until it catches."
+              }
+            ]
+          },
+          {
+            "kind": "sound",
+            "at_ms": 8000,
+            "description": [
+              {
+                "text": "The clockwork clacks and whirrs, glass and brass rattle in the wind, and the muffled roar of the storm presses in."
+              }
+            ]
+          },
+          {
+            "kind": "action",
+            "at_ms": 9200,
+            "description": [
+              {
+                "text": "He lifts the glass chimney and shields the wick with his palm; the flame takes with a soft roar and swells bright."
+              }
+            ]
+          },
+          {
+            "kind": "sound",
+            "at_ms": 9800,
+            "description": [
+              {
+                "text": "The wick hisses and catches with a soft roar as glass and brass rattle in the wind."
+              }
+            ]
+          },
+          {
+            "kind": "action",
+            "at_ms": 10500,
+            "description": [
+              {
+                "text": "Warm light throws his face into relief as the Fresnel lens begins to turn, its prisms flashing."
+              }
+            ]
+          },
+          {
+            "kind": "camera",
+            "description": [
+              {
+                "text": "The camera pushes in with small amplitude at slow speed."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "shot-4",
+        "start_ms": 11500,
+        "end_ms": 15000,
+        "description": [
+          {
+            "text": "From outside the tower, the rotating beam sweeps out in a long white arc across the heaving sea, cutting through the rain. The keeper stands small and silhouetted behind the turning lens in the lamp room, one hand still on the mechanism. The view widens to reveal the illuminated lighthouse holding its light against the storm-covered sea below. Rain streaks the glass, and the white beam throws drifting veils of spray into brief visibility before the dark returns."
+          }
+        ],
+        "events": [
+          {
+            "kind": "visual",
+            "at_ms": 11500,
+            "description": [
+              {
+                "text": "The rotating beam sweeps out in a long white arc across the heaving sea, cutting through rain."
+              }
+            ]
+          },
+          {
+            "kind": "sound",
+            "at_ms": 11500,
+            "description": [
+              {
+                "text": "A low moan of wind around the tower, rain on glass, surf pounding the rocks, and a faint mechanical hum from the turning lens."
+              }
+            ]
+          },
+          {
+            "kind": "action",
+            "at_ms": 13000,
+            "description": [
+              {
+                "text": "The keeper stands silhouetted behind the turning lens, one hand on the mechanism, as the view widens to the illuminated lighthouse."
+              }
+            ]
+          },
+          {
+            "kind": "camera",
+            "description": [
+              {
+                "text": "The camera pulls out with large amplitude at slow speed."
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "soundscape": "Howling wind, rain hammering stone, surf crashing against rocks, distant low thunder, wind buffeting the tower, boots on stone steps, a creaking lantern handle, clockwork clack and whirr, a wick hiss, glass and brass rattling, the muffled roar of the storm, rain on glass, and a faint mechanical hum from the turning lens.",
+    "music": "N/A",
+    "constraints": [
+      {
+        "id": "compiler-no-dialogue",
+        "kind": "no_dialogue",
+        "text": "Do not add spoken or sung lines."
+      }
+    ]
+  },
+  "artifact": {
+    "version": "contextir-h3/artifact-v1",
+    "compiler_version": "contextir-h3/v1.2",
+    "format_version": "minimax-h3/prompt-v1",
+    "mode": "t2va",
+    "target": {
+      "duration_ms": 15000,
+      "frame_count": 360,
+      "aspect_ratio": "16:9",
+      "fps": {
+        "numerator": 24,
+        "denominator": 1
+      },
+      "width": 1344,
+      "height": 768
+    },
+    "profile": {
+      "name": "h3-published-format-v1",
+      "format": "minimax-h3/prompt-v1",
+      "fps": {
+        "numerator": 24,
+        "denominator": 1
+      },
+      "modes": [
+        "t2va",
+        "i2va",
+        "l2va",
+        "fl2va",
+        "ref2va"
+      ],
+      "limits": {
+        "pictures": 0,
+        "videos": 0,
+        "video_audio": 0,
+        "standalone_audio": 0
+      },
+      "supports_reference_frame_anchors": true,
+      "supports_source_intervals": true
+    },
+    "prompt": "integrated_multimodal_description: [Shot 1] Live-action, cinematic, Rain lashes a tall stone lighthouse standing on a black rocky headland. Huge waves burst white against its base, and a fork of lightning flares behind the tower, briefly throwing the whole structure into silhouette before the dark closes back in. In the extreme wide view, the tower holds its ground while the storm-driven sea churns around the rocks and the sky presses low and heavy. Salt spray streaks the wet stone, and the lantern room glass is dark above the rocks. At 00:00.000, Howling wind, rain hammering stone, surf crashing against the rocks, and a distant low thunder roll. At 00:00.000, A tall stone lighthouse stands on a black rocky headland as rain lashes the stone and huge waves burst white against its base. At 00:01.600, Lightning flares behind the tower and throws the structure into silhouette; the waves surge and break again. At 00:02.800, Salt spray streaks the wet stone and the dark closes back around the tower. The camera pushes in with small amplitude at slow speed. Throughout the target video: Do not add spoken or sung lines. [Shot 2] At 00:04.000, the shot cuts to Inside the tower, a soaked lighthouse keeper in a heavy coat and cap climbs a tight spiral staircase. One hand grips the cold iron rail while the other holds a swaying lantern; the flame gutters with each gust that rattles the shuttered windows. His boots strike the worn stone steps in a steady, laboring rhythm as he works upward through the drafty tower. The stairwell is narrow, its curved wall slick with damp, and cold blue storm light leaks through the shutters in thin bars. At 00:04.000, The soaked keeper climbs the tight spiral staircase, one hand on the iron rail and the other holding a swaying lantern. At 00:04.000, Wind buffets the tower, rain ticks against the shutters, boots sound on stone steps, the lantern handle creaks, and the keeper breathes heavily. At 00:05.600, The lantern flame gutters as gusts rattle the shutters; cold blue light leaks through in thin bars. At 00:07.000, His boots strike the worn stone steps in a steady, laboring rhythm as he works upward. The camera tracks with the subject with small amplitude at slow speed. [Shot 3] At 00:08.000, the shot cuts to In the lamp room, the keeper sets the lantern down and grips the brass clockwork mechanism with both hands, turning the crank until it catches. He lifts the glass chimney and shields the wick from the draft with his palm. The flame takes with a soft roar, swelling bright and throwing his face into warm relief as the great Fresnel lens begins to turn. Brass fittings gleam in the first warm light, and the lens prisms flash as they start to rotate. At 00:08.000, In the lamp room the keeper sets the lantern down and grips the brass clockwork with both hands, turning the crank until it catches. At 00:08.000, The clockwork clacks and whirrs, glass and brass rattle in the wind, and the muffled roar of the storm presses in. At 00:09.200, He lifts the glass chimney and shields the wick with his palm; the flame takes with a soft roar and swells bright. At 00:09.800, The wick hisses and catches with a soft roar as glass and brass rattle in the wind. At 00:10.500, Warm light throws his face into relief as the Fresnel lens begins to turn, its prisms flashing. The camera pushes in with small amplitude at slow speed. [Shot 4] At 00:11.500, the shot cuts to From outside the tower, the rotating beam sweeps out in a long white arc across the heaving sea, cutting through the rain. The keeper stands small and silhouetted behind the turning lens in the lamp room, one hand still on the mechanism. The view widens to reveal the illuminated lighthouse holding its light against the storm-covered sea below. Rain streaks the glass, and the white beam throws drifting veils of spray into brief visibility before the dark returns. At 00:11.500, The rotating beam sweeps out in a long white arc across the heaving sea, cutting through rain. At 00:11.500, A low moan of wind around the tower, rain on glass, surf pounding the rocks, and a faint mechanical hum from the turning lens. At 00:13.000, The keeper stands silhouetted behind the turning lens, one hand on the mechanism, as the view widens to the illuminated lighthouse. The camera pulls out with large amplitude at slow speed.\n\noverall_soundscape: Howling wind, rain hammering stone, surf crashing against rocks, distant low thunder, wind buffeting the tower, boots on stone steps, a creaking lantern handle, clockwork clack and whirr, a wick hiss, glass and brass rattling, the muffled roar of the storm, rain on glass, and a faint mechanical hum from the turning lens.\n\nnon_diegetic_music: N/A\n",
+    "manifest": {
+      "media": [],
+      "subjects": [],
+      "references": [],
+      "speakers": []
+    },
+    "frames": 360,
+    "effective_duration_seconds": {
+      "numerator": 15,
+      "denominator": 1
+    },
+    "document_sha256": "013b44a2c0021af225d2fa0bbcbf9d7471f2c92899c3674738aa22ec2f337dd6",
+    "profile_sha256": "ce4364d3f1242f5aeb2216db44195fb3897f4828dd9e145c4c16c64315786ab6",
+    "prompt_sha256": "7e1ea6377b7261c0569e1b2a525df9f19e4c2d1a09a4648ce9e8cdef2eef0bb5",
+    "manifest_sha256": "1cf2ed81ae9543b3d49ccca1678fef12fd20a7720f32a700bb5d2f4d04af1f39",
+    "sha256": "7adbb1c9871ce90451f46d7cac8be6958d00281387a0bd4f8812bb4b52faa18a"
+  },
+  "decisions": [
+    {
+      "field": "target",
+      "source": "computed",
+      "value": {
+        "effective_seconds": 15,
+        "frame_count": 360,
+        "nominal_seconds": 15,
+        "policy": "snap_up"
+      },
+      "explanation": "Effective timing and nominal duration are recorded separately; generated cuts use effective timing."
+    },
+    {
+      "field": "canvas",
+      "source": "computed",
+      "value": [
+        1344,
+        768
+      ],
+      "explanation": "Native short-edge canvas is aligned to 32 pixels; explicit megapixels replaces the native area budget."
+    },
+    {
+      "field": "execution",
+      "source": "explicit_adapter_policy",
+      "value": {
+        "effort": "standard"
+      },
+      "explanation": "The injected adapters and explicit compiler repair configuration implement standard effort."
+    },
+    {
+      "field": "mode",
+      "source": "12.2#3",
+      "value": {
+        "clarification_policy": "continue_with_recorded_choice",
+        "confidence_kind": "routing_policy",
+        "aspect_mismatch": false,
+        "needs_clarification": false,
+        "mode": "t2va",
+        "confidence": 1,
+        "rule": "12.2#3",
+        "signals": [
+          "Mode follows explicit structured choices and media socket requirements."
+        ]
+      },
+      "explanation": "Mode follows the production typed routing contract; publication capabilities are checked separately."
+    },
+    {
+      "field": "content_scope",
+      "source": "typed_request_interpretation",
+      "value": {
+        "conflict_policy": "supplied_content_wins",
+        "requested": {
+          "speech": false,
+          "music": false,
+          "onscreen_text": false,
+          "magnitude": ""
+        },
+        "forbidden": {
+          "speech": false,
+          "music": false,
+          "onscreen_text": false,
+          "magnitude": ""
+        },
+        "allowed": {
+          "speech": false,
+          "music": true,
+          "onscreen_text": false,
+          "magnitude": "measured"
+        },
+        "dialogue": [],
+        "onscreen_text": [],
+        "reasoning": "The intent describes a lighthouse keeper climbing stairs and lighting a lamp during a storm. It does not request spoken/sung words, added music, or visible lettering, and it contains no free-text prohibitions for those classes.",
+        "calls": [
+          {
+            "stage": "scope",
+            "attempt": 1,
+            "model": "deepseek-flash",
+            "usage": {
+              "input_tokens": 956,
+              "output_tokens": 199
+            },
+            "valid": true
+          }
+        ]
+      },
+      "explanation": "Caller requests and prohibitions are interpreted before code applies the explicit creativity level."
+    },
+    {
+      "field": "reference_licence",
+      "source": "typed_attribute_precedence",
+      "value": {
+        "medium_decision": {
+          "rendering_permission": {
+            "kind": "no_reference",
+            "disposition": "no_reference",
+            "operation_quote": "",
+            "target": "",
+            "reasoning": "No supplied reference has authority over the rendering medium."
+          },
+          "disposition": "no_reference",
+          "operation_quote": "",
+          "target": "",
+          "requested_style": "",
+          "reference_medium": "",
+          "requested_medium": "",
+          "treatments": [],
+          "reasoning": "There is no visual reference and no explicit rendering medium or style phrase. The intent only describes a scene and action, which does not specify a rendering process or compatible treatments.",
+          "calls": [
+            {
+              "stage": "medium",
+              "attempt": 1,
+              "model": "deepseek-flash",
+              "usage": {
+                "input_tokens": 1103,
+                "output_tokens": 197
+              },
+              "valid": true
+            }
+          ]
+        },
+        "identity": [],
+        "governs": {
+          "action": "request",
+          "framing": "request",
+          "lighting": "request",
+          "medium": "request",
+          "palette": "request",
+          "wardrobe": "request"
+        },
+        "reasons": {
+          "action": "The brief explicitly asks for a performance: the keeper climbs the tower stairs and lights the lamp, so the action is set by the request.",
+          "framing": "No reference image or camera composition exists, so shot scale, viewpoint and camera movement are governed by the request alone.",
+          "lighting": "The storm is a weather condition and the lamp is a story object, neither of which authorizes reference lighting; with no reference, lighting falls to the request.",
+          "medium": "No visual reference and no explicit style phrase exist, so the rendering medium is request-governed per the medium decision.",
+          "palette": "No reference grade or hue is present, so the scene's color and tonal treatment belong to the request.",
+          "wardrobe": "No reference supplies observed clothing and no wardrobe is described, so any keeper attire is left to the request."
+        },
+        "transform_phrase": null,
+        "transform_target": "",
+        "medium_transferred": false,
+        "style": {
+          "observed_phrase": "",
+          "phrase": "Live-action, cinematic",
+          "source": "default",
+          "reference_medium": "",
+          "requested_medium": "",
+          "discrepancy": false,
+          "note": ""
+        },
+        "calls": [
+          {
+            "stage": "medium",
+            "attempt": 1,
+            "model": "deepseek-flash",
+            "usage": {
+              "input_tokens": 1103,
+              "output_tokens": 197
+            },
+            "valid": true
+          },
+          {
+            "stage": "licence",
+            "attempt": 1,
+            "model": "deepseek-flash",
+            "usage": {
+              "input_tokens": 1226,
+              "output_tokens": 287
+            },
+            "valid": true
+          }
+        ]
+      },
+      "explanation": "Each attribute follows explicit request or observed reference; poses and reference-sheet presentation are not subject identity."
+    },
+    {
+      "field": "shots.camera",
+      "source": "host_template",
+      "value": [
+        {
+          "subjects": [
+            "the stone lighthouse on a rocky headland",
+            "the storm-driven sea and breaking waves",
+            "the dark sky with lightning"
+          ],
+          "sync_sound": [
+            "howling wind",
+            "rain hammering stone",
+            "surf crashing against the rocks",
+            "a distant low thunder roll"
+          ],
+          "start_ms": 0,
+          "purpose": "establish",
+          "framing": "extreme wide",
+          "action": "Rain lashes a tall stone lighthouse standing on a black rocky headland; huge waves burst white against the base and a fork of lightning flares behind the tower, briefly throwing the whole structure into silhouette before the dark closes back in.",
+          "what_changes": "The shot opens on the storm-battered lighthouse and pushes gradually closer as lightning flares and the waves surge.",
+          "camera": {
+            "type": "Push In",
+            "amplitude": "small",
+            "speed": "slow"
+          }
+        },
+        {
+          "subjects": [
+            "the lighthouse keeper in a heavy coat and cap",
+            "the swinging lantern in his hand",
+            "the spiral stone staircase and iron rail"
+          ],
+          "sync_sound": [
+            "wind buffeting the tower",
+            "rain against the shutters",
+            "boots on stone steps",
+            "the creak of the lantern handle",
+            "the keeper's heavy breathing"
+          ],
+          "start_ms": 4000,
+          "purpose": "develop",
+          "framing": "medium wide",
+          "action": "Inside the tower, a soaked lighthouse keeper in a heavy coat and cap climbs the tight spiral staircase, one hand on the cold iron rail and the other holding a swaying lantern; the flame gutters with each gust that rattles the shuttered windows, and his boots strike the worn stone steps in a steady, laboring rhythm as he works his way upward.",
+          "what_changes": "The keeper ascends the spiral staircase, the lantern swinging and the storm audible against the shutters.",
+          "camera": {
+            "type": "Tracking Shot",
+            "amplitude": "small",
+            "speed": "slow"
+          }
+        },
+        {
+          "subjects": [
+            "the lighthouse keeper at the lamp mechanism",
+            "the brass clockwork and Fresnel lens",
+            "the rising lamp flame"
+          ],
+          "sync_sound": [
+            "the clack and whirr of the clockwork crank",
+            "the hiss of the wick catching",
+            "glass and brass rattling in the wind",
+            "the muffled roar of the storm outside"
+          ],
+          "start_ms": 8000,
+          "purpose": "reveal",
+          "framing": "medium close",
+          "action": "In the lamp room the keeper sets the lantern down, grips the brass clockwork mechanism with both hands and turns the crank until it catches; he lifts the glass chimney, shields the wick from the draft with his palm, and the flame takes with a soft roar, swelling bright and throwing his face into warm relief as the great Fresnel lens begins to turn.",
+          "what_changes": "The lamp ignites and brightens, the lens begins rotating, and the keeper's face is lit warm against the cold blue storm light.",
+          "camera": {
+            "type": "Push In",
+            "amplitude": "small",
+            "speed": "slow"
+          }
+        },
+        {
+          "subjects": [
+            "the rotating lighthouse beam",
+            "the silhouetted keeper in the lamp room",
+            "the storm-covered sea below"
+          ],
+          "sync_sound": [
+            "the low moan of wind around the tower",
+            "rain on the glass",
+            "surf pounding the rocks",
+            "a faint mechanical hum from the turning lens"
+          ],
+          "start_ms": 11500,
+          "purpose": "resolve",
+          "framing": "wide",
+          "action": "The camera draws back through the lamp-room glass to the outside of the tower as the beam sweeps out in a long white arc across the heaving sea, cutting through the rain; the keeper stands small and silhouetted behind the turning lens, one hand still on the mechanism.",
+          "what_changes": "The beam swings out across the sea and the view widens to reveal the illuminated lighthouse holding its light against the storm.",
+          "camera": {
+            "type": "Pull Out",
+            "amplitude": "large",
+            "speed": "slow"
+          }
+        }
+      ],
+      "explanation": "Canonical camera events are assembled from the typed structural plan after prose."
+    },
+    {
+      "field": "subjects.shot_ids",
+      "source": "typed_actual_use_projection",
+      "value": null,
+      "explanation": "High-level target appearances derive only from actual RichText and speaker-dialogue bindings. Removed figures carry their incoming replacement's transfer scope; unused source observations remain in Evidence."
+    },
+    {
+      "field": "creativity",
+      "source": "caller_or_default",
+      "value": {
+        "speech": false,
+        "music": true,
+        "onscreen_text": false,
+        "magnitude": "measured"
+      },
+      "explanation": "Scope reflects requested elements, explicit prohibitions, and the selected four-position creativity control."
+    }
+  ],
+  "calls": [
+    {
+      "stage": "scope",
+      "attempt": 1,
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 956,
+        "output_tokens": 199
+      },
+      "valid": true
+    },
+    {
+      "stage": "medium",
+      "attempt": 1,
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 1103,
+        "output_tokens": 197
+      },
+      "valid": true
+    },
+    {
+      "stage": "licence",
+      "attempt": 1,
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 1226,
+        "output_tokens": 287
+      },
+      "valid": true
+    },
+    {
+      "stage": "structure",
+      "attempt": 1,
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 2706,
+        "output_tokens": 1541
+      },
+      "valid": true
+    },
+    {
+      "stage": "plan",
+      "attempt": 1,
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 9517,
+        "output_tokens": 6092
+      },
+      "valid": true
+    }
+  ]
+}
