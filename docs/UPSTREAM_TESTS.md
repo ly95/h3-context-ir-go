@@ -1,14 +1,12 @@
 # 上游完整行为验收
 
-验收对象是上游单测保护的业务行为。固定来源为 42 文件、991 个原 nodeid；nodeid 用于追溯来源，不要求保留 Python 的函数形状、常量、命令或分类器局限。当前 **991 个条目都有已执行的验证映射，N/A 为 0**。原两项语言兼容要求按 Go 源码解析和声明最低版本可用的原意实现。
+发布目标为 `v0.2.0`；当前验收覆盖固定上游 `fd031e136ae3d89147324c0d1b2aa65e838c21f5` 的 **42 文件、991 个原 nodeid**。nodeid 追溯原业务规则，不要求复制 Python 内部常量、函数形状或分类器局限。
 
-本轮按业务意图复核此前十项差异，补强契约变更必须升级版本、公共 Compile 的用户镜头数优先、最终产物的媒体绑定与姿态，以及合法双图首尾帧保留场景。完整验收入口见 [本轮逐项结果](../conformance/reports/native-functionality-intent-review-v1.json)，最低版本与质量记录见 [Go 1.25.0](../conformance/reports/go-minimum-intent-review-v1.json) 和 [本轮质量检查](../conformance/reports/local-quality-intent-review-v1.json)。这些补强不增加上游条目计数，也不把既有 Python 失败改写成通过。
+[最新逐项报告](../conformance/reports/native-functionality-release-v1.json) 实际通过 **991/991，672 original_go_primary + 319 go_test，N/A 0**，无遗漏、重复或 Go 测试跳过。[全仓质量](../conformance/reports/local-quality-release-v1.json) 与 [真实最低 Go 1.25.0](../conformance/reports/go-minimum-release-v1.json) 均通过，442 主测试、7957 子测试。当前运行时包含对白、语义审核、参考角色/身份边界和时间校验修复，不能称作本轮仅添加测试。
 
-此前已发布的产品基线已从 GitHub 私有远端独立下载：`v0.1.1-0.20261021024005-84c82a35fe9f`。该下载包内 **372 个主测试、7813 个子测试全部通过且无跳过**，包括两个兼容性测试；其原生源码与当轮真实 Go 1.25.0 最低版本测试的输入一致。本轮增加的是 Go 行为验收测试，未修改运行时代码；该历史下载记录不冒充新增测试的外部运行。见 [外部基线证据](../conformance/reports/private-native-go-compatibility-v1.json) 与 [当轮汇总](../conformance/reports/completion-go-compatibility-v1.json)。
+[当前原样 Python 断言 v7](../conformance/reports/go-draft-pytest-release-final-primary-v7.json) 仍是 **981 passed / 10 failed、0 skipped**，其 [proof](../conformance/reports/release-final-primary-v7-verification.json) 核验 672 项实际 Go 主输出。十项原红色记录各有显式 Go 业务验收，不能改写成原断言通过。此前 v4 的 978/13、670/672、v5/v6 proof 和所有旧失败保持历史状态。
 
-[最终逐项报告](../conformance/reports/native-functionality-intent-review-v1.json) 对每个要求保存实际验证入口、原断言意图、输入调整和证据：**672 项由未修改的原断言检查实际 Go 主输出，319 项用独立 Go 接口测试适配**。没有遗漏、重复、跳过或把辅助函数触达当作主功能通过。独立 Go 测试与原断言使用同一生产实现；受控模型候选和严格录音回放不需要付费服务。
-
-原样 Python 断言桥接诊断依然是 **981 passed / 10 failed，0 skipped**，见 [完整原报告](../conformance/reports/go-draft-pytest-go-compatibility-v1.json)。它记录跨实现的输入、依赖和接口差异；业务是否成立需检查保持原意的 Go 正反例，不能仅据 Python 固定 v2 常量或命令名称判断 Go 功能失败。也不能用一个拒绝入口的测试，代替原用例期待的成功产物。此前 986/5 和所有历史轮次继续保留。
+`v0.2.0` 实际 tag 下载/外部安装尚未执行：`【待填：tag/commit、远端 ZIP hash、consumer/下载包全测报告】`。旧 `v0.1.1-0.20261021024005-84c82a35fe9f` 的 [远端下载证明](../conformance/reports/private-native-go-compatibility-v1.json) 与 [当轮汇总](../conformance/reports/completion-go-compatibility-v1.json) 仅代表旧版 372+7813 测试，不替代本轮分发验收。
 
 ## 证据怎样计数
 
@@ -20,13 +18,13 @@
 
 319 项包含旧 126 个 Python-only 节点的全部 126 个要求，以及 193 个此前已经触达 Go、但主断言仍需独立验证或接口适配的节点。672 项没有虚构独立 Go test leaf：入口仍是原 source nodeid 与实际 native operation。逐项 [适配清单](../conformance/adaptations/remaining_existing_native.json) 与其他 `remaining_*.json` 列出原断言、来源 SHA、边界和精确测试/fixture IDs。
 
-[最终本地质量检查](../conformance/reports/local-quality-intent-review-v1.json) 的全仓 race、vet、gofmt、diff 与 conformance 门卫全部通过。最终聚合也执行全部 Go 测试并核验运行期间源文件不变；原始 Go JSON events、源码归档和 hash 在报告中。首轮 [v1](../conformance/reports/native-functionality-remaining-all-v1.json) 保持不变，不把两轮事件数相加。
+[最终本地质量检查](../conformance/reports/local-quality-release-v1.json) 的全仓 race、vet、gofmt、diff 与 conformance 门卫全部通过。最终聚合也执行全部 Go 测试并核验运行期间源文件不变；原始 Go JSON events、源码归档和 hash 在报告中。首轮 [v1](../conformance/reports/native-functionality-remaining-all-v1.json) 保持不变，不把两轮事件数相加。
 
 ## Go 源码与最低版本兼容性
 
 原两项 Python 语法测试的原意已按 Go 实现，不再列 N/A：`TestGoCompatibilityEverySourceParses` 解析实际 Go 源码，`TestGoCompatibilityDeclaredLanguageVersion` 检查 `go.mod` 声明版本对应的语言与标准库 API。负例包括当前编译器能读、较低语言版本拒绝的语法，以及较新标准库 API；原 Python f-string 规则没有伪称逐句翻译为 Go。
 
-更强的 [真实最低 Go 1.25.0 全包测试与 vet](../conformance/reports/go-minimum-intent-review-v1.json) 已通过，关闭自动升级与工作区，使用新缓存且未读取模型凭据。聚合门卫核对真实工具链、所有 Go/test/embedded 输入 hash、完整 JSON 事件、两项实际测试和运行期间证据不变；用 Go 1.27 或 Go 1.25.1 代替最低版本、筛选测试、跳过、篡改来源或日志均被拒绝。映射见 [remaining_go_compatibility.json](../conformance/adaptations/remaining_go_compatibility.json)。旧 989 项通过 / 2 项 N/A 的 [历史报告](../conformance/reports/native-functionality-remaining-all-v3.json) 保持原样。
+更强的 [真实最低 Go 1.25.0 全包测试与 vet](../conformance/reports/go-minimum-release-v1.json) 已通过，关闭自动升级与工作区，使用新缓存且未读取模型凭据。聚合门卫核对真实工具链、所有 Go/test/embedded 输入 hash、完整 JSON 事件、两项实际测试和运行期间证据不变；用 Go 1.27 或 Go 1.25.1 代替最低版本、筛选测试、跳过、篡改来源或日志均被拒绝。映射见 [remaining_go_compatibility.json](../conformance/adaptations/remaining_go_compatibility.json)。旧 989 项通过 / 2 项 N/A 的 [历史报告](../conformance/reports/native-functionality-remaining-all-v3.json) 保持原样。
 
 ## 原样重跑保留的十项差异
 
@@ -70,15 +68,25 @@
 
 ## 当前模型录音与真实高层编译
 
-当前合同的许可录音主批次为 437 entries / 228 unique，其中 1 unique（14 个复用 entries）失败；[主报告](../conformance/reports/remaining-full-licence-v1/report.json) 保持原失败。同合同 [显式重试](../conformance/reports/remaining-full-licence-retry-v1/report.json) 14 entries / 1 unique 成功，另有 [10 unique 补录](../conformance/reports/remaining-full-licence-supplement-v1/report.json)。新索引保留 461 条记录、238 个完整输入，按 namespace 保留 reuse chains，不混入旧 System 合同的补充录音。
+[统一 release-live-round6](../conformance/reports/release-live-round6/report.json) 完整执行 **35 Compile + 5 Refine = 40 操作**：36 compiled、4 个预期拒绝；不是把旧不同 binary 的成功拼成一批。运行时 `a9f84ef09bc0c662bd8b0c52afac380a1ce10dc4` / `composition-review/v10`，binary SHA `2b34869092e0110606f3a071c18af4f6183e565e4237b8612d28c455d91b7bfa`。
 
-本次原断言重放的 423 次 licence/style 调用，对全部 **1,422 次实际 recorded Stage/System/Input/Schema** 在 Go 中核验后才消费。真实非法 JSON、其用量与后续修复请求也按原错误重放；没有删掉坏响应或把未验证历史结果当当前运行。fresh bridge SHA 为 `8e7cd974c82d…`，[完整来源证明](../conformance/reports/go-draft-pytest-go-compatibility-v1-provenance.json) 记录 source archive、当前 runtime、适配器、fixture 和录音文件 hash。
+配置为 `deepseek-flash` / `low` / 输出上限 16384 / 并行 3。原 34 Compile 显式 OfficialProfile、3/3 修复预算；新增 wardrobe 原例显式 ComfyUIProfile、1/1。共 277 实际调用、921,356 输入 token、538,309 输出 token。14 次后续尝试分为 host structured 12、provider protocol 1、semantic review 1；其中 Refine 的 3 次后续尝试最后仍为预期依赖拒绝，不是修复成功，Result.Calls 重复 ledger 不另算调用。详见 [完整清单](../conformance/reports/release-live-round6-recording-inventory.json)。
 
-[最新三例高层 Compile 独立验读](../conformance/reports/remaining-highlevel-compile-v2-verification.json) 全部 compiled 并通过各自主要要求：两例转写“`We close at six, not half past.`”各恰有一条同语言固定对白和一次最终 prompt；身份组合得到一个 sports car，两个真实来源，明确区分观察到的 carbon fibre body 与用户要求的 wheels 属性。自包含 20 次阶段请求严格回放及 drift 负例纳入 Go 测试；转写例仍有 R5/A2/token-band 等 WARN，模型选择例还有 P3，不称全面质量通过。
+[独立产物检查 40/40](../conformance/reports/release-live-round6-verification.json) 与 [核心 21](../conformance/reports/release-live-round6-semantic-core-review.json)、[角色 16](../conformance/reports/release-live-round6-semantic-role-review.json)、[非法边界 3](../conformance/reports/release-live-round6-semantic-boundary-review.json) 逐项复核全部通过。后三份 reviewer_kind 为 coding_agent_independent_artifact_review，不称人类签字或通用语义证明。
 
-旧 [六例 suite](../conformance/reports/live-suite-round8/report.json) 和 [16 角色 Compile](../conformance/reports/live-roles-round4/report.json) 分别为 6 compiled 与 15 compiled/1 failed；后续 [environment](../conformance/reports/live-roles-environment-round1/report.json) 与 [animate](../conformance/reports/live-suite-style-round1/report.json) 单例另存。20 个旧版本结果加 2 个新版本补录不能称 22 例同一 binary。suite 使用真实 PNG 像素；角色 cards 是原测试合成数据，不能当真实视频/音频观察。角色全 Compile 省略原 deterministic_draft 独立 mode 参数，[调用合同](../conformance/reports/roles-compile-contract.json) 明示这种比较局限。
+产品修复覆盖：中文固定对白的逐字节跨镜分片/连续标记及不可见旁白；真实 per-shot 对白/可见字叙事合同；属性音频的实际 recipient（voice 不能引导 engine SFX）；replacement 动作继承；角色与 PRE-projection 源图边界；非 actual-frame reference sheet 在 identity 后、licence owner 前的独立资格阶段与最终 canonical 审查；T12 整数毫秒比较。1200ms 不再被浮点误判，1199ms 仍拒绝；实际首尾帧的版页、标签和背景不被身份清理误删。
 
-旧轮次语义错误、非法 JSON、失败和 WARN 全部保留。IR/格式通过、compiled、自动 review 或人工审查都不能证明任意描述的语义完备，更没有实际 H3 视频生成或成片一致性证据。
+可见字按原文、typed display 数量/镜头及实际 prose 展示复核；同一标牌在同镜被描述两次不自动等于两次展示。[旧 oracle 更正](../conformance/reports/release-live-round5-visible-text-oracle-correction.json) 保留旧词频失败。同镜两个标牌、跨镜 readable carry 和新增文字仍须拒绝。[checker 工具更正](../conformance/reports/release-live-round6-checker-tool-correction.json) 另存本轮首次 NameError 的源码/trace；新脚本整 inspect 路径正负对照通过后才得到实际 40/40。
+
+prefix 的原属性名 `wheels from the second picture` 是 opaque selector。加前置来源后，typed graph 和明确 rendered source clause 仍把 wheels 绑定 asset-2 / Picture3；删除前置来源时按物理源重排，不能从属性名中的 ordinal 另猜绑定。summary 重复原属性名仍有自然语言位置歧义，报告明确保留；不声称全部散文无歧义、来源像素已由成片证实。
+
+当前许可索引 [v2](../conformance/fixtures/release_final_licence_replay_resolutions_v2.json) 是原 461 entries 加 2 个补录，合计 463 entries / 238 完整输入。原主 437/228 unique 中的失败及 [retry](../conformance/reports/remaining-full-licence-retry-v1/report.json)、[supplement](../conformance/reports/remaining-full-licence-supplement-v1/report.json) 均不覆盖。[两个原 API 补录](../conformance/reports/release-helper-refresh-v1/report.json) 属于独立 v9 helper、binary `ff97523c…`、8 次调用、上限 12288；不是本轮 v10 main binary，不计入其 277 次。当前 replay 只有在完整 Stage/System/Input/Schema 匹配后消费各自来源录音。
+
+[高层三例录音](../compiler/testdata/remaining_highlevel/manifest.json) 与 [wardrobe 完整 Compile](../compiler/testdata/remaining_wardrobe_fresh/manifest.json) 已用本轮完整响应更新，阶段数分别 6、6、10、12。这 34 条是 main 调用子集，严格回放没有新付费调用。Wardrobe 的原 licence-01108 明确适配为完整 Compile 后取实际 Licence 跑原 GuardOwnership，其余旧 wardrobe 录音仍保持原边界；原 Python 源 SHA/断言不变。
+
+本批真实 PNG 用于 ref2 双主体、i2 动画和 paired 首尾帧；其他媒体 Card 是显式 supplied typed observations，不能称真实音视频感知。原词 TranscriptUses 的授权新表演不等于原音轨 signal copy，voice 属性也不自动授权台词。未执行实际 H3 视频推理，compiled、schema、自动 critic 与独立文本复核均不能证明任意语义或成片质量。
+
+旧 [suite](../conformance/reports/live-suite-round8/report.json)、[16 角色批次](../conformance/reports/live-roles-round4/report.json)、[environment](../conformance/reports/live-roles-environment-round1/report.json)、[animate](../conformance/reports/live-suite-style-round1/report.json) 及其 [输入合同局限](../conformance/reports/roles-compile-contract.json) 继续作为历史证据。所有真实失败、非法 JSON、拒绝、WARN 和早期跨批补录均保持原状态。
 
 ## 复验与固定来源
 
@@ -88,8 +96,8 @@ go test ./...
 go test -race ./...
 go vet ./...
 python3 conformance/run_native_functionality.py --require-all \
-  --original-report conformance/reports/go-draft-pytest-go-compatibility-v1.json \
-  --go-compatibility-report conformance/reports/go-minimum-intent-review-v1.json \
+  --original-report conformance/reports/go-draft-pytest-release-final-primary-v7.json \
+  --go-compatibility-report conformance/reports/go-minimum-release-v1.json \
   --label a-new-native-round
 ```
 
@@ -109,9 +117,9 @@ python3 conformance/run_native_functionality.py --require-all \
 | [full plan round3](../conformance/reports/go-plan-pytest-round3.json) | 991 passed | 312 次 native plan.Build，mode 仍由 Python 决定 |
 | [972a 组合](../conformance/reports/go-combined-pytest-972a-supplement-complete.json) | 990 passed / 1 failed | 857 触达 Go，尚未替换完整 Draft |
 | [wholeDraft 旧五差异轮](../conformance/reports/go-draft-pytest-go-adapted-contracts-v1.json) | 986 passed / 5 failed | 865 触达，126 Python-only，不等于主行为全部 native |
-| [当前原样重跑](../conformance/reports/go-draft-pytest-go-compatibility-v1.json) | 981 passed / 10 failed | 原结果保持；当前全部要求另按 672 + 319 分类，N/A 0 |
+| [当前原样重跑 v7](../conformance/reports/go-draft-pytest-release-final-primary-v7.json) | 981 passed / 10 failed | 原结果保持；当前全部要求另按 672 + 319 分类，N/A 0 |
 
-`matrix.json` 采用 additive 更新：旧 pending、触达数和历史状态原样保留，当前结论位于 `current_native_primary_verification` 与每项 `native_primary_verification`。不能把旧覆盖并集、回放历史结果和当前原生主输出混算。
+`matrix.json` 保留历史 pending、触达数和旧聚合状态；当前来源/映射在 `current_release_evidence`、`current_source_primary_verification` 与每项来源字段，最终实际通过结论以 native-functionality-release-v1 为准。快照中的 pending 表示捕获当时尚未执行的最终聚合，不能把旧覆盖并集或回放历史结果冒充新运行。
 
 ## 最终逐文件分账
 

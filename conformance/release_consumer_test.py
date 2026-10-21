@@ -96,6 +96,36 @@ func TestFailedAttemptsAreReproducedWithUsage(t *testing.T) {
  if !errors.As(err,&typed)||typed.Code!=contextir.CodeModelOutput||typed.Stage!="deepseek.response"||response.Usage.InputTokens!=3||model.Position!=1||model.Mismatch!=nil {t.Fatal("original failed attempt disappeared",err)}
 }
 
+func TestAbsentFailedJSONIsDistinctFromAnActualNullOutput(t *testing.T) {
+ for _,variant:=range []string{"failed_nil_json","actual_null_output","non_null_without_file","absent_success","missing_named_file","null_output_mismatch"} {
+  t.Run(variant,func(t *testing.T){
+   model,request:=setupReplay(t,nil,true)
+   var packet responseRecord
+   if err:=readRelative(model.Root,"response.json",&packet);err!=nil{t.Fatal(err)}
+   packet.Rejected="original rejected provider bytes"
+   packet.Response.JSON=nil
+   model.Operation.Calls[0].OutputFile=""
+   switch variant {
+   case "actual_null_output":
+    packet.Response.JSON=json.RawMessage(`null`);packet.Error=nil
+    model.Operation.Calls[0].OutputFile="output.json";save(t,model.Root,"output.json",packet.Response.JSON)
+   case "non_null_without_file":packet.Response.JSON=json.RawMessage(`{"valid":true}`)
+   case "absent_success":packet.Error=nil
+   case "missing_named_file":packet.Response.JSON=json.RawMessage(`null`);model.Operation.Calls[0].OutputFile="missing.json"
+   case "null_output_mismatch":packet.Response.JSON=json.RawMessage(`null`);model.Operation.Calls[0].OutputFile="output.json"
+   }
+   save(t,model.Root,"response.json",packet)
+   response,err:=model.Generate(context.Background(),request)
+   if variant=="failed_nil_json" {
+    var typed *contextir.Error
+    if !errors.As(err,&typed)||typed.Code!=contextir.CodeModelOutput||typed.Stage!="deepseek.response"||len(response.JSON)!=0||response.RejectedOutput!=packet.Rejected||response.Usage!=packet.Response.Usage||model.Position!=1||model.Mismatch!=nil {t.Fatal("nil failure/usage/rejected bytes were not reproduced exactly",err)}
+   } else if variant=="actual_null_output" {
+    if err!=nil||string(response.JSON)!="null"||model.Position!=1||model.Mismatch!=nil {t.Fatal("actual JSON null output was silently changed",err)}
+   } else if err==nil||model.Mismatch==nil||len(response.JSON)!=0||!response.UsageInvalid||model.Position!=0 {t.Fatal("unbacked/tampered output was reused",variant,err)}
+  })
+ }
+}
+
 func TestActualRecordedRetryOptionsNeverUseHiddenDefaults(t *testing.T) {
  for _,budget:=range []int{0,1,2,3} {
   partial,include,imageRetries:=true,true,1

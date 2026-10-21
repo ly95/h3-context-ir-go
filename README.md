@@ -22,7 +22,7 @@ go get github.com/ly95/contextir@v0.2.0
 
 发布目标为 `v0.2.0`。发布验证要求从 GitHub 私有远端安装、下载包全库测试和完整 40 项严格重放；实际进度及来源证明见 [发布验收](docs/READINESS.md#发布与外部验证)。旧标签 `v0.1.0` 和旧伪版本的证据作为历史保留。
 
-历史模型输出、源码快照和测试报告保存在独立的审计 module `conformance/reports`。安装 Go 库不下载这些历史文件；需要完整证据时克隆 Git 仓库。
+历史模型输出、源码快照和测试报告保存在独立的审计 module `conformance/reports`。Go module ZIP 排除这些文件，库和自包含测试均不依赖它们。私有仓库首次通过 Git 解析版本时仍可能传输较大的审计 Git 对象；需要完整证据时克隆 Git 仓库。
 
 ## 从一句需求编译
 

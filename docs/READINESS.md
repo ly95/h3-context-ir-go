@@ -1,28 +1,32 @@
 # 实现与验收状态
 
-更新日期：2026-10-21。当前实现以独立 Go package 实现公开的 Brief → ContextIR → H3 流程，运行时仅使用 Go 标准库，不依赖 Python、CLW、数据库或队列。它不包含 MiniMax 托管 Context-IR 的内部代码，也没有托管服务或成片质量等价证据。
+更新日期：2026-10-21。发布目标：`v0.2.0`（远端标签安装证明待执行）。当前实现以独立 Go package 实现公开的 Brief → ContextIR → H3 流程，运行时仅使用 Go 标准库，不依赖 Python、CLW、数据库或队列。它不包含 MiniMax 托管 Context-IR 的内部代码，也没有托管服务或成片质量等价证据。
 
 ## 当前验收结论
 
-固定上游 `fd031e136ae3d89147324c0d1b2aa65e838c21f5` 的原清单有 **42 文件、991 个条目**。验收单位是用例保护的业务规则，允许使用 Go 的合法输入、显式观察依赖和真实命令，不机械复制 Python 实现细节。本轮所有条目都有已执行且通过的映射：672 项原断言验证 Go 主输出，319 项独立 Go 适配，N/A 为 0。新增契约变更版本门卫、公共 Compile 镜头约束、最终媒体绑定/姿态和合法双图 FL2VA 对照。完整结果见 [本轮逐项报告](../conformance/reports/native-functionality-intent-review-v1.json) 与 [原意及补强说明](UPSTREAM_TESTS.md#go-测试怎样保留上游意图)。
+固定上游 `fd031e136ae3d89147324c0d1b2aa65e838c21f5` 的原清单是 **42 文件、991 个条目**。当前 [逐项原生验收](../conformance/reports/native-functionality-release-v1.json) 为 **991/991，通过且无遗漏、重复或测试跳过**：672 项未修改原断言验证真实 Go 主输出，319 项使用按原意编写并执行的 Go 适配，N/A 为 0。条目不是 991 种独立能力，也不与 Go 测试事件或付费模型调用数相加。
 
-| 证据类型 | 项数 | 实际验证的内容 |
+| 证据类型 | 数量 | 实际验证的内容 |
 | --- | ---: | --- |
-| 未修改的原断言验证 Go 主输出 | 672 | 每个原 nodeid 的 call phase 通过，要求的主 Go operation/validator 确实执行；不可变 bridge、当前 runtime、测试适配器、fixture、录音请求来源均核验 |
-| 独立 Go 接口/输入适配 | 319 | 原要求对应实际 Go API、成品和错误负例；明确记录合法模式、依赖注入、结构化输入或版本差异，不以辅助函数触达代替主行为 |
-| 免除 / N/A | 0 | 原 Python 语法测试的源码解析/声明最低版本可用要求，按 Go 兼容性契约实际验证 |
+| 原断言验证 Go 主输出 | 672 | 每个原 nodeid 的 call phase 和所需主 Go operation/validator；当前不可变 bridge、runtime、适配器、fixture 和完整录音请求来源 |
+| 独立 Go 接口/输入适配 | 319 | 原业务规则的实际 Go API/产物及负例；显式记录合法模式、观察依赖、结构化输入与版本差异 |
+| 免除 / N/A | 0 | 两项 Python 语法要求改为实际 Go 源码解析及声明最低版本兼容验证 |
 
-319 项包括原先 126 个 Python-only nodeid 的全部 126 个要求，以及 193 个此前虽然调用过 Go、但主行为或接口尚需独立验证的节点。完整映射没有遗漏或重复。普通 `go test`、原断言桥接和付费模型运行各自保存原始结果，不把它们的通过数相加。
+319 项包括原先 126 个 Python-only nodeid 的全部要求及另 193 个原本虽触达 Go、主行为仍需独立验收的节点。完整分账和原意见 [UPSTREAM_TESTS](UPSTREAM_TESTS.md)。
 
-未修改 Python 断言的桥接诊断仍是 **981 passed / 10 failed，0 skipped**，见 [原报告](../conformance/reports/go-draft-pytest-go-compatibility-v1.json)。这些输入、依赖、版本及命令差异不能直接当作 Go 业务失败，也不能直接豁免原功能；应检查保持原意的 Go 正向产物和负向对照。十项均有明确映射，原结果没有被改写。逐项说明见 [UPSTREAM_TESTS](UPSTREAM_TESTS.md#原样重跑保留的十项差异)。旧失败轮次继续保留。
+[当前原样断言诊断 v7](../conformance/reports/go-draft-pytest-release-final-primary-v7.json) 仍为 **981 passed / 10 failed，0 skipped**；[来源核验](../conformance/reports/release-final-primary-v7-verification.json) 确认上述 672 项主输出通过。这十项输入、观察、profile、分类或接口差异没有被改成 Python 通过，各自另有保持原意的 Go 正反例。历史 v4 的 978/13、670/672 及所有旧失败继续保留。
 
-本轮全仓 Go 测试、race、vet、格式与 diff 检查以 [本轮质量记录](../conformance/reports/local-quality-intent-review-v1.json) 为准，真实最低 Go 1.25.0 全包测试和 vet 见 [本轮最低版本记录](../conformance/reports/go-minimum-intent-review-v1.json)。旧报告保持不变；新增补强不再计作新的上游条目，既有真实高层编译录音继续严格回放。
+当前 [全仓质量检查](../conformance/reports/local-quality-release-v1.json) 的 race、vet、源码 gofmt/diff 全通过：**442 主测试、7957 子测试，0 失败、0 跳过**。[真实最低 Go 1.25.0](../conformance/reports/go-minimum-release-v1.json) 全包测试及 vet 也通过。逐项聚合使用同一当前源码及 fresh v7 证据，核验运行期间源码不变。
+
+原始 pytest 诊断保留其尾随空格；源码和测试的 diff 检查通过，完整未过滤检查中的原始日志格式记录见 [说明](../conformance/reports/release-source-diff-check-v1.json)。
+
+本次确有产品修复：对白跨镜协议、最终叙事语义审查、身份/素材责任边界、参考板身份清理、源图映射及整数毫秒校验均有调整；不能描述成仅增加测试。
 
 ## Go 源码与最低版本兼容性
 
 原两项 Python 语法测试的原意已按 Go 实现，不再列 N/A：`TestGoCompatibilityEverySourceParses` 解析实际 Go 源码，`TestGoCompatibilityDeclaredLanguageVersion` 检查 `go.mod` 声明版本对应的语言与标准库 API。负例包括当前编译器能读、较低语言版本拒绝的语法，以及较新标准库 API；原 Python f-string 规则没有伪称逐句翻译为 Go。
 
-更强的 [真实最低 Go 1.25.0 全包测试与 vet](../conformance/reports/go-minimum-intent-review-v1.json) 已通过，关闭自动升级与工作区，使用新缓存且未读取模型凭据。聚合门卫核对真实工具链、所有 Go/test/embedded 输入 hash、完整 JSON 事件、两项实际测试和运行期间证据不变；用 Go 1.27 或 Go 1.25.1 代替最低版本、筛选测试、跳过、篡改来源或日志均被拒绝。映射见 [remaining_go_compatibility.json](../conformance/adaptations/remaining_go_compatibility.json)。旧 989 项通过 / 2 项 N/A 的 [历史报告](../conformance/reports/native-functionality-remaining-all-v3.json) 保持原样。
+更强的 [真实最低 Go 1.25.0 全包测试与 vet](../conformance/reports/go-minimum-release-v1.json) 已通过，关闭自动升级与工作区，使用新缓存且未读取模型凭据。聚合门卫核对真实工具链、所有 Go/test/embedded 输入 hash、完整 JSON 事件、两项实际测试和运行期间证据不变；用 Go 1.27 或 Go 1.25.1 代替最低版本、筛选测试、跳过、篡改来源或日志均被拒绝。映射见 [remaining_go_compatibility.json](../conformance/adaptations/remaining_go_compatibility.json)。旧 989 项通过 / 2 项 N/A 的 [历史报告](../conformance/reports/native-functionality-remaining-all-v3.json) 保持原样。
 
 ## 实际提供的能力
 
@@ -46,11 +50,23 @@
 
 ## 真实模型证据与限制
 
-本轮许可录音重新运行当前合同：主 437 entries / 228 unique 中 1 unique 失败（14 entries 复用该失败）；同合同显式重试这 14 entries / 1 unique 成功，另补录 10 unique。完整索引保留 **461 记录、238 个完整输入**和初轮失败，禁止旧补充录音覆盖新索引。原断言重放的 423 次许可/风格调用在 Go 中验证全部 **1,422 次 Stage/System/Input/Schema**，其中一次真实非法 JSON 响应及后续重试也按原错误、用量和请求重放，没有丢掉失败调用。
+最新统一批次是 [release-live-round6](../conformance/reports/release-live-round6/report.json)，产品运行时冻结在 `a9f84ef09bc0c662bd8b0c52afac380a1ce10dc4`，`composition-review/v10`，执行文件 SHA-256 为 `2b34869092e0110606f3a071c18af4f6183e565e4237b8612d28c455d91b7bfa`。这是已验收运行时快照，不冒充尚未执行的发布 tag 安装。
 
-此外有 [当前高层 Compile 三例独立核验](../conformance/reports/remaining-highlevel-compile-v2-verification.json)：显式/类型化选择转写的两例，以及按来源组合属性的身份合并一例。它们与 [原六例 suite](../conformance/reports/live-suite-round8/report.json)、[16 角色额外全 Compile](../conformance/reports/live-roles-round4/report.json) 和后续单例修复分别记录。旧轮次存在真实语义失败、非法 JSON 和拒绝，不能被新一轮 compiled 覆盖。当前三例也仍有警告，不能称全面生成质量通过。
+批次完整执行 **35 Compile + 5 Refine = 40 操作**：36 个 compiled，4 个预期拒绝（3 个非法 Compile 输入、1 个删除对白来源但保留依赖原词的 Refine）。[独立产物检查](../conformance/reports/release-live-round6-verification.json) 为 40/40；另有 [核心 21](../conformance/reports/release-live-round6-semantic-core-review.json)、[角色 16](../conformance/reports/release-live-round6-semantic-role-review.json)、[边界 3](../conformance/reports/release-live-round6-semantic-boundary-review.json) 的逐项独立语义复核。reviewer 为 `coding_agent_independent_artifact_review`，不是人类签字或任意语义完备证明。
 
-六例 suite 使用原 PNG 真实像素；角色批次使用原测试的合成 cards，不能当成真实视频/音频观察。角色批次的生产 Compile 未携带原 deterministic_draft 单独的 mode 参数，因此不是同一函数输入合同。`semantic_review` 及人工审查能发现特定错误，但不是任意自由文本语义的完备证明。更没有执行真实 H3 视频推理，无法据 IR 测试证明成片人物一致性、动作、音画同步或文字保真。
+实际使用 `deepseek-flash`、`low`、输出上限 16384、并行 3；原 34 个 Compile 用 OfficialProfile 和显式 3/3 修复预算，新 wardrobe 原例明确用 ComfyUIProfile、1/1。完整记录共 **277 次调用，921,356 input tokens、538,309 output tokens**。有 14 次后续尝试：12 次 host structured validation、1 次 provider protocol、1 次 semantic review。其中 3 次 Refine 后续尝试属于最终预期拒绝，不能称作修复成功，也不能把 Result.Calls 重复 ledger 另加成调用。详见 [调用与失败清单](../conformance/reports/release-live-round6-recording-inventory.json)。
+
+本轮修复并验证了：固定中文跨镜片段/连续旗标及不可见旁白；明确对白/可见字的镜头位置，防止事件列表正确但后镜 prose 又表演/展示；voice 属性只作用于 vocal recipient，不能转用到发动机 SFX；replacement 动作继承；参考图角色和来源投影边界；非 actual-frame reference sheet 的单责身份资格阶段及最终 canonical 审查；T12 用整数毫秒比较，1200ms 合法而 1199ms 仍拒绝。源姿态、版页标签和镜头包装不会因此成为目标身份，实际首尾帧则保留整图像素责任。
+
+prefix 案例的调用方原属性名 `wheels from the second picture` 是 opaque selector。加前置来源后，最终明确分源 clause/typed graph 仍把 wheels 绑定到实际 asset-2 / Picture3；删除前置来源后重排为 Picture2，物理来源不变。原属性名在 prose 中重复会产生位置命名歧义，本报告明确保留，不能说所有散文均无歧义，更不能据此声称成片来源已证实。库不按词法规则重解释该字符串。
+
+许可索引 [release_final_licence_replay_resolutions_v2.json](../conformance/fixtures/release_final_licence_replay_resolutions_v2.json) 保留原 461 entries，追加 2 个原 DecideLicence API 补录，共 463 entries / 238 个完整输入。两例补录属于 [独立 v9 helper 批次](../conformance/reports/release-helper-refresh-v1/report.json)，8 次调用、上限 12288、binary `ff97523c…`；它与本轮 v10 main 的 `2b348690…` 不是同一 binary，也不计入 main 的 277 次。每条录音按自身 binary/来源核验完整 Stage/System/Input/Schema，不能将历史回放称作当前新付费调用。
+
+本轮三例高层 Compile 和 wardrobe 原例的完整录音已导入自包含 [highlevel](../compiler/testdata/remaining_highlevel/manifest.json) / [wardrobe](../compiler/testdata/remaining_wardrobe_fresh/manifest.json)，逐例实际阶段数为 6、6、10、12。它们是上述 main 调用的子集，回放不是新的 34 次调用；原失败 critic、修复、用量和完整 normalized Result 均保留。
+
+真实 PNG 感知用于原 ref2 双主体、i2 动画和 paired 首尾帧三个 Compile 场景。其他音频/视频及多数图像 Card 是明确 supplied typed observations，不能声称真实听懂或观察了音视频。转写词的授权重演与原音轨 signal copy 分开；语音属性本身不自动授权台词。未执行实际 H3 视频生成，无法据 IR 测试证明成片身份、动作、音画同步或文字保真。
+
+所有旧模型失败、非法 JSON、拒绝、WARN 和 [oracle 更正](../conformance/reports/release-live-round5-visible-text-oracle-correction.json) 保留。本轮 checker 首次因局部变量 NameError 中止，旧源码与异常也保留在 [工具纠正记录](../conformance/reports/release-live-round6-checker-tool-correction.json)；之后用实际修正脚本得到 40/40，不伪称旧脚本执行通过。
 
 ## 明确的接口与执行边界
 
@@ -66,14 +82,12 @@
 
 ## 发布与外部验证
 
-当前产品提交 `84c82a35fe9f84b9179522f3925ff1d1d7e15324`，安装版本 `v0.1.1-0.20261021024005-84c82a35fe9f`，已从 GitHub 私有远端真实下载 9,385,184 字节 ZIP。独立消费者 build/run、IR/H3/哈希/评分重放通过，见 [消费者报告](../conformance/reports/private-consumer-go-compatibility-v4.json)。
+**`v0.2.0` 远端发布与安装：待执行。** 在完成后补齐：`【待填：实际 tag commit】`、`【待填：私有远端 module ZIP SHA/大小】`、`【待填：独立 consumer 与下载包全测报告】`。当前本地/模型证据不等于已从该 tag 安装成功；本节不能预填通过。
 
-下载包内执行完整 Go 测试：**372 主测试、7813 子测试全部通过，0 失败、0 跳过**，包含本轮新增的两个 Go 原生兼容性检查。源码与 ZIP 逐文件一致，下载源码 hash 也与真实 Go 1.25.0 最低版本全库验证一致；无 `replace`、工作区源码、模型凭据或 `conformance/reports` 依赖。见 [实际下载包测试](../conformance/reports/private-native-go-compatibility-v1.json) 与 [最终汇总](../conformance/reports/completion-go-compatibility-v1.json)。
+以下是保留的历史分发证明，不能冒充本轮 `v0.2.0`：产品提交 `84c82a35fe9f84b9179522f3925ff1d1d7e15324`、版本 `v0.1.1-0.20261021024005-84c82a35fe9f` 曾从 GitHub 私有远端下载 9,385,184 字节 ZIP。[消费者报告](../conformance/reports/private-consumer-go-compatibility-v4.json)、[下载包原生测试](../conformance/reports/private-native-go-compatibility-v1.json) 和 [当轮汇总](../conformance/reports/completion-go-compatibility-v1.json) 记录 372 主测试、7813 子测试通过，无失败/跳过，无 replace、工作树或 reports 依赖。三次 TLS 下载失败及同仓库规范 `.git` URL 处理均保留。
 
-三次下载安装因 GitHub TLS 连接中断失败，原记录全部保留。只对任务专用外部 Go VCS 缓存采用同一 GitHub 仓库的规范 `.git` URL 后，远端下载与全包验证通过；没有以工作树、overlay 或本地 replace 替代远端源码。此前 `874c5ee` 的分发证据继续保留。
+更早 `dc2731a` 外部测试依赖 checkout Git HEAD 的 [真实失败](../conformance/reports/private-native-remaining-final-v2.json)、修正后显式 caller provenance/未知状态测试，以及 `874c5ee`、`fe1feb7` 的历史分发记录均保留。旧标签和失败不被覆盖。
 
-首轮外部测试在 `dc2731a` 发现一项测试错误依赖 checkout 的 Git HEAD，记录保留在 [原失败报告](../conformance/reports/private-native-remaining-final-v2.json)。现按 Go 契约验证调用方传入的短/完整 commit、缺省未知状态和完整持久化，不要求模块目录存在 Git；修正后重跑逐项验收、全仓 race/vet 与上述外部全套。此前 `fe1feb7` 的旧分发证据和旧标签继续保留。
-
-GitHub Actions 曾因账户付款/spending limit 在启动前被阻止，不能声称历史远端 CI 通过；[实际远端注释](../conformance/reports/remote-ci-71a4bb5.json) 和旧记录独立保留。当前以本地可复验的命令、原断言、独立 Go 测试和来源证明为依据。
+GitHub Actions 曾因账户付款/spending limit 在启动前被阻止，不能声称这些历史远端 CI 通过；[远端注释](../conformance/reports/remote-ci-71a4bb5.json) 独立保留。当前以实际本地、原断言、Go 测试及来源证明为依据。
 
 更多内容见 [上游验收](UPSTREAM_TESTS.md)、[复验流程](../conformance/README.md)、[架构](ARCHITECTURE.md) 与各包 README。

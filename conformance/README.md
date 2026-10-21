@@ -8,17 +8,21 @@ replace this corpus.
 
 ## Current acceptance
 
-[The current native functionality report](reports/native-functionality-intent-review-v1.json)
+[The current native functionality report](reports/native-functionality-release-v1.json)
 verifies **991/991 requirements**: **672 unchanged original assertions
 consume actual native primary output; 319 have separately executed Go API/input
 adaptations**. The two source-parse/minimum-language-version requirements now
 have native Go checks and real minimum-toolchain evidence; there are no N/A cases.
 There are no duplicate/missing original nodeids, failed or skipped Go test events.
-[Whole-repository race/vet/format and harness gates](reports/local-quality-intent-review-v1.json)
-also pass. The earlier aggregate v1 and every failing historical run remain intact.
+[Whole-repository race/vet/format and harness gates](reports/local-quality-release-v1.json)
+also pass: **442 root tests and 7957 subtests, zero failed/skipped tests**.
+This release changes runtime behavior as well as tests. It fixes dialogue/display
+placement, audio-property recipients, source/identity boundaries, explicit-sheet
+qualification and integer-millisecond timeline validation. Every failing
+historical run remains intact.
 
 This is not a claim that every unchanged Python assertion passes. The current
-[raw original-assert run](reports/go-draft-pytest-go-compatibility-v1.json) is
+[raw original-assert run](reports/go-draft-pytest-release-final-primary-v7.json) is
 **981 passed / 10 failed, zero skipped**. Five failures preserve the earlier
 entry/evidence/profile/taxonomy differences; five reflect native contract v3 and
 actual Go CLI regeneration interfaces. Each requirement has a passing explicit
@@ -36,10 +40,12 @@ all 126 formerly Python-only requirements and 193 previously Go-touched
 nodes whose main behavior needed independent verification.
 
 All exact mappings are in `adaptations/remaining_*.json`.
-`matrix.json` preserves old fields and adds `current_native_primary_verification`
-and per-node `native_primary_verification`; historic `pending` and touch counts
-remain historic evidence. Neither historical coverage unions nor corpus call
-counts imply whole-pipeline equivalence.
+`matrix.json` preserves historical aggregate fields, pending states and touch
+counts. Current source/evidence hashes are in `current_release_evidence`,
+`current_source_primary_verification` and per-node mapping fields. The final
+executed verdict is the release-v1 aggregate; a pending marker in its input
+snapshot describes capture time, not a failed or skipped final test. Historical
+coverage unions and corpus call counts do not imply whole-pipeline equivalence.
 
 ## Port the behavior, not Python implementation details
 
@@ -65,7 +71,7 @@ native acceptance verdict.
 `TestGoCompatibilityDeclaredLanguageVersion` guards language and standard-library
 API versions, with newer-syntax/API negative controls. The original Python
 f-string rule is not claimed to be a statement-by-statement Go grammar mapping.
-The [real minimum Go 1.25.0 full tests and vet](reports/go-minimum-intent-review-v1.json)
+The [real minimum Go 1.25.0 full tests and vet](reports/go-minimum-release-v1.json)
 passed with automatic upgrades/workspaces disabled and fresh caches. A newer
 compiler is not accepted in place of the exact declared minimum.
 
@@ -91,8 +97,8 @@ go test ./...
 go test -race ./...
 go vet ./...
 python3 conformance/run_native_functionality.py --require-all \
-  --original-report conformance/reports/go-draft-pytest-go-compatibility-v1.json \
-  --go-compatibility-report conformance/reports/go-minimum-intent-review-v1.json \
+  --original-report conformance/reports/go-draft-pytest-release-final-primary-v7.json \
+  --go-compatibility-report conformance/reports/go-minimum-release-v1.json \
   --label a-new-native-round
 ```
 
@@ -121,7 +127,7 @@ python3 conformance/build_frozen_bridge.py \
   --binary /path/printed/by/the/build-helper/bridge \
   --plugin pytest_go_draft \
   --bridge-provenance conformance/reports/builds/a-new-frozen-bridge-bridge.json \
-  --licence-resolutions conformance/fixtures/remaining_full_licence_replay_resolutions_v1.json \
+  --licence-resolutions conformance/fixtures/release_final_licence_replay_resolutions_v2.json \
   --label a-new-original-round
 ```
 
@@ -130,53 +136,52 @@ illustrative. Archive hash and each source file are checked before building in a
 fresh directory with the recorded Go toolchain/OS/architecture. Each source run
 archives adapters, records fixture and consumed recording hashes before/after,
 and preserves all original nodeids/assertions. The current raw report's bridge
-SHA is `8e7cd974c82d81a3f912529b42359d09c64ca2d9652dd841d315822715dc32cd`;
-[its provenance](reports/go-draft-pytest-go-compatibility-v1-provenance.json)
+SHA is `2ebf2758652df6caa7c680fc1e15475268f459c95f9ac92ed313e1871bf2b667`;
+[its provenance](reports/go-draft-pytest-release-final-primary-v7-provenance.json)
 contains the exact build record. Historical `.sources.json` hashes alone cannot
 reconstruct old sources; later `reports/builds` archives can.
 
 ## Fresh semantic recordings, without oracle leakage
 
-Model-safe inputs and held-out expected fields are separate. Importers never read
-expected outputs to create model responses. Typed mode/scope/licence decisions
-are evaluated through production native APIs; unrelated or incompatible tapes
-fail closed. Each recording keeps its own executable/model provenance. Replaying
-it never becomes a new paid call by the later binary.
+Model-safe inputs and held-out expected fields are separate. Complete typed
+requests are verified before replay; incompatible Stage/System/Input/Schema
+fails closed. Each recording keeps its own executable/model/source provenance.
+A replay is never relabelled as a fresh paid call by the current binary.
 
-Current licence/style replay explicitly selects
-`fixtures/remaining_full_licence_replay_resolutions_v1.json`. This **disables old
-automatically loaded supplements** so an earlier System contract cannot override
-the fresh main corpus. The index has 461 namespaced entries / 238 complete inputs:
-437 main rows (228 unique), 14 retry rows (1 unique), and 10 supplemental unique
-inputs. The main run's failed unique case and 14 reused failures remain in
-[its raw report](reports/remaining-full-licence-v1/report.json); the
-[retry](reports/remaining-full-licence-retry-v1/report.json) and
-[supplement](reports/remaining-full-licence-supplement-v1/report.json) are distinct.
+The selected index is
+[`release_final_licence_replay_resolutions_v2.json`](fixtures/release_final_licence_replay_resolutions_v2.json):
+**463 namespaced entries / 238 complete inputs**, preserving the 461-entry
+historical base and adding two precisely selected original DecideLicence API
+refreshes. The original main failure, [retry](reports/remaining-full-licence-retry-v1/report.json)
+and [supplement](reports/remaining-full-licence-supplement-v1/report.json) are
+retained. The [two-case refresh](reports/release-helper-refresh-v1/report.json)
+used a separate **v9 helper binary `ff97523c…`, eight calls, output cap 12288**.
+It is not the v10 main binary `2b348690…`, and its calls are not part of the
+main run's 277. `extend_licence_replay.py` preserves per-recording source builds
+and exact input-key selection rather than overwriting historical responses.
 
-The current source harness consumed 423 licence/style calls and verified all
-**1,422 actual Stage/System/Input/Schema requests** before returning recorded
-outputs. Actual invalid JSON, usage and later repair requests are faithfully
-replayed. Namespaced reuse chains point to the real trace case, never a similarly
-named case from another run. The raw original inputs/oracles are not rewritten.
+[Fresh source-primary v7](reports/release-final-primary-v7-verification.json)
+verifies the current immutable bridge/runtime and supporting source hashes,
+including the corrected independent checker. Raw source tests still report
+981/10; all 672 primary mappings passed their exact required operations. Earlier
+v4 978/13 and 670/672 and v5/v6 proofs remain historical, without relaxation.
 
-To compose a new immutable index from these actual runs:
+Current self-contained [high-level recordings](../compiler/testdata/remaining_highlevel/manifest.json)
+contain full Compile responses for explicit transcript, model-selected transcript
+and source-property merge (6/6/10 stages). The [new wardrobe recording](../compiler/testdata/remaining_wardrobe_fresh/manifest.json)
+contains 12 stages, including a rejected critic candidate and the successful
+bounded writer revision. These 34 stages are a subset of main run calls, not 34
+new paid calls. Strict replay compares every complete request, response and
+normalized final Result. Drift/invalid-provenance controls remain.
 
-```sh
-python3 conformance/compose_licence_replay.py \
-  --run main conformance/fixtures/licence_inputs.json conformance/reports/remaining-full-licence-v1/report.json \
-  --run retry conformance/fixtures/licence_remaining_retry_inputs_v1.json conformance/reports/remaining-full-licence-retry-v1/report.json \
-  --run supplement conformance/fixtures/remaining_full_licence_supplement_inputs_v1.json conformance/reports/remaining-full-licence-supplement-v1/report.json \
-  --inputs /tmp/a-new-licence-inputs.json \
-  --resolutions /tmp/a-new-licence-resolutions.json
-```
+For original wardrobe licence-01108 only, the Go adaptation now takes the real
+Licence from a full public Compile before executing the unchanged GuardOwnership
+assertion. The other old wardrobe cases retain their original recorded API
+boundary; pinned Python assertion/source hashes are unchanged.
 
-[Three latest high-level Compile cases](reports/remaining-highlevel-compile-v2-verification.json)
-verify explicit/model-selected exact transcript performance and a two-source
-identity merge. Their 20 actual stage requests are strictly replayed from small
-self-contained `compiler/testdata/remaining_highlevel` recordings, with changed
-input/request negatives. Both transcript cases preserve the original English
-sentence once; the merge distinguishes observed carbon fibre from caller-requested
-wheels. WARN findings remain and are not called comprehensive quality passes.
+Ordinary module tests use only self-contained testdata, not reports or media
+paths from the recording host. The complete audit/checker selftest needs a full
+repository clone with historical reports; that is separate from Go module use.
 
 ## Pinned original baseline and mutation controls
 
@@ -206,10 +211,10 @@ environment as a new run.
 
 | Artifact | Establishes |
 | --- | --- |
-| `reports/native-functionality-intent-review-v1.json` | All 991 requirements, exact verification class/leaf or original primary operation, raw Go events and immutable source hashes. |
-| `reports/local-quality-intent-review-v1.json` | Actual full-repository race, vet, gofmt, diff and harness gates. |
+| `reports/native-functionality-release-v1.json` | Current 991/991 requirements (672+319), exact verification class/leaf or original primary operation, raw Go events and immutable source hashes. |
+| `reports/local-quality-release-v1.json` | Actual full-repository race/vet and source format/diff checks. |
 | `adaptations/remaining_*.json` | One unique mapping per original nodeid; source assertion intent, Go API/input adjustments and real execution evidence. |
-| `reports/go-draft-pytest-go-compatibility-v1.json` | Unmodified original assertions; 981 passed/10 failed, 865 Go-touched/126 Python-only. Touch alone is not current primary verification. |
+| `reports/go-draft-pytest-release-final-primary-v7.json` | Unmodified original assertions; 981 passed/10 failed, 865 Go-touched/126 Python-only. Touch alone is not current primary verification. |
 | `reports/upstream-pytest.json` | Original Python 991-test baseline and collected assert sources; no Go claim. |
 | `fixtures/controls.json`, `validator_calls.json` | 23 named controls and 386 actual source validator calls, complete text/Context/findings, across 295 source nodes. |
 | `fixtures/compiler_calls.json` | 1,952 original plan/mode/helper calls with exact original inputs, mutation states, results/errors and nodeids. |
@@ -218,7 +223,7 @@ environment as a new run.
 | `fixtures/render_calls.json` | 1,927 original render/textnorm calls, mutable after-states and complete results. Exact helper/format and native pipeline mappings are separately identified. |
 | `reports/go-remaining-repair-v2.json`, `adaptations/remaining_repair.json` | 57 source repair/continuity requirements, bounded retries, exact cross-cut fragments, actual Planner/H3 and negative controls. |
 | `reports/go-adapted-before-fixes-red-v1.json` | New frame/retention negatives fail against hash-verified old product source, without artificial product edits. |
-| `fixtures/suite_briefs.json` | All six original suite Brief inputs, relocated asset paths only. Live results and manual review are separate evidence. |
+| `fixtures/suite_briefs.json` | All six original suite Brief inputs, relocated asset paths only. Live results and independent artifact review are separate evidence. |
 | `fixtures/role_briefs.json`, `role_expectations.json` | Original 16-role Brief/cards inputs and independent held-out expectations; production model inputs never contain the oracle. |
 | `source_manifest.json` | Every upstream tracked file SHA/immutable URL and byte-exact copied assets. |
 | `requirements.lock`, `reports/environment.json` | Isolated Python harness/tool versions; no Python dependency in the Go runtime. |
@@ -239,24 +244,62 @@ report. No shared green helper upgrades an unexecuted primary requirement.
 
 ## Live compilation and limits
 
-Historical six-suite/16-role batches and later environment/style single-case
-repairs retain every request, response, rejected text, usage and binary hash.
-Twenty results from one binary plus two later repairs are not 22 results from one
-binary. Role full-Compile runs omit the source Draft's separate mode parameter;
-`reports/roles-compile-contract.json` makes the input-contract difference explicit.
-The role cards are synthetic source fixtures, not real audio/video observations.
+The latest unified [release-live-round6](reports/release-live-round6/report.json)
+executes **35 Compile + 5 Refine = 40 operations** from one frozen runtime:
+`a9f84ef09bc0c662bd8b0c52afac380a1ce10dc4`, composition-review/v10, binary SHA-256
+`2b34869092e0110606f3a071c18af4f6183e565e4237b8612d28c455d91b7bfa`.
+There are **36 compiled results and four expected typed rejections**: three
+invalid Compile inputs and one Refine deleting the selected transcript source
+while retaining dependent words. A rejected input is not a compiled success.
 
-The Chinese two-four-second user regression is supplementary, not another source
-nodeid: exact “我们明天见，好吗？” fragments concatenate byte-for-byte, legal
-0–4000/4000–8000 ms boundaries, matching continuation flags, no extra dialogue or
-music. It executes real Planner/H3 with controlled candidates and is not a live
-DeepSeek or H3-video quality measurement.
+Settings were deepseek-flash / low / output cap 16384 / parallel 3. Original
+34 Compile cases explicitly use OfficialProfile and 3/3 repair limits; the
+wardrobe original explicitly uses ComfyUIProfile and 1/1. [All call records](reports/release-live-round6-recording-inventory.json)
+retain **277 actual calls, 921356 input and 538309 output tokens**. Fourteen
+followups comprise 12 host-structured, one provider-protocol and one semantic
+review followup. Three Refine followups end in the expected refusal, not a
+successful repair. Repeated Result.Calls ledgers are not additional calls.
 
-Compiled output, schema validity, held-out field equality, automated semantic
-review and manual prose review are different evidence classes. Actual model
-failures and WARNs remain; no real H3 video inference was performed. Historical
-fallback/normalization policies are never silently applied to user literals.
-Generated-prose repair helpers are opt-in and return observable changes.
+The [independent publication checker](reports/release-live-round6-verification.json)
+passes 40/40. New artifact reviews cover [21 core operations](reports/release-live-round6-semantic-core-review.json),
+[16 roles](reports/release-live-round6-semantic-role-review.json) and
+[three invalid boundaries](reports/release-live-round6-semantic-boundary-review.json).
+Reviewer kind is coding_agent_independent_artifact_review, not human signoff or
+proof of universal semantics. Real PNG perception applies to ref2 two-subject,
+i2 animation and paired endpoints. Other media observations are explicitly
+supplied typed fixtures, not real audio/video perception.
+
+The v10 sheet stage qualifies only host-declared non-frame sheets after accepted
+identity and before remaining licence owners. Canonical target facts are checked
+again in final review; sheet captions, view wrappers and source backgrounds are
+not identity. Actual frame anchors preserve full panels/labels/backgrounds and
+are excluded from cleanup. Separate fixes retain replacement motion, exact
+cross-cut Chinese parts and flags, unseen voiceover, per-shot dialogue/display
+contracts and voice-property vocal recipients. T12 compares integer milliseconds:
+1200ms passes, 1199ms still fails. None is implemented by lexical intent guessing.
+
+The prefix case retains the caller's opaque property label
+`wheels from the second picture` even after an extra conditioning reference
+changes display ordinals. Explicit typed edges and rendered source clauses bind
+wheels to asset-2 / Picture3, then Picture2 after deletion; the label is not parsed
+as a media address. Its reuse in prose has a recorded namespace ambiguity. We do
+not claim all prose is unambiguous or rendered-video source fidelity established.
+
+Visible lettering is checked by exact bytes, typed display count/shot and actual
+prose semantics; repeating a description of the same prop is not automatically
+a second physical display. [The prior oracle correction](reports/release-live-round5-visible-text-oracle-correction.json)
+preserves old frozen failures. Two distinct signs, unauthorized readable carry
+or extra words still fail semantic review. The [checker implementation fix](reports/release-live-round6-checker-tool-correction.json)
+retains the original NameError/source snapshot and corrected execution SHA;
+the old tool was not falsely reported as successful.
+
+Historical suite/role batches, later single-case repairs, invalid JSON, semantic
+failures, WARNs and separate binaries remain intact. The [old role API adaptation](reports/roles-compile-contract.json)
+is not silently renamed into an identical Draft contract. Fixed transcript words
+authorize a new performance independently of copying the original audio signal;
+voice properties alone never grant speech. No real H3 video inference occurred,
+so IR/schema/critic/artifact approval is not a video quality, timing or pixel
+fidelity guarantee.
 
 ## Redistribution and external use
 
@@ -268,19 +311,27 @@ recording runtime credentials/configuration objects. Reports contain evidence,
 not live credentials.
 
 Large `conformance/reports` are deliberately excluded from the Go module ZIP.
+An initial private-VCS fetch may still transfer those larger Git objects before
+the Go module ZIP is produced; ZIP exclusion is not a promise about Git traffic.
 The runtime and downloadable package tests use their self-contained testdata,
 not reports; a repository clone is needed to reproduce this complete audit.
 Ordinary corpus tests write only `t.TempDir`; `CONTEXTIR_PLAN_CORPUS_REPORT` is an
 explicit opt-in destination for retained reports.
 
-The current product commit is `84c82a35fe9f84b9179522f3925ff1d1d7e15324`, pinned as
-`v0.1.1-0.20261021024005-84c82a35fe9f`. The actual private remote ZIP contains 9,385,184
+**v0.2.0 publication/install proof is pending.** Fill only after execution:
+`[PENDING: actual tag commit]`, `[PENDING: private remote ZIP hash/size]`,
+`[PENDING: independent consumer and downloaded full-suite reports]`.
+Current local/source/live acceptance does not claim that this tag is already
+installed or that its remote download succeeded.
+
+The historical product commit was `84c82a35fe9f84b9179522f3925ff1d1d7e15324`, pinned as
+`v0.1.1-0.20261021024005-84c82a35fe9f`. Its actual private remote ZIP contained 9,385,184
 bytes. [The independent consumer](reports/private-consumer-go-compatibility-v4.json)
 and [downloaded native suite](reports/private-native-go-compatibility-v1.json)
 passed 372 root tests and 7813 subtests with no failed/skipped test events.
 The ZIP has no reports directory; it uses no local replace/workspace resolution,
 and its native source hashes match the actual Go 1.25.0 minimum-toolchain run.
-[The current receipt](reports/completion-go-compatibility-v1.json) retains the
+[That historical receipt](reports/completion-go-compatibility-v1.json) retains the
 three TLS download failures and the same-repository canonical origin used only
 in the task-owned external VCS cache. No worktree source or overlay was substituted.
 The prior `874c5ee` distribution evidence remains historical.

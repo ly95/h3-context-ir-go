@@ -321,7 +321,7 @@ func (r *replay) GenerateWithImages(ctx context.Context, request contextir.Model
 			return r.fail("image conditioning has no original fixture behind it")
 		}
 	}
-	if len(response.Response.JSON) > 0 {
+	if entry.OutputFile != "" {
 		outputPath, err := relativeFile(r.Root, entry.OutputFile)
 		if err != nil {
 			return r.fail("recorded response output is unavailable")
@@ -330,6 +330,19 @@ func (r *replay) GenerateWithImages(ctx context.Context, request contextir.Model
 		if err != nil || !equalJSON(output, response.Response.JSON) {
 			return r.fail("recorded output differs from complete response")
 		}
+	} else {
+		// The recorder writes an output file only for a nonempty original
+		// RawMessage. Encoding a nil RawMessage in the complete response emits
+		// JSON null; decoding that packet yields the four bytes "null". The
+		// absent output file plus typed failure distinguishes this from an
+		// actual model JSON value null, whose output file must still be checked.
+		if len(response.Response.JSON) != 0 && !bytes.Equal(bytes.TrimSpace(response.Response.JSON), []byte("null")) {
+			return r.fail("nonempty recorded response has no original output file")
+		}
+		if response.Error == nil || response.Error.Code == "" {
+			return r.fail("recorded absent output lacks its typed failed-call contract")
+		}
+		response.Response.JSON = nil
 	}
 	r.Position++
 	if response.Error != nil {

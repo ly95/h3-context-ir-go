@@ -1,7 +1,7 @@
 {
   "schema": "contextir-private-release-completion/v1",
   "created_at": "2026-10-21T08:20:48.075143+00:00",
-  "state": "awaiting_candidate_publication",
+  "state": "awaiting_final_tag_publication_and_verification",
   "target": {
     "module": "github.com/ly95/contextir",
     "version": "v0.2.0",
@@ -58,12 +58,86 @@
     "strict_four_original_input_compile_replays_passed": true
   },
   "candidate": {
-    "state": "not_run",
-    "requested_commit": null,
-    "download": null,
-    "full_native": null,
-    "forty_operation_recorded_replay": null,
-    "passed": false
+    "state": "passed",
+    "requested_commit": "38393570e2c87365c26be278d0550dae3cd389b7",
+    "resolved_version": "v0.1.1-0.20261021082422-38393570e2c8",
+    "download": {
+      "file": "conformance/reports/private-consumer-release-v0.2.0-candidate-retry2.json",
+      "sha256": "dccd4486715d180e273bba86109939a5160b99902652135d66a87924ffa4c1a4",
+      "passed": true,
+      "module_cache_reused": true,
+      "module_zip_bytes": 10835560,
+      "module_zip_sha256": "2e4ed7d0c362b3e775bc8147033fc811190d7bbaa668219793a2086df57f8875",
+      "module_sum": "h1:VGjW562zznAOVMYJcSMC+EBqL4HAinihKZecE0mZ79c="
+    },
+    "full_native": {
+      "file": "conformance/reports/private-native-release-v0.2.0-candidate.json",
+      "sha256": "960ac20cab5f61c4f416f41616f3807f14d3ed8d656d99f9a8da0110e0f6ad35",
+      "passed": true,
+      "counts": {
+        "root": {
+          "total": 442,
+          "pass": 442,
+          "fail": 0,
+          "skip": 0
+        },
+        "sub": {
+          "total": 7957,
+          "pass": 7957,
+          "fail": 0,
+          "skip": 0
+        },
+        "packages": {
+          "total": 24,
+          "pass": 20,
+          "fail": 0,
+          "skip": 4
+        }
+      },
+      "full_suite_executed": true,
+      "cache_unchanged": true,
+      "provider_credentials_forwarded": false
+    },
+    "forty_operation_recorded_replay": {
+      "file": "conformance/reports/release-consumer-v0.2.0-candidate-retry1.json",
+      "sha256": "43ae47fa7e97c0ae7eb0c5c0f5e9e90871c6b0244e5632717fe5ebf0fdfe76c2",
+      "passed": true,
+      "case_count": 35,
+      "operation_count": 40,
+      "compile_count": 35,
+      "refine_count": 5,
+      "model_attempts": 277,
+      "same_complete_recorded_outputs": true,
+      "disk_result_roundtrips": 40,
+      "compiled_document_artifact_roundtrips": 36,
+      "matched_expected_typed_rejections": 4,
+      "downloaded_runtime_matches_live_build": true,
+      "provider_calls": 0,
+      "provider_credentials_forwarded": false,
+      "cache_unchanged": true,
+      "recording_unchanged": true
+    },
+    "prior_failed_attempts": [
+      {
+        "file": "conformance/reports/private-consumer-release-v0.2.0-candidate.json",
+        "sha256": "65302ce01d441bbd4a92fe4565aa53111ff4b5befbcb67c52668950ecfcb8ebd"
+      },
+      {
+        "file": "conformance/reports/private-consumer-release-v0.2.0-candidate-retry1.json",
+        "sha256": "7c79cac53463c1c47cba89a27fe51436bd29dbdd63f59da928b37a23f2e468f1"
+      },
+      {
+        "file": "conformance/reports/release-consumer-v0.2.0-candidate.json",
+        "sha256": "e3008a82f92d7c183b23ea8286c0808726626886539d3ef3ac5b13e6b9049aa2"
+      }
+    ],
+    "transport_note": "A fresh external cache encountered TLS EOF during Git history fetching. The accepted attempt explicitly reused an earlier independently downloaded external VCS/module cache and fetched/resolved the new exact remote commit, with a new consumer/build directory; no worktree replacement or source overlay was used.",
+    "replay_adapter_fix": {
+      "file": "conformance/reports/release-consumer-null-response-boundary.json",
+      "sha256": "000489b0ea0c193a587de5c369a1210a9d27a6c71d53e90dcdc47e5141307695",
+      "scope": "Restore recorded nil RawMessage from absent output plus typed provider error, while preserving actual JSON-null output files, all attempts, rejected output and usage. New strict controls passed before successful complete replay."
+    },
+    "passed": true
   },
   "tag": {
     "state": "not_run",
@@ -75,16 +149,64 @@
     "passed": false
   },
   "remaining_required_checks": [
-    "Candidate is pushed and freshly downloaded at its exact remote commit; no replacement/workspace.",
-    "Full shipped Go suite ends with zero failed/skipped tests and complete package terminals, offline with no forwarded provider credentials.",
-    "External host reproduces all 40 recorded operations, all requests/actual image inputs, complete Result and Artifact, including disk save/read and Refine.",
-    "v0.2.0 is freshly downloaded in another actual consumer; resolved Version exactly v0.2.0 and Origin.Hash exactly the merged commit.",
-    "The tag passes its own full native suite and complete 40-operation replay using the downloaded module."
+    "Finalize thin distribution HEAD and refreshed conformance provenance without changing production Go or testdata.",
+    "Fresh v0.2.0 download must resolve exact v0.2.0 and Origin.Hash equal the merged commit.",
+    "Final tag must pass its own full native test suite with zero failed/skipped tests and complete package terminals.",
+    "Final tag must reproduce all 40 recorded operations through saved/restored Results with identical actual outputs/compiled Artifacts and all 277 attempts."
   ],
   "limits": [
     "Main live batch uses DeepSeek flash/low/16384 with explicit finite repair budgets; successful final compilation does not mean all first drafts were correct.",
     "Independent coding-agent artifact review is not human sign-off or certification of generated video/audio quality.",
     "Projection attributes are exact opaque selectors on typed source identities; caller ordinal wording may remain ambiguous after media insertion even though source IDs and manifest bindings are correct.",
     "Independent TranscriptUses authorizes exact words; a voice-property reference by itself does not authorize words or source signal reuse."
-  ]
+  ],
+  "local_and_semantic_evidence": [
+    {
+      "file": "conformance/reports/native-functionality-release-v1.json",
+      "sha256": "7490e89887f4fc88ed7b3e38fe19778e2adbd4284e35117bb3b2ca939e3fcd18",
+      "passed": true
+    },
+    {
+      "file": "conformance/reports/go-minimum-release-v1.json",
+      "sha256": "f07e47288dbcf9988d6d373969b3560944e7bfa8da81d1be4667be25a2916d4c",
+      "passed": true
+    },
+    {
+      "file": "conformance/reports/local-quality-release-v1.json",
+      "sha256": "df486d0588da88e19a90451ff14fcb11d37b5d761d33597deab0cedadcc893df",
+      "passed": true
+    },
+    {
+      "file": "conformance/reports/release-final-primary-v7-verification.json",
+      "sha256": "bc4325f1bce4947c917602be06ef56132d735dc5addcd739a2f57adabb8e6ed1",
+      "passed": true
+    },
+    {
+      "file": "conformance/reports/release-live-round6-verification.json",
+      "sha256": "298bd59fb87d6f2a2ac85bfbab5aa19776187f58f5b714410af310406adffa91",
+      "passed": true
+    },
+    {
+      "file": "conformance/reports/release-live-round6-semantic-core-review.json",
+      "sha256": "b359d48a08b64791c5581e0780b8f7415b798ee86577c4ce182e86d9f794d27d",
+      "passed": true
+    },
+    {
+      "file": "conformance/reports/release-live-round6-semantic-role-review.json",
+      "sha256": "60153b47f145f2dbb5af3fb668e17f70f88962eedcfabb43cfb6a702e4a38d20",
+      "passed": true
+    },
+    {
+      "file": "conformance/reports/release-live-round6-semantic-boundary-review.json",
+      "sha256": "6274ae523c179a6cc74a17775c5705fec69993210a6e8434f42b54d821f1f72d",
+      "passed": true
+    }
+  ],
+  "source_diff_evidence": {
+    "file": "conformance/reports/release-source-diff-check-v1.json",
+    "sha256": "b985726d658a49cc4b78f74f5ba6b0dfcc24b7c02feced03797161d85118f04a",
+    "production_and_test_diff_check_exit_code": 0,
+    "scope": "Original raw pytest log trailing whitespace is retained as evidence; it is not a source/test failure."
+  },
+  "updated_at": "2026-10-21T08:48:59.658382+00:00"
 }
