@@ -78,7 +78,7 @@ def main():
     with tarfile.open(archive, 'x:gz') as out:
         for name in sources:
             out.add(ROOT / name, arcname=name, recursive=False)
-    directory = Path(tempfile.mkdtemp(prefix='contextir-live-build-' + args.label + '-'))
+    directory = Path(tempfile.mkdtemp(prefix='contextir-live-build-' + args.label + '-')).resolve()
     with tarfile.open(archive) as saved:
         saved.extractall(directory, filter='data')
     for name, want in sources.items():
