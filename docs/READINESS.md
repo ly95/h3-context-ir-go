@@ -4,7 +4,7 @@
 
 ## 当前验收结论
 
-固定上游 `fd031e136ae3d89147324c0d1b2aa65e838c21f5` 的原清单有 **42 文件、991 项**。本轮 **991/991 项全部通过**，分为 672 项原断言验证 Go 主输出与 319 项独立 Go 适配，N/A 为 0。两项语言兼容要求按 Go 原意实现，并有真实最低 Go 1.25.0 全包构建、测试和 vet 证据。完整结果见 [最终逐项报告](../conformance/reports/native-functionality-go-compatibility-v1.json)、[映射矩阵](../conformance/matrix.json) 与 [验收说明](UPSTREAM_TESTS.md)。
+固定上游 `fd031e136ae3d89147324c0d1b2aa65e838c21f5` 的原清单有 **42 文件、991 个条目**。验收单位是用例保护的业务规则，允许使用 Go 的合法输入、显式观察依赖和真实命令，不机械复制 Python 实现细节。本轮所有条目都有已执行且通过的映射：672 项原断言验证 Go 主输出，319 项独立 Go 适配，N/A 为 0。新增契约变更版本门卫、公共 Compile 镜头约束、最终媒体绑定/姿态和合法双图 FL2VA 对照。完整结果见 [本轮逐项报告](../conformance/reports/native-functionality-intent-review-v1.json) 与 [原意及补强说明](UPSTREAM_TESTS.md#go-测试怎样保留上游意图)。
 
 | 证据类型 | 项数 | 实际验证的内容 |
 | --- | ---: | --- |
@@ -14,15 +14,15 @@
 
 319 项包括原先 126 个 Python-only nodeid 的全部 126 个要求，以及 193 个此前虽然调用过 Go、但主行为或接口尚需独立验证的节点。完整映射没有遗漏或重复。普通 `go test`、原断言桥接和付费模型运行各自保存原始结果，不把它们的通过数相加。
 
-最新未修改原断言重跑仍是 **981 passed / 10 failed，0 skipped**，见 [原报告](../conformance/reports/go-draft-pytest-go-compatibility-v1.json)。十项失败分别是五项既有合法入口/观察/后端/分类差异，加上 native wire contract v3 与真实 Go CLI 的五项版本/再生接口差异；对应 Go 要求已独立验证，原失败没有被豁免、删掉或改成原断言通过。逐项说明见 [UPSTREAM_TESTS](UPSTREAM_TESTS.md#原样重跑保留的十项差异)。旧 986/5、953/38 和其他失败轮次继续保留。
+未修改 Python 断言的桥接诊断仍是 **981 passed / 10 failed，0 skipped**，见 [原报告](../conformance/reports/go-draft-pytest-go-compatibility-v1.json)。这些输入、依赖、版本及命令差异不能直接当作 Go 业务失败，也不能直接豁免原功能；应检查保持原意的 Go 正向产物和负向对照。十项均有明确映射，原结果没有被改写。逐项说明见 [UPSTREAM_TESTS](UPSTREAM_TESTS.md#原样重跑保留的十项差异)。旧失败轮次继续保留。
 
-最终全仓 Go 测试、race、vet、格式与 diff 检查以 [local-quality-go-compatibility-v1.json](../conformance/reports/local-quality-go-compatibility-v1.json) 的实际命令/结果为准。原 989 聚合首轮 [v1](../conformance/reports/native-functionality-remaining-all-v1.json) 也保持不变；当前兼容性轮另纳入 Go 源码和声明最低语言版本测试，既有真实高层编译录音的严格回放测试也继续执行，不把补充测试再算作新的上游节点。
+本轮全仓 Go 测试、race、vet、格式与 diff 检查以 [本轮质量记录](../conformance/reports/local-quality-intent-review-v1.json) 为准，真实最低 Go 1.25.0 全包测试和 vet 见 [本轮最低版本记录](../conformance/reports/go-minimum-intent-review-v1.json)。旧报告保持不变；新增补强不再计作新的上游条目，既有真实高层编译录音继续严格回放。
 
 ## Go 源码与最低版本兼容性
 
 原两项 Python 语法测试的原意已按 Go 实现，不再列 N/A：`TestGoCompatibilityEverySourceParses` 解析实际 Go 源码，`TestGoCompatibilityDeclaredLanguageVersion` 检查 `go.mod` 声明版本对应的语言与标准库 API。负例包括当前编译器能读、较低语言版本拒绝的语法，以及较新标准库 API；原 Python f-string 规则没有伪称逐句翻译为 Go。
 
-更强的 [真实最低 Go 1.25.0 全包测试与 vet](../conformance/reports/go-minimum-compatibility-v1.json) 已通过，关闭自动升级与工作区，使用新缓存且未读取模型凭据。聚合门卫核对真实工具链、所有 Go/test/embedded 输入 hash、完整 JSON 事件、两项实际测试和运行期间证据不变；用 Go 1.27 或 Go 1.25.1 代替最低版本、筛选测试、跳过、篡改来源或日志均被拒绝。映射见 [remaining_go_compatibility.json](../conformance/adaptations/remaining_go_compatibility.json)。旧 989 项通过 / 2 项 N/A 的 [历史报告](../conformance/reports/native-functionality-remaining-all-v3.json) 保持原样。
+更强的 [真实最低 Go 1.25.0 全包测试与 vet](../conformance/reports/go-minimum-intent-review-v1.json) 已通过，关闭自动升级与工作区，使用新缓存且未读取模型凭据。聚合门卫核对真实工具链、所有 Go/test/embedded 输入 hash、完整 JSON 事件、两项实际测试和运行期间证据不变；用 Go 1.27 或 Go 1.25.1 代替最低版本、筛选测试、跳过、篡改来源或日志均被拒绝。映射见 [remaining_go_compatibility.json](../conformance/adaptations/remaining_go_compatibility.json)。旧 989 项通过 / 2 项 N/A 的 [历史报告](../conformance/reports/native-functionality-remaining-all-v3.json) 保持原样。
 
 ## 实际提供的能力
 

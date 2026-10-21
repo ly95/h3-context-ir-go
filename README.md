@@ -4,9 +4,9 @@
 
 验收依据是 [OpenH3-IR 固定提交 fd031e1](https://github.com/ruashots/open-h3-ir/tree/fd031e136ae3d89147324c0d1b2aa65e838c21f5) 的完整功能与原始测试。原测试输入、原断言、历次失败和真实 DeepSeek 输出分别保存在 [conformance](conformance/README.md)，未把早期三个自编 smoke cases 当作功能验收。具体通过范围和剩余差异见 [验收清单](docs/UPSTREAM_TESTS.md) 与 [当前状态](docs/READINESS.md)。
 
-最终逐项验收覆盖原清单 **991/991 项，全部通过**：672 项由未修改的原断言验证实际 Go 主输出，319 项由明确记录接口/输入调整的独立 Go 测试验证；两项语言兼容要求已按 Go 实现，N/A 为 0。没有遗漏、重复计数或跳过来凑通过。原样 Python 桥接重跑仍保留 **981 passed / 10 failed**，没有改写成 991 passed。见 [完整逐项报告](conformance/reports/native-functionality-go-compatibility-v1.json) 与 [差异说明](docs/UPSTREAM_TESTS.md)。
+验收按上游单测保护的业务行为重写，使用 Go 的接口、类型和显式依赖。原清单 **991 个条目都有通过的验证映射**：672 项由原断言验证实际 Go 主输出，319 项由记录原意及接口/输入调整的 Go 测试验证，N/A 为 0。本轮补强了契约升级门卫、公共 Compile 的镜头数优先级、最终素材绑定/姿态和合法双图首尾帧保留；见 [本轮逐项报告](conformance/reports/native-functionality-intent-review-v1.json) 与 [意图说明](docs/UPSTREAM_TESTS.md#go-测试怎样保留上游意图)。原样 Python 桥接诊断保留 **981 passed / 10 failed**；固定 Python 版本、命令及输入设置不同的结果，与 Go 业务验收分别报告。
 
-真实最低 Go 1.25.0 的全库测试与 vet 已通过，见 [兼容性证据](conformance/reports/go-minimum-compatibility-v1.json)。旧 989 项通过、2 项 N/A 的报告作为历史保留。
+真实最低 Go 1.25.0 的全库测试与 vet 已通过，见 [本轮兼容性证据](conformance/reports/go-minimum-intent-review-v1.json)。旧验收报告及其失败和 N/A 记录作为历史保留。
 
 这是公开协议的独立实现，没有 MiniMax 托管 Context-IR 的内部代码、训练数据或生成质量等价证据。
 
@@ -18,7 +18,7 @@
 go get github.com/ly95/contextir@v0.1.1-0.20261021024005-84c82a35fe9f
 ```
 
-当前版本固定产品提交 `84c82a35fe9f84b9179522f3925ff1d1d7e15324`，已从 GitHub 私有远端下载验证，ZIP 为 9,385,184 字节。独立消费者构建、IR/H3/哈希/评分重放，以及下载包内完整 Go 测试 **372 个主测试、7813 个子测试全部通过，0 失败、0 跳过**。没有 `replace`、工作区源码或历史报告依赖；下载源码逐项匹配真实 Go 1.25.0 最低版本测试的输入。见 [消费者验证](conformance/reports/private-consumer-go-compatibility-v4.json)、[下载包完整测试](conformance/reports/private-native-go-compatibility-v1.json) 与 [汇总证据](conformance/reports/completion-go-compatibility-v1.json)。
+已发布产品基线固定提交 `84c82a35fe9f84b9179522f3925ff1d1d7e15324`，已从 GitHub 私有远端下载验证，ZIP 为 9,385,184 字节。该下载包的独立消费者构建、IR/H3/哈希/评分重放，以及 **372 个主测试、7813 个子测试全部通过，0 失败、0 跳过**。没有 `replace`、工作区源码或历史报告依赖；下载源码匹配当轮真实 Go 1.25.0 测试输入。本轮增加验收测试，未改运行时代码；新增测试结果以上述本轮报告为准。见 [消费者验证](conformance/reports/private-consumer-go-compatibility-v4.json)、[下载包基线测试](conformance/reports/private-native-go-compatibility-v1.json) 与 [当轮汇总](conformance/reports/completion-go-compatibility-v1.json)。
 
 当前实现与证据位于 `codex/readiness-audit` 分支。此前 `874c5ee` 的 989/2 N/A 验收和分发记录作为历史保留；旧标签 `v0.1.0` 不包含后续实现。
 

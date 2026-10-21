@@ -1,12 +1,14 @@
 # 上游完整行为验收
 
-固定上游原清单的 **991/991 项要求全部通过，N/A 为 0**；原两项语言兼容要求已按 Go 解析/声明最低版本可用的原意实现。来源是 42 文件、991 个原 nodeid，不以自编示例代替原要求。
+验收对象是上游单测保护的业务行为。固定来源为 42 文件、991 个原 nodeid；nodeid 用于追溯来源，不要求保留 Python 的函数形状、常量、命令或分类器局限。当前 **991 个条目都有已执行的验证映射，N/A 为 0**。原两项语言兼容要求按 Go 源码解析和声明最低版本可用的原意实现。
 
-本轮版本已从 GitHub 私有远端独立下载：`v0.1.1-0.20261021024005-84c82a35fe9f`。下载包内 **372 个主测试、7813 个子测试全部通过且无跳过**，包括新增的两个兼容性测试；其原生源码与真实 Go 1.25.0 最低版本测试的输入一致。见 [外部全套证据](../conformance/reports/private-native-go-compatibility-v1.json) 与 [最终汇总](../conformance/reports/completion-go-compatibility-v1.json)。
+本轮按业务意图复核此前十项差异，补强契约变更必须升级版本、公共 Compile 的用户镜头数优先、最终产物的媒体绑定与姿态，以及合法双图首尾帧保留场景。完整验收入口见 [本轮逐项结果](../conformance/reports/native-functionality-intent-review-v1.json)，最低版本与质量记录见 [Go 1.25.0](../conformance/reports/go-minimum-intent-review-v1.json) 和 [本轮质量检查](../conformance/reports/local-quality-intent-review-v1.json)。这些补强不增加上游条目计数，也不把既有 Python 失败改写成通过。
 
-[最终逐项报告](../conformance/reports/native-functionality-go-compatibility-v1.json) 对每个要求保存实际验证入口、原断言意图、输入调整和证据：**672 项由未修改的原断言检查实际 Go 主输出，319 项用独立 Go 接口测试适配**。没有遗漏、重复、跳过或把辅助函数触达当作主功能通过。独立 Go 测试与原断言使用同一生产实现；受控模型候选和严格录音回放不需要付费服务。
+此前已发布的产品基线已从 GitHub 私有远端独立下载：`v0.1.1-0.20261021024005-84c82a35fe9f`。该下载包内 **372 个主测试、7813 个子测试全部通过且无跳过**，包括两个兼容性测试；其原生源码与当轮真实 Go 1.25.0 最低版本测试的输入一致。本轮增加的是 Go 行为验收测试，未修改运行时代码；该历史下载记录不冒充新增测试的外部运行。见 [外部基线证据](../conformance/reports/private-native-go-compatibility-v1.json) 与 [当轮汇总](../conformance/reports/completion-go-compatibility-v1.json)。
 
-原样 Python 断言重跑依然是 **981 passed / 10 failed，0 skipped**，见 [完整原报告](../conformance/reports/go-draft-pytest-go-compatibility-v1.json)。这不是“991 原断言全部通过”。十项 Go 接口差异另有实际正反例验证，原失败保持红色。此前 986/5 和其他所有历史轮次继续保留。
+[最终逐项报告](../conformance/reports/native-functionality-intent-review-v1.json) 对每个要求保存实际验证入口、原断言意图、输入调整和证据：**672 项由未修改的原断言检查实际 Go 主输出，319 项用独立 Go 接口测试适配**。没有遗漏、重复、跳过或把辅助函数触达当作主功能通过。独立 Go 测试与原断言使用同一生产实现；受控模型候选和严格录音回放不需要付费服务。
+
+原样 Python 断言桥接诊断依然是 **981 passed / 10 failed，0 skipped**，见 [完整原报告](../conformance/reports/go-draft-pytest-go-compatibility-v1.json)。它记录跨实现的输入、依赖和接口差异；业务是否成立需检查保持原意的 Go 正反例，不能仅据 Python 固定 v2 常量或命令名称判断 Go 功能失败。也不能用一个拒绝入口的测试，代替原用例期待的成功产物。此前 986/5 和所有历史轮次继续保留。
 
 ## 证据怎样计数
 
@@ -18,13 +20,13 @@
 
 319 项包含旧 126 个 Python-only 节点的全部 126 个要求，以及 193 个此前已经触达 Go、但主断言仍需独立验证或接口适配的节点。672 项没有虚构独立 Go test leaf：入口仍是原 source nodeid 与实际 native operation。逐项 [适配清单](../conformance/adaptations/remaining_existing_native.json) 与其他 `remaining_*.json` 列出原断言、来源 SHA、边界和精确测试/fixture IDs。
 
-[最终本地质量检查](../conformance/reports/local-quality-go-compatibility-v1.json) 的全仓 race、vet、gofmt、diff 与 conformance 门卫全部通过。最终聚合也执行全部 Go 测试并核验运行期间源文件不变；原始 Go JSON events、源码归档和 hash 在报告中。首轮 [v1](../conformance/reports/native-functionality-remaining-all-v1.json) 保持不变，不把两轮事件数相加。
+[最终本地质量检查](../conformance/reports/local-quality-intent-review-v1.json) 的全仓 race、vet、gofmt、diff 与 conformance 门卫全部通过。最终聚合也执行全部 Go 测试并核验运行期间源文件不变；原始 Go JSON events、源码归档和 hash 在报告中。首轮 [v1](../conformance/reports/native-functionality-remaining-all-v1.json) 保持不变，不把两轮事件数相加。
 
 ## Go 源码与最低版本兼容性
 
 原两项 Python 语法测试的原意已按 Go 实现，不再列 N/A：`TestGoCompatibilityEverySourceParses` 解析实际 Go 源码，`TestGoCompatibilityDeclaredLanguageVersion` 检查 `go.mod` 声明版本对应的语言与标准库 API。负例包括当前编译器能读、较低语言版本拒绝的语法，以及较新标准库 API；原 Python f-string 规则没有伪称逐句翻译为 Go。
 
-更强的 [真实最低 Go 1.25.0 全包测试与 vet](../conformance/reports/go-minimum-compatibility-v1.json) 已通过，关闭自动升级与工作区，使用新缓存且未读取模型凭据。聚合门卫核对真实工具链、所有 Go/test/embedded 输入 hash、完整 JSON 事件、两项实际测试和运行期间证据不变；用 Go 1.27 或 Go 1.25.1 代替最低版本、筛选测试、跳过、篡改来源或日志均被拒绝。映射见 [remaining_go_compatibility.json](../conformance/adaptations/remaining_go_compatibility.json)。旧 989 项通过 / 2 项 N/A 的 [历史报告](../conformance/reports/native-functionality-remaining-all-v3.json) 保持原样。
+更强的 [真实最低 Go 1.25.0 全包测试与 vet](../conformance/reports/go-minimum-intent-review-v1.json) 已通过，关闭自动升级与工作区，使用新缓存且未读取模型凭据。聚合门卫核对真实工具链、所有 Go/test/embedded 输入 hash、完整 JSON 事件、两项实际测试和运行期间证据不变；用 Go 1.27 或 Go 1.25.1 代替最低版本、筛选测试、跳过、篡改来源或日志均被拒绝。映射见 [remaining_go_compatibility.json](../conformance/adaptations/remaining_go_compatibility.json)。旧 989 项通过 / 2 项 N/A 的 [历史报告](../conformance/reports/native-functionality-remaining-all-v3.json) 保持原样。
 
 ## 原样重跑保留的十项差异
 
@@ -44,6 +46,21 @@
 | `test_reference_licence.py::test_the_rule_is_NOT_armed_when_the_requested_medium_is_unclassifiable` | 原词表要求 `1990s cel animation` 为 None；native typed 决策可识别为 2D。`TestGoConformanceMediumUnknownClassificationDoesNotProveRendition` 保留完整目标风格，区分未知分类、具体变换和跨类退回。 |
 
 前五项映射见 [surface](../conformance/adaptations/remaining_surface.json)、[真实 CLI](../conformance/adaptations/remaining_cli.json)、[native JS](../conformance/adaptations/remaining_js.json)；后五项见 [现有 Go 契约映射](../conformance/adaptations/remaining_existing_native.json) 和 [原五项调整说明](../conformance/go_adapted_cases.json)。新增负例曾发现实际 frame-source 角色错误与非法 retention 漏检，[旧源码 RED](../conformance/reports/go-adapted-before-fixes-red-v1.json) 保留修复前失败，未通过放宽断言求绿。
+
+## Go 测试怎样保留上游意图
+
+先读取原用例的断言、注释与失败反例，再用 Go 的公共入口、类型和显式依赖表达同一规则。调整设置必须保留成功场景和所保护的业务能力；调用方显式选择不能被运行时偷偷改变。测试中的受控模型输出只用于验证合同与错误处理，不作为真实模型质量证明。
+
+| 上游保护的规则 | Go 验收应证明的行为 |
+| --- | --- |
+| 契约来自同一份定义，变化可被客户端识别 | 实际 HTTP、导入接口、JS 和真实 Go CLI 一致；完整 native 契约独立钉住摘要；增加字段、改变错误状态/路由、增删章节而不升级版本必须失败。Python v2 不是 Go 的固定版本要求。 |
+| 用户镜头数高于导演偏好 | 同一模型请求保留用户 2 镜和导演 3 镜原文，并明确优先级；合法候选经公共 Compile 得到 2 镜成品，违约结构或成品被拒绝。无素材场景使用 t2va 不削弱此规则。 |
+| 每个正文媒体引用都有实际绑定 | 显式提供观察后，真实 Draft/Compile 产物的正文标签与非空 manifest 双向对应；虚构引用和错绑失败。观察可注入，不能把用户 note 伪装成观察。 |
+| 首帧姿势属于开场，普通参考姿势不属于身份 | 相同观察分别作为普通 subject 和首帧使用；普通 subject 保留姿态观察但不把它写进最终身份，首帧姿态进入最终产物。H3 格式能力在可表达它的 profile 下验证，后端能力限制另外验证。 |
+| 风格转换不改变素材保留关系 | 普通主体、首帧、尾帧和合法双图 fl2va 均保持对应保留标记与锚点；源风格/目标风格对照一致，恶意 attribute_transfer 被拒绝。 |
+| 未知媒介不能构成类别冲突证据 | 显式未知 source/target 不启用跨媒介误报，同时不能冒充目标风格已经实现；已知同类、已知跨类和退回源风格另有正反例。不要求重现 Python 对 cel animation 无法分类的局限。 |
+
+原桥接的十项红色记录与上述 Go 行为验收回答不同问题，必须分别报告。原清单的 991 个参数化条目也不等于 991 种独立业务能力。
 
 ## 修复、对白与保真
 
@@ -72,7 +89,7 @@ go test -race ./...
 go vet ./...
 python3 conformance/run_native_functionality.py --require-all \
   --original-report conformance/reports/go-draft-pytest-go-compatibility-v1.json \
-  --go-compatibility-report conformance/reports/go-minimum-compatibility-v1.json \
+  --go-compatibility-report conformance/reports/go-minimum-intent-review-v1.json \
   --label a-new-native-round
 ```
 

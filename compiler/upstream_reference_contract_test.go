@@ -119,34 +119,21 @@ func TestGoConformanceManifest(t *testing.T) {
 	if len(r.Document.Subjects) != 1 || len(r.Document.Subjects[0].Sources) != 1 || r.Document.Subjects[0].Sources[0].Source.AssetID != "ref1" || manifest.Subjects[0].ID != r.Document.Subjects[0].ID {
 		t.Fatalf("the published subject is not grounded in the real source: %+v", r.Document.Subjects)
 	}
-	published := map[string]bool{}
-	for _, m := range manifest.Media {
-		published[m.Label] = true
-	}
-	for _, group := range [][]h3.IDBinding{manifest.Subjects, manifest.References} {
-		for _, m := range group {
-			published[m.Label] = true
-		}
-	}
-	// Label syntax is the H3 output protocol, not an intent classifier.
-	labels := regexp.MustCompile(`<(?:Picture|Video|Audio|Subject) [1-9][0-9]*>`).FindAllString(r.Artifact.Prompt, -1)
-	if len(labels) == 0 {
-		t.Fatal("the final text never references the nonempty manifest")
-	}
-	for _, label := range labels {
-		if !published[label] {
-			t.Errorf("final text uses an unpublished label: %s", label)
-		}
-	}
-	for label := range published {
-		if !strings.Contains(r.Artifact.Prompt, label) {
-			t.Errorf("manifest publishes a label absent from the artifact: %s", label)
-		}
-	}
 	replay, err := h3.Compile(r.Document, h3.OfficialProfile())
-	if err != nil || replay.SHA256 != r.Artifact.SHA256 || replay.Prompt != r.Artifact.Prompt {
+	if err != nil || replay.SHA256 != r.Artifact.SHA256 || replay.Prompt != r.Artifact.Prompt || !reflect.DeepEqual(replay.Manifest, r.Artifact.Manifest) {
 		t.Fatalf("Draft did not publish its actual Document compilation: %v", err)
 	}
+	assertConformanceArtifactBindings(t, r)
+
+	t.Run("text_only_binds_nothing", func(t *testing.T) {
+		// This is the opposite half of the same upstream contract: an app must
+		// not attach inert conditioning media to a prompt that binds none.
+		text := goConformanceReferenceDraft(t, compiler.Brief{Intent: "the man walks down the stone corridor", Seconds: 8, Mode: contextir.ModeText})
+		if len(text.Artifact.Manifest.Media) != 0 || len(text.Artifact.Manifest.Subjects) != 0 || len(text.Artifact.Manifest.References) != 0 {
+			t.Fatal("text-only draft published phantom media", text.Artifact.Manifest)
+		}
+		assertConformanceArtifactBindings(t, text)
+	})
 
 	t.Run("reject_phantom_reference", func(t *testing.T) {
 		bad := r.Document
@@ -169,6 +156,32 @@ func TestGoConformanceManifest(t *testing.T) {
 			t.Fatalf("a source with no real asset must be rejected, got %v", err)
 		}
 	})
+}
+
+// The contract is equality of the actual H3 label set and the shipped manifest,
+// as well as correspondence to the authoritative Document. Checking only
+// `used <= published` could let a renderer omit every conditioned input.
+func assertConformanceArtifactBindings(t *testing.T, result compiler.Result) {
+	t.Helper()
+	published := map[string]bool{}
+	for _, binding := range result.Artifact.Manifest.Media {
+		published[binding.Label] = true
+	}
+	for _, binding := range result.Artifact.Manifest.Subjects {
+		published[binding.Label] = true
+	}
+	used := map[string]bool{}
+	// Label syntax is the H3 output protocol, not an intent classifier.
+	for _, label := range regexp.MustCompile(`<(?:Picture|Video|Audio|Subject) [1-9][0-9]*>`).FindAllString(result.Artifact.Prompt, -1) {
+		used[label] = true
+	}
+	if !reflect.DeepEqual(used, published) {
+		t.Fatalf("final text and binding contract differ: text=%v manifest=%v", used, published)
+	}
+	want, err := h3.BuildManifest(result.Document)
+	if err != nil || !reflect.DeepEqual(result.Artifact.Manifest, want) {
+		t.Fatalf("shipped manifest is not derived from the authoritative Document: %v", err)
+	}
 }
 
 // TestGoConformanceFramePose ports the actual Draft/Artifact assertions from

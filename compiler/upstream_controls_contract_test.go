@@ -110,6 +110,99 @@ func TestGoConformancePinnedShots(t *testing.T) {
 		})
 	}
 
+	// The upstream test checks the ask as well as the artifact. In Go the ask is
+	// a typed request, so exercise the public Compile path and inspect what the
+	// actual prose writer receives. A correct structural response must not let
+	// the writer turn the director's conflicting prose into a third shot.
+	for _, writerCount := range []int{2, 3} {
+		name := "public_compile_preserves_pin_and_director_words"
+		if writerCount == 3 {
+			name = "public_compile_rejects_director_third_shot"
+		}
+		t.Run(name, func(t *testing.T) {
+			calls := []string{}
+			base := remainingCompileDouble(t, brief, &calls, false)
+			writerCalls := 0
+			model := modelFunc(func(ctx context.Context, req contextir.ModelRequest) (contextir.ModelResponse, error) {
+				response, err := base.Generate(ctx, req)
+				if err != nil {
+					return response, err
+				}
+				switch req.Stage {
+				case "structure":
+					var st Structure
+					if err := json.Unmarshal(response.JSON, &st); err != nil {
+						t.Fatal(err)
+					}
+					st.Shots = append([]ProposedShot(nil), floor.Structure.Shots...)
+					for i := range st.Shots {
+						st.Shots[i].Subjects = []string{}
+						st.Shots[i].SyncSound = []string{}
+					}
+					response.JSON = upstreamControlJSON(t, st)
+				case "plan":
+					writerCalls++
+					var input struct {
+						Request  contextir.Request `json:"request"`
+						Controls struct {
+							Structure  Structure `json:"structure"`
+							Notes      string    `json:"director_notes"`
+							Precedence []string  `json:"precedence"`
+						} `json:"compiler_controls"`
+					}
+					if err := json.Unmarshal(req.Input, &input); err != nil {
+						t.Fatal(err)
+					}
+					if len(input.Request.PinnedShots) != 2 || len(input.Controls.Structure.Shots) != 2 || !strings.Contains(input.Controls.Notes, notes) || !reflect.DeepEqual(input.Controls.Precedence, []string{"explicit_request", "observed_reference", "director_notes"}) {
+						t.Fatal("writer did not receive both authoritative pins and the unedited subordinate director words")
+					}
+					if !reflect.DeepEqual(input.Request.PinnedShots, floor.Request.PinnedShots) || !strings.Contains(req.System, "Preserve each shot ID, start/end") {
+						t.Fatal("writer lost the exact caller-owned shot boundaries or their preservation instruction")
+					}
+					if writerCount == 3 {
+						var d contextir.Document
+						if err := json.Unmarshal(response.JSON, &d); err != nil {
+							t.Fatal(err)
+						}
+						// Keep the rest of the writer response unchanged. Only the
+						// director-driven split violates the host's two-shot pin.
+						second := d.Shots[1]
+						middle := second.Start + (second.End-second.Start)/2
+						d.Shots[1].End = middle
+						second.ID = "director-shot-3"
+						second.Start = middle
+						d.Shots = append(d.Shots, second)
+						if err := contextir.Validate(d); err != nil {
+							t.Fatal("negative writer response must otherwise be a valid document", err)
+						}
+						response.JSON = upstreamControlJSON(t, d)
+					}
+				}
+				return response, nil
+			})
+			c, err := New(model, nil, Options{Profile: h3.ComfyUIProfile(), FramePolicy: FramePolicySnapUp})
+			if err != nil {
+				t.Fatal(err)
+			}
+			result, err := c.Compile(ctx, brief)
+			if writerCalls != 1 {
+				t.Fatal("the actual prose-writer boundary was not exercised exactly once", writerCalls, calls, err)
+			}
+			if !reflect.DeepEqual(before, upstreamControlJSON(t, brief)) {
+				t.Fatal("public compilation changed the caller's shot pin or director words")
+			}
+			if writerCount == 3 {
+				if !contextir.HasCode(err, contextir.CodeModelOutput) || result.Status == "compiled" || result.Artifact.Prompt != "" {
+					t.Fatal("a writer's director-driven third shot was published", result.Status, err)
+				}
+				return
+			}
+			if err != nil || result.Status != "compiled" || len(result.Document.Shots) != 2 || strings.Count(result.Artifact.Prompt, "[Shot ") != 2 || result.Director == nil || result.Director.Notes != notes {
+				t.Fatal("the valid public compile did not preserve the caller's two-shot contract", result.Status, err)
+			}
+		})
+	}
+
 	// A well-formed, renderable but wrong-count finished document must also be
 	// rejected by the real product assessor; schema prose alone is insufficient.
 	var wrong contextir.Document
@@ -140,8 +233,9 @@ func TestGoConformancePinnedShots(t *testing.T) {
 
 // Adapted from fd031e13 original nodeid:
 // tests/test_reference_licence.py::test_a_frame_anchor_is_exempt_from_a_transformation_marker
-// The original helper passed fl2va one image for every role. Each Go control uses
-// the role's valid one-image mode instead: subject/ref2va, first/i2va, last/l2va.
+// The original helper passed fl2va one image for every role. The single-plate
+// controls use subject/ref2va, first/i2va and last/l2va; the two-plate control below
+// also exercises a complete valid fl2va request with both endpoints together.
 // Intent/cards and actual recorded native transformation decisions are retained;
 // successful artifacts and a deliberately wrong retention marker are checked.
 func TestGoConformanceRetention(t *testing.T) {
@@ -237,6 +331,90 @@ func TestGoConformanceRetention(t *testing.T) {
 			}
 		})
 	}
+
+	t.Run("first_and_last_frames_in_one_valid_fl2va", func(t *testing.T) {
+		original, cards, licence := upstreamRetentionInput(t, "licence-01114")
+		brief, err := FromOriginal(original, cards)
+		if err != nil {
+			t.Fatal(err)
+		}
+		brief.Mode = contextir.ModeFirstLastFrame
+		brief.Style = licence.Style.Phrase
+		// FL2VA has two physical conditioning sockets in Go. This additional
+		// control supplies a second conditioning input and reuses the same
+		// supplied observation fixture under its distinct asset ID. It does
+		// not claim a second perception call or new observed image content.
+		// Neither socket becomes an attribute-transfer instruction.
+		closing := brief.Assets[0]
+		closing.ID = "i2"
+		closing.Role = RoleLastFrame
+		brief.Assets = append(brief.Assets, closing)
+		closingCard := brief.Cards[0]
+		closingCard.AssetID = closing.ID
+		brief.Cards = append(brief.Cards, closingCard)
+		before := upstreamControlJSON(t, brief)
+		c, err := New(nil, nil, Options{Profile: h3.ComfyUIProfile(), FramePolicy: FramePolicySnapUp})
+		if err != nil {
+			t.Fatal(err)
+		}
+		result, err := c.Draft(context.Background(), brief)
+		if err != nil {
+			t.Fatal("a valid two-plate transformation failed", err)
+		}
+		if result.Document.Mode != contextir.ModeFirstLastFrame || result.Document.Style != licence.Style.Phrase || len(result.Document.References) != 2 || len(result.Artifact.Manifest.Media) != 2 {
+			t.Fatal("the actual FL2VA output lost its mode, target style, or conditioning plate")
+		}
+		anchors := map[string]contextir.Time{brief.Assets[0].ID: 0, closing.ID: result.Document.Target.Duration}
+		for _, ref := range result.Document.References {
+			want, exists := anchors[ref.Source.AssetID]
+			role := contextir.RoleFirstFrame
+			if ref.Source.AssetID == closing.ID {
+				role = contextir.RoleLastFrame
+			}
+			if !exists || ref.Anchor == nil || *ref.Anchor != want || ref.Kind != contextir.ReferencePicture || ref.Retention != contextir.FullyPreserved || !reflect.DeepEqual(ref.Roles, []contextir.Role{role}) {
+				t.Fatal("a style transformation changed the exact source/end-point preservation contract", ref)
+			}
+			delete(anchors, ref.Source.AssetID)
+			matched := false
+			for _, media := range result.Artifact.Manifest.Media {
+				for _, use := range media.TargetUses {
+					if media.Source.AssetID == ref.Source.AssetID && use.ReferenceID == ref.ID && use.Anchor != nil && *use.Anchor == want && use.Retention == contextir.FullyPreserved {
+						matched = true
+					}
+				}
+			}
+			if !matched {
+				t.Fatal("rendered media manifest lost an endpoint's source, anchor or retention", ref.ID)
+			}
+		}
+		if len(anchors) != 0 || strings.Contains(result.Artifact.Prompt, "attribute_transfer") {
+			t.Fatal("a frame was dropped or restyling became transfer in the actual prompt")
+		}
+		if _, err := c.assess(result.Brief, result.Structure, result.Scope, result.Document, &licence); err != nil {
+			t.Fatal("the real transformation licence contradicts the dual-frame artifact", err)
+		}
+		preserve := brief
+		preserve.Style = cards["i1"].Style
+		control, err := c.Draft(context.Background(), preserve)
+		if err != nil || !reflect.DeepEqual(control.Document.References, result.Document.References) || !reflect.DeepEqual(control.Artifact.Manifest.Media, result.Artifact.Manifest.Media) {
+			t.Fatal("only changing the target rendering changed frame retention or media bindings", err)
+		}
+		if !reflect.DeepEqual(before, upstreamControlJSON(t, brief)) {
+			t.Fatal("drafting changed the caller's dual-frame transformation input")
+		}
+		for index := range result.Document.References {
+			for _, marker := range []contextir.Retention{contextir.PartiallyPreserved, contextir.AttributeTransfer} {
+				var wrong contextir.Document
+				if err := json.Unmarshal(upstreamControlJSON(t, result.Document), &wrong); err != nil {
+					t.Fatal(err)
+				}
+				wrong.References[index].Retention = marker
+				if _, err := c.assess(result.Brief, result.Structure, result.Scope, wrong, &licence); err == nil {
+					t.Fatal("an actual conditioning frame accepted a changed-pixel retention marker", index, marker)
+				}
+			}
+		}
+	})
 }
 
 func upstreamRetentionMarkers(d contextir.Document) []contextir.Retention {

@@ -4,9 +4,11 @@ import (
 	"context"
 	"encoding/json"
 	"reflect"
+	"strings"
 	"testing"
 
 	"github.com/ly95/contextir"
+	"github.com/ly95/contextir/evaluate"
 	"github.com/ly95/contextir/h3"
 )
 
@@ -52,17 +54,21 @@ func TestGoConformanceFramePoseCompileWithObservedIdentity(t *testing.T) {
 			owners["action"] = "request"
 			out = map[string]any{"governs": owners, "reasons": reasons}
 		case "structure":
-			out = Structure{Mode: input.Mode, Assets: []StructuralAsset{{AssetID: "char", Role: RoleFirstFrame}}, ReplacementTargets: map[string]string{}, Shots: []ProposedShot{{Purpose: "establish", Framing: "medium", Action: b.Intent, WhatChanges: "The man starts walking after the exact opening frame.", Subjects: []string{}, SyncSound: []string{}, Camera: Camera{Type: "Static Shot"}}}, Requested: input.Scope.Requested, Forbidden: input.Scope.Forbidden, Dialogue: input.Scope.Dialogue, OnscreenText: input.Scope.OnscreenText}
+			out = Structure{Mode: input.Mode, Assets: []StructuralAsset{{AssetID: "char", Role: input.Brief.Assets[0].Role}}, ReplacementTargets: map[string]string{}, Shots: []ProposedShot{{Purpose: "establish", Framing: "medium", Action: input.Brief.Intent, WhatChanges: "The man starts walking forward through the corridor.", Subjects: []string{}, SyncSound: []string{}, Camera: Camera{Type: "Static Shot"}}}, Requested: input.Scope.Requested, Forbidden: input.Scope.Forbidden, Dialogue: input.Scope.Dialogue, OnscreenText: input.Scope.OnscreenText}
 		case "plan":
-			assertFrameIdentityGraph(t, input.Request, true)
-			d, err := draftDocument(b, input.Request, input.Controls.Structure, nil)
+			role := input.Controls.Structure.Assets[0].Role
+			assertFrameIdentityGraph(t, input.Request, true, role == RoleFirstFrame)
+			planBrief := b
+			planBrief.Assets = append([]Asset(nil), b.Assets...)
+			planBrief.Assets[0].Role = role
+			d, err := draftDocument(planBrief, input.Request, input.Controls.Structure, nil)
 			if err != nil {
 				t.Fatal(err)
 			}
 			d.Subjects = append([]contextir.Subject(nil), input.Controls.Subjects...)
 			d.Style, d.References = "", nil
 			for i := range d.Shots {
-				d.Shots[i].Description = contextir.RichText{{SubjectID: d.Subjects[0].ID}, {Text: " occupies the unchanged complete opening frame before beginning to walk forward down the stone corridor. The charcoal jacket shifts with each step while the original image composition remains the exact starting frame."}}
+				d.Shots[i].Description = contextir.RichText{{SubjectID: d.Subjects[0].ID}, {Text: " walks forward down the stone corridor. The charcoal jacket shifts with each step while the camera holds a medium view, keeping the man's observed identity in view as his distance from the doorway gradually increases."}}
 				d.Shots[i].Events = nil
 			}
 			out = d
@@ -83,10 +89,50 @@ func TestGoConformanceFramePoseCompileWithObservedIdentity(t *testing.T) {
 	if err != nil || r.Status != "compiled" {
 		t.Fatalf("full Compile rejected its own explicit frame identity graph: %#v", err)
 	}
-	assertFrameIdentityGraph(t, r.Request, true)
+	assertFrameIdentityGraph(t, r.Request, true, true)
 	if len(r.Document.Subjects) != 1 || r.Document.Subjects[0].Sources[0].Role != contextir.RoleIdentity || !r.Document.Subjects[0].PoseLicensed || !reflect.DeepEqual(r.Document.Subjects[0].Pose, pose) || len(r.Document.References) != 1 || r.Document.References[0].Anchor == nil || *r.Document.References[0].Anchor != 0 {
 		t.Fatal("the frame relationship or licensed identity/pose was lost", r.Document.Subjects, r.Document.References)
 	}
+	sections, err := evaluate.Sections(r.Artifact.Prompt)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, detail := range append([]string{"charcoal technical jacket"}, pose...) {
+		if !strings.Contains(sections["subject_definitions"], detail) {
+			t.Errorf("full Compile lost licensed identity/pose from the final definition: %s", detail)
+		}
+	}
+	if len(r.Artifact.Manifest.Media) != 1 || r.Artifact.Manifest.Media[0].Source.AssetID != "char" || len(r.Artifact.Manifest.Media[0].TargetUses) != 1 || r.Artifact.Manifest.Media[0].TargetUses[0].Anchor == nil || *r.Artifact.Manifest.Media[0].TargetUses[0].Anchor != 0 {
+		t.Fatal("the shipped artifact lost its opening-frame binding", r.Artifact.Manifest)
+	}
+
+	t.Run("same_observation_as_subject_is_not_an_opening_pose", func(t *testing.T) {
+		// Hold observation and requested action constant; only the caller's
+		// explicit responsibility changes. Pose may remain evidence, but an
+		// ordinary identity plate cannot dictate the target's opening pose.
+		control := b
+		control.Assets = append([]Asset(nil), b.Assets...)
+		control.Assets[0].Role = RoleSubject
+		actual, err := c.Compile(context.Background(), control)
+		if err != nil || actual.Status != "compiled" {
+			t.Fatalf("full Compile rejected the subject control: %v", err)
+		}
+		assertFrameIdentityGraph(t, actual.Request, true, false)
+		if len(actual.Document.Subjects) != 1 || actual.Document.Subjects[0].PoseLicensed || len(actual.Document.Subjects[0].Pose) != 0 || len(actual.Document.References) != 0 {
+			t.Fatal("an ordinary reference inherited frame or pose authority", actual.Document.Subjects, actual.Document.References)
+		}
+		if !strings.Contains(actual.Artifact.Prompt, "charcoal technical jacket") {
+			t.Fatal("suppressing transient pose also discarded identity")
+		}
+		for _, detail := range pose {
+			if strings.Contains(actual.Artifact.Prompt, detail) {
+				t.Errorf("full Compile asserted an unlicensed source pose: %s", detail)
+			}
+		}
+		if len(actual.Evidence) != 1 || actual.Evidence[0].Card == nil || !reflect.DeepEqual(actual.Evidence[0].Card.Subjects[0].Pose, pose) {
+			t.Fatal("suppressing pose in the target destroyed the observation")
+		}
+	})
 
 	t.Run("unobserved_frame_has_no_identity_authorization", func(t *testing.T) {
 		unknown := b
@@ -95,14 +141,14 @@ func TestGoConformanceFramePoseCompileWithObservedIdentity(t *testing.T) {
 		if err != nil || len(r.Document.Subjects) != 0 {
 			t.Fatal("unknown actual frame fabricated a target identity", r.Document.Subjects, err)
 		}
-		assertFrameIdentityGraph(t, r.Request, false)
+		assertFrameIdentityGraph(t, r.Request, false, true)
 		if _, err := c.Compile(context.Background(), unknown); !contextir.HasCode(err, contextir.CodePerception) {
 			t.Fatal("missing perception silently became an observed identity", err)
 		}
 	})
 }
 
-func assertFrameIdentityGraph(t *testing.T, req contextir.Request, wantIdentity bool) {
+func assertFrameIdentityGraph(t *testing.T, req contextir.Request, wantIdentity, wantFrame bool) {
 	t.Helper()
 	identities, frames := 0, 0
 	for _, binding := range req.Bindings {
@@ -123,7 +169,11 @@ func assertFrameIdentityGraph(t *testing.T, req contextir.Request, wantIdentity 
 	if wantIdentity {
 		want = 1
 	}
-	if identities != want || frames != 1 || req.Mode != contextir.ModeReference {
+	wantFrames := 0
+	if wantFrame {
+		wantFrames = 1
+	}
+	if identities != want || frames != wantFrames || req.Mode != contextir.ModeReference {
 		t.Fatal("explicit responsibilities were duplicated, invented, or downgraded", req.Bindings)
 	}
 }

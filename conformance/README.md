@@ -8,13 +8,13 @@ replace this corpus.
 
 ## Current acceptance
 
-[The final native functionality report](reports/native-functionality-go-compatibility-v1.json)
+[The current native functionality report](reports/native-functionality-intent-review-v1.json)
 verifies **991/991 requirements**: **672 unchanged original assertions
 consume actual native primary output; 319 have separately executed Go API/input
 adaptations**. The two source-parse/minimum-language-version requirements now
 have native Go checks and real minimum-toolchain evidence; there are no N/A cases.
 There are no duplicate/missing original nodeids, failed or skipped Go test events.
-[Whole-repository race/vet/format and harness gates](reports/local-quality-go-compatibility-v1.json)
+[Whole-repository race/vet/format and harness gates](reports/local-quality-intent-review-v1.json)
 also pass. The earlier aggregate v1 and every failing historical run remain intact.
 
 This is not a claim that every unchanged Python assertion passes. The current
@@ -41,13 +41,31 @@ and per-node `native_primary_verification`; historic `pending` and touch counts
 remain historic evidence. Neither historical coverage unions nor corpus call
 counts imply whole-pipeline equivalence.
 
+## Port the behavior, not Python implementation details
+
+Read the upstream assertion, rationale and counterexample first. A native port
+must preserve the business invariant and successful scenario, using public Go
+interfaces, valid modes and explicit dependencies. Python constants, command
+names, AST syntax and accidental gaps in a keyword classifier are not Go
+requirements. Conversely, a rejection-only test cannot replace the successful
+artifact the original test protected, and selecting a capable format profile
+must not claim an unsupported execution backend gained that capability.
+
+The intent review strengthened native contract/version evolution, public Compile
+shot priority, final artifact media/pose evidence and valid paired-frame retention.
+The [intent table](../docs/UPSTREAM_TESTS.md#go-测试怎样保留上游意图) explains the
+original rules and native checks. Full current native acceptance and minimum-Go
+execution are rerun; these supplemental checks do not add source nodeids. The
+unchanged Python bridge remains a separate compatibility diagnostic, not the sole
+native acceptance verdict.
+
 ## Native source and minimum language compatibility
 
 `TestGoCompatibilityEverySourceParses` parses actual native source;
 `TestGoCompatibilityDeclaredLanguageVersion` guards language and standard-library
 API versions, with newer-syntax/API negative controls. The original Python
 f-string rule is not claimed to be a statement-by-statement Go grammar mapping.
-The [real minimum Go 1.25.0 full tests and vet](reports/go-minimum-compatibility-v1.json)
+The [real minimum Go 1.25.0 full tests and vet](reports/go-minimum-intent-review-v1.json)
 passed with automatic upgrades/workspaces disabled and fresh caches. A newer
 compiler is not accepted in place of the exact declared minimum.
 
@@ -74,7 +92,7 @@ go test -race ./...
 go vet ./...
 python3 conformance/run_native_functionality.py --require-all \
   --original-report conformance/reports/go-draft-pytest-go-compatibility-v1.json \
-  --go-compatibility-report conformance/reports/go-minimum-compatibility-v1.json \
+  --go-compatibility-report conformance/reports/go-minimum-intent-review-v1.json \
   --label a-new-native-round
 ```
 
@@ -188,8 +206,8 @@ environment as a new run.
 
 | Artifact | Establishes |
 | --- | --- |
-| `reports/native-functionality-go-compatibility-v1.json` | All 991 requirements, exact verification class/leaf or original primary operation, raw Go events and immutable source hashes. |
-| `reports/local-quality-go-compatibility-v1.json` | Actual full-repository race, vet, gofmt, diff and harness gates. |
+| `reports/native-functionality-intent-review-v1.json` | All 991 requirements, exact verification class/leaf or original primary operation, raw Go events and immutable source hashes. |
+| `reports/local-quality-intent-review-v1.json` | Actual full-repository race, vet, gofmt, diff and harness gates. |
 | `adaptations/remaining_*.json` | One unique mapping per original nodeid; source assertion intent, Go API/input adjustments and real execution evidence. |
 | `reports/go-draft-pytest-go-compatibility-v1.json` | Unmodified original assertions; 981 passed/10 failed, 865 Go-touched/126 Python-only. Touch alone is not current primary verification. |
 | `reports/upstream-pytest.json` | Original Python 991-test baseline and collected assert sources; no Go claim. |

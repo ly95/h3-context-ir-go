@@ -184,18 +184,24 @@
     {
       "upstream_nodeid": "tests/test_contract.py::test_the_service_publishes_one_statement_of_the_lists_it_shares_with_the_contract",
       "go_package": "./service",
-      "go_test": "TestRemainingSurfaceContractVersionAndCapabilities",
-      "assertion_intent": "The actual native contract and capability endpoint share explicit version3 after the real field/refusal additions.",
-      "adaptation": "Additional source-v2 constant comparison difference is explicitly mapped; native v3 is not presented as original contract v2. Legacy source digests remain independently verified by TestUpstreamContractDigests.",
+      "go_test": "TestGoContractVersionTracksPublishedBoundary",
+      "assertion_intent": "Imported contract, HTTP contract and capabilities publish the same vocabulary, timing and version, with complete independently recomputed native boundary digests.",
+      "adaptation": "Use the actual Go contract version and complete native sections rather than Python v2 constants. Compare actual HTTP responses with the imported contract; independently pinned native hashes protect extensions too.",
       "source_test_file_sha256": "23fffd5f04758326b6e7653e3f07620642c211859cf4d3e2aeef25ce4bc6abfb",
       "coverage_basis": "Additional protocol-version mapping, outside the assigned 20 historical gaps."
     },
     {
       "upstream_nodeid": "tests/test_contract.py::test_the_version_moves_when_any_part_of_the_contract_moves",
       "go_package": "./service",
-      "go_test": "TestRemainingSurfaceContractVersionAndCapabilities",
-      "assertion_intent": "The actual native contract and capability endpoint share explicit version3 after the real field/refusal additions.",
-      "adaptation": "Additional source-v2 constant comparison difference is explicitly mapped; native v3 is not presented as original contract v2. Legacy source digests remain independently verified by TestUpstreamContractDigests.",
+      "go_test": "TestGoContractVersionTracksPublishedBoundary",
+      "assertion_intent": "Any published native field, error code, route, status or section change requires a version increase; an unchanged boundary keeps its pinned version.",
+      "adaptation": "Independently pin all eight native v3 section digests, hash actual section bodies without production Digest helpers, and reject changed boundaries at the old version. Mutation controls prove field/error/section changes cannot pass by self-comparison.",
+      "supplemental_go_checks": [
+        {
+          "go_package": "./service",
+          "go_test": "TestGoContractVersionGateRejectsUnversionedChanges"
+        }
+      ],
       "source_test_file_sha256": "23fffd5f04758326b6e7653e3f07620642c211859cf4d3e2aeef25ce4bc6abfb",
       "coverage_basis": "Additional protocol-version mapping, outside the assigned 20 historical gaps."
     }
