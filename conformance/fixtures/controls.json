@@ -1,0 +1,1468 @@
+{
+  "source_commit": "fd031e136ae3d89147324c0d1b2aa65e838c21f5",
+  "upstream_passed": true,
+  "cases": [
+    {
+      "id": "control-01",
+      "name": "MUST PASS: MiniMax official Ref2VA example (P5 exempt, see note)",
+      "upstream_passed": true,
+      "upstream_detail": "clean apart from the documented P5 exception",
+      "go_status": "pending",
+      "expectation": {
+        "allowed_error_rules": [
+          "P5-camera-no-motion-type"
+        ],
+        "allowed_warn_rules": [
+          "P5-camera-no-motion-type"
+        ]
+      },
+      "text": "subject_definitions:\n<Subject 1> is the coffee-shop environment in <Picture 1>, featuring an exposed brick wall, an orange tufted sofa with patterned pillows, a neon sign, and a wooden coffee table.\n<Subject 2> is the fluffy white Samoyed in <Picture 2>, <Picture 3>, and <Picture 4>, with thick white fur, pointed ears, a dark nose, and a curved tail.\n<Subject 3> is the young blonde woman in <Video 1>, with long blonde hair and a light-pink button-down shirt with rolled-up sleeves.\n<Subject 4> is the young man in <Video 2>, with short wavy brown hair and a dark-grey hoodie with drawstrings.\n<Audio 1> is the voice-timbre reference for <Subject 3> (S1), containing a spoken English vocal layer.\n\nsummary:\n[reference generation + audio reference] The target video shows <Subject 3> eating a cookie in <Subject 1>. <Subject 4> enters with <Subject 2>, which lunges toward the cookie. The three-shot exchange uses <Audio 1> as the voice-timbre reference for <Subject 3> and ends with a canned audience laugh.\n\nretention_analysis:\n<Subject 1> (appears in [Shot 1], [Shot 2], [Shot 3]): fully_preserved - the exposed brick wall, orange tufted sofa, patterned pillows, neon sign, and wooden coffee table are retained.\n<Subject 2> (appears in [Shot 1], [Shot 2]): fully_preserved - the Samoyed's thick white fur, pointed ears, dark nose, and curved tail are retained.\n<Subject 3> (appears in [Shot 1], [Shot 2], [Shot 3]): fully_preserved - the blonde woman's identity, long hair, and light-pink shirt are retained.\n<Subject 4> (appears in [Shot 1], [Shot 2]): fully_preserved - the young man's short wavy brown hair and dark-grey hoodie are retained.\n<Audio 1>: reference - its vocal timbre guides the dialogue delivery of <Subject 3> without copying the original signal.\n\ndetailed_description:\nThe target video uses a realistic multi-camera sitcom style with warm indoor lighting.\n[Shot 1] A medium shot establishes <Subject 1>, the coffee shop with its exposed brick wall, orange tufted sofa, patterned pillows, neon sign, and wooden coffee table. <Subject 3> (S1), the young woman with long blonde hair and a light-pink button-down shirt with rolled-up sleeves, sits on the sofa holding a chocolate-chip cookie. From the left, <Subject 4>, the young man with short wavy brown hair and a dark-grey hoodie with drawstrings, enters holding the leash of <Subject 2>, the thick-furred white Samoyed with pointed ears, a dark nose, and a curved tail. The dog lunges toward the cookie and pulls the leash taut. <Subject 3> (S1) jerks her hand back and, using the clear youthful voice timbre referenced from <Audio 1>, exclaims with light annoyance, <d>[English] Hey! Watch your dog!</d> She closes her lips and guards the cookie while <Subject 4> pulls the dog back.\n[Shot 2] At 00:03.000, the shot cuts to a close-up of <Subject 4> (S2), the young man in the dark-grey hoodie from Shot 1, sitting beside <Subject 3> on the sofa and holding <Subject 2> securely in his arms. <Subject 4> (S2) says in a casual young male voice with a playful tone and an easy conversational pace, <d>[English] He just likes cookies more than me.</d> He closes his mouth into an apologetic smile and strokes the dog's thick white fur.\n[Shot 3] At 00:05.000, the shot cuts to a close-up of <Subject 3> (S1), the blonde woman in the light-pink shirt from Shot 1. Her annoyance softens as she looks toward the Samoyed. <Subject 3> (S1) replies in the same clear youthful voice referenced from <Audio 1> with an amused cadence, <d>[English] Well, he has good taste at least.</d> She smiles and raises the cookie in a small toast-like gesture. A classic canned audience laugh begins immediately after the line and continues through the final frame.\n\noverall_soundscape:\nSoft indoor coffee-shop room tone continues throughout the scene.\n\nnon_diegetic_music:\nN/A",
+      "context": {
+        "mode": "ref2va",
+        "duration_s": null,
+        "n_pictures": 4,
+        "n_videos": 2,
+        "n_audios": 1,
+        "expected_dialogue": [],
+        "lora_triggers": [],
+        "onscreen_text": [],
+        "token_budget": [
+          350,
+          1400
+        ],
+        "prompt_tokens": null,
+        "require_music_na": null,
+        "generation_task": true,
+        "pinned_shots": null,
+        "task_types": [],
+        "declared_roles": [],
+        "paired_audio": [],
+        "standalone_audio": [],
+        "audio_transcripts": [],
+        "forbid_keyframe_refs": false,
+        "require_start_at_zero": true,
+        "pose_licensed": false,
+        "has_reference_sheet": false,
+        "wardrobe_terms": [],
+        "transformed_from": "",
+        "scope": null
+      },
+      "findings": [
+        {
+          "rule": "R11-scope-not-cited",
+          "severity": "INFO",
+          "msg": "<Subject 1> is scoped to [Shot 2] but that shot's description never cites it (fine for a persistent setting, suspect for an actor)"
+        },
+        {
+          "rule": "R11-scope-not-cited",
+          "severity": "INFO",
+          "msg": "<Subject 1> is scoped to [Shot 3] but that shot's description never cites it (fine for a persistent setting, suspect for an actor)"
+        },
+        {
+          "rule": "P5-camera-no-motion-type",
+          "severity": "ERROR",
+          "msg": "framing is described but no motion type from the closed vocabulary appears. Use one of these words exactly, woven into the sentence rather than as a label: Zoom In, Zoom Out, Push In, Pull Out, Pan Left, Pan Right, Truck Left, Truck Right, Tilt Up, Tilt Down, Pedestal Up, Pedestal Down, Arc Shot, Tracking Shot, Static Shot, Shake Slightly, Shake Strongly, POV, Roll Clockwise, Roll Counterclockwise. A paraphrase of a move (orbits, circles, glides, drifts, sweeps) is not one of them, and an orbit around the subject is 'Arc Shot'. Every shot needs a stated camera or the model chooses its own"
+        }
+      ]
+    },
+    {
+      "id": "control-02",
+      "name": "EXPECTED: the official example lacks a motion type",
+      "upstream_passed": true,
+      "upstream_detail": "P5 fired as documented",
+      "go_status": "pending",
+      "expectation": {
+        "required_error_rules": [
+          "P5-camera-no-motion-type"
+        ]
+      },
+      "text": "subject_definitions:\n<Subject 1> is the coffee-shop environment in <Picture 1>, featuring an exposed brick wall, an orange tufted sofa with patterned pillows, a neon sign, and a wooden coffee table.\n<Subject 2> is the fluffy white Samoyed in <Picture 2>, <Picture 3>, and <Picture 4>, with thick white fur, pointed ears, a dark nose, and a curved tail.\n<Subject 3> is the young blonde woman in <Video 1>, with long blonde hair and a light-pink button-down shirt with rolled-up sleeves.\n<Subject 4> is the young man in <Video 2>, with short wavy brown hair and a dark-grey hoodie with drawstrings.\n<Audio 1> is the voice-timbre reference for <Subject 3> (S1), containing a spoken English vocal layer.\n\nsummary:\n[reference generation + audio reference] The target video shows <Subject 3> eating a cookie in <Subject 1>. <Subject 4> enters with <Subject 2>, which lunges toward the cookie. The three-shot exchange uses <Audio 1> as the voice-timbre reference for <Subject 3> and ends with a canned audience laugh.\n\nretention_analysis:\n<Subject 1> (appears in [Shot 1], [Shot 2], [Shot 3]): fully_preserved - the exposed brick wall, orange tufted sofa, patterned pillows, neon sign, and wooden coffee table are retained.\n<Subject 2> (appears in [Shot 1], [Shot 2]): fully_preserved - the Samoyed's thick white fur, pointed ears, dark nose, and curved tail are retained.\n<Subject 3> (appears in [Shot 1], [Shot 2], [Shot 3]): fully_preserved - the blonde woman's identity, long hair, and light-pink shirt are retained.\n<Subject 4> (appears in [Shot 1], [Shot 2]): fully_preserved - the young man's short wavy brown hair and dark-grey hoodie are retained.\n<Audio 1>: reference - its vocal timbre guides the dialogue delivery of <Subject 3> without copying the original signal.\n\ndetailed_description:\nThe target video uses a realistic multi-camera sitcom style with warm indoor lighting.\n[Shot 1] A medium shot establishes <Subject 1>, the coffee shop with its exposed brick wall, orange tufted sofa, patterned pillows, neon sign, and wooden coffee table. <Subject 3> (S1), the young woman with long blonde hair and a light-pink button-down shirt with rolled-up sleeves, sits on the sofa holding a chocolate-chip cookie. From the left, <Subject 4>, the young man with short wavy brown hair and a dark-grey hoodie with drawstrings, enters holding the leash of <Subject 2>, the thick-furred white Samoyed with pointed ears, a dark nose, and a curved tail. The dog lunges toward the cookie and pulls the leash taut. <Subject 3> (S1) jerks her hand back and, using the clear youthful voice timbre referenced from <Audio 1>, exclaims with light annoyance, <d>[English] Hey! Watch your dog!</d> She closes her lips and guards the cookie while <Subject 4> pulls the dog back.\n[Shot 2] At 00:03.000, the shot cuts to a close-up of <Subject 4> (S2), the young man in the dark-grey hoodie from Shot 1, sitting beside <Subject 3> on the sofa and holding <Subject 2> securely in his arms. <Subject 4> (S2) says in a casual young male voice with a playful tone and an easy conversational pace, <d>[English] He just likes cookies more than me.</d> He closes his mouth into an apologetic smile and strokes the dog's thick white fur.\n[Shot 3] At 00:05.000, the shot cuts to a close-up of <Subject 3> (S1), the blonde woman in the light-pink shirt from Shot 1. Her annoyance softens as she looks toward the Samoyed. <Subject 3> (S1) replies in the same clear youthful voice referenced from <Audio 1> with an amused cadence, <d>[English] Well, he has good taste at least.</d> She smiles and raises the cookie in a small toast-like gesture. A classic canned audience laugh begins immediately after the line and continues through the final frame.\n\noverall_soundscape:\nSoft indoor coffee-shop room tone continues throughout the scene.\n\nnon_diegetic_music:\nN/A",
+      "context": {
+        "mode": "ref2va",
+        "duration_s": null,
+        "n_pictures": 4,
+        "n_videos": 2,
+        "n_audios": 1,
+        "expected_dialogue": [],
+        "lora_triggers": [],
+        "onscreen_text": [],
+        "token_budget": [
+          350,
+          1400
+        ],
+        "prompt_tokens": null,
+        "require_music_na": null,
+        "generation_task": true,
+        "pinned_shots": null,
+        "task_types": [],
+        "declared_roles": [],
+        "paired_audio": [],
+        "standalone_audio": [],
+        "audio_transcripts": [],
+        "forbid_keyframe_refs": false,
+        "require_start_at_zero": true,
+        "pose_licensed": false,
+        "has_reference_sheet": false,
+        "wardrobe_terms": [],
+        "transformed_from": "",
+        "scope": null
+      },
+      "findings": [
+        {
+          "rule": "R11-scope-not-cited",
+          "severity": "INFO",
+          "msg": "<Subject 1> is scoped to [Shot 2] but that shot's description never cites it (fine for a persistent setting, suspect for an actor)"
+        },
+        {
+          "rule": "R11-scope-not-cited",
+          "severity": "INFO",
+          "msg": "<Subject 1> is scoped to [Shot 3] but that shot's description never cites it (fine for a persistent setting, suspect for an actor)"
+        },
+        {
+          "rule": "P5-camera-no-motion-type",
+          "severity": "ERROR",
+          "msg": "framing is described but no motion type from the closed vocabulary appears. Use one of these words exactly, woven into the sentence rather than as a label: Zoom In, Zoom Out, Push In, Pull Out, Pan Left, Pan Right, Truck Left, Truck Right, Tilt Up, Tilt Down, Pedestal Up, Pedestal Down, Arc Shot, Tracking Shot, Static Shot, Shake Slightly, Shake Strongly, POV, Roll Clockwise, Roll Counterclockwise. A paraphrase of a move (orbits, circles, glides, drifts, sweeps) is not one of them, and an orbit around the subject is 'Arc Shot'. Every shot needs a stated camera or the model chooses its own"
+        }
+      ]
+    },
+    {
+      "id": "control-03",
+      "name": "MUST FAIL: redundant <Picture N> source line",
+      "upstream_passed": true,
+      "upstream_detail": "L5-redundant-source-line fired",
+      "go_status": "pending",
+      "expectation": {
+        "required_error_rules": [
+          "L5-redundant-source-line"
+        ]
+      },
+      "text": "subject_definitions:\n<Picture 1> is the reference for the coffee shop.\n<Subject 1> is the coffee-shop environment in <Picture 1>, featuring an exposed brick wall, an orange tufted sofa with patterned pillows, a neon sign, and a wooden coffee table.\n<Subject 2> is the fluffy white Samoyed in <Picture 2>, <Picture 3>, and <Picture 4>, with thick white fur, pointed ears, a dark nose, and a curved tail.\n<Subject 3> is the young blonde woman in <Video 1>, with long blonde hair and a light-pink button-down shirt with rolled-up sleeves.\n<Subject 4> is the young man in <Video 2>, with short wavy brown hair and a dark-grey hoodie with drawstrings.\n<Audio 1> is the voice-timbre reference for <Subject 3> (S1), containing a spoken English vocal layer.\n\nsummary:\n[reference generation + audio reference] The target video shows <Subject 3> eating a cookie in <Subject 1>. <Subject 4> enters with <Subject 2>, which lunges toward the cookie. The three-shot exchange uses <Audio 1> as the voice-timbre reference for <Subject 3> and ends with a canned audience laugh.\n\nretention_analysis:\n<Subject 1> (appears in [Shot 1], [Shot 2], [Shot 3]): fully_preserved - the exposed brick wall, orange tufted sofa, patterned pillows, neon sign, and wooden coffee table are retained.\n<Subject 2> (appears in [Shot 1], [Shot 2]): fully_preserved - the Samoyed's thick white fur, pointed ears, dark nose, and curved tail are retained.\n<Subject 3> (appears in [Shot 1], [Shot 2], [Shot 3]): fully_preserved - the blonde woman's identity, long hair, and light-pink shirt are retained.\n<Subject 4> (appears in [Shot 1], [Shot 2]): fully_preserved - the young man's short wavy brown hair and dark-grey hoodie are retained.\n<Audio 1>: reference - its vocal timbre guides the dialogue delivery of <Subject 3> without copying the original signal.\n\ndetailed_description:\nThe target video uses a realistic multi-camera sitcom style with warm indoor lighting.\n[Shot 1] A medium shot establishes <Subject 1>, the coffee shop with its exposed brick wall, orange tufted sofa, patterned pillows, neon sign, and wooden coffee table. <Subject 3> (S1), the young woman with long blonde hair and a light-pink button-down shirt with rolled-up sleeves, sits on the sofa holding a chocolate-chip cookie. From the left, <Subject 4>, the young man with short wavy brown hair and a dark-grey hoodie with drawstrings, enters holding the leash of <Subject 2>, the thick-furred white Samoyed with pointed ears, a dark nose, and a curved tail. The dog lunges toward the cookie and pulls the leash taut. <Subject 3> (S1) jerks her hand back and, using the clear youthful voice timbre referenced from <Audio 1>, exclaims with light annoyance, <d>[English] Hey! Watch your dog!</d> She closes her lips and guards the cookie while <Subject 4> pulls the dog back.\n[Shot 2] At 00:03.000, the shot cuts to a close-up of <Subject 4> (S2), the young man in the dark-grey hoodie from Shot 1, sitting beside <Subject 3> on the sofa and holding <Subject 2> securely in his arms. <Subject 4> (S2) says in a casual young male voice with a playful tone and an easy conversational pace, <d>[English] He just likes cookies more than me.</d> He closes his mouth into an apologetic smile and strokes the dog's thick white fur.\n[Shot 3] At 00:05.000, the shot cuts to a close-up of <Subject 3> (S1), the blonde woman in the light-pink shirt from Shot 1. Her annoyance softens as she looks toward the Samoyed. <Subject 3> (S1) replies in the same clear youthful voice referenced from <Audio 1> with an amused cadence, <d>[English] Well, he has good taste at least.</d> She smiles and raises the cookie in a small toast-like gesture. A classic canned audience laugh begins immediately after the line and continues through the final frame.\n\noverall_soundscape:\nSoft indoor coffee-shop room tone continues throughout the scene.\n\nnon_diegetic_music:\nN/A",
+      "context": {
+        "mode": "ref2va",
+        "duration_s": null,
+        "n_pictures": 4,
+        "n_videos": 2,
+        "n_audios": 1,
+        "expected_dialogue": [],
+        "lora_triggers": [],
+        "onscreen_text": [],
+        "token_budget": [
+          350,
+          1400
+        ],
+        "prompt_tokens": null,
+        "require_music_na": null,
+        "generation_task": true,
+        "pinned_shots": null,
+        "task_types": [],
+        "declared_roles": [],
+        "paired_audio": [],
+        "standalone_audio": [],
+        "audio_transcripts": [],
+        "forbid_keyframe_refs": false,
+        "require_start_at_zero": true,
+        "pose_licensed": false,
+        "has_reference_sheet": false,
+        "wardrobe_terms": [],
+        "transformed_from": "",
+        "scope": null
+      },
+      "findings": [
+        {
+          "rule": "L5-redundant-source-line",
+          "severity": "ERROR",
+          "msg": "<Picture 1> is cited only as a source and has no retention_analysis entry, so it gets no line of its own: '<Picture 1> is the reference for the coffee shop.'"
+        },
+        {
+          "rule": "R11-scope-not-cited",
+          "severity": "INFO",
+          "msg": "<Subject 1> is scoped to [Shot 2] but that shot's description never cites it (fine for a persistent setting, suspect for an actor)"
+        },
+        {
+          "rule": "R11-scope-not-cited",
+          "severity": "INFO",
+          "msg": "<Subject 1> is scoped to [Shot 3] but that shot's description never cites it (fine for a persistent setting, suspect for an actor)"
+        },
+        {
+          "rule": "P5-camera-no-motion-type",
+          "severity": "ERROR",
+          "msg": "framing is described but no motion type from the closed vocabulary appears. Use one of these words exactly, woven into the sentence rather than as a label: Zoom In, Zoom Out, Push In, Pull Out, Pan Left, Pan Right, Truck Left, Truck Right, Tilt Up, Tilt Down, Pedestal Up, Pedestal Down, Arc Shot, Tracking Shot, Static Shot, Shake Slightly, Shake Strongly, POV, Roll Clockwise, Roll Counterclockwise. A paraphrase of a move (orbits, circles, glides, drifts, sweeps) is not one of them, and an orbit around the subject is 'Arc Shot'. Every shot needs a stated camera or the model chooses its own"
+        }
+      ]
+    },
+    {
+      "id": "control-04",
+      "name": "MUST FAIL: <Subject N>: colon form",
+      "upstream_passed": true,
+      "upstream_detail": "L2-undefined-subject fired",
+      "go_status": "pending",
+      "expectation": {
+        "required_error_rules": [
+          "L2-undefined-subject"
+        ]
+      },
+      "text": "subject_definitions:\n<Subject 1>: the coffee-shop environment in <Picture 1>, featuring an exposed brick wall, an orange tufted sofa with patterned pillows, a neon sign, and a wooden coffee table.\n<Subject 2> is the fluffy white Samoyed in <Picture 2>, <Picture 3>, and <Picture 4>, with thick white fur, pointed ears, a dark nose, and a curved tail.\n<Subject 3> is the young blonde woman in <Video 1>, with long blonde hair and a light-pink button-down shirt with rolled-up sleeves.\n<Subject 4> is the young man in <Video 2>, with short wavy brown hair and a dark-grey hoodie with drawstrings.\n<Audio 1> is the voice-timbre reference for <Subject 3> (S1), containing a spoken English vocal layer.\n\nsummary:\n[reference generation + audio reference] The target video shows <Subject 3> eating a cookie in <Subject 1>. <Subject 4> enters with <Subject 2>, which lunges toward the cookie. The three-shot exchange uses <Audio 1> as the voice-timbre reference for <Subject 3> and ends with a canned audience laugh.\n\nretention_analysis:\n<Subject 1> (appears in [Shot 1], [Shot 2], [Shot 3]): fully_preserved - the exposed brick wall, orange tufted sofa, patterned pillows, neon sign, and wooden coffee table are retained.\n<Subject 2> (appears in [Shot 1], [Shot 2]): fully_preserved - the Samoyed's thick white fur, pointed ears, dark nose, and curved tail are retained.\n<Subject 3> (appears in [Shot 1], [Shot 2], [Shot 3]): fully_preserved - the blonde woman's identity, long hair, and light-pink shirt are retained.\n<Subject 4> (appears in [Shot 1], [Shot 2]): fully_preserved - the young man's short wavy brown hair and dark-grey hoodie are retained.\n<Audio 1>: reference - its vocal timbre guides the dialogue delivery of <Subject 3> without copying the original signal.\n\ndetailed_description:\nThe target video uses a realistic multi-camera sitcom style with warm indoor lighting.\n[Shot 1] A medium shot establishes <Subject 1>, the coffee shop with its exposed brick wall, orange tufted sofa, patterned pillows, neon sign, and wooden coffee table. <Subject 3> (S1), the young woman with long blonde hair and a light-pink button-down shirt with rolled-up sleeves, sits on the sofa holding a chocolate-chip cookie. From the left, <Subject 4>, the young man with short wavy brown hair and a dark-grey hoodie with drawstrings, enters holding the leash of <Subject 2>, the thick-furred white Samoyed with pointed ears, a dark nose, and a curved tail. The dog lunges toward the cookie and pulls the leash taut. <Subject 3> (S1) jerks her hand back and, using the clear youthful voice timbre referenced from <Audio 1>, exclaims with light annoyance, <d>[English] Hey! Watch your dog!</d> She closes her lips and guards the cookie while <Subject 4> pulls the dog back.\n[Shot 2] At 00:03.000, the shot cuts to a close-up of <Subject 4> (S2), the young man in the dark-grey hoodie from Shot 1, sitting beside <Subject 3> on the sofa and holding <Subject 2> securely in his arms. <Subject 4> (S2) says in a casual young male voice with a playful tone and an easy conversational pace, <d>[English] He just likes cookies more than me.</d> He closes his mouth into an apologetic smile and strokes the dog's thick white fur.\n[Shot 3] At 00:05.000, the shot cuts to a close-up of <Subject 3> (S1), the blonde woman in the light-pink shirt from Shot 1. Her annoyance softens as she looks toward the Samoyed. <Subject 3> (S1) replies in the same clear youthful voice referenced from <Audio 1> with an amused cadence, <d>[English] Well, he has good taste at least.</d> She smiles and raises the cookie in a small toast-like gesture. A classic canned audience laugh begins immediately after the line and continues through the final frame.\n\noverall_soundscape:\nSoft indoor coffee-shop room tone continues throughout the scene.\n\nnon_diegetic_music:\nN/A",
+      "context": {
+        "mode": "ref2va",
+        "duration_s": null,
+        "n_pictures": 4,
+        "n_videos": 2,
+        "n_audios": 1,
+        "expected_dialogue": [],
+        "lora_triggers": [],
+        "onscreen_text": [],
+        "token_budget": [
+          350,
+          1400
+        ],
+        "prompt_tokens": null,
+        "require_music_na": null,
+        "generation_task": true,
+        "pinned_shots": null,
+        "task_types": [],
+        "declared_roles": [],
+        "paired_audio": [],
+        "standalone_audio": [],
+        "audio_transcripts": [],
+        "forbid_keyframe_refs": false,
+        "require_start_at_zero": true,
+        "pose_licensed": false,
+        "has_reference_sheet": false,
+        "wardrobe_terms": [],
+        "transformed_from": "",
+        "scope": null
+      },
+      "findings": [
+        {
+          "rule": "L2-undefined-subject",
+          "severity": "ERROR",
+          "msg": "<Subject 1> is used but never defined with '<Subject 1> is ...' in subject_definitions (a colon form does not register as a definition)"
+        },
+        {
+          "rule": "M4-new-label-in-summary",
+          "severity": "ERROR",
+          "msg": "summary introduces undefined label(s): ['<Subject 1>']"
+        },
+        {
+          "rule": "R11-scope-not-cited",
+          "severity": "INFO",
+          "msg": "<Subject 1> is scoped to [Shot 2] but that shot's description never cites it (fine for a persistent setting, suspect for an actor)"
+        },
+        {
+          "rule": "R11-scope-not-cited",
+          "severity": "INFO",
+          "msg": "<Subject 1> is scoped to [Shot 3] but that shot's description never cites it (fine for a persistent setting, suspect for an actor)"
+        },
+        {
+          "rule": "P5-camera-no-motion-type",
+          "severity": "ERROR",
+          "msg": "framing is described but no motion type from the closed vocabulary appears. Use one of these words exactly, woven into the sentence rather than as a label: Zoom In, Zoom Out, Push In, Pull Out, Pan Left, Pan Right, Truck Left, Truck Right, Tilt Up, Tilt Down, Pedestal Up, Pedestal Down, Arc Shot, Tracking Shot, Static Shot, Shake Slightly, Shake Strongly, POV, Roll Clockwise, Roll Counterclockwise. A paraphrase of a move (orbits, circles, glides, drifts, sweeps) is not one of them, and an orbit around the subject is 'Arc Shot'. Every shot needs a stated camera or the model chooses its own"
+        }
+      ]
+    },
+    {
+      "id": "control-05",
+      "name": "MUST FAIL: missing (appears in [Shot N])",
+      "upstream_passed": true,
+      "upstream_detail": "R3-missing-appears-in fired",
+      "go_status": "pending",
+      "expectation": {
+        "required_error_rules": [
+          "R3-missing-appears-in"
+        ]
+      },
+      "text": "subject_definitions:\n<Subject 1> is the coffee-shop environment in <Picture 1>, featuring an exposed brick wall, an orange tufted sofa with patterned pillows, a neon sign, and a wooden coffee table.\n<Subject 2> is the fluffy white Samoyed in <Picture 2>, <Picture 3>, and <Picture 4>, with thick white fur, pointed ears, a dark nose, and a curved tail.\n<Subject 3> is the young blonde woman in <Video 1>, with long blonde hair and a light-pink button-down shirt with rolled-up sleeves.\n<Subject 4> is the young man in <Video 2>, with short wavy brown hair and a dark-grey hoodie with drawstrings.\n<Audio 1> is the voice-timbre reference for <Subject 3> (S1), containing a spoken English vocal layer.\n\nsummary:\n[reference generation + audio reference] The target video shows <Subject 3> eating a cookie in <Subject 1>. <Subject 4> enters with <Subject 2>, which lunges toward the cookie. The three-shot exchange uses <Audio 1> as the voice-timbre reference for <Subject 3> and ends with a canned audience laugh.\n\nretention_analysis:\n<Subject 1> (appears in [Shot 1], [Shot 2], [Shot 3]): fully_preserved - the exposed brick wall, orange tufted sofa, patterned pillows, neon sign, and wooden coffee table are retained.\n<Subject 2>: fully_preserved - the Samoyed's thick white fur, pointed ears, dark nose, and curved tail are retained.\n<Subject 3> (appears in [Shot 1], [Shot 2], [Shot 3]): fully_preserved - the blonde woman's identity, long hair, and light-pink shirt are retained.\n<Subject 4> (appears in [Shot 1], [Shot 2]): fully_preserved - the young man's short wavy brown hair and dark-grey hoodie are retained.\n<Audio 1>: reference - its vocal timbre guides the dialogue delivery of <Subject 3> without copying the original signal.\n\ndetailed_description:\nThe target video uses a realistic multi-camera sitcom style with warm indoor lighting.\n[Shot 1] A medium shot establishes <Subject 1>, the coffee shop with its exposed brick wall, orange tufted sofa, patterned pillows, neon sign, and wooden coffee table. <Subject 3> (S1), the young woman with long blonde hair and a light-pink button-down shirt with rolled-up sleeves, sits on the sofa holding a chocolate-chip cookie. From the left, <Subject 4>, the young man with short wavy brown hair and a dark-grey hoodie with drawstrings, enters holding the leash of <Subject 2>, the thick-furred white Samoyed with pointed ears, a dark nose, and a curved tail. The dog lunges toward the cookie and pulls the leash taut. <Subject 3> (S1) jerks her hand back and, using the clear youthful voice timbre referenced from <Audio 1>, exclaims with light annoyance, <d>[English] Hey! Watch your dog!</d> She closes her lips and guards the cookie while <Subject 4> pulls the dog back.\n[Shot 2] At 00:03.000, the shot cuts to a close-up of <Subject 4> (S2), the young man in the dark-grey hoodie from Shot 1, sitting beside <Subject 3> on the sofa and holding <Subject 2> securely in his arms. <Subject 4> (S2) says in a casual young male voice with a playful tone and an easy conversational pace, <d>[English] He just likes cookies more than me.</d> He closes his mouth into an apologetic smile and strokes the dog's thick white fur.\n[Shot 3] At 00:05.000, the shot cuts to a close-up of <Subject 3> (S1), the blonde woman in the light-pink shirt from Shot 1. Her annoyance softens as she looks toward the Samoyed. <Subject 3> (S1) replies in the same clear youthful voice referenced from <Audio 1> with an amused cadence, <d>[English] Well, he has good taste at least.</d> She smiles and raises the cookie in a small toast-like gesture. A classic canned audience laugh begins immediately after the line and continues through the final frame.\n\noverall_soundscape:\nSoft indoor coffee-shop room tone continues throughout the scene.\n\nnon_diegetic_music:\nN/A",
+      "context": {
+        "mode": "ref2va",
+        "duration_s": null,
+        "n_pictures": 4,
+        "n_videos": 2,
+        "n_audios": 1,
+        "expected_dialogue": [],
+        "lora_triggers": [],
+        "onscreen_text": [],
+        "token_budget": [
+          350,
+          1400
+        ],
+        "prompt_tokens": null,
+        "require_music_na": null,
+        "generation_task": true,
+        "pinned_shots": null,
+        "task_types": [],
+        "declared_roles": [],
+        "paired_audio": [],
+        "standalone_audio": [],
+        "audio_transcripts": [],
+        "forbid_keyframe_refs": false,
+        "require_start_at_zero": true,
+        "pose_licensed": false,
+        "has_reference_sheet": false,
+        "wardrobe_terms": [],
+        "transformed_from": "",
+        "scope": null
+      },
+      "findings": [
+        {
+          "rule": "R3-missing-appears-in",
+          "severity": "ERROR",
+          "msg": "<Subject 2> is missing the mandated '(appears in [Shot N])'"
+        },
+        {
+          "rule": "R11-scope-not-cited",
+          "severity": "INFO",
+          "msg": "<Subject 1> is scoped to [Shot 2] but that shot's description never cites it (fine for a persistent setting, suspect for an actor)"
+        },
+        {
+          "rule": "R11-scope-not-cited",
+          "severity": "INFO",
+          "msg": "<Subject 1> is scoped to [Shot 3] but that shot's description never cites it (fine for a persistent setting, suspect for an actor)"
+        },
+        {
+          "rule": "P5-camera-no-motion-type",
+          "severity": "ERROR",
+          "msg": "framing is described but no motion type from the closed vocabulary appears. Use one of these words exactly, woven into the sentence rather than as a label: Zoom In, Zoom Out, Push In, Pull Out, Pan Left, Pan Right, Truck Left, Truck Right, Tilt Up, Tilt Down, Pedestal Up, Pedestal Down, Arc Shot, Tracking Shot, Static Shot, Shake Slightly, Shake Strongly, POV, Roll Clockwise, Roll Counterclockwise. A paraphrase of a move (orbits, circles, glides, drifts, sweeps) is not one of them, and an orbit around the subject is 'Arc Shot'. Every shot needs a stated camera or the model chooses its own"
+        }
+      ]
+    },
+    {
+      "id": "control-06",
+      "name": "MUST FAIL: <Image N> instead of <Picture N>",
+      "upstream_passed": true,
+      "upstream_detail": "L1-unknown-label fired",
+      "go_status": "pending",
+      "expectation": {
+        "required_error_rules": [
+          "L1-unknown-label"
+        ]
+      },
+      "text": "subject_definitions:\n<Subject 1> is the coffee-shop environment in <Image 1>, featuring an exposed brick wall, an orange tufted sofa with patterned pillows, a neon sign, and a wooden coffee table.\n<Subject 2> is the fluffy white Samoyed in <Picture 2>, <Picture 3>, and <Picture 4>, with thick white fur, pointed ears, a dark nose, and a curved tail.\n<Subject 3> is the young blonde woman in <Video 1>, with long blonde hair and a light-pink button-down shirt with rolled-up sleeves.\n<Subject 4> is the young man in <Video 2>, with short wavy brown hair and a dark-grey hoodie with drawstrings.\n<Audio 1> is the voice-timbre reference for <Subject 3> (S1), containing a spoken English vocal layer.\n\nsummary:\n[reference generation + audio reference] The target video shows <Subject 3> eating a cookie in <Subject 1>. <Subject 4> enters with <Subject 2>, which lunges toward the cookie. The three-shot exchange uses <Audio 1> as the voice-timbre reference for <Subject 3> and ends with a canned audience laugh.\n\nretention_analysis:\n<Subject 1> (appears in [Shot 1], [Shot 2], [Shot 3]): fully_preserved - the exposed brick wall, orange tufted sofa, patterned pillows, neon sign, and wooden coffee table are retained.\n<Subject 2> (appears in [Shot 1], [Shot 2]): fully_preserved - the Samoyed's thick white fur, pointed ears, dark nose, and curved tail are retained.\n<Subject 3> (appears in [Shot 1], [Shot 2], [Shot 3]): fully_preserved - the blonde woman's identity, long hair, and light-pink shirt are retained.\n<Subject 4> (appears in [Shot 1], [Shot 2]): fully_preserved - the young man's short wavy brown hair and dark-grey hoodie are retained.\n<Audio 1>: reference - its vocal timbre guides the dialogue delivery of <Subject 3> without copying the original signal.\n\ndetailed_description:\nThe target video uses a realistic multi-camera sitcom style with warm indoor lighting.\n[Shot 1] A medium shot establishes <Subject 1>, the coffee shop with its exposed brick wall, orange tufted sofa, patterned pillows, neon sign, and wooden coffee table. <Subject 3> (S1), the young woman with long blonde hair and a light-pink button-down shirt with rolled-up sleeves, sits on the sofa holding a chocolate-chip cookie. From the left, <Subject 4>, the young man with short wavy brown hair and a dark-grey hoodie with drawstrings, enters holding the leash of <Subject 2>, the thick-furred white Samoyed with pointed ears, a dark nose, and a curved tail. The dog lunges toward the cookie and pulls the leash taut. <Subject 3> (S1) jerks her hand back and, using the clear youthful voice timbre referenced from <Audio 1>, exclaims with light annoyance, <d>[English] Hey! Watch your dog!</d> She closes her lips and guards the cookie while <Subject 4> pulls the dog back.\n[Shot 2] At 00:03.000, the shot cuts to a close-up of <Subject 4> (S2), the young man in the dark-grey hoodie from Shot 1, sitting beside <Subject 3> on the sofa and holding <Subject 2> securely in his arms. <Subject 4> (S2) says in a casual young male voice with a playful tone and an easy conversational pace, <d>[English] He just likes cookies more than me.</d> He closes his mouth into an apologetic smile and strokes the dog's thick white fur.\n[Shot 3] At 00:05.000, the shot cuts to a close-up of <Subject 3> (S1), the blonde woman in the light-pink shirt from Shot 1. Her annoyance softens as she looks toward the Samoyed. <Subject 3> (S1) replies in the same clear youthful voice referenced from <Audio 1> with an amused cadence, <d>[English] Well, he has good taste at least.</d> She smiles and raises the cookie in a small toast-like gesture. A classic canned audience laugh begins immediately after the line and continues through the final frame.\n\noverall_soundscape:\nSoft indoor coffee-shop room tone continues throughout the scene.\n\nnon_diegetic_music:\nN/A",
+      "context": {
+        "mode": "ref2va",
+        "duration_s": null,
+        "n_pictures": 4,
+        "n_videos": 2,
+        "n_audios": 1,
+        "expected_dialogue": [],
+        "lora_triggers": [],
+        "onscreen_text": [],
+        "token_budget": [
+          350,
+          1400
+        ],
+        "prompt_tokens": null,
+        "require_music_na": null,
+        "generation_task": true,
+        "pinned_shots": null,
+        "task_types": [],
+        "declared_roles": [],
+        "paired_audio": [],
+        "standalone_audio": [],
+        "audio_transcripts": [],
+        "forbid_keyframe_refs": false,
+        "require_start_at_zero": true,
+        "pose_licensed": false,
+        "has_reference_sheet": false,
+        "wardrobe_terms": [],
+        "transformed_from": "",
+        "scope": null
+      },
+      "findings": [
+        {
+          "rule": "L1-unknown-label",
+          "severity": "ERROR",
+          "msg": "<Image N> is not in the label vocabulary (Subject/Picture/Video/Audio); the runtime emits <Picture N>/<Video N>/<Audio N>, so <Image N> points at nothing"
+        },
+        {
+          "rule": "L4-unused-media",
+          "severity": "WARN",
+          "msg": "attached picture(s) [1] never referenced — they cost rows on every sampling step for no effect"
+        },
+        {
+          "rule": "R11-scope-not-cited",
+          "severity": "INFO",
+          "msg": "<Subject 1> is scoped to [Shot 2] but that shot's description never cites it (fine for a persistent setting, suspect for an actor)"
+        },
+        {
+          "rule": "R11-scope-not-cited",
+          "severity": "INFO",
+          "msg": "<Subject 1> is scoped to [Shot 3] but that shot's description never cites it (fine for a persistent setting, suspect for an actor)"
+        },
+        {
+          "rule": "P5-camera-no-motion-type",
+          "severity": "ERROR",
+          "msg": "framing is described but no motion type from the closed vocabulary appears. Use one of these words exactly, woven into the sentence rather than as a label: Zoom In, Zoom Out, Push In, Pull Out, Pan Left, Pan Right, Truck Left, Truck Right, Tilt Up, Tilt Down, Pedestal Up, Pedestal Down, Arc Shot, Tracking Shot, Static Shot, Shake Slightly, Shake Strongly, POV, Roll Clockwise, Roll Counterclockwise. A paraphrase of a move (orbits, circles, glides, drifts, sweeps) is not one of them, and an orbit around the subject is 'Arc Shot'. Every shot needs a stated camera or the model chooses its own"
+        }
+      ]
+    },
+    {
+      "id": "control-07",
+      "name": "MUST FAIL: timestamp on [Shot 1]",
+      "upstream_passed": true,
+      "upstream_detail": "T2-shot1-timestamp fired",
+      "go_status": "pending",
+      "expectation": {
+        "required_error_rules": [
+          "T2-shot1-timestamp"
+        ]
+      },
+      "text": "subject_definitions:\n<Subject 1> is the coffee-shop environment in <Picture 1>, featuring an exposed brick wall, an orange tufted sofa with patterned pillows, a neon sign, and a wooden coffee table.\n<Subject 2> is the fluffy white Samoyed in <Picture 2>, <Picture 3>, and <Picture 4>, with thick white fur, pointed ears, a dark nose, and a curved tail.\n<Subject 3> is the young blonde woman in <Video 1>, with long blonde hair and a light-pink button-down shirt with rolled-up sleeves.\n<Subject 4> is the young man in <Video 2>, with short wavy brown hair and a dark-grey hoodie with drawstrings.\n<Audio 1> is the voice-timbre reference for <Subject 3> (S1), containing a spoken English vocal layer.\n\nsummary:\n[reference generation + audio reference] The target video shows <Subject 3> eating a cookie in <Subject 1>. <Subject 4> enters with <Subject 2>, which lunges toward the cookie. The three-shot exchange uses <Audio 1> as the voice-timbre reference for <Subject 3> and ends with a canned audience laugh.\n\nretention_analysis:\n<Subject 1> (appears in [Shot 1], [Shot 2], [Shot 3]): fully_preserved - the exposed brick wall, orange tufted sofa, patterned pillows, neon sign, and wooden coffee table are retained.\n<Subject 2> (appears in [Shot 1], [Shot 2]): fully_preserved - the Samoyed's thick white fur, pointed ears, dark nose, and curved tail are retained.\n<Subject 3> (appears in [Shot 1], [Shot 2], [Shot 3]): fully_preserved - the blonde woman's identity, long hair, and light-pink shirt are retained.\n<Subject 4> (appears in [Shot 1], [Shot 2]): fully_preserved - the young man's short wavy brown hair and dark-grey hoodie are retained.\n<Audio 1>: reference - its vocal timbre guides the dialogue delivery of <Subject 3> without copying the original signal.\n\ndetailed_description:\nThe target video uses a realistic multi-camera sitcom style with warm indoor lighting.\n[Shot 1] At 00:00.000, A medium shot establishes <Subject 1>, the coffee shop with its exposed brick wall, orange tufted sofa, patterned pillows, neon sign, and wooden coffee table. <Subject 3> (S1), the young woman with long blonde hair and a light-pink button-down shirt with rolled-up sleeves, sits on the sofa holding a chocolate-chip cookie. From the left, <Subject 4>, the young man with short wavy brown hair and a dark-grey hoodie with drawstrings, enters holding the leash of <Subject 2>, the thick-furred white Samoyed with pointed ears, a dark nose, and a curved tail. The dog lunges toward the cookie and pulls the leash taut. <Subject 3> (S1) jerks her hand back and, using the clear youthful voice timbre referenced from <Audio 1>, exclaims with light annoyance, <d>[English] Hey! Watch your dog!</d> She closes her lips and guards the cookie while <Subject 4> pulls the dog back.\n[Shot 2] At 00:03.000, the shot cuts to a close-up of <Subject 4> (S2), the young man in the dark-grey hoodie from Shot 1, sitting beside <Subject 3> on the sofa and holding <Subject 2> securely in his arms. <Subject 4> (S2) says in a casual young male voice with a playful tone and an easy conversational pace, <d>[English] He just likes cookies more than me.</d> He closes his mouth into an apologetic smile and strokes the dog's thick white fur.\n[Shot 3] At 00:05.000, the shot cuts to a close-up of <Subject 3> (S1), the blonde woman in the light-pink shirt from Shot 1. Her annoyance softens as she looks toward the Samoyed. <Subject 3> (S1) replies in the same clear youthful voice referenced from <Audio 1> with an amused cadence, <d>[English] Well, he has good taste at least.</d> She smiles and raises the cookie in a small toast-like gesture. A classic canned audience laugh begins immediately after the line and continues through the final frame.\n\noverall_soundscape:\nSoft indoor coffee-shop room tone continues throughout the scene.\n\nnon_diegetic_music:\nN/A",
+      "context": {
+        "mode": "ref2va",
+        "duration_s": null,
+        "n_pictures": 4,
+        "n_videos": 2,
+        "n_audios": 1,
+        "expected_dialogue": [],
+        "lora_triggers": [],
+        "onscreen_text": [],
+        "token_budget": [
+          350,
+          1400
+        ],
+        "prompt_tokens": null,
+        "require_music_na": null,
+        "generation_task": true,
+        "pinned_shots": null,
+        "task_types": [],
+        "declared_roles": [],
+        "paired_audio": [],
+        "standalone_audio": [],
+        "audio_transcripts": [],
+        "forbid_keyframe_refs": false,
+        "require_start_at_zero": true,
+        "pose_licensed": false,
+        "has_reference_sheet": false,
+        "wardrobe_terms": [],
+        "transformed_from": "",
+        "scope": null
+      },
+      "findings": [
+        {
+          "rule": "T2-shot1-timestamp",
+          "severity": "ERROR",
+          "msg": "[Shot 1] must not carry a timestamp"
+        },
+        {
+          "rule": "R11-scope-not-cited",
+          "severity": "INFO",
+          "msg": "<Subject 1> is scoped to [Shot 2] but that shot's description never cites it (fine for a persistent setting, suspect for an actor)"
+        },
+        {
+          "rule": "R11-scope-not-cited",
+          "severity": "INFO",
+          "msg": "<Subject 1> is scoped to [Shot 3] but that shot's description never cites it (fine for a persistent setting, suspect for an actor)"
+        },
+        {
+          "rule": "P5-camera-no-motion-type",
+          "severity": "ERROR",
+          "msg": "framing is described but no motion type from the closed vocabulary appears. Use one of these words exactly, woven into the sentence rather than as a label: Zoom In, Zoom Out, Push In, Pull Out, Pan Left, Pan Right, Truck Left, Truck Right, Tilt Up, Tilt Down, Pedestal Up, Pedestal Down, Arc Shot, Tracking Shot, Static Shot, Shake Slightly, Shake Strongly, POV, Roll Clockwise, Roll Counterclockwise. A paraphrase of a move (orbits, circles, glides, drifts, sweeps) is not one of them, and an orbit around the subject is 'Arc Shot'. Every shot needs a stated camera or the model chooses its own"
+        }
+      ]
+    },
+    {
+      "id": "control-08",
+      "name": "MUST FAIL: invented retention marker",
+      "upstream_passed": true,
+      "upstream_detail": "R2-illegal-marker fired",
+      "go_status": "pending",
+      "expectation": {
+        "required_error_rules": [
+          "R2-illegal-marker"
+        ]
+      },
+      "text": "subject_definitions:\n<Subject 1> is the coffee-shop environment in <Picture 1>, featuring an exposed brick wall, an orange tufted sofa with patterned pillows, a neon sign, and a wooden coffee table.\n<Subject 2> is the fluffy white Samoyed in <Picture 2>, <Picture 3>, and <Picture 4>, with thick white fur, pointed ears, a dark nose, and a curved tail.\n<Subject 3> is the young blonde woman in <Video 1>, with long blonde hair and a light-pink button-down shirt with rolled-up sleeves.\n<Subject 4> is the young man in <Video 2>, with short wavy brown hair and a dark-grey hoodie with drawstrings.\n<Audio 1> is the voice-timbre reference for <Subject 3> (S1), containing a spoken English vocal layer.\n\nsummary:\n[reference generation + audio reference] The target video shows <Subject 3> eating a cookie in <Subject 1>. <Subject 4> enters with <Subject 2>, which lunges toward the cookie. The three-shot exchange uses <Audio 1> as the voice-timbre reference for <Subject 3> and ends with a canned audience laugh.\n\nretention_analysis:\n<Subject 1> (appears in [Shot 1], [Shot 2], [Shot 3]): mostly_preserved - the exposed brick wall, orange tufted sofa, patterned pillows, neon sign, and wooden coffee table are retained.\n<Subject 2> (appears in [Shot 1], [Shot 2]): fully_preserved - the Samoyed's thick white fur, pointed ears, dark nose, and curved tail are retained.\n<Subject 3> (appears in [Shot 1], [Shot 2], [Shot 3]): fully_preserved - the blonde woman's identity, long hair, and light-pink shirt are retained.\n<Subject 4> (appears in [Shot 1], [Shot 2]): fully_preserved - the young man's short wavy brown hair and dark-grey hoodie are retained.\n<Audio 1>: reference - its vocal timbre guides the dialogue delivery of <Subject 3> without copying the original signal.\n\ndetailed_description:\nThe target video uses a realistic multi-camera sitcom style with warm indoor lighting.\n[Shot 1] A medium shot establishes <Subject 1>, the coffee shop with its exposed brick wall, orange tufted sofa, patterned pillows, neon sign, and wooden coffee table. <Subject 3> (S1), the young woman with long blonde hair and a light-pink button-down shirt with rolled-up sleeves, sits on the sofa holding a chocolate-chip cookie. From the left, <Subject 4>, the young man with short wavy brown hair and a dark-grey hoodie with drawstrings, enters holding the leash of <Subject 2>, the thick-furred white Samoyed with pointed ears, a dark nose, and a curved tail. The dog lunges toward the cookie and pulls the leash taut. <Subject 3> (S1) jerks her hand back and, using the clear youthful voice timbre referenced from <Audio 1>, exclaims with light annoyance, <d>[English] Hey! Watch your dog!</d> She closes her lips and guards the cookie while <Subject 4> pulls the dog back.\n[Shot 2] At 00:03.000, the shot cuts to a close-up of <Subject 4> (S2), the young man in the dark-grey hoodie from Shot 1, sitting beside <Subject 3> on the sofa and holding <Subject 2> securely in his arms. <Subject 4> (S2) says in a casual young male voice with a playful tone and an easy conversational pace, <d>[English] He just likes cookies more than me.</d> He closes his mouth into an apologetic smile and strokes the dog's thick white fur.\n[Shot 3] At 00:05.000, the shot cuts to a close-up of <Subject 3> (S1), the blonde woman in the light-pink shirt from Shot 1. Her annoyance softens as she looks toward the Samoyed. <Subject 3> (S1) replies in the same clear youthful voice referenced from <Audio 1> with an amused cadence, <d>[English] Well, he has good taste at least.</d> She smiles and raises the cookie in a small toast-like gesture. A classic canned audience laugh begins immediately after the line and continues through the final frame.\n\noverall_soundscape:\nSoft indoor coffee-shop room tone continues throughout the scene.\n\nnon_diegetic_music:\nN/A",
+      "context": {
+        "mode": "ref2va",
+        "duration_s": null,
+        "n_pictures": 4,
+        "n_videos": 2,
+        "n_audios": 1,
+        "expected_dialogue": [],
+        "lora_triggers": [],
+        "onscreen_text": [],
+        "token_budget": [
+          350,
+          1400
+        ],
+        "prompt_tokens": null,
+        "require_music_na": null,
+        "generation_task": true,
+        "pinned_shots": null,
+        "task_types": [],
+        "declared_roles": [],
+        "paired_audio": [],
+        "standalone_audio": [],
+        "audio_transcripts": [],
+        "forbid_keyframe_refs": false,
+        "require_start_at_zero": true,
+        "pose_licensed": false,
+        "has_reference_sheet": false,
+        "wardrobe_terms": [],
+        "transformed_from": "",
+        "scope": null
+      },
+      "findings": [
+        {
+          "rule": "R2-illegal-marker",
+          "severity": "ERROR",
+          "msg": "<Subject 1>: 'mostly_preserved' is not a legal Subject relationship marker (fully_preserved, partially_preserved, attribute_transfer, weak_reference)"
+        },
+        {
+          "rule": "R11-scope-not-cited",
+          "severity": "INFO",
+          "msg": "<Subject 1> is scoped to [Shot 2] but that shot's description never cites it (fine for a persistent setting, suspect for an actor)"
+        },
+        {
+          "rule": "R11-scope-not-cited",
+          "severity": "INFO",
+          "msg": "<Subject 1> is scoped to [Shot 3] but that shot's description never cites it (fine for a persistent setting, suspect for an actor)"
+        },
+        {
+          "rule": "P5-camera-no-motion-type",
+          "severity": "ERROR",
+          "msg": "framing is described but no motion type from the closed vocabulary appears. Use one of these words exactly, woven into the sentence rather than as a label: Zoom In, Zoom Out, Push In, Pull Out, Pan Left, Pan Right, Truck Left, Truck Right, Tilt Up, Tilt Down, Pedestal Up, Pedestal Down, Arc Shot, Tracking Shot, Static Shot, Shake Slightly, Shake Strongly, POV, Roll Clockwise, Roll Counterclockwise. A paraphrase of a move (orbits, circles, glides, drifts, sweeps) is not one of them, and an orbit around the subject is 'Arc Shot'. Every shot needs a stated camera or the model chooses its own"
+        }
+      ]
+    },
+    {
+      "id": "control-09",
+      "name": "MUST FAIL: audio marker on a subject",
+      "upstream_passed": true,
+      "upstream_detail": "R2-illegal-marker fired",
+      "go_status": "pending",
+      "expectation": {
+        "required_error_rules": [
+          "R2-illegal-marker"
+        ]
+      },
+      "text": "subject_definitions:\n<Subject 1> is the coffee-shop environment in <Picture 1>, featuring an exposed brick wall, an orange tufted sofa with patterned pillows, a neon sign, and a wooden coffee table.\n<Subject 2> is the fluffy white Samoyed in <Picture 2>, <Picture 3>, and <Picture 4>, with thick white fur, pointed ears, a dark nose, and a curved tail.\n<Subject 3> is the young blonde woman in <Video 1>, with long blonde hair and a light-pink button-down shirt with rolled-up sleeves.\n<Subject 4> is the young man in <Video 2>, with short wavy brown hair and a dark-grey hoodie with drawstrings.\n<Audio 1> is the voice-timbre reference for <Subject 3> (S1), containing a spoken English vocal layer.\n\nsummary:\n[reference generation + audio reference] The target video shows <Subject 3> eating a cookie in <Subject 1>. <Subject 4> enters with <Subject 2>, which lunges toward the cookie. The three-shot exchange uses <Audio 1> as the voice-timbre reference for <Subject 3> and ends with a canned audience laugh.\n\nretention_analysis:\n<Subject 1> (appears in [Shot 1], [Shot 2], [Shot 3]): fully_preserved - the exposed brick wall, orange tufted sofa, patterned pillows, neon sign, and wooden coffee table are retained.\n<Subject 2> (appears in [Shot 1], [Shot 2]): fully_copy - the Samoyed's thick white fur, pointed ears, dark nose, and curved tail are retained.\n<Subject 3> (appears in [Shot 1], [Shot 2], [Shot 3]): fully_preserved - the blonde woman's identity, long hair, and light-pink shirt are retained.\n<Subject 4> (appears in [Shot 1], [Shot 2]): fully_preserved - the young man's short wavy brown hair and dark-grey hoodie are retained.\n<Audio 1>: reference - its vocal timbre guides the dialogue delivery of <Subject 3> without copying the original signal.\n\ndetailed_description:\nThe target video uses a realistic multi-camera sitcom style with warm indoor lighting.\n[Shot 1] A medium shot establishes <Subject 1>, the coffee shop with its exposed brick wall, orange tufted sofa, patterned pillows, neon sign, and wooden coffee table. <Subject 3> (S1), the young woman with long blonde hair and a light-pink button-down shirt with rolled-up sleeves, sits on the sofa holding a chocolate-chip cookie. From the left, <Subject 4>, the young man with short wavy brown hair and a dark-grey hoodie with drawstrings, enters holding the leash of <Subject 2>, the thick-furred white Samoyed with pointed ears, a dark nose, and a curved tail. The dog lunges toward the cookie and pulls the leash taut. <Subject 3> (S1) jerks her hand back and, using the clear youthful voice timbre referenced from <Audio 1>, exclaims with light annoyance, <d>[English] Hey! Watch your dog!</d> She closes her lips and guards the cookie while <Subject 4> pulls the dog back.\n[Shot 2] At 00:03.000, the shot cuts to a close-up of <Subject 4> (S2), the young man in the dark-grey hoodie from Shot 1, sitting beside <Subject 3> on the sofa and holding <Subject 2> securely in his arms. <Subject 4> (S2) says in a casual young male voice with a playful tone and an easy conversational pace, <d>[English] He just likes cookies more than me.</d> He closes his mouth into an apologetic smile and strokes the dog's thick white fur.\n[Shot 3] At 00:05.000, the shot cuts to a close-up of <Subject 3> (S1), the blonde woman in the light-pink shirt from Shot 1. Her annoyance softens as she looks toward the Samoyed. <Subject 3> (S1) replies in the same clear youthful voice referenced from <Audio 1> with an amused cadence, <d>[English] Well, he has good taste at least.</d> She smiles and raises the cookie in a small toast-like gesture. A classic canned audience laugh begins immediately after the line and continues through the final frame.\n\noverall_soundscape:\nSoft indoor coffee-shop room tone continues throughout the scene.\n\nnon_diegetic_music:\nN/A",
+      "context": {
+        "mode": "ref2va",
+        "duration_s": null,
+        "n_pictures": 4,
+        "n_videos": 2,
+        "n_audios": 1,
+        "expected_dialogue": [],
+        "lora_triggers": [],
+        "onscreen_text": [],
+        "token_budget": [
+          350,
+          1400
+        ],
+        "prompt_tokens": null,
+        "require_music_na": null,
+        "generation_task": true,
+        "pinned_shots": null,
+        "task_types": [],
+        "declared_roles": [],
+        "paired_audio": [],
+        "standalone_audio": [],
+        "audio_transcripts": [],
+        "forbid_keyframe_refs": false,
+        "require_start_at_zero": true,
+        "pose_licensed": false,
+        "has_reference_sheet": false,
+        "wardrobe_terms": [],
+        "transformed_from": "",
+        "scope": null
+      },
+      "findings": [
+        {
+          "rule": "R2-illegal-marker",
+          "severity": "ERROR",
+          "msg": "<Subject 2>: 'fully_copy' is not a legal Subject relationship marker (fully_preserved, partially_preserved, attribute_transfer, weak_reference)"
+        },
+        {
+          "rule": "R11-scope-not-cited",
+          "severity": "INFO",
+          "msg": "<Subject 1> is scoped to [Shot 2] but that shot's description never cites it (fine for a persistent setting, suspect for an actor)"
+        },
+        {
+          "rule": "R11-scope-not-cited",
+          "severity": "INFO",
+          "msg": "<Subject 1> is scoped to [Shot 3] but that shot's description never cites it (fine for a persistent setting, suspect for an actor)"
+        },
+        {
+          "rule": "P5-camera-no-motion-type",
+          "severity": "ERROR",
+          "msg": "framing is described but no motion type from the closed vocabulary appears. Use one of these words exactly, woven into the sentence rather than as a label: Zoom In, Zoom Out, Push In, Pull Out, Pan Left, Pan Right, Truck Left, Truck Right, Tilt Up, Tilt Down, Pedestal Up, Pedestal Down, Arc Shot, Tracking Shot, Static Shot, Shake Slightly, Shake Strongly, POV, Roll Clockwise, Roll Counterclockwise. A paraphrase of a move (orbits, circles, glides, drifts, sweeps) is not one of them, and an orbit around the subject is 'Arc Shot'. Every shot needs a stated camera or the model chooses its own"
+        }
+      ]
+    },
+    {
+      "id": "control-10",
+      "name": "MUST FAIL: speaker ID in retention_analysis",
+      "upstream_passed": true,
+      "upstream_detail": "R4-speaker-in-retention fired",
+      "go_status": "pending",
+      "expectation": {
+        "required_error_rules": [
+          "R4-speaker-in-retention"
+        ]
+      },
+      "text": "subject_definitions:\n<Subject 1> is the coffee-shop environment in <Picture 1>, featuring an exposed brick wall, an orange tufted sofa with patterned pillows, a neon sign, and a wooden coffee table.\n<Subject 2> is the fluffy white Samoyed in <Picture 2>, <Picture 3>, and <Picture 4>, with thick white fur, pointed ears, a dark nose, and a curved tail.\n<Subject 3> is the young blonde woman in <Video 1>, with long blonde hair and a light-pink button-down shirt with rolled-up sleeves.\n<Subject 4> is the young man in <Video 2>, with short wavy brown hair and a dark-grey hoodie with drawstrings.\n<Audio 1> is the voice-timbre reference for <Subject 3> (S1), containing a spoken English vocal layer.\n\nsummary:\n[reference generation + audio reference] The target video shows <Subject 3> eating a cookie in <Subject 1>. <Subject 4> enters with <Subject 2>, which lunges toward the cookie. The three-shot exchange uses <Audio 1> as the voice-timbre reference for <Subject 3> and ends with a canned audience laugh.\n\nretention_analysis:\n<Subject 1> (appears in [Shot 1], [Shot 2], [Shot 3]): fully_preserved - the exposed brick wall, orange tufted sofa, patterned pillows, neon sign, and wooden coffee table are retained.\n<Subject 2> (appears in [Shot 1], [Shot 2]): fully_preserved - the Samoyed's thick white fur, pointed ears, dark nose, and curved tail are retained.\n<Subject 3> (appears in [Shot 1], [Shot 2], [Shot 3]): fully_preserved - the blonde woman's identity, long hair, and light-pink shirt are retained.\n<Subject 4> (appears in [Shot 1], [Shot 2]): fully_preserved - the young man's short wavy brown hair and dark-grey hoodie are retained.\n<Audio 1> (S1): reference - its vocal timbre guides the dialogue delivery of <Subject 3> without copying the original signal.\n\ndetailed_description:\nThe target video uses a realistic multi-camera sitcom style with warm indoor lighting.\n[Shot 1] A medium shot establishes <Subject 1>, the coffee shop with its exposed brick wall, orange tufted sofa, patterned pillows, neon sign, and wooden coffee table. <Subject 3> (S1), the young woman with long blonde hair and a light-pink button-down shirt with rolled-up sleeves, sits on the sofa holding a chocolate-chip cookie. From the left, <Subject 4>, the young man with short wavy brown hair and a dark-grey hoodie with drawstrings, enters holding the leash of <Subject 2>, the thick-furred white Samoyed with pointed ears, a dark nose, and a curved tail. The dog lunges toward the cookie and pulls the leash taut. <Subject 3> (S1) jerks her hand back and, using the clear youthful voice timbre referenced from <Audio 1>, exclaims with light annoyance, <d>[English] Hey! Watch your dog!</d> She closes her lips and guards the cookie while <Subject 4> pulls the dog back.\n[Shot 2] At 00:03.000, the shot cuts to a close-up of <Subject 4> (S2), the young man in the dark-grey hoodie from Shot 1, sitting beside <Subject 3> on the sofa and holding <Subject 2> securely in his arms. <Subject 4> (S2) says in a casual young male voice with a playful tone and an easy conversational pace, <d>[English] He just likes cookies more than me.</d> He closes his mouth into an apologetic smile and strokes the dog's thick white fur.\n[Shot 3] At 00:05.000, the shot cuts to a close-up of <Subject 3> (S1), the blonde woman in the light-pink shirt from Shot 1. Her annoyance softens as she looks toward the Samoyed. <Subject 3> (S1) replies in the same clear youthful voice referenced from <Audio 1> with an amused cadence, <d>[English] Well, he has good taste at least.</d> She smiles and raises the cookie in a small toast-like gesture. A classic canned audience laugh begins immediately after the line and continues through the final frame.\n\noverall_soundscape:\nSoft indoor coffee-shop room tone continues throughout the scene.\n\nnon_diegetic_music:\nN/A",
+      "context": {
+        "mode": "ref2va",
+        "duration_s": null,
+        "n_pictures": 4,
+        "n_videos": 2,
+        "n_audios": 1,
+        "expected_dialogue": [],
+        "lora_triggers": [],
+        "onscreen_text": [],
+        "token_budget": [
+          350,
+          1400
+        ],
+        "prompt_tokens": null,
+        "require_music_na": null,
+        "generation_task": true,
+        "pinned_shots": null,
+        "task_types": [],
+        "declared_roles": [],
+        "paired_audio": [],
+        "standalone_audio": [],
+        "audio_transcripts": [],
+        "forbid_keyframe_refs": false,
+        "require_start_at_zero": true,
+        "pose_licensed": false,
+        "has_reference_sheet": false,
+        "wardrobe_terms": [],
+        "transformed_from": "",
+        "scope": null
+      },
+      "findings": [
+        {
+          "rule": "R4-speaker-in-retention",
+          "severity": "ERROR",
+          "msg": "speaker IDs must not appear in retention_analysis"
+        },
+        {
+          "rule": "R11-scope-not-cited",
+          "severity": "INFO",
+          "msg": "<Subject 1> is scoped to [Shot 2] but that shot's description never cites it (fine for a persistent setting, suspect for an actor)"
+        },
+        {
+          "rule": "R11-scope-not-cited",
+          "severity": "INFO",
+          "msg": "<Subject 1> is scoped to [Shot 3] but that shot's description never cites it (fine for a persistent setting, suspect for an actor)"
+        },
+        {
+          "rule": "P5-camera-no-motion-type",
+          "severity": "ERROR",
+          "msg": "framing is described but no motion type from the closed vocabulary appears. Use one of these words exactly, woven into the sentence rather than as a label: Zoom In, Zoom Out, Push In, Pull Out, Pan Left, Pan Right, Truck Left, Truck Right, Tilt Up, Tilt Down, Pedestal Up, Pedestal Down, Arc Shot, Tracking Shot, Static Shot, Shake Slightly, Shake Strongly, POV, Roll Clockwise, Roll Counterclockwise. A paraphrase of a move (orbits, circles, glides, drifts, sweeps) is not one of them, and an orbit around the subject is 'Arc Shot'. Every shot needs a stated camera or the model chooses its own"
+        }
+      ]
+    },
+    {
+      "id": "control-11",
+      "name": "MUST FAIL: curly apostrophe in structural text",
+      "upstream_passed": true,
+      "upstream_detail": "H1-unicode-hazard fired",
+      "go_status": "pending",
+      "expectation": {
+        "required_error_rules": [
+          "H1-unicode-hazard"
+        ]
+      },
+      "text": "subject_definitions:\n<Subject 1> is the coffee-shop environment in <Picture 1>, featuring an exposed brick wall, an orange tufted sofa with patterned pillows, a neon sign, and a wooden coffee table.\n<Subject 2> is the fluffy white Samoyed in <Picture 2>, <Picture 3>, and <Picture 4>, with thick white fur, pointed ears, a dark nose, and a curved tail.\n<Subject 3> is the young blonde woman in <Video 1>, with long blonde hair and a light-pink button-down shirt with rolled-up sleeves.\n<Subject 4> is the young man in <Video 2>, with short wavy brown hair and a dark-grey hoodie with drawstrings.\n<Audio 1> is the voice-timbre reference for <Subject 3> (S1), containing a spoken English vocal layer.\n\nsummary:\n[reference generation + audio reference] The target video shows <Subject 3> eating a cookie in <Subject 1>. <Subject 4> enters with <Subject 2>, which lunges toward the cookie. The three-shot exchange uses <Audio 1> as the voice-timbre reference for <Subject 3> and ends with a canned audience laugh.\n\nretention_analysis:\n<Subject 1> (appears in [Shot 1], [Shot 2], [Shot 3]): fully_preserved - the exposed brick wall, orange tufted sofa, patterned pillows, neon sign, and wooden coffee table are retained.\n<Subject 2> (appears in [Shot 1], [Shot 2]): fully_preserved - the Samoyed’s thick white fur, pointed ears, dark nose, and curved tail are retained.\n<Subject 3> (appears in [Shot 1], [Shot 2], [Shot 3]): fully_preserved - the blonde woman's identity, long hair, and light-pink shirt are retained.\n<Subject 4> (appears in [Shot 1], [Shot 2]): fully_preserved - the young man's short wavy brown hair and dark-grey hoodie are retained.\n<Audio 1>: reference - its vocal timbre guides the dialogue delivery of <Subject 3> without copying the original signal.\n\ndetailed_description:\nThe target video uses a realistic multi-camera sitcom style with warm indoor lighting.\n[Shot 1] A medium shot establishes <Subject 1>, the coffee shop with its exposed brick wall, orange tufted sofa, patterned pillows, neon sign, and wooden coffee table. <Subject 3> (S1), the young woman with long blonde hair and a light-pink button-down shirt with rolled-up sleeves, sits on the sofa holding a chocolate-chip cookie. From the left, <Subject 4>, the young man with short wavy brown hair and a dark-grey hoodie with drawstrings, enters holding the leash of <Subject 2>, the thick-furred white Samoyed with pointed ears, a dark nose, and a curved tail. The dog lunges toward the cookie and pulls the leash taut. <Subject 3> (S1) jerks her hand back and, using the clear youthful voice timbre referenced from <Audio 1>, exclaims with light annoyance, <d>[English] Hey! Watch your dog!</d> She closes her lips and guards the cookie while <Subject 4> pulls the dog back.\n[Shot 2] At 00:03.000, the shot cuts to a close-up of <Subject 4> (S2), the young man in the dark-grey hoodie from Shot 1, sitting beside <Subject 3> on the sofa and holding <Subject 2> securely in his arms. <Subject 4> (S2) says in a casual young male voice with a playful tone and an easy conversational pace, <d>[English] He just likes cookies more than me.</d> He closes his mouth into an apologetic smile and strokes the dog's thick white fur.\n[Shot 3] At 00:05.000, the shot cuts to a close-up of <Subject 3> (S1), the blonde woman in the light-pink shirt from Shot 1. Her annoyance softens as she looks toward the Samoyed. <Subject 3> (S1) replies in the same clear youthful voice referenced from <Audio 1> with an amused cadence, <d>[English] Well, he has good taste at least.</d> She smiles and raises the cookie in a small toast-like gesture. A classic canned audience laugh begins immediately after the line and continues through the final frame.\n\noverall_soundscape:\nSoft indoor coffee-shop room tone continues throughout the scene.\n\nnon_diegetic_music:\nN/A",
+      "context": {
+        "mode": "ref2va",
+        "duration_s": null,
+        "n_pictures": 4,
+        "n_videos": 2,
+        "n_audios": 1,
+        "expected_dialogue": [],
+        "lora_triggers": [],
+        "onscreen_text": [],
+        "token_budget": [
+          350,
+          1400
+        ],
+        "prompt_tokens": null,
+        "require_music_na": null,
+        "generation_task": true,
+        "pinned_shots": null,
+        "task_types": [],
+        "declared_roles": [],
+        "paired_audio": [],
+        "standalone_audio": [],
+        "audio_transcripts": [],
+        "forbid_keyframe_refs": false,
+        "require_start_at_zero": true,
+        "pose_licensed": false,
+        "has_reference_sheet": false,
+        "wardrobe_terms": [],
+        "transformed_from": "",
+        "scope": null
+      },
+      "findings": [
+        {
+          "rule": "R11-scope-not-cited",
+          "severity": "INFO",
+          "msg": "<Subject 1> is scoped to [Shot 2] but that shot's description never cites it (fine for a persistent setting, suspect for an actor)"
+        },
+        {
+          "rule": "R11-scope-not-cited",
+          "severity": "INFO",
+          "msg": "<Subject 1> is scoped to [Shot 3] but that shot's description never cites it (fine for a persistent setting, suspect for an actor)"
+        },
+        {
+          "rule": "P5-camera-no-motion-type",
+          "severity": "ERROR",
+          "msg": "framing is described but no motion type from the closed vocabulary appears. Use one of these words exactly, woven into the sentence rather than as a label: Zoom In, Zoom Out, Push In, Pull Out, Pan Left, Pan Right, Truck Left, Truck Right, Tilt Up, Tilt Down, Pedestal Up, Pedestal Down, Arc Shot, Tracking Shot, Static Shot, Shake Slightly, Shake Strongly, POV, Roll Clockwise, Roll Counterclockwise. A paraphrase of a move (orbits, circles, glides, drifts, sweeps) is not one of them, and an orbit around the subject is 'Arc Shot'. Every shot needs a stated camera or the model chooses its own"
+        },
+        {
+          "rule": "H1-unicode-hazard",
+          "severity": "ERROR",
+          "msg": "structural text contains characters that change tokenization: U+2019 (use \"'\")"
+        }
+      ]
+    },
+    {
+      "id": "control-12",
+      "name": "MUST FAIL: invented task type",
+      "upstream_passed": true,
+      "upstream_detail": "M2-task-type fired",
+      "go_status": "pending",
+      "expectation": {
+        "required_error_rules": [
+          "M2-task-type"
+        ]
+      },
+      "text": "subject_definitions:\n<Subject 1> is the coffee-shop environment in <Picture 1>, featuring an exposed brick wall, an orange tufted sofa with patterned pillows, a neon sign, and a wooden coffee table.\n<Subject 2> is the fluffy white Samoyed in <Picture 2>, <Picture 3>, and <Picture 4>, with thick white fur, pointed ears, a dark nose, and a curved tail.\n<Subject 3> is the young blonde woman in <Video 1>, with long blonde hair and a light-pink button-down shirt with rolled-up sleeves.\n<Subject 4> is the young man in <Video 2>, with short wavy brown hair and a dark-grey hoodie with drawstrings.\n<Audio 1> is the voice-timbre reference for <Subject 3> (S1), containing a spoken English vocal layer.\n\nsummary:\n[reference generation + vibes] The target video shows <Subject 3> eating a cookie in <Subject 1>. <Subject 4> enters with <Subject 2>, which lunges toward the cookie. The three-shot exchange uses <Audio 1> as the voice-timbre reference for <Subject 3> and ends with a canned audience laugh.\n\nretention_analysis:\n<Subject 1> (appears in [Shot 1], [Shot 2], [Shot 3]): fully_preserved - the exposed brick wall, orange tufted sofa, patterned pillows, neon sign, and wooden coffee table are retained.\n<Subject 2> (appears in [Shot 1], [Shot 2]): fully_preserved - the Samoyed's thick white fur, pointed ears, dark nose, and curved tail are retained.\n<Subject 3> (appears in [Shot 1], [Shot 2], [Shot 3]): fully_preserved - the blonde woman's identity, long hair, and light-pink shirt are retained.\n<Subject 4> (appears in [Shot 1], [Shot 2]): fully_preserved - the young man's short wavy brown hair and dark-grey hoodie are retained.\n<Audio 1>: reference - its vocal timbre guides the dialogue delivery of <Subject 3> without copying the original signal.\n\ndetailed_description:\nThe target video uses a realistic multi-camera sitcom style with warm indoor lighting.\n[Shot 1] A medium shot establishes <Subject 1>, the coffee shop with its exposed brick wall, orange tufted sofa, patterned pillows, neon sign, and wooden coffee table. <Subject 3> (S1), the young woman with long blonde hair and a light-pink button-down shirt with rolled-up sleeves, sits on the sofa holding a chocolate-chip cookie. From the left, <Subject 4>, the young man with short wavy brown hair and a dark-grey hoodie with drawstrings, enters holding the leash of <Subject 2>, the thick-furred white Samoyed with pointed ears, a dark nose, and a curved tail. The dog lunges toward the cookie and pulls the leash taut. <Subject 3> (S1) jerks her hand back and, using the clear youthful voice timbre referenced from <Audio 1>, exclaims with light annoyance, <d>[English] Hey! Watch your dog!</d> She closes her lips and guards the cookie while <Subject 4> pulls the dog back.\n[Shot 2] At 00:03.000, the shot cuts to a close-up of <Subject 4> (S2), the young man in the dark-grey hoodie from Shot 1, sitting beside <Subject 3> on the sofa and holding <Subject 2> securely in his arms. <Subject 4> (S2) says in a casual young male voice with a playful tone and an easy conversational pace, <d>[English] He just likes cookies more than me.</d> He closes his mouth into an apologetic smile and strokes the dog's thick white fur.\n[Shot 3] At 00:05.000, the shot cuts to a close-up of <Subject 3> (S1), the blonde woman in the light-pink shirt from Shot 1. Her annoyance softens as she looks toward the Samoyed. <Subject 3> (S1) replies in the same clear youthful voice referenced from <Audio 1> with an amused cadence, <d>[English] Well, he has good taste at least.</d> She smiles and raises the cookie in a small toast-like gesture. A classic canned audience laugh begins immediately after the line and continues through the final frame.\n\noverall_soundscape:\nSoft indoor coffee-shop room tone continues throughout the scene.\n\nnon_diegetic_music:\nN/A",
+      "context": {
+        "mode": "ref2va",
+        "duration_s": null,
+        "n_pictures": 4,
+        "n_videos": 2,
+        "n_audios": 1,
+        "expected_dialogue": [],
+        "lora_triggers": [],
+        "onscreen_text": [],
+        "token_budget": [
+          350,
+          1400
+        ],
+        "prompt_tokens": null,
+        "require_music_na": null,
+        "generation_task": true,
+        "pinned_shots": null,
+        "task_types": [],
+        "declared_roles": [],
+        "paired_audio": [],
+        "standalone_audio": [],
+        "audio_transcripts": [],
+        "forbid_keyframe_refs": false,
+        "require_start_at_zero": true,
+        "pose_licensed": false,
+        "has_reference_sheet": false,
+        "wardrobe_terms": [],
+        "transformed_from": "",
+        "scope": null
+      },
+      "findings": [
+        {
+          "rule": "M2-task-type",
+          "severity": "ERROR",
+          "msg": "'vibes' is not a legal task type"
+        },
+        {
+          "rule": "R11-scope-not-cited",
+          "severity": "INFO",
+          "msg": "<Subject 1> is scoped to [Shot 2] but that shot's description never cites it (fine for a persistent setting, suspect for an actor)"
+        },
+        {
+          "rule": "R11-scope-not-cited",
+          "severity": "INFO",
+          "msg": "<Subject 1> is scoped to [Shot 3] but that shot's description never cites it (fine for a persistent setting, suspect for an actor)"
+        },
+        {
+          "rule": "P5-camera-no-motion-type",
+          "severity": "ERROR",
+          "msg": "framing is described but no motion type from the closed vocabulary appears. Use one of these words exactly, woven into the sentence rather than as a label: Zoom In, Zoom Out, Push In, Pull Out, Pan Left, Pan Right, Truck Left, Truck Right, Tilt Up, Tilt Down, Pedestal Up, Pedestal Down, Arc Shot, Tracking Shot, Static Shot, Shake Slightly, Shake Strongly, POV, Roll Clockwise, Roll Counterclockwise. A paraphrase of a move (orbits, circles, glides, drifts, sweeps) is not one of them, and an orbit around the subject is 'Arc Shot'. Every shot needs a stated camera or the model chooses its own"
+        }
+      ]
+    },
+    {
+      "id": "control-13",
+      "name": "MUST FAIL: 'video editing' with no edit source",
+      "upstream_passed": true,
+      "upstream_detail": "M6-editing-opening fired",
+      "go_status": "pending",
+      "expectation": {
+        "required_error_rules": [
+          "M6-editing-opening"
+        ]
+      },
+      "text": "subject_definitions:\n<Subject 1> is the coffee-shop environment in <Picture 1>, featuring an exposed brick wall, an orange tufted sofa with patterned pillows, a neon sign, and a wooden coffee table.\n<Subject 2> is the fluffy white Samoyed in <Picture 2>, <Picture 3>, and <Picture 4>, with thick white fur, pointed ears, a dark nose, and a curved tail.\n<Subject 3> is the young blonde woman in <Video 1>, with long blonde hair and a light-pink button-down shirt with rolled-up sleeves.\n<Subject 4> is the young man in <Video 2>, with short wavy brown hair and a dark-grey hoodie with drawstrings.\n<Audio 1> is the voice-timbre reference for <Subject 3> (S1), containing a spoken English vocal layer.\n\nsummary:\n[video editing] The target video shows <Subject 3> eating a cookie in <Subject 1>. <Subject 4> enters with <Subject 2>, which lunges toward the cookie. The three-shot exchange uses <Audio 1> as the voice-timbre reference for <Subject 3> and ends with a canned audience laugh.\n\nretention_analysis:\n<Subject 1> (appears in [Shot 1], [Shot 2], [Shot 3]): fully_preserved - the exposed brick wall, orange tufted sofa, patterned pillows, neon sign, and wooden coffee table are retained.\n<Subject 2> (appears in [Shot 1], [Shot 2]): fully_preserved - the Samoyed's thick white fur, pointed ears, dark nose, and curved tail are retained.\n<Subject 3> (appears in [Shot 1], [Shot 2], [Shot 3]): fully_preserved - the blonde woman's identity, long hair, and light-pink shirt are retained.\n<Subject 4> (appears in [Shot 1], [Shot 2]): fully_preserved - the young man's short wavy brown hair and dark-grey hoodie are retained.\n<Audio 1>: reference - its vocal timbre guides the dialogue delivery of <Subject 3> without copying the original signal.\n\ndetailed_description:\nThe target video uses a realistic multi-camera sitcom style with warm indoor lighting.\n[Shot 1] A medium shot establishes <Subject 1>, the coffee shop with its exposed brick wall, orange tufted sofa, patterned pillows, neon sign, and wooden coffee table. <Subject 3> (S1), the young woman with long blonde hair and a light-pink button-down shirt with rolled-up sleeves, sits on the sofa holding a chocolate-chip cookie. From the left, <Subject 4>, the young man with short wavy brown hair and a dark-grey hoodie with drawstrings, enters holding the leash of <Subject 2>, the thick-furred white Samoyed with pointed ears, a dark nose, and a curved tail. The dog lunges toward the cookie and pulls the leash taut. <Subject 3> (S1) jerks her hand back and, using the clear youthful voice timbre referenced from <Audio 1>, exclaims with light annoyance, <d>[English] Hey! Watch your dog!</d> She closes her lips and guards the cookie while <Subject 4> pulls the dog back.\n[Shot 2] At 00:03.000, the shot cuts to a close-up of <Subject 4> (S2), the young man in the dark-grey hoodie from Shot 1, sitting beside <Subject 3> on the sofa and holding <Subject 2> securely in his arms. <Subject 4> (S2) says in a casual young male voice with a playful tone and an easy conversational pace, <d>[English] He just likes cookies more than me.</d> He closes his mouth into an apologetic smile and strokes the dog's thick white fur.\n[Shot 3] At 00:05.000, the shot cuts to a close-up of <Subject 3> (S1), the blonde woman in the light-pink shirt from Shot 1. Her annoyance softens as she looks toward the Samoyed. <Subject 3> (S1) replies in the same clear youthful voice referenced from <Audio 1> with an amused cadence, <d>[English] Well, he has good taste at least.</d> She smiles and raises the cookie in a small toast-like gesture. A classic canned audience laugh begins immediately after the line and continues through the final frame.\n\noverall_soundscape:\nSoft indoor coffee-shop room tone continues throughout the scene.\n\nnon_diegetic_music:\nN/A",
+      "context": {
+        "mode": "ref2va",
+        "duration_s": null,
+        "n_pictures": 4,
+        "n_videos": 2,
+        "n_audios": 1,
+        "expected_dialogue": [],
+        "lora_triggers": [],
+        "onscreen_text": [],
+        "token_budget": [
+          350,
+          1400
+        ],
+        "prompt_tokens": null,
+        "require_music_na": null,
+        "generation_task": true,
+        "pinned_shots": null,
+        "task_types": [],
+        "declared_roles": [],
+        "paired_audio": [],
+        "standalone_audio": [],
+        "audio_transcripts": [],
+        "forbid_keyframe_refs": false,
+        "require_start_at_zero": true,
+        "pose_licensed": false,
+        "has_reference_sheet": false,
+        "wardrobe_terms": [],
+        "transformed_from": "",
+        "scope": null
+      },
+      "findings": [
+        {
+          "rule": "M6-editing-opening",
+          "severity": "ERROR",
+          "msg": "a video-editing summary must contain the mandated opening sentence immediately after the task-type prefix, and keep the prefix first: '[video editing] The target video is an edited version of <Video 1>. ...' (ref-en.txt 3: begin the summary after the task-type prefix with that sentence; it may continue with a comma instead of stopping). Add the sentence, do not move the prefix"
+        },
+        {
+          "rule": "R11-scope-not-cited",
+          "severity": "INFO",
+          "msg": "<Subject 1> is scoped to [Shot 2] but that shot's description never cites it (fine for a persistent setting, suspect for an actor)"
+        },
+        {
+          "rule": "R11-scope-not-cited",
+          "severity": "INFO",
+          "msg": "<Subject 1> is scoped to [Shot 3] but that shot's description never cites it (fine for a persistent setting, suspect for an actor)"
+        },
+        {
+          "rule": "P5-camera-no-motion-type",
+          "severity": "ERROR",
+          "msg": "framing is described but no motion type from the closed vocabulary appears. Use one of these words exactly, woven into the sentence rather than as a label: Zoom In, Zoom Out, Push In, Pull Out, Pan Left, Pan Right, Truck Left, Truck Right, Tilt Up, Tilt Down, Pedestal Up, Pedestal Down, Arc Shot, Tracking Shot, Static Shot, Shake Slightly, Shake Strongly, POV, Roll Clockwise, Roll Counterclockwise. A paraphrase of a move (orbits, circles, glides, drifts, sweeps) is not one of them, and an orbit around the subject is 'Arc Shot'. Every shot needs a stated camera or the model chooses its own"
+        }
+      ]
+    },
+    {
+      "id": "control-14",
+      "name": "MUST FAIL: the task-type prefix written twice",
+      "upstream_passed": true,
+      "upstream_detail": "M9-task-prefix-repeated fired",
+      "go_status": "pending",
+      "expectation": {
+        "required_error_rules": [
+          "M9-task-prefix-repeated"
+        ]
+      },
+      "text": "subject_definitions:\n<Subject 1> is the coffee-shop environment in <Picture 1>, featuring an exposed brick wall, an orange tufted sofa with patterned pillows, a neon sign, and a wooden coffee table.\n<Subject 2> is the fluffy white Samoyed in <Picture 2>, <Picture 3>, and <Picture 4>, with thick white fur, pointed ears, a dark nose, and a curved tail.\n<Subject 3> is the young blonde woman in <Video 1>, with long blonde hair and a light-pink button-down shirt with rolled-up sleeves.\n<Subject 4> is the young man in <Video 2>, with short wavy brown hair and a dark-grey hoodie with drawstrings.\n<Audio 1> is the voice-timbre reference for <Subject 3> (S1), containing a spoken English vocal layer.\n\nsummary:\n[reference generation + audio reference] The target video is described below. [reference generation + audio reference] The target video shows <Subject 3> eating a cookie in <Subject 1>. <Subject 4> enters with <Subject 2>, which lunges toward the cookie. The three-shot exchange uses <Audio 1> as the voice-timbre reference for <Subject 3> and ends with a canned audience laugh.\n\nretention_analysis:\n<Subject 1> (appears in [Shot 1], [Shot 2], [Shot 3]): fully_preserved - the exposed brick wall, orange tufted sofa, patterned pillows, neon sign, and wooden coffee table are retained.\n<Subject 2> (appears in [Shot 1], [Shot 2]): fully_preserved - the Samoyed's thick white fur, pointed ears, dark nose, and curved tail are retained.\n<Subject 3> (appears in [Shot 1], [Shot 2], [Shot 3]): fully_preserved - the blonde woman's identity, long hair, and light-pink shirt are retained.\n<Subject 4> (appears in [Shot 1], [Shot 2]): fully_preserved - the young man's short wavy brown hair and dark-grey hoodie are retained.\n<Audio 1>: reference - its vocal timbre guides the dialogue delivery of <Subject 3> without copying the original signal.\n\ndetailed_description:\nThe target video uses a realistic multi-camera sitcom style with warm indoor lighting.\n[Shot 1] A medium shot establishes <Subject 1>, the coffee shop with its exposed brick wall, orange tufted sofa, patterned pillows, neon sign, and wooden coffee table. <Subject 3> (S1), the young woman with long blonde hair and a light-pink button-down shirt with rolled-up sleeves, sits on the sofa holding a chocolate-chip cookie. From the left, <Subject 4>, the young man with short wavy brown hair and a dark-grey hoodie with drawstrings, enters holding the leash of <Subject 2>, the thick-furred white Samoyed with pointed ears, a dark nose, and a curved tail. The dog lunges toward the cookie and pulls the leash taut. <Subject 3> (S1) jerks her hand back and, using the clear youthful voice timbre referenced from <Audio 1>, exclaims with light annoyance, <d>[English] Hey! Watch your dog!</d> She closes her lips and guards the cookie while <Subject 4> pulls the dog back.\n[Shot 2] At 00:03.000, the shot cuts to a close-up of <Subject 4> (S2), the young man in the dark-grey hoodie from Shot 1, sitting beside <Subject 3> on the sofa and holding <Subject 2> securely in his arms. <Subject 4> (S2) says in a casual young male voice with a playful tone and an easy conversational pace, <d>[English] He just likes cookies more than me.</d> He closes his mouth into an apologetic smile and strokes the dog's thick white fur.\n[Shot 3] At 00:05.000, the shot cuts to a close-up of <Subject 3> (S1), the blonde woman in the light-pink shirt from Shot 1. Her annoyance softens as she looks toward the Samoyed. <Subject 3> (S1) replies in the same clear youthful voice referenced from <Audio 1> with an amused cadence, <d>[English] Well, he has good taste at least.</d> She smiles and raises the cookie in a small toast-like gesture. A classic canned audience laugh begins immediately after the line and continues through the final frame.\n\noverall_soundscape:\nSoft indoor coffee-shop room tone continues throughout the scene.\n\nnon_diegetic_music:\nN/A",
+      "context": {
+        "mode": "ref2va",
+        "duration_s": null,
+        "n_pictures": 4,
+        "n_videos": 2,
+        "n_audios": 1,
+        "expected_dialogue": [],
+        "lora_triggers": [],
+        "onscreen_text": [],
+        "token_budget": [
+          350,
+          1400
+        ],
+        "prompt_tokens": null,
+        "require_music_na": null,
+        "generation_task": true,
+        "pinned_shots": null,
+        "task_types": [],
+        "declared_roles": [],
+        "paired_audio": [],
+        "standalone_audio": [],
+        "audio_transcripts": [],
+        "forbid_keyframe_refs": false,
+        "require_start_at_zero": true,
+        "pose_licensed": false,
+        "has_reference_sheet": false,
+        "wardrobe_terms": [],
+        "transformed_from": "",
+        "scope": null
+      },
+      "findings": [
+        {
+          "rule": "M9-task-prefix-repeated",
+          "severity": "ERROR",
+          "msg": "the task-type prefix appears again inside the summary ('[reference generation + audio reference]'); it belongs once, at the very start, and the rest of the paragraph is prose"
+        },
+        {
+          "rule": "R11-scope-not-cited",
+          "severity": "INFO",
+          "msg": "<Subject 1> is scoped to [Shot 2] but that shot's description never cites it (fine for a persistent setting, suspect for an actor)"
+        },
+        {
+          "rule": "R11-scope-not-cited",
+          "severity": "INFO",
+          "msg": "<Subject 1> is scoped to [Shot 3] but that shot's description never cites it (fine for a persistent setting, suspect for an actor)"
+        },
+        {
+          "rule": "P5-camera-no-motion-type",
+          "severity": "ERROR",
+          "msg": "framing is described but no motion type from the closed vocabulary appears. Use one of these words exactly, woven into the sentence rather than as a label: Zoom In, Zoom Out, Push In, Pull Out, Pan Left, Pan Right, Truck Left, Truck Right, Tilt Up, Tilt Down, Pedestal Up, Pedestal Down, Arc Shot, Tracking Shot, Static Shot, Shake Slightly, Shake Strongly, POV, Roll Clockwise, Roll Counterclockwise. A paraphrase of a move (orbits, circles, glides, drifts, sweeps) is not one of them, and an orbit around the subject is 'Arc Shot'. Every shot needs a stated camera or the model chooses its own"
+        }
+      ]
+    },
+    {
+      "id": "control-15",
+      "name": "MUST FAIL: sections out of order",
+      "upstream_passed": true,
+      "upstream_detail": "S2-section-order fired",
+      "go_status": "pending",
+      "expectation": {
+        "required_error_rules": [
+          "S2-section-order"
+        ]
+      },
+      "text": "subject_definitions:\n<Subject 1> is the coffee-shop environment in <Picture 1>, featuring an exposed brick wall, an orange tufted sofa with patterned pillows, a neon sign, and a wooden coffee table.\n<Subject 2> is the fluffy white Samoyed in <Picture 2>, <Picture 3>, and <Picture 4>, with thick white fur, pointed ears, a dark nose, and a curved tail.\n<Subject 3> is the young blonde woman in <Video 1>, with long blonde hair and a light-pink button-down shirt with rolled-up sleeves.\n<Subject 4> is the young man in <Video 2>, with short wavy brown hair and a dark-grey hoodie with drawstrings.\n<Audio 1> is the voice-timbre reference for <Subject 3> (S1), containing a spoken English vocal layer.\n\nretention_analysis:\n<Subject 1> (appears in [Shot 1], [Shot 2], [Shot 3]): fully_preserved - the exposed brick wall, orange tufted sofa, patterned pillows, neon sign, and wooden coffee table are retained.\n<Subject 2> (appears in [Shot 1], [Shot 2]): fully_preserved - the Samoyed's thick white fur, pointed ears, dark nose, and curved tail are retained.\n<Subject 3> (appears in [Shot 1], [Shot 2], [Shot 3]): fully_preserved - the blonde woman's identity, long hair, and light-pink shirt are retained.\n<Subject 4> (appears in [Shot 1], [Shot 2]): fully_preserved - the young man's short wavy brown hair and dark-grey hoodie are retained.\n<Audio 1>: reference - its vocal timbre guides the dialogue delivery of <Subject 3> without copying the original signal.\n\nsummary:\n[reference generation + audio reference] The target video shows <Subject 3> eating a cookie in <Subject 1>. <Subject 4> enters with <Subject 2>, which lunges toward the cookie. The three-shot exchange uses <Audio 1> as the voice-timbre reference for <Subject 3> and ends with a canned audience laugh.\n\ndetailed_description:\nThe target video uses a realistic multi-camera sitcom style with warm indoor lighting.\n[Shot 1] A medium shot establishes <Subject 1>, the coffee shop with its exposed brick wall, orange tufted sofa, patterned pillows, neon sign, and wooden coffee table. <Subject 3> (S1), the young woman with long blonde hair and a light-pink button-down shirt with rolled-up sleeves, sits on the sofa holding a chocolate-chip cookie. From the left, <Subject 4>, the young man with short wavy brown hair and a dark-grey hoodie with drawstrings, enters holding the leash of <Subject 2>, the thick-furred white Samoyed with pointed ears, a dark nose, and a curved tail. The dog lunges toward the cookie and pulls the leash taut. <Subject 3> (S1) jerks her hand back and, using the clear youthful voice timbre referenced from <Audio 1>, exclaims with light annoyance, <d>[English] Hey! Watch your dog!</d> She closes her lips and guards the cookie while <Subject 4> pulls the dog back.\n[Shot 2] At 00:03.000, the shot cuts to a close-up of <Subject 4> (S2), the young man in the dark-grey hoodie from Shot 1, sitting beside <Subject 3> on the sofa and holding <Subject 2> securely in his arms. <Subject 4> (S2) says in a casual young male voice with a playful tone and an easy conversational pace, <d>[English] He just likes cookies more than me.</d> He closes his mouth into an apologetic smile and strokes the dog's thick white fur.\n[Shot 3] At 00:05.000, the shot cuts to a close-up of <Subject 3> (S1), the blonde woman in the light-pink shirt from Shot 1. Her annoyance softens as she looks toward the Samoyed. <Subject 3> (S1) replies in the same clear youthful voice referenced from <Audio 1> with an amused cadence, <d>[English] Well, he has good taste at least.</d> She smiles and raises the cookie in a small toast-like gesture. A classic canned audience laugh begins immediately after the line and continues through the final frame.\n\noverall_soundscape:\nSoft indoor coffee-shop room tone continues throughout the scene.\n\nnon_diegetic_music:\nN/A",
+      "context": {
+        "mode": "ref2va",
+        "duration_s": null,
+        "n_pictures": 4,
+        "n_videos": 2,
+        "n_audios": 1,
+        "expected_dialogue": [],
+        "lora_triggers": [],
+        "onscreen_text": [],
+        "token_budget": [
+          350,
+          1400
+        ],
+        "prompt_tokens": null,
+        "require_music_na": null,
+        "generation_task": true,
+        "pinned_shots": null,
+        "task_types": [],
+        "declared_roles": [],
+        "paired_audio": [],
+        "standalone_audio": [],
+        "audio_transcripts": [],
+        "forbid_keyframe_refs": false,
+        "require_start_at_zero": true,
+        "pose_licensed": false,
+        "has_reference_sheet": false,
+        "wardrobe_terms": [],
+        "transformed_from": "",
+        "scope": null
+      },
+      "findings": [
+        {
+          "rule": "S2-section-order",
+          "severity": "ERROR",
+          "msg": "sections out of mandated order: ['subject_definitions', 'retention_analysis', 'summary', 'detailed_description', 'overall_soundscape', 'non_diegetic_music']"
+        },
+        {
+          "rule": "R11-scope-not-cited",
+          "severity": "INFO",
+          "msg": "<Subject 1> is scoped to [Shot 2] but that shot's description never cites it (fine for a persistent setting, suspect for an actor)"
+        },
+        {
+          "rule": "R11-scope-not-cited",
+          "severity": "INFO",
+          "msg": "<Subject 1> is scoped to [Shot 3] but that shot's description never cites it (fine for a persistent setting, suspect for an actor)"
+        },
+        {
+          "rule": "P5-camera-no-motion-type",
+          "severity": "ERROR",
+          "msg": "framing is described but no motion type from the closed vocabulary appears. Use one of these words exactly, woven into the sentence rather than as a label: Zoom In, Zoom Out, Push In, Pull Out, Pan Left, Pan Right, Truck Left, Truck Right, Tilt Up, Tilt Down, Pedestal Up, Pedestal Down, Arc Shot, Tracking Shot, Static Shot, Shake Slightly, Shake Strongly, POV, Roll Clockwise, Roll Counterclockwise. A paraphrase of a move (orbits, circles, glides, drifts, sweeps) is not one of them, and an orbit around the subject is 'Arc Shot'. Every shot needs a stated camera or the model chooses its own"
+        }
+      ]
+    },
+    {
+      "id": "control-16",
+      "name": "MUST FAIL: wrapped in a code fence",
+      "upstream_passed": true,
+      "upstream_detail": "S4-code-fence fired",
+      "go_status": "pending",
+      "expectation": {
+        "required_error_rules": [
+          "S4-code-fence"
+        ]
+      },
+      "text": "```text\nsubject_definitions:\n<Subject 1> is the coffee-shop environment in <Picture 1>, featuring an exposed brick wall, an orange tufted sofa with patterned pillows, a neon sign, and a wooden coffee table.\n<Subject 2> is the fluffy white Samoyed in <Picture 2>, <Picture 3>, and <Picture 4>, with thick white fur, pointed ears, a dark nose, and a curved tail.\n<Subject 3> is the young blonde woman in <Video 1>, with long blonde hair and a light-pink button-down shirt with rolled-up sleeves.\n<Subject 4> is the young man in <Video 2>, with short wavy brown hair and a dark-grey hoodie with drawstrings.\n<Audio 1> is the voice-timbre reference for <Subject 3> (S1), containing a spoken English vocal layer.\n\nsummary:\n[reference generation + audio reference] The target video shows <Subject 3> eating a cookie in <Subject 1>. <Subject 4> enters with <Subject 2>, which lunges toward the cookie. The three-shot exchange uses <Audio 1> as the voice-timbre reference for <Subject 3> and ends with a canned audience laugh.\n\nretention_analysis:\n<Subject 1> (appears in [Shot 1], [Shot 2], [Shot 3]): fully_preserved - the exposed brick wall, orange tufted sofa, patterned pillows, neon sign, and wooden coffee table are retained.\n<Subject 2> (appears in [Shot 1], [Shot 2]): fully_preserved - the Samoyed's thick white fur, pointed ears, dark nose, and curved tail are retained.\n<Subject 3> (appears in [Shot 1], [Shot 2], [Shot 3]): fully_preserved - the blonde woman's identity, long hair, and light-pink shirt are retained.\n<Subject 4> (appears in [Shot 1], [Shot 2]): fully_preserved - the young man's short wavy brown hair and dark-grey hoodie are retained.\n<Audio 1>: reference - its vocal timbre guides the dialogue delivery of <Subject 3> without copying the original signal.\n\ndetailed_description:\nThe target video uses a realistic multi-camera sitcom style with warm indoor lighting.\n[Shot 1] A medium shot establishes <Subject 1>, the coffee shop with its exposed brick wall, orange tufted sofa, patterned pillows, neon sign, and wooden coffee table. <Subject 3> (S1), the young woman with long blonde hair and a light-pink button-down shirt with rolled-up sleeves, sits on the sofa holding a chocolate-chip cookie. From the left, <Subject 4>, the young man with short wavy brown hair and a dark-grey hoodie with drawstrings, enters holding the leash of <Subject 2>, the thick-furred white Samoyed with pointed ears, a dark nose, and a curved tail. The dog lunges toward the cookie and pulls the leash taut. <Subject 3> (S1) jerks her hand back and, using the clear youthful voice timbre referenced from <Audio 1>, exclaims with light annoyance, <d>[English] Hey! Watch your dog!</d> She closes her lips and guards the cookie while <Subject 4> pulls the dog back.\n[Shot 2] At 00:03.000, the shot cuts to a close-up of <Subject 4> (S2), the young man in the dark-grey hoodie from Shot 1, sitting beside <Subject 3> on the sofa and holding <Subject 2> securely in his arms. <Subject 4> (S2) says in a casual young male voice with a playful tone and an easy conversational pace, <d>[English] He just likes cookies more than me.</d> He closes his mouth into an apologetic smile and strokes the dog's thick white fur.\n[Shot 3] At 00:05.000, the shot cuts to a close-up of <Subject 3> (S1), the blonde woman in the light-pink shirt from Shot 1. Her annoyance softens as she looks toward the Samoyed. <Subject 3> (S1) replies in the same clear youthful voice referenced from <Audio 1> with an amused cadence, <d>[English] Well, he has good taste at least.</d> She smiles and raises the cookie in a small toast-like gesture. A classic canned audience laugh begins immediately after the line and continues through the final frame.\n\noverall_soundscape:\nSoft indoor coffee-shop room tone continues throughout the scene.\n\nnon_diegetic_music:\nN/A\n```",
+      "context": {
+        "mode": "ref2va",
+        "duration_s": null,
+        "n_pictures": 4,
+        "n_videos": 2,
+        "n_audios": 1,
+        "expected_dialogue": [],
+        "lora_triggers": [],
+        "onscreen_text": [],
+        "token_budget": [
+          350,
+          1400
+        ],
+        "prompt_tokens": null,
+        "require_music_na": null,
+        "generation_task": true,
+        "pinned_shots": null,
+        "task_types": [],
+        "declared_roles": [],
+        "paired_audio": [],
+        "standalone_audio": [],
+        "audio_transcripts": [],
+        "forbid_keyframe_refs": false,
+        "require_start_at_zero": true,
+        "pose_licensed": false,
+        "has_reference_sheet": false,
+        "wardrobe_terms": [],
+        "transformed_from": "",
+        "scope": null
+      },
+      "findings": [
+        {
+          "rule": "S3-preamble",
+          "severity": "ERROR",
+          "msg": "brief must begin with 'subject_definitions:'"
+        },
+        {
+          "rule": "S4-code-fence",
+          "severity": "ERROR",
+          "msg": "output contains a markdown code fence"
+        },
+        {
+          "rule": "R11-scope-not-cited",
+          "severity": "INFO",
+          "msg": "<Subject 1> is scoped to [Shot 2] but that shot's description never cites it (fine for a persistent setting, suspect for an actor)"
+        },
+        {
+          "rule": "R11-scope-not-cited",
+          "severity": "INFO",
+          "msg": "<Subject 1> is scoped to [Shot 3] but that shot's description never cites it (fine for a persistent setting, suspect for an actor)"
+        },
+        {
+          "rule": "P5-camera-no-motion-type",
+          "severity": "ERROR",
+          "msg": "framing is described but no motion type from the closed vocabulary appears. Use one of these words exactly, woven into the sentence rather than as a label: Zoom In, Zoom Out, Push In, Pull Out, Pan Left, Pan Right, Truck Left, Truck Right, Tilt Up, Tilt Down, Pedestal Up, Pedestal Down, Arc Shot, Tracking Shot, Static Shot, Shake Slightly, Shake Strongly, POV, Roll Clockwise, Roll Counterclockwise. A paraphrase of a move (orbits, circles, glides, drifts, sweeps) is not one of them, and an orbit around the subject is 'Arc Shot'. Every shot needs a stated camera or the model chooses its own"
+        },
+        {
+          "rule": "A5-music-no-tempo",
+          "severity": "INFO",
+          "msg": "non_diegetic_music should state instrumentation, tempo and dynamics"
+        }
+      ]
+    },
+    {
+      "id": "control-17",
+      "name": "MUST FAIL: <D> instead of <d>",
+      "upstream_passed": true,
+      "upstream_detail": "D5-marker-not-byte-exact fired",
+      "go_status": "pending",
+      "expectation": {
+        "required_error_rules": [
+          "D5-marker-not-byte-exact"
+        ]
+      },
+      "text": "subject_definitions:\n<Subject 1> is the coffee-shop environment in <Picture 1>, featuring an exposed brick wall, an orange tufted sofa with patterned pillows, a neon sign, and a wooden coffee table.\n<Subject 2> is the fluffy white Samoyed in <Picture 2>, <Picture 3>, and <Picture 4>, with thick white fur, pointed ears, a dark nose, and a curved tail.\n<Subject 3> is the young blonde woman in <Video 1>, with long blonde hair and a light-pink button-down shirt with rolled-up sleeves.\n<Subject 4> is the young man in <Video 2>, with short wavy brown hair and a dark-grey hoodie with drawstrings.\n<Audio 1> is the voice-timbre reference for <Subject 3> (S1), containing a spoken English vocal layer.\n\nsummary:\n[reference generation + audio reference] The target video shows <Subject 3> eating a cookie in <Subject 1>. <Subject 4> enters with <Subject 2>, which lunges toward the cookie. The three-shot exchange uses <Audio 1> as the voice-timbre reference for <Subject 3> and ends with a canned audience laugh.\n\nretention_analysis:\n<Subject 1> (appears in [Shot 1], [Shot 2], [Shot 3]): fully_preserved - the exposed brick wall, orange tufted sofa, patterned pillows, neon sign, and wooden coffee table are retained.\n<Subject 2> (appears in [Shot 1], [Shot 2]): fully_preserved - the Samoyed's thick white fur, pointed ears, dark nose, and curved tail are retained.\n<Subject 3> (appears in [Shot 1], [Shot 2], [Shot 3]): fully_preserved - the blonde woman's identity, long hair, and light-pink shirt are retained.\n<Subject 4> (appears in [Shot 1], [Shot 2]): fully_preserved - the young man's short wavy brown hair and dark-grey hoodie are retained.\n<Audio 1>: reference - its vocal timbre guides the dialogue delivery of <Subject 3> without copying the original signal.\n\ndetailed_description:\nThe target video uses a realistic multi-camera sitcom style with warm indoor lighting.\n[Shot 1] A medium shot establishes <Subject 1>, the coffee shop with its exposed brick wall, orange tufted sofa, patterned pillows, neon sign, and wooden coffee table. <Subject 3> (S1), the young woman with long blonde hair and a light-pink button-down shirt with rolled-up sleeves, sits on the sofa holding a chocolate-chip cookie. From the left, <Subject 4>, the young man with short wavy brown hair and a dark-grey hoodie with drawstrings, enters holding the leash of <Subject 2>, the thick-furred white Samoyed with pointed ears, a dark nose, and a curved tail. The dog lunges toward the cookie and pulls the leash taut. <Subject 3> (S1) jerks her hand back and, using the clear youthful voice timbre referenced from <Audio 1>, exclaims with light annoyance, <D>[English] Hey! Watch your dog!</d> She closes her lips and guards the cookie while <Subject 4> pulls the dog back.\n[Shot 2] At 00:03.000, the shot cuts to a close-up of <Subject 4> (S2), the young man in the dark-grey hoodie from Shot 1, sitting beside <Subject 3> on the sofa and holding <Subject 2> securely in his arms. <Subject 4> (S2) says in a casual young male voice with a playful tone and an easy conversational pace, <d>[English] He just likes cookies more than me.</d> He closes his mouth into an apologetic smile and strokes the dog's thick white fur.\n[Shot 3] At 00:05.000, the shot cuts to a close-up of <Subject 3> (S1), the blonde woman in the light-pink shirt from Shot 1. Her annoyance softens as she looks toward the Samoyed. <Subject 3> (S1) replies in the same clear youthful voice referenced from <Audio 1> with an amused cadence, <d>[English] Well, he has good taste at least.</d> She smiles and raises the cookie in a small toast-like gesture. A classic canned audience laugh begins immediately after the line and continues through the final frame.\n\noverall_soundscape:\nSoft indoor coffee-shop room tone continues throughout the scene.\n\nnon_diegetic_music:\nN/A",
+      "context": {
+        "mode": "ref2va",
+        "duration_s": null,
+        "n_pictures": 4,
+        "n_videos": 2,
+        "n_audios": 1,
+        "expected_dialogue": [],
+        "lora_triggers": [],
+        "onscreen_text": [],
+        "token_budget": [
+          350,
+          1400
+        ],
+        "prompt_tokens": null,
+        "require_music_na": null,
+        "generation_task": true,
+        "pinned_shots": null,
+        "task_types": [],
+        "declared_roles": [],
+        "paired_audio": [],
+        "standalone_audio": [],
+        "audio_transcripts": [],
+        "forbid_keyframe_refs": false,
+        "require_start_at_zero": true,
+        "pose_licensed": false,
+        "has_reference_sheet": false,
+        "wardrobe_terms": [],
+        "transformed_from": "",
+        "scope": null
+      },
+      "findings": [
+        {
+          "rule": "R11-scope-not-cited",
+          "severity": "INFO",
+          "msg": "<Subject 1> is scoped to [Shot 2] but that shot's description never cites it (fine for a persistent setting, suspect for an actor)"
+        },
+        {
+          "rule": "R11-scope-not-cited",
+          "severity": "INFO",
+          "msg": "<Subject 1> is scoped to [Shot 3] but that shot's description never cites it (fine for a persistent setting, suspect for an actor)"
+        },
+        {
+          "rule": "P5-camera-no-motion-type",
+          "severity": "ERROR",
+          "msg": "framing is described but no motion type from the closed vocabulary appears. Use one of these words exactly, woven into the sentence rather than as a label: Zoom In, Zoom Out, Push In, Pull Out, Pan Left, Pan Right, Truck Left, Truck Right, Tilt Up, Tilt Down, Pedestal Up, Pedestal Down, Arc Shot, Tracking Shot, Static Shot, Shake Slightly, Shake Strongly, POV, Roll Clockwise, Roll Counterclockwise. A paraphrase of a move (orbits, circles, glides, drifts, sweeps) is not one of them, and an orbit around the subject is 'Arc Shot'. Every shot needs a stated camera or the model chooses its own"
+        },
+        {
+          "rule": "D1-unbalanced-d",
+          "severity": "ERROR",
+          "msg": "2 <d> vs 3 </d>"
+        },
+        {
+          "rule": "D5-marker-not-byte-exact",
+          "severity": "ERROR",
+          "msg": "'<D>' is not the marker; it must be exactly '<d>' / '</d>' or the token sequence changes"
+        }
+      ]
+    },
+    {
+      "id": "control-18",
+      "name": "MUST FAIL: a label opened and never closed",
+      "upstream_passed": true,
+      "upstream_detail": "L6-label-not-closed fired",
+      "go_status": "pending",
+      "expectation": {
+        "required_error_rules": [
+          "L6-label-not-closed"
+        ]
+      },
+      "text": "subject_definitions:\n<Subject 1> is the coffee-shop environment in <Picture 1>, featuring an exposed brick wall, an orange tufted sofa with patterned pillows, a neon sign, and a wooden coffee table.\n<Subject 2> is the fluffy white Samoyed in <Picture 2, <Picture 3>, and <Picture 4>, with thick white fur, pointed ears, a dark nose, and a curved tail.\n<Subject 3> is the young blonde woman in <Video 1>, with long blonde hair and a light-pink button-down shirt with rolled-up sleeves.\n<Subject 4> is the young man in <Video 2>, with short wavy brown hair and a dark-grey hoodie with drawstrings.\n<Audio 1> is the voice-timbre reference for <Subject 3> (S1), containing a spoken English vocal layer.\n\nsummary:\n[reference generation + audio reference] The target video shows <Subject 3> eating a cookie in <Subject 1>. <Subject 4> enters with <Subject 2>, which lunges toward the cookie. The three-shot exchange uses <Audio 1> as the voice-timbre reference for <Subject 3> and ends with a canned audience laugh.\n\nretention_analysis:\n<Subject 1> (appears in [Shot 1], [Shot 2], [Shot 3]): fully_preserved - the exposed brick wall, orange tufted sofa, patterned pillows, neon sign, and wooden coffee table are retained.\n<Subject 2> (appears in [Shot 1], [Shot 2]): fully_preserved - the Samoyed's thick white fur, pointed ears, dark nose, and curved tail are retained.\n<Subject 3> (appears in [Shot 1], [Shot 2], [Shot 3]): fully_preserved - the blonde woman's identity, long hair, and light-pink shirt are retained.\n<Subject 4> (appears in [Shot 1], [Shot 2]): fully_preserved - the young man's short wavy brown hair and dark-grey hoodie are retained.\n<Audio 1>: reference - its vocal timbre guides the dialogue delivery of <Subject 3> without copying the original signal.\n\ndetailed_description:\nThe target video uses a realistic multi-camera sitcom style with warm indoor lighting.\n[Shot 1] A medium shot establishes <Subject 1>, the coffee shop with its exposed brick wall, orange tufted sofa, patterned pillows, neon sign, and wooden coffee table. <Subject 3> (S1), the young woman with long blonde hair and a light-pink button-down shirt with rolled-up sleeves, sits on the sofa holding a chocolate-chip cookie. From the left, <Subject 4>, the young man with short wavy brown hair and a dark-grey hoodie with drawstrings, enters holding the leash of <Subject 2>, the thick-furred white Samoyed with pointed ears, a dark nose, and a curved tail. The dog lunges toward the cookie and pulls the leash taut. <Subject 3> (S1) jerks her hand back and, using the clear youthful voice timbre referenced from <Audio 1>, exclaims with light annoyance, <d>[English] Hey! Watch your dog!</d> She closes her lips and guards the cookie while <Subject 4> pulls the dog back.\n[Shot 2] At 00:03.000, the shot cuts to a close-up of <Subject 4> (S2), the young man in the dark-grey hoodie from Shot 1, sitting beside <Subject 3> on the sofa and holding <Subject 2> securely in his arms. <Subject 4> (S2) says in a casual young male voice with a playful tone and an easy conversational pace, <d>[English] He just likes cookies more than me.</d> He closes his mouth into an apologetic smile and strokes the dog's thick white fur.\n[Shot 3] At 00:05.000, the shot cuts to a close-up of <Subject 3> (S1), the blonde woman in the light-pink shirt from Shot 1. Her annoyance softens as she looks toward the Samoyed. <Subject 3> (S1) replies in the same clear youthful voice referenced from <Audio 1> with an amused cadence, <d>[English] Well, he has good taste at least.</d> She smiles and raises the cookie in a small toast-like gesture. A classic canned audience laugh begins immediately after the line and continues through the final frame.\n\noverall_soundscape:\nSoft indoor coffee-shop room tone continues throughout the scene.\n\nnon_diegetic_music:\nN/A",
+      "context": {
+        "mode": "ref2va",
+        "duration_s": null,
+        "n_pictures": 4,
+        "n_videos": 2,
+        "n_audios": 1,
+        "expected_dialogue": [],
+        "lora_triggers": [],
+        "onscreen_text": [],
+        "token_budget": [
+          350,
+          1400
+        ],
+        "prompt_tokens": null,
+        "require_music_na": null,
+        "generation_task": true,
+        "pinned_shots": null,
+        "task_types": [],
+        "declared_roles": [],
+        "paired_audio": [],
+        "standalone_audio": [],
+        "audio_transcripts": [],
+        "forbid_keyframe_refs": false,
+        "require_start_at_zero": true,
+        "pose_licensed": false,
+        "has_reference_sheet": false,
+        "wardrobe_terms": [],
+        "transformed_from": "",
+        "scope": null
+      },
+      "findings": [
+        {
+          "rule": "L4-unused-media",
+          "severity": "WARN",
+          "msg": "attached picture(s) [2] never referenced — they cost rows on every sampling step for no effect"
+        },
+        {
+          "rule": "L6-label-not-closed",
+          "severity": "ERROR",
+          "msg": "<Picture 2 is opened and never closed with '>': '<Picture 2, <Picture 3>, and <Picture 4>, with thick white f'. A reference label is a single token the encoder binds to the attached asset, so the '>' is not punctuation -- without it this names nothing. Write <Picture 2>."
+        },
+        {
+          "rule": "R11-scope-not-cited",
+          "severity": "INFO",
+          "msg": "<Subject 1> is scoped to [Shot 2] but that shot's description never cites it (fine for a persistent setting, suspect for an actor)"
+        },
+        {
+          "rule": "R11-scope-not-cited",
+          "severity": "INFO",
+          "msg": "<Subject 1> is scoped to [Shot 3] but that shot's description never cites it (fine for a persistent setting, suspect for an actor)"
+        },
+        {
+          "rule": "P5-camera-no-motion-type",
+          "severity": "ERROR",
+          "msg": "framing is described but no motion type from the closed vocabulary appears. Use one of these words exactly, woven into the sentence rather than as a label: Zoom In, Zoom Out, Push In, Pull Out, Pan Left, Pan Right, Truck Left, Truck Right, Tilt Up, Tilt Down, Pedestal Up, Pedestal Down, Arc Shot, Tracking Shot, Static Shot, Shake Slightly, Shake Strongly, POV, Roll Clockwise, Roll Counterclockwise. A paraphrase of a move (orbits, circles, glides, drifts, sweeps) is not one of them, and an orbit around the subject is 'Arc Shot'. Every shot needs a stated camera or the model chooses its own"
+        }
+      ]
+    },
+    {
+      "id": "control-19",
+      "name": "MUST PASS mechanically: a shot rejected on taste, not on legality",
+      "upstream_passed": true,
+      "upstream_detail": "clean, as it should be — the repeated shot is a judgement the validator cannot make, and a human is the judge on it",
+      "go_status": "pending",
+      "expectation": {
+        "allowed_error_rules": []
+      },
+      "text": "subject_definitions:\n<Subject 1> is the woman in <Picture 1>, with black hair shaved at the sides and pulled into a short tight knot, a thin pale scar through her left eyebrow, lean build, charcoal technical jacket with a high collar, dark utility trousers.\n<Subject 2> is the interior stone corridor in <Picture 2>, with the wall torch, the stone wall of rough-hewn rectangular blocks, the vines.\n\nsummary:\n[reference generation] The video depicts <Subject 1> walking forward through a stone corridor toward the camera. <Subject 2> provides the atmospheric environment.\n\nretention_analysis:\n<Subject 1> (appears in [Shot 1], [Shot 2]): fully_preserved - the shaved sides and short tight knot, the scar through the left eyebrow, the lean build are retained.\n<Subject 2> (appears in [Shot 1], [Shot 2]): fully_preserved - the wall torch, the stone wall, the vines are retained.\n\ndetailed_description:\nThe target video is in digital illustration style with semi-realistic character design.\n[Shot 1] Rhythmic footsteps echo on stone as <Subject 1> walks forward down a narrow corridor. Her black hair, shaved at the sides and knotted short, is sharply defined above the high collar of the charcoal technical jacket, over dark utility trousers. The camera pushes in with small amplitude at slow speed. A mounted wall torch on the right features a bright yellow and orange flame. The flickering torchlight casts moving shadows across the irregular rectangular blocks of the stone wall as she moves steadily toward the foreground.\n[Shot 2] At 00:04.000, <Subject 1> strides forward down the stone corridor, her lean build moving with purpose. The shaved sides of her black hair and the thin pale scar through her left eyebrow frame a face illuminated by the warm, flickering light from the torch mounted on the wall, and the charcoal technical jacket and dark utility trousers catch the same glow. The camera pushes in with small amplitude at slow speed. The woman closes the distance to the camera as the light washes over her face and upper body.\n\noverall_soundscape:\nLow ambient hum of a stone corridor. Faint wind echoing through the passage.\n\nnon_diegetic_music:\nN/A\n",
+      "context": {
+        "mode": "ref2va",
+        "duration_s": 8.0,
+        "n_pictures": 2,
+        "n_videos": 0,
+        "n_audios": 0,
+        "expected_dialogue": [],
+        "lora_triggers": [],
+        "onscreen_text": [],
+        "token_budget": [
+          350,
+          1400
+        ],
+        "prompt_tokens": null,
+        "require_music_na": null,
+        "generation_task": true,
+        "pinned_shots": null,
+        "task_types": [],
+        "declared_roles": [],
+        "paired_audio": [],
+        "standalone_audio": [],
+        "audio_transcripts": [],
+        "forbid_keyframe_refs": false,
+        "require_start_at_zero": true,
+        "pose_licensed": false,
+        "has_reference_sheet": false,
+        "wardrobe_terms": [],
+        "transformed_from": "",
+        "scope": null
+      },
+      "findings": [
+        {
+          "rule": "R11-scope-not-cited",
+          "severity": "INFO",
+          "msg": "<Subject 2> is scoped to [Shot 1] but that shot's description never cites it (fine for a persistent setting, suspect for an actor)"
+        },
+        {
+          "rule": "R11-scope-not-cited",
+          "severity": "INFO",
+          "msg": "<Subject 2> is scoped to [Shot 2] but that shot's description never cites it (fine for a persistent setting, suspect for an actor)"
+        },
+        {
+          "rule": "P2-too-short",
+          "severity": "WARN",
+          "msg": "detailed_description is 193 words; spec guidance 350-500, official example 336"
+        },
+        {
+          "rule": "P7-cut-phrase-off-vocabulary",
+          "severity": "WARN",
+          "msg": "[Shot 2] is a cut and its opening states no transition from base-en.txt 4.2's closed set: `the camera cuts to`, `the shot cuts to`, `the shot transitions to`, `the shot changes to`, `the shot switches to` (a cross-dissolve, fade or wipe only if the request asked for one). A synonym is a near miss in the same way a wrong label is: '<Subject 1> strides forward down the stone corridor, her lea'"
+        }
+      ]
+    },
+    {
+      "id": "control-20",
+      "name": "MUST PASS: published t2va.ir.txt",
+      "upstream_passed": true,
+      "upstream_detail": "clean",
+      "go_status": "pending",
+      "expectation": {
+        "allowed_error_rules": []
+      },
+      "text": "integrated_multimodal_description: [Shot 1] Cinematic, medium wide shot, pushing in slowly. In the cavernous, dimly lit bridge of a starship, sleek metallic consoles with glowing amber displays flank a massive, curved observation window. A female captain, in her late 40s with an athletic build and short silver-streaked black hair, stands in the center midground. She wears a structured, high-collared dark navy military tunic with silver chest insignias. Her back is to the camera, silhouetted against the cool, ambient starlight pouring through the thick glass. She stands perfectly still with her hands clasped tightly behind her back. Outside the window, a massive armada of jagged, dark grey dreadnoughts hovers in tight formation against a deep purple space nebula. The fleet's massive rear thrusters begin to glow with an intense, escalating bright blue light. [Shot 2] At 00:04.500, the camera cuts to a close-up of the captain's face and shakes strongly. The brilliant blue-white light from the fleet's gathering energy reflects vividly in her dark eyes. Suddenly, a blinding white flash floods through the window, completely washing out the background as the fleet jumps to hyperspace. The sheer spatial force violently jolts the bridge, causing the captain from Shot 1 to stagger slightly forward, her shoulders tensing as she visibly braces herself against the physical tremors. As the intense white light fades abruptly, leaving only the dim, empty expanse of the purple nebula reflected on her starkly lit skin, her jaw clenches, and she slowly closes her eyes in the newly emptied space.\noverall_soundscape: A low, resonant hum of the ship's ambient life support systems serves as the baseline, soon drowned out by an audible, escalating, high-pitched electronic whine as the fleet outside charges its hyperdrives. A massive, deafening, bass-heavy boom and sharp crackle erupts during the blinding flash, accompanied by the loud metallic creaking, rattling, and deep thuds of the bridge's bulkheads vibrating under immense physical stress. The intense roaring impact then cuts abruptly back to a hollow, echoing room tone, leaving only the faint, steady hum of the isolated bridge.\nnon_diegetic_music: Cinematic space-opera orchestral score, slow tempo, featuring a solitary, mournful French horn melody over deep, sustained string dissonances that build rapidly in volume and intensity, swelling to a massive orchestral peak before snapping immediately into silence right after the jump.\n",
+      "context": {
+        "mode": "t2va",
+        "duration_s": 10.125,
+        "n_pictures": 0,
+        "n_videos": 0,
+        "n_audios": 0,
+        "expected_dialogue": [],
+        "lora_triggers": [],
+        "onscreen_text": [],
+        "token_budget": [
+          350,
+          1400
+        ],
+        "prompt_tokens": null,
+        "require_music_na": null,
+        "generation_task": true,
+        "pinned_shots": null,
+        "task_types": [],
+        "declared_roles": [],
+        "paired_audio": [],
+        "standalone_audio": [],
+        "audio_transcripts": [],
+        "forbid_keyframe_refs": false,
+        "require_start_at_zero": true,
+        "pose_licensed": false,
+        "has_reference_sheet": false,
+        "wardrobe_terms": [],
+        "transformed_from": "",
+        "scope": null
+      },
+      "findings": [
+        {
+          "rule": "P5b-camera-no-amplitude",
+          "severity": "INFO",
+          "msg": "a motion type appears but without the 'with <small|large> amplitude at <slow|fast> speed' idiom the spec defines"
+        }
+      ]
+    },
+    {
+      "id": "control-21",
+      "name": "MUST PASS: published i2va.ir.txt",
+      "upstream_passed": true,
+      "upstream_detail": "clean",
+      "go_status": "pending",
+      "expectation": {
+        "allowed_error_rules": []
+      },
+      "text": "For the target video, at 0.00 seconds into the target video, <Picture 1> (from [Shot 1]) is fully referenced.\n\nintegrated_multimodal_description: [Shot 1] This is a live-action, cinematic shot with a shallow depth of field. The camera holds a perfectly static shot throughout the entire eight-second duration, capturing a cozy family gathering in a traditional Japanese dining room. The scene opens with a large, intricately patterned blue and white ceramic bowl of ramen in the immediate foreground, rendered in crisp, sharp focus. The bowl sits on a smooth, polished long wooden table. Inside the bowl, a rich, oily golden-brown broth surrounds yellow wavy noodles, topped with two thick, round slices of chashu pork featuring visible fat marbling and a distinct spiral meat pattern. A generous mound of freshly chopped, bright green scallions rests in the center, and a crisp, dark green rectangular sheet of nori seaweed is tucked into the right edge. To the left of the bowl, a pair of light brown wooden chopsticks rests horizontally on a small, dark rectangular chopstick rest, near a small cylindrical ceramic teacup with blue painted patterns. On the right side of the table, a spherical paper lantern with a ribbed bamboo frame sits on a black wooden base. In the background, a large family of seven is gathered around the table, initially appearing as a soft, blurred presence. Behind them, traditional Japanese sliding shoji screens with wooden lattice frames are open, revealing a bright outdoor scene with lush green trees. Early in the clip, the thick, white steam rising from the hot ramen broth immediately intensifies, billowing upwards in thick, swirling clouds that dance continuously above the bowl. As the clip progresses into the middle seconds, the camera maintains its static position while the focus begins a deliberate, smooth shift deeper into the room. The foreground ramen bowl, its vibrant ingredients, and the rising steam gradually soften into a hazy, out-of-focus blur. Simultaneously, the family members in the background come into sharp, detailed clarity. The heavy steam continues to rise from the foreground, creating a dynamic, translucent veil between the camera and the family. With the focus now firmly locked on the background, the vibrant family dinner comes alive. The man in the dark navy blue long-sleeved shirt on the left leans forward, his mouth moving animatedly in a silent exchange. The young girl in the crisp white short-sleeved t-shirt beside him smiles brightly, looking toward the center of the table. The woman on the far left, wearing a soft light blue long-sleeved blouse, turns her head slightly, smiling gently. Across the table, the woman in the light grey button-down shirt smiles broadly, her eyes crinkling, as she rests her hands near her plate. The woman in the dark grey top further back uses her wooden chopsticks to pick up a small piece of food from a central ceramic dish filled with bright red pickled vegetables. The woman in the center back in the light grey sweater smiles gently, her hands clasped softly in front of her, observing the interaction. Throughout the remainder of the clip, the family continues their lively physical interaction, their mouths moving in continuous, silent cadences of conversation, while the thick, white steam from the blurred ramen bowl in the foreground never stops rising, adding a comforting atmosphere to the warm gathering.\n\noverall_soundscape: The soundscape begins with a quiet room tone mixed with the faint, airy rustle of the thick steam billowing from the hot ramen bowl in the foreground, accompanied by the subtle, continuous hissing and bubbling of the rich broth. As the visual focus shifts deeper into the room, the physical sounds of the bustling family dinner become dominant in the foreground. The clear, sharp clinking of ceramic bowls and wooden chopsticks touching plates is clearly heard as the family members reach for food. This is followed by the faint, muffled thud of a cup being set down on the smooth wooden table, and the subtle, rhythmic rustle of cotton and wool clothing as the family members lean forward and gesture, perfectly capturing the lively, physical atmosphere of the shared meal.\n\nnon_diegetic_music: A gentle, heartwarming acoustic guitar melody plays softly in the background, accompanied by the subtle, resonant notes of a traditional Japanese koto. The music maintains a slow, comforting tempo that enhances the cozy, nostalgic, and joyful atmosphere of the family gathering.\n",
+      "context": {
+        "mode": "i2va",
+        "duration_s": 8.0,
+        "n_pictures": 1,
+        "n_videos": 0,
+        "n_audios": 0,
+        "expected_dialogue": [],
+        "lora_triggers": [],
+        "onscreen_text": [],
+        "token_budget": [
+          350,
+          1400
+        ],
+        "prompt_tokens": null,
+        "require_music_na": null,
+        "generation_task": true,
+        "pinned_shots": null,
+        "task_types": [],
+        "declared_roles": [],
+        "paired_audio": [],
+        "standalone_audio": [],
+        "audio_transcripts": [],
+        "forbid_keyframe_refs": false,
+        "require_start_at_zero": true,
+        "pose_licensed": false,
+        "has_reference_sheet": false,
+        "wardrobe_terms": [],
+        "transformed_from": "",
+        "scope": null
+      },
+      "findings": [
+        {
+          "rule": "P5b-camera-no-amplitude",
+          "severity": "INFO",
+          "msg": "a motion type appears but without the 'with <small|large> amplitude at <slow|fast> speed' idiom the spec defines"
+        },
+        {
+          "rule": "A2-sound-duplicated",
+          "severity": "WARN",
+          "msg": "overall_soundscape repeats a phrase already in the description: 'deeper into the room the'"
+        },
+        {
+          "rule": "A8-music-mood-word",
+          "severity": "WARN",
+          "msg": "non_diegetic_music states the score's mood or emotional function rather than its sound: 'joyful', 'nostalgic'. base-en.txt 4.7 asks for instrumentation, speed, rhythm and dynamic change and rules those out explicitly. Name what is playing and what it does across the duration instead"
+        }
+      ]
+    },
+    {
+      "id": "control-22",
+      "name": "MUST PASS: published official_fl2va_example.txt",
+      "upstream_passed": true,
+      "upstream_detail": "clean",
+      "go_status": "pending",
+      "expectation": {
+        "allowed_error_rules": []
+      },
+      "text": "How the reference pictures align with the target video — Picture 1 (from Shot 1) aligns with the 0.00-second mark of the target video; Picture 2 (from Shot 1) aligns with the 8.00-second mark of the target video.\n\nintegrated_multimodal_description: [Shot 1] Live-action, cinematic, a rain-soaked cyclist begins in the position and framing established by Picture 1, holding a closed black umbrella beside a silver bicycle. The camera pulls out with small amplitude at slow speed as she releases the bicycle handle, raises the umbrella above her shoulder, and presses the runner upward until the canopy opens. Water rolls from the expanding fabric while she steps beneath it, rotates the handle into the final angle, and settles into the pose, spacing, and composition established by Picture 2 at the end of the shot.\n\noverall_soundscape: Rain falls steadily on the pavement, followed by the metallic click of the umbrella runner and the soft snap of the canopy opening. Water drips from the bicycle frame as distant traffic passes.\n\nnon_diegetic_music: N/A\n",
+      "context": {
+        "mode": "fl2va",
+        "duration_s": 8.0,
+        "n_pictures": 2,
+        "n_videos": 0,
+        "n_audios": 0,
+        "expected_dialogue": [],
+        "lora_triggers": [],
+        "onscreen_text": [],
+        "token_budget": [
+          350,
+          1400
+        ],
+        "prompt_tokens": null,
+        "require_music_na": null,
+        "generation_task": true,
+        "pinned_shots": null,
+        "task_types": [],
+        "declared_roles": [],
+        "paired_audio": [],
+        "standalone_audio": [],
+        "audio_transcripts": [],
+        "forbid_keyframe_refs": false,
+        "require_start_at_zero": true,
+        "pose_licensed": false,
+        "has_reference_sheet": false,
+        "wardrobe_terms": [],
+        "transformed_from": "",
+        "scope": null
+      },
+      "findings": []
+    },
+    {
+      "id": "control-23",
+      "name": "MUST PASS: published ref2va.ir.txt",
+      "upstream_passed": true,
+      "upstream_detail": "clean",
+      "go_status": "pending",
+      "expectation": {
+        "allowed_error_rules": []
+      },
+      "text": "subject_definitions:\n<Subject 1> is the young man with short wavy blonde hair, wearing a bright pink suit jacket, matching pink trousers, an unbuttoned white shirt, and silver rings, holding a small black lamb in his arms in <Video 1>.\n<Video 1> is the source video for the editing task.\n<Audio 1> is the synchronized audio track of <Video 1>, providing the background music.\n<Audio 2> is the voice timbre reference for <Subject 1>'s voice, containing a spoken male voiceover.\n\nsummary:\n[video editing + audio reference + audio reuse] The target video is an edited version of <Video 1>. <Subject 1>, wearing a bright pink suit and holding a black lamb, stands in a grassy field with other white lambs in the background. The edit animates <Subject 1>'s face to speak the user-provided dialogue. <Audio 1> is partially reused as the continuous background music, while the target references the calm male voice timbre of <Audio 2> for <Subject 1>'s spoken lines.\n\nretention_analysis:\n<Subject 1> (appears in [Shot 1]): fully_preserved - the man retains his identity, wavy blonde hair, pink suit, white shirt, accessories, and the black lamb he holds, with his mouth newly animated to speak.\n<Video 1> (source video editing): fully_preserved - the original camera framing, warm golden hour lighting, grassy hill setting, and background white lambs are maintained while the central character is edited.\n<Audio 1>: partially_copy - the atmospheric background music from <Audio 1> is reused in the target video, mixed beneath the newly added spoken dialogue.\n<Audio 2>: reference - the target audio references the male voice timbre from <Audio 2> to generate <Subject 1>'s spoken dialogue.\n\ndetailed_description:\nThe target video is in realistic photographic style.\n[Shot 1] The shot begins from the source <Video 1>, showing <Subject 1>, a young man with short wavy blonde hair, wearing a bright pink suit jacket, matching pink trousers, and a casually unbuttoned white shirt. He stands confidently in a sunlit green pasture, gently holding a small black lamb securely in his arms. The warm, golden hour lighting casts soft shadows across his face and the bright pink fabric of his suit. Behind him, several white lambs stand and graze on the rolling grassy hill against a clear, pale blue sky. The atmospheric background music from <Audio 1> plays continuously throughout the scene. <Subject 1> physically speaks, his mouth movements naturally syncing to the new dialogue, with his voice timbre referencing the calm male delivery from <Audio 2>. Looking thoughtfully forward, <Subject 1> (S1) speaks softly, <d>[English] Follow the wind, live free.</d> As he delivers the line, he subtly shifts his weight, cradling the resting black lamb while the camera slowly pushes in. <Subject 1> (S1) continues his thought, <d>[English] Leave worries behind, enjoy the moment.</d> Exactly as his voice stops, his lips meet in a relaxed, peaceful smile, and his jaw ceases speaking motion. He then turns his gaze slightly away toward the horizon, gently stroking the black lamb's fleece with his fingers as the camera holds on this tranquil, sunlit state through the end of the video.\n\noverall_soundscape:\nThe soundscape consists of the continuous, atmospheric background music from <Audio 1>, overlaid with the clear, calm male dialogue spoken by the main character, referencing the voice timbre of <Audio 2>.\n\nnon_diegetic_music:\nThe atmospheric, sustained background music from <Audio 1> is reused as the continuous score, playing quietly beneath the spoken dialogue.\n",
+      "context": {
+        "mode": "ref2va",
+        "duration_s": 5.167,
+        "n_pictures": 0,
+        "n_videos": 1,
+        "n_audios": 2,
+        "expected_dialogue": [],
+        "lora_triggers": [],
+        "onscreen_text": [],
+        "token_budget": [
+          350,
+          1400
+        ],
+        "prompt_tokens": null,
+        "require_music_na": null,
+        "generation_task": false,
+        "pinned_shots": null,
+        "task_types": [],
+        "declared_roles": [],
+        "paired_audio": [],
+        "standalone_audio": [],
+        "audio_transcripts": [],
+        "forbid_keyframe_refs": false,
+        "require_start_at_zero": true,
+        "pose_licensed": false,
+        "has_reference_sheet": false,
+        "wardrobe_terms": [],
+        "transformed_from": "",
+        "scope": null
+      },
+      "findings": [
+        {
+          "rule": "P5b-camera-no-amplitude",
+          "severity": "INFO",
+          "msg": "a motion type appears but without the 'with <small|large> amplitude at <slow|fast> speed' idiom the spec defines"
+        },
+        {
+          "rule": "A2-sound-duplicated",
+          "severity": "WARN",
+          "msg": "overall_soundscape repeats a phrase already in the description: 'atmospheric background music from audio'"
+        },
+        {
+          "rule": "A5-music-no-tempo",
+          "severity": "INFO",
+          "msg": "non_diegetic_music should state instrumentation, tempo and dynamics"
+        }
+      ]
+    }
+  ]
+}

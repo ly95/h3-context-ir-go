@@ -67,6 +67,7 @@ func request(mode contextir.Mode) contextir.Request {
 }
 
 func evidenceFor(asset contextir.Asset) contextir.Evidence {
+	// These fixtures test contract plumbing, not real media perception.
 	track := contextir.TrackVisual
 	if asset.Kind == contextir.MediaAudio {
 		track = contextir.TrackAudio
@@ -75,7 +76,11 @@ func evidenceFor(asset contextir.Asset) contextir.Evidence {
 	if asset.Kind == contextir.MediaVideo {
 		facts = append(facts, contextir.Fact{ID: asset.ID + "_audio_fact", Text: "The source is silent.", Source: contextir.SourceRef{AssetID: asset.ID, Track: contextir.TrackAudio, Interval: &contextir.Interval{Start: 0, End: 7000}}})
 	}
-	return contextir.Evidence{AssetID: asset.ID, Facts: facts, AnalyzerVersion: "test/v1", Model: "fake-perceiver"}
+	tracks := []contextir.Track{track}
+	if asset.Kind == contextir.MediaVideo {
+		tracks = append(tracks, contextir.TrackAudio)
+	}
+	return contextir.Evidence{AssetID: asset.ID, Facts: facts, AnalyzerVersion: "test/v1", Model: "fake-perceiver", Coverage: &contextir.PerceptionCoverage{Status: contextir.CoverageComplete, Tracks: tracks}}
 }
 
 func allEvidence(r contextir.Request) []contextir.Evidence {
@@ -124,6 +129,13 @@ func document(r contextir.Request) contextir.Document {
 				ref.Kind, ref.Roles = contextir.ReferenceVideo, []contextir.Role{contextir.RoleCamera}
 			case contextir.MediaAudio:
 				ref.Kind, ref.Roles, ref.Source.Track = contextir.ReferenceAudio, []contextir.Role{contextir.RoleRhythm}, contextir.TrackAudio
+			}
+		}
+		// An actual frame binds the complete supplied pixels. Keep this test
+		// provider's positive fixture valid without changing non-frame markers.
+		for _, role := range ref.Roles {
+			if role == contextir.RoleFirstFrame || role == contextir.RoleLastFrame || role == contextir.RoleKeyframe {
+				ref.Retention = contextir.FullyPreserved
 			}
 		}
 		d.References = append(d.References, ref)

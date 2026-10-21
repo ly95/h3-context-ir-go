@@ -1,0 +1,357 @@
+{
+  "stage": "identity_requirements",
+  "system": "Resolve ONLY target identity requirements against observed source identities. Read the caller's complete intent and constraints first. Every explicit identity-bearing assertion in those words is a TARGET requirement, including a referential noun phrase; it does not need a separate transformation verb. Observed gender, age, species, name, clothing and physical attributes describe the SOURCE and may not overrule a conflicting caller target. Never dismiss the caller's target as a callout mismatch or silently substitute the source identity. A source with a different observed identity property can retain its other stable visual traits while honoring that target change.\nFor each source subject return the exact label and observed kind unless the caller expressly changes its kind. If identity/wardrobe is unchanged, descriptor_source=reference and descriptor equals the exact source descriptor, target_mention/request_quote empty, claims/requested_attributes/adjusted_attributes empty. Keep all stable observed attributes. A whole-figure swap does not delete the outgoing figure's recorded attributes here: a separate host relationship removes that figure later.\nFor a source marked reference-sheet, use presentation_cleanup (or request when identity is changed). Remove panel/view/turnaround phrasing from descriptor; when no such wording is present, its existing descriptor can be copied exactly. Presentation is not identity. Cleanup cannot change gender/species/age or remove an identity trait without a caller-authorized request. No reference pose, studio setup, layout, label or mood inference belongs in retained attributes. excluded_presentation contains only PURE presentation/background source attributes. A mixed attribute containing a stable physical fact and view packaging MUST retain its exact source in retained_attributes and use adjusted_attributes kind=presentation_cleanup to preserve the stable fact while removing only the view packaging. Such cleanup requires a declared reference sheet, not a caller identity change. Sources absent from reference_sheet_sources include actual frame anchors: their entire image composition is target frame content and must never be cleaned into a hero panel.\nWhen the user requires an identity change, descriptor_source=request; target_mention is the exact caller expression identifying that target (including a referring pronoun), request_quote quotes its actual authorizing words, and claims enumerate the explicit dimensions with supported normalized semantic values and exact supporting quotes. A value may normalize the meaning of its quote; it need not be a literal substring. descriptor must be a complete grammatical target noun phrase faithful to those claims and unaffected source identity, never an isolated pronoun and never a conflicting source gender/species/age. retained_attributes keeps every unaffected stable source trait; drop only explicitly replaced properties. requested_attributes holds only actual additional target attributes supported by a claim value or exact caller wording, not guesses. An unchanged source attribute containing source-specific identity wording can appear in adjusted_attributes kind=target_identity_alignment as source=that exact retained string and target=a faithful neutral rephrasing compatible with the explicit target identity. Do not change the underlying scar/hair/garment/prop fact while adjusting its wording. target_identity_alignment requires explicit caller identity-change authority. The original observed source remains unchanged separately.\nwardrobe_attributes is exactly the retained garments/accessories subset, excluding hair/scars/pose. request_quote, target_mention and claim quote fields must quote caller intent/constraints exactly; claim values and the grammatical target descriptor express their supported semantics. References and director preferences never invent target claims. Unknown changes are not authorized; preserve the source rather than guessing. Return only the typed JSON.",
+  "input": {
+    "constraints": null,
+    "diagnostics": null,
+    "intent": "Continue from the end of this clip and land exactly on this picture as the final frame.",
+    "observed_subjects": [
+      {
+        "label": "\u003cSubject 1\u003e",
+        "kind": "object",
+        "sources": [
+          "\u003cPicture 1\u003e"
+        ],
+        "descriptor": "the black supercar",
+        "attributes": [
+          "carbon fibre body"
+        ],
+        "pose": [],
+        "pose_licensed": false,
+        "retention": "fully_preserved",
+        "retention_note": "",
+        "appears_in": [],
+        "taken_over_by": ""
+      },
+      {
+        "label": "\u003cSubject 2\u003e",
+        "kind": "object",
+        "sources": [
+          "\u003cVideo 1\u003e"
+        ],
+        "descriptor": "the black car",
+        "attributes": [
+          "carbon fibre body"
+        ],
+        "pose": [],
+        "pose_licensed": false,
+        "retention": "partially_preserved",
+        "retention_note": "",
+        "appears_in": [],
+        "taken_over_by": ""
+      }
+    ],
+    "reference_sheet_sources": {}
+  },
+  "response_schema": {
+    "additionalProperties": false,
+    "properties": {
+      "identity": {
+        "items": false,
+        "maxItems": 2,
+        "minItems": 2,
+        "prefixItems": [
+          {
+            "additionalProperties": false,
+            "properties": {
+              "adjusted_attributes": {
+                "items": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "kind": {
+                      "enum": [
+                        "presentation_cleanup",
+                        "target_identity_alignment"
+                      ],
+                      "type": "string"
+                    },
+                    "source": {
+                      "enum": [
+                        "carbon fibre body"
+                      ],
+                      "type": "string"
+                    },
+                    "target": {
+                      "minLength": 1,
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "kind",
+                    "source",
+                    "target"
+                  ],
+                  "type": "object"
+                },
+                "type": "array"
+              },
+              "claims": {
+                "items": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "dimension": {
+                      "enum": [
+                        "identity",
+                        "gender",
+                        "age",
+                        "species",
+                        "name",
+                        "wardrobe",
+                        "stable_attribute"
+                      ],
+                      "type": "string"
+                    },
+                    "quote": {
+                      "type": "string"
+                    },
+                    "value": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "dimension",
+                    "quote",
+                    "value"
+                  ],
+                  "type": "object"
+                },
+                "type": "array"
+              },
+              "descriptor": {
+                "type": "string"
+              },
+              "descriptor_source": {
+                "enum": [
+                  "reference",
+                  "request"
+                ],
+                "type": "string"
+              },
+              "excluded_presentation": {
+                "items": {
+                  "enum": [
+                    "carbon fibre body"
+                  ],
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "kind": {
+                "enum": [
+                  "subject",
+                  "person",
+                  "animal",
+                  "object",
+                  "environment",
+                  "style",
+                  "action"
+                ],
+                "type": "string"
+              },
+              "label": {
+                "const": "\u003cSubject 1\u003e"
+              },
+              "request_quote": {
+                "type": "string"
+              },
+              "requested_attributes": {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "retained_attributes": {
+                "items": {
+                  "enum": [
+                    "carbon fibre body"
+                  ],
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "target_mention": {
+                "type": "string"
+              },
+              "wardrobe_attributes": {
+                "items": {
+                  "enum": [
+                    "carbon fibre body"
+                  ],
+                  "type": "string"
+                },
+                "type": "array"
+              }
+            },
+            "required": [
+              "adjusted_attributes",
+              "claims",
+              "descriptor",
+              "descriptor_source",
+              "excluded_presentation",
+              "kind",
+              "label",
+              "request_quote",
+              "requested_attributes",
+              "retained_attributes",
+              "target_mention",
+              "wardrobe_attributes"
+            ],
+            "type": "object"
+          },
+          {
+            "additionalProperties": false,
+            "properties": {
+              "adjusted_attributes": {
+                "items": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "kind": {
+                      "enum": [
+                        "presentation_cleanup",
+                        "target_identity_alignment"
+                      ],
+                      "type": "string"
+                    },
+                    "source": {
+                      "enum": [
+                        "carbon fibre body"
+                      ],
+                      "type": "string"
+                    },
+                    "target": {
+                      "minLength": 1,
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "kind",
+                    "source",
+                    "target"
+                  ],
+                  "type": "object"
+                },
+                "type": "array"
+              },
+              "claims": {
+                "items": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "dimension": {
+                      "enum": [
+                        "identity",
+                        "gender",
+                        "age",
+                        "species",
+                        "name",
+                        "wardrobe",
+                        "stable_attribute"
+                      ],
+                      "type": "string"
+                    },
+                    "quote": {
+                      "type": "string"
+                    },
+                    "value": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "dimension",
+                    "quote",
+                    "value"
+                  ],
+                  "type": "object"
+                },
+                "type": "array"
+              },
+              "descriptor": {
+                "type": "string"
+              },
+              "descriptor_source": {
+                "enum": [
+                  "reference",
+                  "request"
+                ],
+                "type": "string"
+              },
+              "excluded_presentation": {
+                "items": {
+                  "enum": [
+                    "carbon fibre body"
+                  ],
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "kind": {
+                "enum": [
+                  "subject",
+                  "person",
+                  "animal",
+                  "object",
+                  "environment",
+                  "style",
+                  "action"
+                ],
+                "type": "string"
+              },
+              "label": {
+                "const": "\u003cSubject 2\u003e"
+              },
+              "request_quote": {
+                "type": "string"
+              },
+              "requested_attributes": {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "retained_attributes": {
+                "items": {
+                  "enum": [
+                    "carbon fibre body"
+                  ],
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "target_mention": {
+                "type": "string"
+              },
+              "wardrobe_attributes": {
+                "items": {
+                  "enum": [
+                    "carbon fibre body"
+                  ],
+                  "type": "string"
+                },
+                "type": "array"
+              }
+            },
+            "required": [
+              "adjusted_attributes",
+              "claims",
+              "descriptor",
+              "descriptor_source",
+              "excluded_presentation",
+              "kind",
+              "label",
+              "request_quote",
+              "requested_attributes",
+              "retained_attributes",
+              "target_mention",
+              "wardrobe_attributes"
+            ],
+            "type": "object"
+          }
+        ],
+        "type": "array"
+      }
+    },
+    "required": [
+      "identity"
+    ],
+    "type": "object"
+  }
+}

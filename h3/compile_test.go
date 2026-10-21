@@ -164,9 +164,10 @@ func TestMixedMediaAndDialogueBindings(t *testing.T) {
 		"[Shot 2] At 00:04.000,", "At 00:01.000,",
 		"<d>[Chinese] Hold,  </d>", "<d>[Chinese] steady—行！</d>",
 		"<scenetrans>", "The audio continues seamlessly across the cut.",
-		"says in an off-screen voiceover", "</d> while their lips remain completely closed.",
+		"says in an off-screen voiceover",
 		"<cutoff>", "\"营业中：“请进”\"", "Do not add background music.",
 		"<Audio 1>: partially_copy", "<Audio 2>: reference",
+		"Applicable scope: ([Shot 1], [Shot 2]; soundtrack).", "Applicable scope: ([Shot 1], [Shot 2]; voice timbre and delivery).",
 	} {
 		if !strings.Contains(a.Prompt, text) {
 			t.Fatalf("missing required rendering %q:\n%s", text, a.Prompt)
@@ -174,6 +175,19 @@ func TestMixedMediaAndDialogueBindings(t *testing.T) {
 	}
 	if strings.Count(a.Prompt, "Hold,  ") != 1 || strings.Count(a.Prompt, "steady—行！") != 1 {
 		t.Fatal("cross-cut dialogue was duplicated or normalized")
+	}
+	if strings.Contains(a.Prompt, "lips remain completely closed") {
+		t.Fatal("an unpictured narrator must not invent a visible character or a mouth constraint")
+	}
+}
+
+func TestVisibleVoiceoverKeepsMouthClosed(t *testing.T) {
+	d := mixed()
+	onscreen := true
+	d.Speakers[1].Onscreen = &onscreen
+	a := requireCompile(t, d, h3.OfficialProfile())
+	if !strings.Contains(a.Prompt, "</d> while their lips remain completely closed.") {
+		t.Fatal("a caller-declared visible voiceover speaker needs an explicit closed-mouth constraint")
 	}
 }
 
@@ -303,7 +317,7 @@ func TestSourceSegmentsRemainExplicitInBindings(t *testing.T) {
 }
 
 func TestLiteralProtocolMarkersFailWithoutChangingContent(t *testing.T) {
-	for _, literal := range []string{"the sign says <Picture 2>", "a <d>literal</d> tag", "first line\nsecond line", "```text", "a voice (S99)", "two voices (S1,S2)"} {
+	for _, literal := range []string{"the sign says <Picture 2>", "a paragraph\n\nnon_diegetic_music: replaced", "a <d>literal</d> tag", "```text", "a voice (S99)", "two voices (S1,S2)"} {
 		d := base(contextir.ModeText)
 		d.Shots[0].Description = contextir.Text(literal)
 		before, _ := json.Marshal(d)

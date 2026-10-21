@@ -382,3 +382,267 @@ func TestValidateOnlyOneDistinctCompleteAudioTrack(t *testing.T) {
 	d.References[1].Source.Interval.End = 2000
 	assertValidationInvalid(t, d, "references[1].retention")
 }
+
+func TestValidateExplicitRequestBindings(t *testing.T) {
+	for _, mode := range []ir.Mode{ir.ModeText, ir.ModeFirstFrame, ir.ModeLastFrame, ir.ModeFirstLastFrame, ir.ModeReference} {
+		t.Run(string(mode), func(t *testing.T) {
+			d := validationDocument(mode)
+			r := ir.Request{Instruction: "Use the explicit source responsibilities.", Mode: mode, Target: d.Target, Assets: d.Assets}
+			for _, ref := range d.References {
+				r.Bindings = append(r.Bindings, ir.AssetBinding{Source: ref.Source, Role: ref.Roles[0], Anchor: ref.Anchor})
+			}
+			if mode == ir.ModeReference {
+				r.Bindings = []ir.AssetBinding{{Source: d.Subjects[0].Sources[0].Source, Role: ir.RoleIdentity}, {Source: d.Subjects[0].Sources[0].Source, Role: ir.RoleStyle}}
+			}
+			if err := ir.ValidateRequest(r); err != nil {
+				t.Fatalf("valid explicit responsibilities rejected: %v", err)
+			}
+		})
+	}
+	newRequest := func() ir.Request {
+		d := validationDocument(ir.ModeReference)
+		return ir.Request{Instruction: "Use the image as identity reference.", Mode: d.Mode, Target: d.Target, Assets: d.Assets, Bindings: []ir.AssetBinding{{Source: d.Subjects[0].Sources[0].Source, Role: ir.RoleIdentity}}}
+	}
+	tests := []struct {
+		name, path string
+		mutate     func(*ir.Request)
+	}{
+		{"unknown asset", "bindings[0].source.asset_id", func(r *ir.Request) { r.Bindings[0].Source.AssetID = "unknown" }},
+		{"unknown role", "bindings[0].role", func(r *ir.Request) { r.Bindings[0].Role = "unknown" }},
+		{"wrong audio role", "bindings[0].role", func(r *ir.Request) { r.Bindings[0].Role = ir.RoleVoice }},
+		{"anchor on identity", "bindings[0].anchor_ms", func(r *ir.Request) { at := ir.Time(0); r.Bindings[0].Anchor = &at }},
+		{"keyframe needs anchor", "bindings[0].anchor_ms", func(r *ir.Request) { r.Bindings[0].Role = ir.RoleKeyframe }},
+		{"anchor beyond target", "bindings[0].anchor_ms", func(r *ir.Request) {
+			at := ir.Time(5001)
+			r.Bindings[0].Role = ir.RoleKeyframe
+			r.Bindings[0].Anchor = &at
+		}},
+		{"first frame in reference mode", "bindings[0].role", func(r *ir.Request) {
+			at := ir.Time(0)
+			r.Bindings[0].Role = ir.RoleFirstFrame
+			r.Bindings[0].Anchor = &at
+		}},
+		{"editing a still image", "bindings[0].source", func(r *ir.Request) { r.Bindings[0].Role = ir.RoleEditSource }},
+		{"duplicate responsibility", "bindings[1]", func(r *ir.Request) { r.Bindings = append(r.Bindings, r.Bindings[0]) }},
+		{"unbound asset", "assets[1]", func(r *ir.Request) { r.Assets = append(r.Assets, ir.Asset{ID: "extra", Kind: ir.MediaImage}) }},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := newRequest()
+			tt.mutate(&r)
+			var typed *ir.Error
+			if !errors.As(ir.ValidateRequest(r), &typed) {
+				t.Fatal("invalid binding was accepted")
+			}
+			for _, issue := range typed.Issues {
+				if issue.Path == tt.path {
+					return
+				}
+			}
+			t.Fatalf("expected %s: %#v", tt.path, typed.Issues)
+		})
+	}
+	// Endpoint responsibilities are unique even when their source differs.
+	d := validationDocument(ir.ModeFirstLastFrame)
+	r := ir.Request{Instruction: "Use both endpoints.", Mode: d.Mode, Target: d.Target, Assets: d.Assets}
+	at := ir.Time(0)
+	r.Bindings = []ir.AssetBinding{{Source: d.References[0].Source, Role: ir.RoleFirstFrame, Anchor: &at}, {Source: d.References[1].Source, Role: ir.RoleFirstFrame, Anchor: &at}}
+	if !ir.HasCode(ir.ValidateRequest(r), ir.CodeInvalid) {
+		t.Fatal("duplicate first-frame endpoint was accepted")
+	}
+}
+
+func TestValidatePerceptionCoverage(t *testing.T) {
+	for _, kind := range []ir.MediaKind{ir.MediaImage, ir.MediaVideo, ir.MediaAudio} {
+		t.Run(string(kind), func(t *testing.T) {
+			track := ir.TrackVisual
+			if kind == ir.MediaAudio {
+				track = ir.TrackAudio
+			}
+			coverage := &ir.PerceptionCoverage{Status: ir.CoverageComplete, Tracks: []ir.Track{track}}
+			if kind == ir.MediaVideo {
+				coverage.AbsentTracks = []ir.Track{ir.TrackAudio}
+				coverage.SampleTimes = []ir.Time{0, 1000}
+				coverage.Intervals = []ir.Interval{{Start: 0, End: 2000}}
+			}
+			asset := ir.Asset{ID: "source", Kind: kind}
+			if kind != ir.MediaImage {
+				asset.Metadata.Duration = 5000
+			}
+			evidence := []ir.Evidence{{AssetID: asset.ID, AnalyzerVersion: "1", Facts: []ir.Fact{{ID: "observed", Text: "An observation.", Source: ir.SourceRef{AssetID: asset.ID, Track: track}}}, Coverage: coverage}}
+			if err := ir.ValidateEvidence([]ir.Asset{asset}, evidence); err != nil {
+				t.Fatalf("valid complete coverage rejected: %v", err)
+			}
+		})
+	}
+	newEvidence := func() ([]ir.Asset, []ir.Evidence) {
+		assets := []ir.Asset{{ID: "video", Kind: ir.MediaVideo, Metadata: ir.MediaMetadata{Duration: 5000}}}
+		evidence := []ir.Evidence{{AssetID: "video", AnalyzerVersion: "1", Facts: []ir.Fact{{ID: "visible", Text: "A person appears.", Source: ir.SourceRef{AssetID: "video", Track: ir.TrackVisual}}}, Coverage: &ir.PerceptionCoverage{Status: ir.CoverageComplete, Tracks: []ir.Track{ir.TrackVisual, ir.TrackAudio}, SampleTimes: []ir.Time{0, 1000}, Intervals: []ir.Interval{{Start: 0, End: 1000}, {Start: 1000, End: 5000}}}}}
+		return assets, evidence
+	}
+	tests := []struct {
+		name, path string
+		mutate     func([]ir.Asset, []ir.Evidence)
+	}{
+		{"unknown status", "evidence[0].coverage.status", func(_ []ir.Asset, e []ir.Evidence) { e[0].Coverage.Status = "invented" }},
+		{"unknown track", "evidence[0].coverage.tracks[0]", func(_ []ir.Asset, e []ir.Evidence) { e[0].Coverage.Tracks[0] = "invented" }},
+		{"duplicate checked track", "evidence[0].coverage.tracks[1]", func(_ []ir.Asset, e []ir.Evidence) { e[0].Coverage.Tracks[1] = ir.TrackVisual }},
+		{"checked and absent", "evidence[0].coverage.absent_tracks[0]", func(_ []ir.Asset, e []ir.Evidence) { e[0].Coverage.AbsentTracks = []ir.Track{ir.TrackAudio} }},
+		{"absent main video track", "evidence[0].coverage.absent_tracks[0]", func(_ []ir.Asset, e []ir.Evidence) { e[0].Coverage.AbsentTracks = []ir.Track{ir.TrackVisual} }},
+		{"complete video misses audio probe", "evidence[0].coverage.tracks", func(_ []ir.Asset, e []ir.Evidence) { e[0].Coverage.Tracks = []ir.Track{ir.TrackVisual} }},
+		{"fact on uninspected track", "evidence[0].facts[0].source.track", func(_ []ir.Asset, e []ir.Evidence) {
+			e[0].Coverage.Status = ir.CoveragePartial
+			e[0].Coverage.Tracks = []ir.Track{ir.TrackAudio}
+		}},
+		{"negative sample", "evidence[0].coverage.sample_times_ms[0]", func(_ []ir.Asset, e []ir.Evidence) { e[0].Coverage.SampleTimes[0] = -1 }},
+		{"sample at exclusive end", "evidence[0].coverage.sample_times_ms[1]", func(_ []ir.Asset, e []ir.Evidence) { e[0].Coverage.SampleTimes[1] = 5000 }},
+		{"duplicate sample", "evidence[0].coverage.sample_times_ms[1]", func(_ []ir.Asset, e []ir.Evidence) { e[0].Coverage.SampleTimes[1] = 0 }},
+		{"interval beyond duration", "evidence[0].coverage.intervals[1]", func(_ []ir.Asset, e []ir.Evidence) { e[0].Coverage.Intervals[1].End = 5001 }},
+		{"empty interval", "evidence[0].coverage.intervals[0]", func(_ []ir.Asset, e []ir.Evidence) { e[0].Coverage.Intervals[0].End = 0 }},
+		{"overlapping intervals", "evidence[0].coverage.intervals[1]", func(_ []ir.Asset, e []ir.Evidence) { e[0].Coverage.Intervals[1].Start = 999 }},
+		{"still temporal samples", "evidence[0].coverage.sample_times_ms[0]", func(a []ir.Asset, _ []ir.Evidence) { a[0].Kind = ir.MediaImage; a[0].Metadata.Duration = 0 }},
+		{"wrong kind tracks", "evidence[0].coverage.tracks[1]", func(a []ir.Asset, _ []ir.Evidence) { a[0].Kind = ir.MediaImage; a[0].Metadata.Duration = 0 }},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			a, e := newEvidence()
+			tt.mutate(a, e)
+			var typed *ir.Error
+			if !errors.As(ir.ValidateEvidence(a, e), &typed) {
+				t.Fatal("invalid coverage was accepted")
+			}
+			for _, issue := range typed.Issues {
+				if issue.Path == tt.path {
+					return
+				}
+			}
+			t.Fatalf("expected %s: %#v", tt.path, typed.Issues)
+		})
+	}
+	a, e := newEvidence()
+	e[0].Coverage = nil
+	if err := ir.ValidateEvidence(a, e); err != nil {
+		t.Fatalf("legacy coverage omission must remain a planner policy: %v", err)
+	}
+	a, e = newEvidence()
+	e[0].Coverage.Status = ir.CoveragePartial
+	e[0].Coverage.Tracks = []ir.Track{ir.TrackVisual}
+	if err := ir.ValidateEvidence(a, e); err != nil {
+		t.Fatalf("declared partial coverage must remain a planner policy: %v", err)
+	}
+}
+
+func TestValidateSingingContract(t *testing.T) {
+	for _, kind := range []ir.VocalKind{"", ir.VocalSpeech, ir.VocalSinging} {
+		d := validationDocument(ir.ModeText)
+		addValidationDialogue(&d)
+		d.Dialogue[0].Kind = kind
+		if err := ir.Validate(d); err != nil {
+			t.Fatalf("valid vocal kind rejected: %v", err)
+		}
+	}
+	d := validationDocument(ir.ModeText)
+	addValidationDialogue(&d)
+	d.Dialogue[0].Kind = "invented"
+	assertValidationInvalid(t, d, "dialogue[0].kind")
+	d.Dialogue[0].Kind = ir.VocalSinging
+	d.Dialogue[0].Voiceover = true
+	assertValidationInvalid(t, d, "dialogue[0].voiceover")
+}
+
+func validationAudioCueDocument() ir.Document {
+	d := validationDocument(ir.ModeReference)
+	d.Assets = append(d.Assets, ir.Asset{ID: "recorded-score", Kind: ir.MediaAudio})
+	d.References = []ir.Reference{{ID: "score-cue", Kind: ir.ReferenceAudio, Source: ir.SourceRef{AssetID: "recorded-score", Track: ir.TrackAudio}, Roles: []ir.Role{ir.RoleMusic}, Description: "An existing song.", Retention: ir.PartiallyCopy, ShotIDs: []string{"shot-1"}}}
+	d.Shots[0].Events = []ir.Event{{Kind: ir.EventAudioCue, AudioCue: &ir.AudioCue{ReferenceID: "score-cue", Language: "中文", Text: "原文， 그대로! 👋"}}}
+	d.Constraints = []ir.Constraint{{ID: "no-independent-dialogue", Kind: ir.ConstraintNoDialogue, Text: "No independent dialogue."}}
+	return d
+}
+
+func TestValidateExistingAudioCue(t *testing.T) {
+	d := validationAudioCueDocument()
+	before, _ := json.Marshal(d)
+	if err := ir.Validate(d); err != nil {
+		t.Fatalf("valid cue without generated speakers rejected: %v %#v", err, ir.Inspect(d))
+	}
+	after, _ := json.Marshal(d)
+	if string(before) != string(after) || len(d.Speakers) != 0 || len(d.Dialogue) != 0 {
+		t.Fatal("cue validation changed source text or created a speaker")
+	}
+	tests := []struct {
+		name, path string
+		mutate     func(*ir.Document)
+	}{
+		{"missing cue payload", "shots[0].events[0].audio_cue", func(d *ir.Document) { d.Shots[0].Events[0].AudioCue = nil }},
+		{"wrong event kind", "shots[0].events[0].audio_cue", func(d *ir.Document) {
+			d.Shots[0].Events[0].Kind = ir.EventSound
+			d.Shots[0].Events[0].Description = ir.Text("A sound.")
+		}},
+		{"wrong dialogue union", "shots[0].events[0].dialogue", func(d *ir.Document) {
+			d.Shots[0].Events[0].Dialogue = &ir.DialoguePart{LineID: "missing", Text: "A line."}
+		}},
+		{"wrong visible text union", "shots[0].events[0].visible_text", func(d *ir.Document) { d.Shots[0].Events[0].VisibleText = "A label." }},
+		{"unknown reference", "shots[0].events[0].audio_cue.reference_id", func(d *ir.Document) { d.Shots[0].Events[0].AudioCue.ReferenceID = "missing" }},
+		{"not an audio reference", "shots[0].events[0].audio_cue.reference_id", func(d *ir.Document) { d.References[0].Kind = ir.ReferencePicture }},
+		{"reference-only signal", "shots[0].events[0].audio_cue.reference_id", func(d *ir.Document) { d.References[0].Retention = ir.AudioReference }},
+		{"cue empty text", "shots[0].events[0].audio_cue.text", func(d *ir.Document) { d.Shots[0].Events[0].AudioCue.Text = "" }},
+		{"cue invalid UTF8", "shots[0].events[0].audio_cue.text", func(d *ir.Document) { d.Shots[0].Events[0].AudioCue.Text = string([]byte{0xff}) }},
+		{"cue empty language", "shots[0].events[0].audio_cue.language", func(d *ir.Document) { d.Shots[0].Events[0].AudioCue.Language = "" }},
+		{"cue outside reference shots", "shots[0].events[0].audio_cue.reference_id", func(d *ir.Document) {
+			d.Shots[0].End = 2500
+			d.Shots = append(d.Shots, ir.Shot{ID: "shot-2", Start: 2500, End: 5000, Description: ir.Text("A second shot.")})
+			d.References[0].ShotIDs = []string{"shot-2"}
+		}},
+		{"silence forbids cue", "shots[0].events[0].kind", func(d *ir.Document) {
+			d.Constraints = []ir.Constraint{{ID: "silence", Kind: ir.ConstraintSilence, Text: "Silent."}}
+			d.Soundscape = "N/A"
+			d.Music = "N/A"
+		}},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			d := validationAudioCueDocument()
+			tt.mutate(&d)
+			assertValidationInvalid(t, d, tt.path)
+		})
+	}
+}
+
+func TestValidateCompleteAudioRejectsDifferentCopiedSignal(t *testing.T) {
+	newDoc := func() ir.Document {
+		d := validationAudioCueDocument()
+		d.References[0].Retention = ir.FullyCopy
+		d.Assets = append(d.Assets, ir.Asset{ID: "second-track", Kind: ir.MediaAudio})
+		d.References = append(d.References, ir.Reference{ID: "other-copy", Kind: ir.ReferenceAudio, Source: ir.SourceRef{AssetID: "second-track", Track: ir.TrackAudio}, Roles: []ir.Role{ir.RoleSoundEffect}, Description: "A second copied signal.", Retention: ir.PartiallyCopy})
+		return d
+	}
+	d := newDoc()
+	assertValidationInvalid(t, d, "references[1].retention")
+	// The result is independent of declaration order.
+	d = newDoc()
+	d.References[0], d.References[1] = d.References[1], d.References[0]
+	assertValidationInvalid(t, d, "references[0].retention")
+	d = newDoc()
+	d.References[1].Retention = ir.AudioReference
+	if err := ir.Validate(d); err != nil {
+		t.Fatalf("pure reference audio is not a copied signal: %v", err)
+	}
+}
+
+func TestValidateVoiceTimbreDoesNotCopySourceSpeech(t *testing.T) {
+	d := validationDocument(ir.ModeReference)
+	addValidationDialogue(&d)
+	d.Assets = append(d.Assets, ir.Asset{ID: "voice-source", Kind: ir.MediaAudio})
+	d.References = []ir.Reference{{ID: "voice-ref", Kind: ir.ReferenceAudio, Source: ir.SourceRef{AssetID: "voice-source", Track: ir.TrackAudio}, Roles: []ir.Role{ir.RoleVoice}, SpeakerID: "speaker-1", Description: "Voice timbre and delivery.", Retention: ir.AudioReference}}
+	d.Speakers[0].VoiceReferenceID = "voice-ref"
+	for _, retention := range []ir.Retention{ir.FullyCopy, ir.PartiallyCopy} {
+		d.References[0].Retention = retention
+		assertValidationInvalid(t, d, "references[0].retention")
+	}
+	for _, retention := range []ir.Retention{ir.AudioReference, ir.WeakReference} {
+		d.References[0].Retention = retention
+		if err := ir.Validate(d); err != nil {
+			t.Fatalf("voice reference relationship rejected: %v", err)
+		}
+	}
+}

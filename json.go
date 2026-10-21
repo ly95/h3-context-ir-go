@@ -26,19 +26,41 @@ func Decode(r io.Reader) (Document, error) {
 // values, invalid UTF-8, and unpaired JSON surrogate escapes. It decodes syntax;
 // call Validate to check the semantic contract before using a document.
 func DecodeWithOptions(r io.Reader, options DecodeOptions) (Document, error) {
-	var doc Document
-	invalid := func() (Document, error) {
-		return Document{}, &Error{Code: CodeModelOutput, Stage: "decode", Issues: []Issue{{Code: CodeModelOutput, Path: "$", Message: "invalid document JSON"}}}
+	return decodeStrictJSON[Document](r, options, "document")
+}
+
+// DecodeEvidence decodes a perception adapter's Evidence response using the
+// same strict wire contract and default byte limit as Decode. Call
+// ValidateEvidence with the original assets to check source provenance.
+func DecodeEvidence(r io.Reader) (Evidence, error) {
+	return DecodeEvidenceWithOptions(r, DecodeOptions{MaxBytes: MaxDocumentBytes})
+}
+
+// DecodeEvidenceWithOptions checks Evidence wire syntax without interpreting
+// facts or assuming that declared perception coverage has actually occurred.
+func DecodeEvidenceWithOptions(r io.Reader, options DecodeOptions) (Evidence, error) {
+	return decodeStrictJSON[Evidence](r, options, "evidence")
+}
+
+func decodeStrictJSON[T any](r io.Reader, options DecodeOptions, kind string) (T, error) {
+	var result T
+	invalid := func() (T, error) {
+		var empty T
+		return empty, &Error{Code: CodeModelOutput, Stage: "decode", Issues: []Issue{{Code: CodeModelOutput, Path: "$", Message: "invalid " + kind + " JSON"}}}
 	}
 	if r == nil || options.MaxBytes <= 0 || options.MaxBytes == math.MaxInt64 {
 		return invalid()
 	}
+	readerValue := reflect.ValueOf(r)
+	if (readerValue.Kind() == reflect.Pointer || readerValue.Kind() == reflect.Interface) && readerValue.IsNil() {
+		return invalid()
+	}
 	data, err := io.ReadAll(io.LimitReader(r, options.MaxBytes+1))
 	if err != nil {
-		return Document{}, &Error{Code: CodeModelOutput, Stage: "decode", Cause: err}
+		return result, &Error{Code: CodeModelOutput, Stage: "decode", Cause: err}
 	}
 	if int64(len(data)) > options.MaxBytes {
-		return Document{}, &Error{Code: CodeLimit, Stage: "decode", Issues: []Issue{{Code: CodeLimit, Path: "$", Message: "document exceeds configured byte limit"}}}
+		return result, &Error{Code: CodeLimit, Stage: "decode", Issues: []Issue{{Code: CodeLimit, Path: "$", Message: kind + " exceeds configured byte limit"}}}
 	}
 	if !utf8.Valid(data) || !validSurrogates(data) {
 		return invalid()
@@ -54,8 +76,11 @@ func DecodeWithOptions(r io.Reader, options DecodeOptions) (Document, error) {
 	var shape any
 	decoder = json.NewDecoder(bytes.NewReader(data))
 	decoder.UseNumber()
-	if err := decoder.Decode(&shape); err != nil || !strictShape(shape, reflect.TypeFor[Document]()) {
+	if err := decoder.Decode(&shape); err != nil {
 		return invalid()
+	}
+	if issue := strictShapeIssue(shape, reflect.TypeFor[T](), "$"); issue != nil {
+		return result, &Error{Code: CodeModelOutput, Stage: "decode", Issues: []Issue{*issue}}
 	}
 	// JSON Schema integers may be written as 5000.0 or 5e3. Normalize their
 	// exact value without passing through float64 or rejecting legal JSON.
@@ -65,7 +90,7 @@ func DecodeWithOptions(r io.Reader, options DecodeOptions) (Document, error) {
 	}
 	decoder = json.NewDecoder(bytes.NewReader(normalized))
 	decoder.DisallowUnknownFields()
-	if err := decoder.Decode(&doc); err != nil {
+	if err := decoder.Decode(&result); err != nil {
 		return invalid()
 	}
 	if err := decoder.Decode(new(any)); err != io.EOF {
@@ -74,22 +99,34 @@ func DecodeWithOptions(r io.Reader, options DecodeOptions) (Document, error) {
 	if len(bytes.TrimSpace(data)) == 0 || bytes.Equal(bytes.TrimSpace(data), []byte("null")) {
 		return invalid()
 	}
-	return doc, nil
+	return result, nil
 }
 
 // Go's decoder matches keys case-insensitively and accepts null for scalars.
 // The wire schema does neither. Check the exact shape before assigning fields.
 func strictShape(value any, typ reflect.Type) bool {
+	return strictShapeIssue(value, typ, "$") == nil
+}
+
+// Diagnostic paths contain only schema-owned field names and array indexes.
+// Unknown model keys and values never enter errors or repair feedback.
+func strictShapeIssue(value any, typ reflect.Type, path string) *Issue {
+	invalid := func(message string) *Issue {
+		return &Issue{Code: CodeModelOutput, Path: path, Message: message}
+	}
 	if typ.Kind() == reflect.Pointer {
-		return value != nil && strictShape(value, typ.Elem())
+		if value == nil {
+			return invalid("Omit an optional property instead of returning null.")
+		}
+		return strictShapeIssue(value, typ.Elem(), path)
 	}
 	switch typ.Kind() {
 	case reflect.Struct:
 		object, ok := value.(map[string]any)
 		if !ok {
-			return false
+			return invalid("Expected a JSON object.")
 		}
-		fields := map[string]reflect.Type{}
+		fields := map[string]bool{}
 		for i := 0; i < typ.NumField(); i++ {
 			field := typ.Field(i)
 			tag := strings.Split(field.Tag.Get("json"), ",")
@@ -100,7 +137,7 @@ func strictShape(value any, typ reflect.Type) bool {
 			if name == "" {
 				name = field.Name
 			}
-			fields[name] = field.Type
+			fields[name] = true
 			optional := false
 			for _, part := range tag[1:] {
 				if part == "omitempty" {
@@ -108,45 +145,66 @@ func strictShape(value any, typ reflect.Type) bool {
 				}
 			}
 			if _, exists := object[name]; !exists && !optional {
-				return false
+				return &Issue{Code: CodeModelOutput, Path: path + "." + name, Message: "A required JSON property is missing."}
+			}
+			if child, exists := object[name]; exists {
+				if issue := strictShapeIssue(child, field.Type, path+"."+name); issue != nil {
+					return issue
+				}
 			}
 		}
-		for key, child := range object {
-			field, exists := fields[key]
-			if !exists || !strictShape(child, field) {
-				return false
+		for key := range object {
+			if !fields[key] {
+				return invalid("Unknown JSON properties are not allowed; use only the exact schema field names.")
 			}
 		}
-		return true
+		return nil
 	case reflect.Slice:
 		if value == nil {
-			return true
+			return nil
 		} // nil and empty lists share the same IR meaning.
 		array, ok := value.([]any)
 		if !ok {
-			return false
+			return invalid("Expected a JSON array.")
 		}
-		for _, child := range array {
-			if !strictShape(child, typ.Elem()) {
-				return false
+		for i, child := range array {
+			if issue := strictShapeIssue(child, typ.Elem(), path+"["+strconv.Itoa(i)+"]"); issue != nil {
+				return issue
 			}
 		}
-		return true
+		return nil
 	case reflect.String:
-		_, ok := value.(string)
-		return ok
+		if _, ok := value.(string); !ok {
+			return invalid("Expected a JSON string; omit unused optional properties instead of returning null.")
+		}
+		return nil
 	case reflect.Bool:
-		_, ok := value.(bool)
-		return ok
+		if _, ok := value.(bool); !ok {
+			return invalid("Expected a JSON boolean.")
+		}
+		return nil
+	case reflect.Float64:
+		n, ok := value.(json.Number)
+		if !ok {
+			return invalid("Expected a finite JSON number.")
+		}
+		f, err := strconv.ParseFloat(string(n), 64)
+		if err != nil || math.IsNaN(f) || math.IsInf(f, 0) {
+			return invalid("Expected a finite JSON number.")
+		}
+		return nil
 	case reflect.Int, reflect.Int64:
 		number, ok := value.(json.Number)
 		if !ok {
-			return false
+			return invalid("Expected an exact JSON integer within the supported range.")
 		}
 		_, valid := exactInteger(string(number))
-		return valid
+		if !valid {
+			return invalid("Expected an exact JSON integer within the supported range.")
+		}
+		return nil
 	}
-	return false
+	return invalid("Unsupported JSON property type.")
 }
 
 // exactInteger parses mathematical JSON integers in linear time and bounded
@@ -213,8 +271,11 @@ func exactInteger(s string) (int64, bool) {
 func normalizeIntegers(value any) any {
 	switch value := value.(type) {
 	case json.Number:
-		n, _ := exactInteger(string(value))
-		return n
+		n, ok := exactInteger(string(value))
+		if ok {
+			return n
+		}
+		return value
 	case []any:
 		for i := range value {
 			value[i] = normalizeIntegers(value[i])

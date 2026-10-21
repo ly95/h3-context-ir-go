@@ -44,7 +44,11 @@ func TestCodecRoundTripAndSchemaIsolation(t *testing.T) {
 	if !json.Valid(contextir.DocumentSchema()) {
 		t.Fatal("caller mutated cached schema")
 	}
-	if published, err := os.ReadFile("schema/contextir-v1.schema.json"); err == nil && !bytes.Equal(bytes.TrimSpace(published), bytes.TrimSpace(contextir.DocumentSchema())) {
+	published, err := os.ReadFile("schema/contextir-v1.schema.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !bytes.Equal(bytes.TrimSpace(published), bytes.TrimSpace(contextir.DocumentSchema())) {
 		t.Fatal("published schema differs from Go contract")
 	}
 }
@@ -72,6 +76,39 @@ func TestDecodeRejectsAmbiguousOrLossyJSON(t *testing.T) {
 				t.Fatal("accepted invalid wire representation")
 			}
 		})
+	}
+}
+
+func TestDecodeDiagnosticsNameKnownFieldsWithoutExposingUnknownContent(t *testing.T) {
+	for _, unknown := range []bool{false, true} {
+		data, _ := json.Marshal(codecDocument())
+		var value map[string]any
+		if err := json.Unmarshal(data, &value); err != nil {
+			t.Fatal(err)
+		}
+		if unknown {
+			value["private://unknown-secret-key"] = "private://unknown-secret-value"
+		} else {
+			value["summary"] = []any{map[string]any{"text": "private://untrusted-text", "subject_id": nil}}
+		}
+		data, _ = json.Marshal(value)
+		_, err := contextir.Decode(bytes.NewReader(data))
+		var typed *contextir.Error
+		if !errors.As(err, &typed) || len(typed.Issues) != 1 {
+			t.Fatal("expected one safe typed diagnostic", err)
+		}
+		issue := typed.Issues[0]
+		if unknown {
+			if issue.Path != "$" {
+				t.Fatal("unknown field name entered diagnostic", issue)
+			}
+		} else if issue.Path != "$.summary[0].subject_id" || !strings.Contains(issue.Message, "omit") {
+			t.Fatal("known null scalar has no specific repair instruction", issue)
+		}
+		wire, _ := json.Marshal(typed)
+		if strings.Contains(string(wire), "private://") {
+			t.Fatal("untrusted key or value leaked through diagnostic")
+		}
 	}
 }
 

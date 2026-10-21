@@ -8,10 +8,17 @@ import (
 )
 
 func renderDefinitions(doc contextir.Document, state bindingState) (string, string, error) {
+	editTargets, relationshipErr := editReferenceRelationships(doc)
+	if relationshipErr != nil {
+		return "", "", relationshipErr
+	}
 	var definitions, retentions []string
 	for i, subject := range doc.Subjects {
 		label := state.subjects[subject.ID]
 		definition := sentence(label + " is " + subject.Description)
+		if subject.TakenOverBy != "" {
+			definition = label + " is the source figure " + subject.Description + " in the edited clip, whose position in frame, actions and timing are transferred to " + state.subjects[subject.TakenOverBy] + ". Its source appearance is not retained."
+		}
 		for _, attribution := range subject.Sources {
 			definition += " " + sentence("Its "+roleName(attribution.Role)+" is referenced from "+sourceDescription(attribution.Source, state))
 			if attribution.Details != "" {
@@ -23,6 +30,17 @@ func renderDefinitions(doc contextir.Document, state bindingState) (string, stri
 			continue // Original subjects have no source retention relationship to claim.
 		}
 		shots := subjectShots(doc, subject)
+		if subject.TakenOverBy != "" && len(shots) == 0 {
+			// A removed identity is a transfer relationship, not a separately
+			// visible actor. Its implicit scope follows the incoming figure.
+			// Caller-supplied explicit scope remains authoritative above.
+			for _, incoming := range doc.Subjects {
+				if incoming.ID == subject.TakenOverBy {
+					shots = subjectShots(doc, incoming)
+					break
+				}
+			}
+		}
 		if len(shots) == 0 {
 			return "", "", profileIssue(contextir.CodeInvalid, fmt.Sprintf("subjects[%d].shot_ids", i), "referenced subjects require an explicit or structurally bound shot appearance")
 		}
@@ -30,6 +48,9 @@ func renderDefinitions(doc contextir.Document, state bindingState) (string, stri
 			return "", "", profileIssue(contextir.CodeInvalid, fmt.Sprintf("subjects[%d].retention", i), "reference mode requires an explicit subject retention relationship")
 		}
 		retentions = append(retentions, label+" (appears in "+strings.Join(shots, ", ")+"): "+string(subject.Retention)+" - "+retentionDetails(subject.Retention, subject.RetentionDetails))
+		if subject.TakenOverBy != "" {
+			retentions[len(retentions)-1] += " This scope describes transferred behavior, not the removed figure appearing as a separate actor. Its position in frame, actions and timing are transferred to " + state.subjects[subject.TakenOverBy] + "; its source appearance is not retained."
+		}
 	}
 	// Several semantic references may point to the same conditioning input.
 	// H3 defines that physical label once; all explicit roles and details survive.
@@ -52,15 +73,40 @@ func renderDefinitions(doc contextir.Document, state bindingState) (string, stri
 		var description, reasons []string
 		var contexts []string
 		for _, item := range group {
+			if containsRole(item.Roles, contextir.RoleStoryboard) {
+				shots := referenceShots(doc, item)
+				if len(shots) > 0 {
+					description = append(description, "a storyboard reference for "+strings.Join(shots, " and ")+", defining their viewpoint, subject placement, and shot order.")
+				}
+			}
 			description = append(description, sentence(item.Description))
 			roles := make([]string, 0, len(item.Roles))
 			for _, role := range item.Roles {
 				roles = append(roles, roleName(role))
 			}
 			description = append(description, sentence("Its role is "+strings.Join(roles, " and ")))
+			if containsRole(item.Roles, contextir.RoleStructure) {
+				description = append(description, "Only camera movement and cutting structure are referenced; its people, objects, setting and visible content never appear in the target video.")
+			}
+			if containsRole(item.Roles, contextir.RolePlacedSubject) || containsRole(item.Roles, contextir.RoleReplacementSubject) {
+				for _, video := range editTargets[item.ID] {
+					if containsRole(item.Roles, contextir.RolePlacedSubject) {
+						description = append(description, label+" is placed into "+state.refs[video.ID]+"; the picture contributes its subject only, never its background, pose, or photographic lighting.")
+					} else {
+						target := item.Replaces
+						if target == "" {
+							target = "the structurally identified source figure"
+						}
+						description = append(description, label+" takes the place of "+target+" in "+state.refs[video.ID]+", inheriting that figure's position in frame, actions and timing. The picture contributes its replacement identity, never its background, pose, or lighting.")
+					}
+				}
+			}
+			if containsRole(item.Roles, contextir.RoleMusicStyle) || containsRole(item.Roles, contextir.RoleBeatReference) || containsRole(item.Roles, contextir.RoleSoundTexture) {
+				description = append(description, "Only the declared audio property is referenced; the recorded audio signal itself is not copied into the target.")
+			}
 			if item.SpeakerID != "" {
 				speaker := state.voices[item.SpeakerID]
-				identity := speaker.Description
+				identity := "the speaker"
 				if speaker.SubjectID != "" {
 					identity = state.subjects[speaker.SubjectID]
 				}
@@ -68,6 +114,9 @@ func renderDefinitions(doc contextir.Document, state bindingState) (string, stri
 					identity += " " + sid
 				}
 				description = append(description, sentence("It supplies the voice reference for "+identity))
+				if speaker.SubjectID == "" && speaker.Description != "" {
+					description = append(description, "Speaker description: "+sentence(speaker.Description))
+				}
 			}
 			if item.Anchor != nil {
 				description = append(description, "It anchors the target frame at "+timestamp(*item.Anchor)+".")
@@ -75,25 +124,74 @@ func renderDefinitions(doc contextir.Document, state bindingState) (string, stri
 			if item.Source.Interval != nil {
 				description = append(description, "Its selected source segment runs from "+timestamp(item.Source.Interval.Start)+" to "+timestamp(item.Source.Interval.End)+".")
 			}
-			reasons = append(reasons, retentionDetails(item.Retention, item.RetentionDetails))
-			if item.Kind != contextir.ReferenceAudio {
-				shots := referenceShots(doc, item)
-				context := strings.Join(shots, ", ")
-				if len(roles) > 0 {
-					if context != "" {
-						context += "; "
+			reason := retentionDetails(item.Retention, item.RetentionDetails)
+			if containsRole(item.Roles, contextir.RoleEditSource) {
+				var changes []string
+				for _, subject := range doc.Subjects {
+					if subject.TakenOverBy == "" {
+						continue
 					}
-					context += strings.Join(roles, " and ")
+					fromSource := false
+					for _, source := range subject.Sources {
+						fromSource = fromSource || sourceKey(source.Source) == sourceKey(item.Source)
+					}
+					if fromSource {
+						changes = append(changes, state.subjects[subject.TakenOverBy]+" takes the place of "+state.subjects[subject.ID])
+					}
 				}
-				contexts = append(contexts, context)
+				for _, incoming := range doc.References {
+					if containsRole(incoming.Roles, contextir.RolePlacedSubject) {
+						for _, target := range editTargets[incoming.ID] {
+							if sourceKey(target.Source) == sourceKey(item.Source) {
+								changes = append(changes, state.refs[incoming.ID]+" is placed into the scene")
+							}
+						}
+					}
+				}
+				if len(changes) > 0 {
+					reason = "The original camera movement, timing and setting are maintained while " + strings.Join(changes, "; ") + ". " + reason
+				}
 			}
+			if containsRole(item.Roles, contextir.RolePlacedSubject) {
+				reason = label + " is placed into the scene. " + reason
+			}
+			if item.Kind == contextir.ReferenceAudio && containsRole(item.Roles, contextir.RoleSoundTexture) && item.Retention == contextir.AudioReference {
+				reason = label + "'s sound texture is referenced. " + reason
+			}
+			reasons = append(reasons, reason)
+			shots := referenceShots(doc, item)
+			if item.Kind == contextir.ReferenceAudio {
+				shots = audioShots(doc, item)
+			}
+			context := strings.Join(shots, ", ")
+			if len(roles) > 0 {
+				if context != "" {
+					context += "; "
+				}
+				context += strings.Join(roles, " and ")
+			}
+			contexts = append(contexts, context)
 		}
 		definitions = append(definitions, label+" is "+strings.Join(description, " "))
 		context := ""
 		if len(contexts) > 0 {
 			context = " (" + strings.Join(contexts, "; ") + ")"
 		}
-		retentions = append(retentions, label+context+": "+string(ref.Retention)+" - "+strings.Join(reasons, " "))
+		reason := strings.Join(reasons, " ")
+		if ref.Kind == contextir.ReferenceAudio {
+			// Keep the published audio marker directly after its label. Scope
+			// remains explicit in the same retention line and in the manifest.
+			if context != "" {
+				reason += " Applicable scope:" + context + "."
+			}
+			context = ""
+		} else if containsRole(ref.Roles, contextir.RoleStoryboard) {
+			if context != "" {
+				reason += " Applicable scope:" + context + "."
+			}
+			context = " (storyboard reference)"
+		}
+		retentions = append(retentions, label+context+": "+string(ref.Retention)+" - "+reason)
 	}
 	return strings.Join(definitions, "\n"), strings.Join(retentions, "\n"), nil
 }
@@ -133,7 +231,13 @@ func roleName(role contextir.Role) string {
 		contextir.RoleContinuation: "source video for continuation",
 		contextir.RoleVoice:        "voice timbre and delivery", contextir.RoleMusic: "music",
 		contextir.RoleRhythm: "rhythm", contextir.RoleSoundtrack: "soundtrack",
-		contextir.RoleSoundEffect: "sound texture",
+		contextir.RoleSoundEffect:        "sound effect",
+		contextir.RoleSoundTexture:       "sound texture",
+		contextir.RoleStructure:          "camera movement and cutting structure only",
+		contextir.RolePlacedSubject:      "a subject placed into the edited scene",
+		contextir.RoleReplacementSubject: "replacement of a source figure in the edited video",
+		contextir.RoleMusicStyle:         "background-music style without copying the recording",
+		contextir.RoleBeatReference:      "beat and cutting rhythm without copying the recording",
 	}[role]
 }
 
@@ -206,4 +310,80 @@ func usesSubject(text contextir.RichText, id string) bool {
 		}
 	}
 	return false
+}
+
+// audioShots resolves explicit semantic scope without reading or guessing prose.
+// Explicit ShotIDs and structural appearances are additive, as for visual uses.
+// A reference with no target scope is a whole-video relationship.
+func audioShots(doc contextir.Document, ref contextir.Reference) []string {
+	shots := orderedShots(doc, ref.ShotIDs, func(shot contextir.Shot) bool {
+		for _, span := range shot.Description {
+			if span.ReferenceID == ref.ID {
+				return true
+			}
+		}
+		for _, event := range shot.Events {
+			for _, span := range event.Description {
+				if span.ReferenceID == ref.ID {
+					return true
+				}
+			}
+			if event.AudioCue != nil && event.AudioCue.ReferenceID == ref.ID {
+				return true
+			}
+			if event.Dialogue != nil {
+				for _, line := range doc.Dialogue {
+					if line.ID != event.Dialogue.LineID {
+						continue
+					}
+					for _, id := range line.SpeakerIDs {
+						for _, speaker := range doc.Speakers {
+							if speaker.ID == id && speaker.VoiceReferenceID == ref.ID {
+								return true
+							}
+						}
+					}
+				}
+			}
+		}
+		return false
+	})
+	if len(shots) == 0 {
+		for i := range doc.Shots {
+			shots = append(shots, fmt.Sprintf("[Shot %d]", i+1))
+		}
+	}
+	return shots
+}
+
+func audioAppliesToShot(doc contextir.Document, ref contextir.Reference, id string) bool {
+	for i, shot := range doc.Shots {
+		if shot.ID == id {
+			label := fmt.Sprintf("[Shot %d]", i+1)
+			for _, applied := range audioShots(doc, ref) {
+				if applied == label {
+					return true
+				}
+			}
+			return false
+		}
+	}
+	return false
+}
+
+func audioApplication(ref contextir.Reference, label string) string {
+	roles := make([]string, 0, len(ref.Roles))
+	for _, role := range ref.Roles {
+		roles = append(roles, roleName(role))
+	}
+	relation := "Its broad audible characteristics are followed without copying the source signal."
+	switch ref.Retention {
+	case contextir.FullyCopy:
+		relation = "Its complete source signal is reused as the target video's complete final audio track."
+	case contextir.PartiallyCopy:
+		relation = "Its source signal is copied in part or combined with other audio."
+	case contextir.AudioReference:
+		relation = "Its defined audible characteristics are referenced without copying the source signal."
+	}
+	return label + " applies in this shot as " + strings.Join(roles, " and ") + ". " + relation
 }

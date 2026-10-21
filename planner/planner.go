@@ -15,9 +15,9 @@ import (
 )
 
 // PromptVersion identifies the interpretation contract embedded in this package.
-const PromptVersion = "contextir/planner/v1"
+const PromptVersion = "contextir/planner/v4"
 
-//go:embed prompts/plan_v1.txt
+//go:embed prompts/plan_v4.txt
 var systemPrompt string
 
 // Model must honor context cancellation and must not silently select another
@@ -36,21 +36,25 @@ type Perceiver interface {
 // Options configures bounded repair of malformed or invalid documents. Model
 // transport failures and invalid usage are never automatically retried.
 type Options struct {
+	// ValidateDocument adds caller-owned typed invariants to the existing repair
+	// boundary. It receives deep snapshots and cannot mutate authoritative input.
+	ValidateDocument func(contextir.Request, contextir.Document) error
 	// MaxRetries is the number of extra interpretation calls, from 0 through 3.
 	// The default, zero, makes exactly one model call after perception succeeds.
 	MaxRetries int
+	// AllowPartialPerception explicitly admits observations declared partial.
+	// Their coverage and limitations remain in the model input and Document;
+	// admitting them does not establish complete media understanding.
+	AllowPartialPerception bool
+	// AllowUnspecifiedCoverage explicitly admits legacy observations that do not
+	// declare coverage. The default rejects such observations before planning.
+	AllowUnspecifiedCoverage bool
 }
 
 // CallUsage records every planner Model invocation, including failed attempts.
 // Valid is false for impossible negative token counts; callers must not charge
 // such reports. Perceiver calls are metered separately by the injected adapter.
-type CallUsage struct {
-	Stage   string          `json:"stage"`
-	Attempt int             `json:"attempt"`
-	Model   string          `json:"model"`
-	Usage   contextir.Usage `json:"usage"`
-	Valid   bool            `json:"valid"`
-}
+type CallUsage = contextir.CallUsage
 
 // Result retains reported usage and collected evidence even when Plan returns an
 // error. Document is populated only after the complete contract is validated.
@@ -122,6 +126,10 @@ func (p *Planner) PlanWithEvidence(ctx context.Context, request contextir.Reques
 	if err != nil {
 		return result, err
 	}
+	schema, err := responseSchema(request)
+	if err != nil {
+		return result, issueError(contextir.CodeInvalid, "request", "response_schema", "The explicit request cannot be represented by the planning schema.", err)
+	}
 	var diagnostics []contextir.Issue
 	for attempt := 1; attempt <= p.options.MaxRetries+1; attempt++ {
 		if err := canceled(ctx, "plan"); err != nil {
@@ -143,9 +151,9 @@ func (p *Planner) PlanWithEvidence(ctx context.Context, request contextir.Reques
 			Stage:          "plan",
 			System:         systemPrompt,
 			Input:          input,
-			ResponseSchema: contextir.DocumentSchema(),
+			ResponseSchema: append(json.RawMessage(nil), schema...),
 		})
-		validUsage := response.Usage.InputTokens >= 0 && response.Usage.OutputTokens >= 0
+		validUsage := !response.UsageInvalid && response.Usage.InputTokens >= 0 && response.Usage.OutputTokens >= 0
 		result.Calls = append(result.Calls, CallUsage{
 			Stage: "plan", Attempt: attempt, Model: response.Model,
 			Usage: response.Usage, Valid: validUsage,
@@ -157,9 +165,17 @@ func (p *Planner) PlanWithEvidence(ctx context.Context, request contextir.Reques
 			return result, issueError(contextir.CodeCanceled, "plan", "model", "The model call was canceled.", callErr)
 		}
 		if !validUsage {
-			return result, issueError(contextir.CodeModelOutput, "plan", "usage", "Reported token counts must be nonnegative.", callErr)
+			return result, issueError(contextir.CodeModelOutput, "plan", "usage", "Reported usage must be valid and token counts must be nonnegative.", callErr)
 		}
 		if callErr != nil {
+			if contextir.HasCode(callErr, contextir.CodeModelOutput) {
+				outputErr := modelOutputError(callErr)
+				if attempt <= p.options.MaxRetries {
+					diagnostics = outputErr.Issues
+					continue
+				}
+				return result, outputErr
+			}
 			return result, issueError(contextir.CodeModel, "plan", "model", "The model call failed.", callErr)
 		}
 		document, err := contextir.Decode(bytes.NewReader(response.JSON))
@@ -167,10 +183,29 @@ func (p *Planner) PlanWithEvidence(ctx context.Context, request contextir.Reques
 			err = validateLocked(request, document, evidence)
 		}
 		if err == nil {
-			// The actual observations are authoritative; they are attached by the
-			// host rather than accepted as model-invented observations.
+			// Locked validation first rejects model-invented observations. Attach
+			// authoritative evidence before semantic or compiler-hook validation,
+			// because valid FactIDs deliberately refer to these host-owned records.
 			document.Evidence = cloneEvidence(evidence)
 			err = contextir.Validate(document)
+		}
+		if err == nil && p.options.ValidateDocument != nil {
+			data, copyErr := json.Marshal(document)
+			if copyErr != nil {
+				return result, issueError(contextir.CodeInvalid, "plan", "document", "The guarded document cannot be encoded.", copyErr)
+			}
+			var snapshot contextir.Document
+			if copyErr = json.Unmarshal(data, &snapshot); copyErr != nil {
+				return result, issueError(contextir.CodeInvalid, "plan", "document", "The guarded document cannot be copied.", copyErr)
+			}
+			err = p.options.ValidateDocument(cloneRequest(request), snapshot)
+		}
+		if canceledErr := canceled(ctx, "plan"); canceledErr != nil {
+			return result, canceledErr
+		}
+		var stop *validationStop
+		if errors.As(err, &stop) {
+			return result, stop.cause
 		}
 		if err == nil {
 			result.Document = document
@@ -200,7 +235,7 @@ func issueError(code contextir.Code, stage, path, message string, cause error) *
 
 func modelOutputError(cause error) *contextir.Error {
 	var typed *contextir.Error
-	if errors.As(cause, &typed) && len(typed.Issues) > 0 {
+	if errors.As(cause, &typed) && typed != nil && len(typed.Issues) > 0 {
 		issues := append([]contextir.Issue(nil), typed.Issues...)
 		return &contextir.Error{Code: contextir.CodeModelOutput, Stage: "plan", Issues: issues, Cause: cause}
 	}

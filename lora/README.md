@@ -1,0 +1,11 @@
+# Explicit LoRA registry
+
+This Go package ports the OpenH3-IR registry at commit `fd031e136ae3d89147324c0d1b2aa65e838c21f5`. `ParseRecord` reads compiler metadata from YAML front matter and keeps the full prose body for model guidance. `Record.Public()` exposes guidance without activation strings. `LoadRegistry(roots)` scans caller-supplied paths; `Registry.Resolve` uses an explicit file-opening capability, verifies weight bytes, checks the declared H3 checkpoint, tests typed aspect/frame/canvas/step constraints, reports requested/applied strength, detects conflicts, and records the registry revision and weight provenance. It never reads intent prose or global environment variables.
+
+`Choice.FileSHA256` preserves the declared registry hash. `ActualFileSHA256` records the bytes actually read, including when the registry uses the original example's placeholder hash; that condition produces `W16-lora-sha-unverified`. A mismatch blocks the choice. Missing files, unknown IDs, incompatible checkpoints, conflicts and constraints keep the upstream W rule namespace. Callers must reject ERROR findings.
+
+`PlanTriggers` and `StylePrefix` preserve activation bytes and repeat counts. Only the implemented `style` placement is accepted. The authoritative IR must retain resolved choices; final H3 rendering puts activation strings in the correct style slot and validates their counts. No model types or edits activation strings.
+
+Compared with the source's permissive parser, invalid numeric metadata, missing registry paths, malformed YAML shapes, unsupported placements and unimplemented constraints fail explicitly. One-level nested mappings and commas inside quoted trigger strings are preserved correctly. Guidance prose is not silently truncated.
+
+Tests replay all 108 LoRA calls captured from the unchanged original pytest suite and compare original contract fields. Source paths are relocated to the byte-identical bundled example; additional provenance fields are checked independently. Further tests are explicitly supplementary and exercise weight changes, missing resources, conflicts and structured constraints. The 79-byte `.safetensors` file in `testdata` is the upstream placeholder example, not a usable trained LoRA. Apache-2.0 attribution is preserved under `third_party/open-h3-ir`.

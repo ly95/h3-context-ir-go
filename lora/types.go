@@ -1,0 +1,83 @@
+// Package lora implements the explicit H3 LoRA registry and trigger contract.
+// Ported from ruashots/open-h3-ir h3ir/lora.py at fd031e136ae3d89147324c0d1b2aa65e838c21f5.
+// Copyright 2026 Ruashots; Apache-2.0, see ../third_party/open-h3-ir.
+package lora
+
+import (
+	"github.com/ly95/contextir/h3check"
+	"io"
+)
+
+type Trigger struct {
+	Text      string `json:"text"`
+	Required  bool   `json:"required"`
+	Placement string `json:"placement"`
+	Count     int    `json:"count"`
+}
+type Strength struct {
+	Default float64 `json:"default"`
+	Min     float64 `json:"min"`
+	Max     float64 `json:"max"`
+}
+type Record struct {
+	ID            string         `json:"id"`
+	Name          string         `json:"name"`
+	Kind          string         `json:"kind"`
+	Target        string         `json:"target"`
+	H3Variant     []string       `json:"h3_variant"`
+	File          string         `json:"file"`
+	SHA256        string         `json:"sha256"`
+	Version       int            `json:"version"`
+	Triggers      []Trigger      `json:"triggers"`
+	Strength      Strength       `json:"strength"`
+	Constrains    map[string]any `json:"constrains"`
+	ConflictsWith []string       `json:"conflicts_with"`
+	Body          string         `json:"body"`
+	SourcePath    string         `json:"source_path"`
+}
+type Request struct {
+	ID       string   `json:"id"`
+	Strength *float64 `json:"strength,omitempty"`
+}
+
+// Brief contains explicit request attributes. Intent prose is never inspected.
+type Brief struct {
+	Aspect  string  `json:"aspect"`
+	Seconds float64 `json:"seconds"`
+	Frames  int     `json:"frames,omitempty"`
+	Canvas  *[2]int `json:"canvas,omitempty"`
+	Steps   *int    `json:"steps,omitempty"`
+}
+type Choice struct {
+	ID                string    `json:"id"`
+	Version           int       `json:"version"`
+	FileSHA256        string    `json:"file_sha256"`
+	StrengthRequested float64   `json:"strength_requested"`
+	StrengthApplied   float64   `json:"strength_applied"`
+	Triggers          []Trigger `json:"triggers"`
+	RegistryRevision  string    `json:"registry_revision"`
+	ActualFileSHA256  string    `json:"actual_file_sha256,omitempty"`
+	WeightsURI        string    `json:"weights_uri,omitempty"`
+	Checkpoint        string    `json:"checkpoint,omitempty"`
+}
+
+// Registry uses an explicit file capability to verify weight bytes at resolution.
+// No global configuration, implicit environment reads or model selection occurs.
+type Registry struct {
+	Records  map[string]Record                   `json:"records"`
+	Findings []h3check.Finding                   `json:"findings"`
+	Revision string                              `json:"revision"`
+	OpenFile func(string) (io.ReadCloser, error) `json:"-"`
+}
+type PublicRecord struct {
+	ID            string         `json:"id"`
+	Name          string         `json:"name"`
+	Kind          string         `json:"kind"`
+	Target        string         `json:"target"`
+	Variants      []string       `json:"variants"`
+	Strength      Strength       `json:"strength"`
+	Constrains    map[string]any `json:"constrains"`
+	ConflictsWith []string       `json:"conflicts_with"`
+	WhatFor       string         `json:"what_for"`
+	WhenNot       string         `json:"when_not"`
+}

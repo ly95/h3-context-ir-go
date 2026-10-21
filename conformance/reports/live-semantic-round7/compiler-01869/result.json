@@ -1,0 +1,1657 @@
+{
+  "case_id": "compiler-01869",
+  "input_sha256": "cbe4e18d5b8f29f5c52e21d7c5a5679f141cabd68356c58d2ebd9e8c5118916d",
+  "status": "proposed",
+  "calls": [
+    {
+      "stage": "replacement",
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 924,
+        "output_tokens": 226
+      },
+      "usage_valid": true,
+      "images": 0
+    },
+    {
+      "stage": "scope",
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 1120,
+        "output_tokens": 163
+      },
+      "usage_valid": true,
+      "images": 0
+    },
+    {
+      "stage": "rendering_permission",
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 439,
+        "output_tokens": 148
+      },
+      "usage_valid": true,
+      "images": 0
+    },
+    {
+      "stage": "medium",
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 1408,
+        "output_tokens": 315
+      },
+      "usage_valid": true,
+      "images": 0
+    },
+    {
+      "stage": "identity_requirements",
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 2279,
+        "output_tokens": 8859
+      },
+      "usage_valid": true,
+      "images": 0
+    },
+    {
+      "stage": "identity_requirements",
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 2317,
+        "output_tokens": 5078
+      },
+      "usage_valid": true,
+      "images": 0
+    },
+    {
+      "stage": "licence",
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 2856,
+        "output_tokens": 458
+      },
+      "usage_valid": true,
+      "images": 0
+    },
+    {
+      "stage": "structure",
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 5403,
+        "output_tokens": 1156
+      },
+      "usage_valid": true,
+      "images": 0
+    }
+  ],
+  "elapsed_ms": 81132,
+  "result": {
+    "usage_complete": true,
+    "clarification_policy": "continue_with_recorded_choice",
+    "mode_decision": {
+      "clarification_policy": "continue_with_recorded_choice",
+      "confidence_kind": "routing_policy",
+      "aspect_mismatch": false,
+      "needs_clarification": false,
+      "mode": "ref2va",
+      "confidence": 1,
+      "rule": "12.2#1",
+      "signals": [
+        "Mode follows explicit structured choices and media socket requirements."
+      ]
+    },
+    "scope_decision": {
+      "conflict_policy": "supplied_content_wins",
+      "requested": {
+        "speech": false,
+        "music": false,
+        "onscreen_text": false,
+        "magnitude": ""
+      },
+      "forbidden": {
+        "speech": false,
+        "music": false,
+        "onscreen_text": false,
+        "magnitude": ""
+      },
+      "allowed": {
+        "speech": false,
+        "music": true,
+        "onscreen_text": false,
+        "magnitude": "measured"
+      },
+      "dialogue": [],
+      "onscreen_text": [],
+      "reasoning": "The intent only requests replacing the man with her while changing nothing else. It does not request speech, music, or onscreen text, and the free-text instruction contains no prohibitions for those classes.",
+      "calls": [
+        {
+          "stage": "scope",
+          "attempt": 1,
+          "model": "deepseek-flash",
+          "usage": {
+            "input_tokens": 1120,
+            "output_tokens": 163
+          },
+          "valid": true
+        }
+      ]
+    },
+    "licence": {
+      "reference_permissions": {
+        "action": true,
+        "framing": true,
+        "lighting": true,
+        "medium": true,
+        "palette": true,
+        "wardrobe": true
+      },
+      "medium_decision": {
+        "rendering_permission": {
+          "kind": "preserve",
+          "disposition": "preserve",
+          "operation_quote": "",
+          "target": "",
+          "reasoning": "The caller only requests a subject swap (the man for her) and explicitly says to change nothing else. There is no authorizing instruction to transform or reinterpret the rendering, and no target style or medium is specified.",
+          "calls": [
+            {
+              "stage": "rendering_permission",
+              "attempt": 1,
+              "model": "deepseek-flash",
+              "usage": {
+                "input_tokens": 439,
+                "output_tokens": 148
+              },
+              "valid": true
+            }
+          ]
+        },
+        "disposition": "preserve",
+        "operation_quote": "",
+        "target": "",
+        "requested_style": "",
+        "reference_medium": "live-action",
+        "requested_medium": "",
+        "treatments": [],
+        "reasoning": "The rendering permission is host-owned and preserves the edit source unchanged: the caller requests only a subject swap and explicitly says to change nothing else. The edit-source clip is live-action, and no requested medium, style phrase, or compatible treatments are specified.",
+        "calls": [
+          {
+            "stage": "rendering_permission",
+            "attempt": 1,
+            "model": "deepseek-flash",
+            "usage": {
+              "input_tokens": 439,
+              "output_tokens": 148
+            },
+            "valid": true
+          },
+          {
+            "stage": "medium",
+            "attempt": 1,
+            "model": "deepseek-flash",
+            "usage": {
+              "input_tokens": 1408,
+              "output_tokens": 315
+            },
+            "valid": true
+          }
+        ]
+      },
+      "identity": [
+        {
+          "descriptor_source": "reference",
+          "kind": "person",
+          "label": "\u003cSubject 1\u003e",
+          "descriptor": "the elderly woman",
+          "retained_attributes": [
+            "short white hair",
+            "a bright yellow raincoat"
+          ],
+          "requested_attributes": [],
+          "request_quote": "",
+          "wardrobe_attributes": [
+            "a bright yellow raincoat"
+          ]
+        },
+        {
+          "descriptor_source": "request",
+          "target_mention": "her",
+          "kind": "person",
+          "claims": [
+            {
+              "dimension": "identity",
+              "value": "the elderly woman",
+              "quote": "her"
+            },
+            {
+              "dimension": "gender",
+              "value": "female",
+              "quote": "her"
+            }
+          ],
+          "label": "\u003cSubject 2\u003e",
+          "descriptor": "the elderly woman in the plaid shirt",
+          "retained_attributes": [],
+          "requested_attributes": [
+            "the elderly woman"
+          ],
+          "request_quote": "swap the man for her and change nothing else",
+          "wardrobe_attributes": []
+        },
+        {
+          "descriptor_source": "reference",
+          "kind": "person",
+          "label": "\u003cSubject 3\u003e",
+          "descriptor": "the older man at the lathe",
+          "retained_attributes": [],
+          "requested_attributes": [],
+          "request_quote": "",
+          "wardrobe_attributes": []
+        }
+      ],
+      "governs": {
+        "action": "reference",
+        "framing": "reference",
+        "lighting": "reference",
+        "medium": "reference",
+        "palette": "reference",
+        "wardrobe": "reference"
+      },
+      "reasons": {
+        "action": "The caller only asks to swap the man for her and change nothing else; no new behavior or performance is requested, so the edit source's performed action (raising the hammer, driving the nail, turning to camera) persists.",
+        "framing": "No shot scale, viewpoint or camera move is requested; 'change nothing else' leaves the medium-wide workshop composition and the clip's tightening camera to govern.",
+        "lighting": "The portrait's diffused studio light is identity-plate presentation, not a lighting instruction; the workshop's bright natural daylight from the windows remains.",
+        "medium": "Host medium decision preserves the live-action edit source; no restyling is authorized.",
+        "palette": "No grade, saturation or contrast treatment is requested; the edit source's existing cinematic color and tonal rendering is retained.",
+        "wardrobe": "No clothing or accessory change is requested; the yellow raincoat arrives only as the replacement portrait's identity, and observed wardrobe otherwise stays with the edit source."
+      },
+      "transform_phrase": null,
+      "transform_target": "",
+      "medium_transferred": false,
+      "style": {
+        "observed_phrase": "Live-action, cinematic, bright natural daylight from the windows",
+        "phrase": "Live-action, cinematic, bright natural daylight from the windows",
+        "source": "reference",
+        "reference_medium": "live-action",
+        "requested_medium": "",
+        "discrepancy": false,
+        "note": ""
+      },
+      "subjects": [
+        {
+          "label": "\u003cSubject 1\u003e",
+          "kind": "person",
+          "sources": [
+            "\u003cPicture 1\u003e"
+          ],
+          "descriptor": "the elderly woman",
+          "attributes": [
+            "short white hair",
+            "a bright yellow raincoat"
+          ],
+          "pose": [],
+          "pose_licensed": false,
+          "retention": "fully_preserved",
+          "retention_note": "",
+          "appears_in": [],
+          "taken_over_by": ""
+        },
+        {
+          "label": "\u003cSubject 2\u003e",
+          "kind": "person",
+          "sources": [
+            "\u003cVideo 1\u003e"
+          ],
+          "descriptor": "the bearded man in the plaid shirt",
+          "attributes": [],
+          "pose": [],
+          "pose_licensed": false,
+          "retention": "fully_preserved",
+          "retention_note": "",
+          "appears_in": [],
+          "taken_over_by": ""
+        },
+        {
+          "label": "\u003cSubject 3\u003e",
+          "kind": "person",
+          "sources": [
+            "\u003cVideo 1\u003e"
+          ],
+          "descriptor": "the older man at the lathe",
+          "attributes": [],
+          "pose": [],
+          "pose_licensed": false,
+          "retention": "fully_preserved",
+          "retention_note": "",
+          "appears_in": [],
+          "taken_over_by": ""
+        }
+      ],
+      "calls": [
+        {
+          "stage": "rendering_permission",
+          "attempt": 1,
+          "model": "deepseek-flash",
+          "usage": {
+            "input_tokens": 439,
+            "output_tokens": 148
+          },
+          "valid": true
+        },
+        {
+          "stage": "medium",
+          "attempt": 1,
+          "model": "deepseek-flash",
+          "usage": {
+            "input_tokens": 1408,
+            "output_tokens": 315
+          },
+          "valid": true
+        },
+        {
+          "stage": "identity_requirements",
+          "attempt": 1,
+          "model": "deepseek-flash",
+          "usage": {
+            "input_tokens": 2279,
+            "output_tokens": 8859
+          },
+          "valid": true
+        },
+        {
+          "stage": "identity_requirements",
+          "attempt": 2,
+          "model": "deepseek-flash",
+          "usage": {
+            "input_tokens": 2317,
+            "output_tokens": 5078
+          },
+          "valid": true
+        },
+        {
+          "stage": "licence",
+          "attempt": 1,
+          "model": "deepseek-flash",
+          "usage": {
+            "input_tokens": 2856,
+            "output_tokens": 458
+          },
+          "valid": true
+        }
+      ]
+    },
+    "budget": {
+      "prompt_tokens": 0,
+      "target_video_rows": 0,
+      "target_audio_rows": 0,
+      "known_reference_rows": 0,
+      "in_trained_band": false
+    },
+    "status": "proposed",
+    "version": "contextir/compiler/v1",
+    "brief": {
+      "effort": "standard",
+      "seconds_explicit": true,
+      "aspect_explicit": true,
+      "intent": "swap the man for her and change nothing else",
+      "assets": [
+        {
+          "preparation_computed": true,
+          "id": "asset-1",
+          "kind": "image",
+          "metadata": {
+            "width": 1344,
+            "height": 768,
+            "fps": {
+              "numerator": 0,
+              "denominator": 0
+            }
+          },
+          "preparation": {
+            "sizing": "match",
+            "width": 1344,
+            "height": 768
+          },
+          "role": "replacement_subject",
+          "replaces": "the man",
+          "composition": "unknown",
+          "sizing": "match"
+        },
+        {
+          "preparation_computed": true,
+          "id": "asset-2",
+          "kind": "video",
+          "metadata": {
+            "duration_ms": 5167,
+            "fps": {
+              "numerator": 0,
+              "denominator": 0
+            }
+          },
+          "preparation": {
+            "width": 1344,
+            "height": 768,
+            "frames": 124
+          },
+          "role": "edit_source",
+          "composition": "unknown",
+          "sizing": "match",
+          "frames": 124
+        }
+      ],
+      "seconds": 5.167,
+      "aspect": "16:9",
+      "shots": 1,
+      "creativity": "balanced",
+      "evidence": [
+        {
+          "card": {
+            "asset_id": "asset-1",
+            "summary": "a full-body studio portrait of an elderly woman in a yellow raincoat",
+            "subjects": [
+              {
+                "kind": "person",
+                "descriptor": "the elderly woman",
+                "attributes": [
+                  "short white hair",
+                  "a bright yellow raincoat"
+                ]
+              }
+            ],
+            "environment": "a seamless grey studio backdrop",
+            "lighting": "even, diffused studio lighting from the front",
+            "framing": "a full-body shot",
+            "style": "Clean, high-resolution studio photography",
+            "composition": "bare_plate",
+            "analyzer_version": "1",
+            "coverage": {
+              "status": "complete",
+              "tracks": [
+                "visual"
+              ]
+            }
+          },
+          "asset_id": "asset-1",
+          "facts": [
+            {
+              "id": "card-asset-1-1",
+              "text": "a full-body studio portrait of an elderly woman in a yellow raincoat",
+              "source": {
+                "asset_id": "asset-1",
+                "track": "visual"
+              }
+            },
+            {
+              "id": "card-asset-1-2",
+              "text": "a seamless grey studio backdrop",
+              "source": {
+                "asset_id": "asset-1",
+                "track": "visual"
+              }
+            },
+            {
+              "id": "card-asset-1-3",
+              "text": "even, diffused studio lighting from the front",
+              "source": {
+                "asset_id": "asset-1",
+                "track": "visual"
+              }
+            },
+            {
+              "id": "card-asset-1-4",
+              "text": "a full-body shot",
+              "source": {
+                "asset_id": "asset-1",
+                "track": "visual"
+              }
+            },
+            {
+              "id": "card-asset-1-5",
+              "text": "Clean, high-resolution studio photography",
+              "source": {
+                "asset_id": "asset-1",
+                "track": "visual"
+              }
+            },
+            {
+              "id": "card-asset-1-6",
+              "text": "the elderly woman",
+              "source": {
+                "asset_id": "asset-1",
+                "track": "visual"
+              }
+            },
+            {
+              "id": "card-asset-1-7",
+              "text": "short white hair",
+              "source": {
+                "asset_id": "asset-1",
+                "track": "visual"
+              }
+            },
+            {
+              "id": "card-asset-1-8",
+              "text": "a bright yellow raincoat",
+              "source": {
+                "asset_id": "asset-1",
+                "track": "visual"
+              }
+            }
+          ],
+          "analyzer_version": "1",
+          "coverage": {
+            "status": "complete",
+            "tracks": [
+              "visual"
+            ]
+          }
+        },
+        {
+          "card": {
+            "asset_id": "asset-2",
+            "summary": "a bearded man drives a nail at a workbench and turns to the camera",
+            "subjects": [
+              {
+                "kind": "person",
+                "descriptor": "the bearded man in the plaid shirt"
+              },
+              {
+                "kind": "person",
+                "descriptor": "the older man at the lathe"
+              }
+            ],
+            "environment": "a wood-panelled carpentry workshop with large multi-paned windows",
+            "lighting": "bright natural daylight from the windows",
+            "framing": "a medium-wide shot",
+            "style": "Live-action, cinematic",
+            "motion": "he raises the hammer and strikes",
+            "camera": "the framing tightens on the subject",
+            "frames_seen": 3,
+            "composition": "unknown",
+            "analyzer_version": "1",
+            "coverage": {
+              "status": "partial",
+              "tracks": [
+                "visual"
+              ]
+            }
+          },
+          "asset_id": "asset-2",
+          "facts": [
+            {
+              "id": "card-asset-2-1",
+              "text": "a bearded man drives a nail at a workbench and turns to the camera",
+              "source": {
+                "asset_id": "asset-2",
+                "track": "visual"
+              }
+            },
+            {
+              "id": "card-asset-2-2",
+              "text": "a wood-panelled carpentry workshop with large multi-paned windows",
+              "source": {
+                "asset_id": "asset-2",
+                "track": "visual"
+              }
+            },
+            {
+              "id": "card-asset-2-3",
+              "text": "bright natural daylight from the windows",
+              "source": {
+                "asset_id": "asset-2",
+                "track": "visual"
+              }
+            },
+            {
+              "id": "card-asset-2-4",
+              "text": "a medium-wide shot",
+              "source": {
+                "asset_id": "asset-2",
+                "track": "visual"
+              }
+            },
+            {
+              "id": "card-asset-2-5",
+              "text": "Live-action, cinematic",
+              "source": {
+                "asset_id": "asset-2",
+                "track": "visual"
+              }
+            },
+            {
+              "id": "card-asset-2-6",
+              "text": "he raises the hammer and strikes",
+              "source": {
+                "asset_id": "asset-2",
+                "track": "visual"
+              }
+            },
+            {
+              "id": "card-asset-2-7",
+              "text": "the framing tightens on the subject",
+              "source": {
+                "asset_id": "asset-2",
+                "track": "visual"
+              }
+            },
+            {
+              "id": "card-asset-2-8",
+              "text": "the bearded man in the plaid shirt",
+              "source": {
+                "asset_id": "asset-2",
+                "track": "visual"
+              }
+            },
+            {
+              "id": "card-asset-2-9",
+              "text": "the older man at the lathe",
+              "source": {
+                "asset_id": "asset-2",
+                "track": "visual"
+              }
+            }
+          ],
+          "analyzer_version": "1",
+          "limitations": [
+            "The video card was constructed from 3 sampled frames, not the entire clip."
+          ],
+          "coverage": {
+            "status": "partial",
+            "tracks": [
+              "visual"
+            ]
+          }
+        }
+      ],
+      "cards": [
+        {
+          "asset_id": "asset-1",
+          "summary": "a full-body studio portrait of an elderly woman in a yellow raincoat",
+          "subjects": [
+            {
+              "kind": "person",
+              "descriptor": "the elderly woman",
+              "attributes": [
+                "short white hair",
+                "a bright yellow raincoat"
+              ]
+            }
+          ],
+          "environment": "a seamless grey studio backdrop",
+          "lighting": "even, diffused studio lighting from the front",
+          "framing": "a full-body shot",
+          "style": "Clean, high-resolution studio photography",
+          "composition": "bare_plate",
+          "analyzer_version": "1",
+          "coverage": {
+            "status": "complete",
+            "tracks": [
+              "visual"
+            ]
+          }
+        },
+        {
+          "asset_id": "asset-2",
+          "summary": "a bearded man drives a nail at a workbench and turns to the camera",
+          "subjects": [
+            {
+              "kind": "person",
+              "descriptor": "the bearded man in the plaid shirt"
+            },
+            {
+              "kind": "person",
+              "descriptor": "the older man at the lathe"
+            }
+          ],
+          "environment": "a wood-panelled carpentry workshop with large multi-paned windows",
+          "lighting": "bright natural daylight from the windows",
+          "framing": "a medium-wide shot",
+          "style": "Live-action, cinematic",
+          "motion": "he raises the hammer and strikes",
+          "camera": "the framing tightens on the subject",
+          "frames_seen": 3,
+          "composition": "unknown",
+          "analyzer_version": "1",
+          "coverage": {
+            "status": "partial",
+            "tracks": [
+              "visual"
+            ]
+          }
+        }
+      ]
+    },
+    "request": {
+      "instruction": "swap the man for her and change nothing else",
+      "mode": "ref2va",
+      "target": {
+        "duration_ms": 5167,
+        "frame_count": 124,
+        "aspect_ratio": "16:9",
+        "fps": {
+          "numerator": 24,
+          "denominator": 1
+        },
+        "width": 1344,
+        "height": 768
+      },
+      "assets": [
+        {
+          "id": "asset-1",
+          "kind": "image",
+          "metadata": {
+            "width": 1344,
+            "height": 768,
+            "fps": {
+              "numerator": 0,
+              "denominator": 0
+            }
+          },
+          "preparation": {
+            "sizing": "match",
+            "width": 1344,
+            "height": 768
+          }
+        },
+        {
+          "id": "asset-2",
+          "kind": "video",
+          "metadata": {
+            "duration_ms": 5167,
+            "fps": {
+              "numerator": 0,
+              "denominator": 0
+            }
+          },
+          "preparation": {
+            "width": 1344,
+            "height": 768,
+            "frames": 124
+          }
+        }
+      ],
+      "bindings": [
+        {
+          "source": {
+            "asset_id": "asset-1",
+            "track": "visual"
+          },
+          "role": "replacement_subject",
+          "replaces": "the man"
+        },
+        {
+          "source": {
+            "asset_id": "asset-2",
+            "track": "visual"
+          },
+          "role": "edit_source"
+        }
+      ],
+      "constraints": [
+        {
+          "id": "compiler-no-dialogue",
+          "kind": "no_dialogue",
+          "text": "Do not add spoken or sung lines."
+        }
+      ],
+      "allow_creative_additions": true,
+      "allow_generated_dialogue": false,
+      "pinned_shots": [
+        {
+          "id": "shot-1",
+          "start_ms": 0,
+          "end_ms": 5167
+        }
+      ],
+      "addition_scope": {
+        "dialogue": false,
+        "music": true,
+        "visible_text": false
+      }
+    },
+    "structure": {
+      "replacement_targets": {
+        "\u003cPicture 1\u003e": ""
+      },
+      "style": "Live-action, cinematic, bright natural daylight from the windows",
+      "mode": "ref2va",
+      "assets": [
+        {
+          "asset_id": "asset-1",
+          "role": "replacement_subject",
+          "replaces": "the man"
+        },
+        {
+          "asset_id": "asset-2",
+          "role": "edit_source",
+          "replaces": ""
+        }
+      ],
+      "shots": [
+        {
+          "subjects": [
+            "\u003cSubject 1\u003e",
+            "\u003cSubject 3\u003e"
+          ],
+          "sync_sound": [
+            "the sharp crack of the hammer striking the nail head",
+            "low workshop room tone under the daylight"
+          ],
+          "start_ms": 0,
+          "purpose": "develop",
+          "framing": "medium wide",
+          "action": "Inside the wood-panelled carpentry workshop, the elderly woman in the bright yellow raincoat with short white hair now stands where the bearded man worked: she raises the hammer and strikes it down onto the nail head at the workbench, then turns her head toward the camera as the older man continues at the lathe in the background and bright natural daylight pours through the large multi-paned windows.",
+          "what_changes": "The figure driving the nail changes from the bearded man to the elderly woman in the yellow raincoat, while the hammer strike, the turn to camera, the workshop, the lighting and the slowly tightening framing stay as they were.",
+          "camera": {
+            "type": "Push In",
+            "amplitude": "small",
+            "speed": "slow"
+          }
+        }
+      ],
+      "dialogue": [],
+      "onscreen_text": [],
+      "requested": {
+        "speech": false,
+        "music": false,
+        "onscreen_text": false,
+        "magnitude": ""
+      },
+      "forbidden": {
+        "speech": false,
+        "music": false,
+        "onscreen_text": false,
+        "magnitude": ""
+      },
+      "reasoning": "The caller asks for one thing only: swap the man for her and change nothing else, at 16:9 for the source's 5.167 seconds. \u003cPicture 1\u003e supplies the elderly woman (short white hair, bright yellow raincoat) as a replacement_subject identity plate, not a frame or scene, so her studio backdrop, frontal studio lighting and full-body presentation are plate presentation rather than the requested environment. \u003cVideo 1\u003e is the edit_source and everything else stays with it: the wood-panelled carpentry workshop with large multi-paned windows, the bright natural daylight, the live-action cinematic rendering, the medium-wide framing that tightens on the subject, the hammer raised and driven into the nail at the workbench, his turn to the camera, and the older man at the lathe in the background. No shot count change is requested, so the single continuous 5.167s take is kept as one shot whose only change is the identity of the figure at the bench. Nothing is requested or prohibited regarding voice, score or lettering; no line or visible text exists to preserve, and the balanced allowance for music is a permission, not an instruction, so none is added and the diegetic workshop sound of the hammer strike is left to carry the moment."
+    },
+    "scope": {
+      "speech": false,
+      "music": true,
+      "onscreen_text": false,
+      "magnitude": "measured"
+    },
+    "document": {
+      "version": "",
+      "mode": "",
+      "target": {
+        "duration_ms": 0,
+        "aspect_ratio": "",
+        "fps": {
+          "numerator": 0,
+          "denominator": 0
+        }
+      },
+      "shots": null,
+      "soundscape": "",
+      "music": ""
+    },
+    "artifact": {
+      "version": "",
+      "compiler_version": "",
+      "format_version": "",
+      "mode": "",
+      "target": {
+        "duration_ms": 0,
+        "aspect_ratio": "",
+        "fps": {
+          "numerator": 0,
+          "denominator": 0
+        }
+      },
+      "profile": {
+        "name": "",
+        "format": "",
+        "fps": {
+          "numerator": 0,
+          "denominator": 0
+        },
+        "modes": null,
+        "limits": {
+          "pictures": 0,
+          "videos": 0,
+          "video_audio": 0,
+          "standalone_audio": 0
+        },
+        "supports_reference_frame_anchors": false,
+        "supports_source_intervals": false
+      },
+      "prompt": "",
+      "manifest": {
+        "media": null,
+        "subjects": null,
+        "references": null,
+        "speakers": null
+      },
+      "frames": 0,
+      "effective_duration_seconds": {
+        "numerator": 0,
+        "denominator": 0
+      },
+      "document_sha256": "",
+      "profile_sha256": "",
+      "prompt_sha256": "",
+      "manifest_sha256": "",
+      "sha256": ""
+    },
+    "evidence": [
+      {
+        "card": {
+          "asset_id": "asset-1",
+          "summary": "a full-body studio portrait of an elderly woman in a yellow raincoat",
+          "subjects": [
+            {
+              "kind": "person",
+              "descriptor": "the elderly woman",
+              "attributes": [
+                "short white hair",
+                "a bright yellow raincoat"
+              ]
+            }
+          ],
+          "environment": "a seamless grey studio backdrop",
+          "lighting": "even, diffused studio lighting from the front",
+          "framing": "a full-body shot",
+          "style": "Clean, high-resolution studio photography",
+          "composition": "bare_plate",
+          "analyzer_version": "1",
+          "coverage": {
+            "status": "complete",
+            "tracks": [
+              "visual"
+            ]
+          }
+        },
+        "asset_id": "asset-1",
+        "facts": [
+          {
+            "id": "card-asset-1-1",
+            "text": "a full-body studio portrait of an elderly woman in a yellow raincoat",
+            "source": {
+              "asset_id": "asset-1",
+              "track": "visual"
+            }
+          },
+          {
+            "id": "card-asset-1-2",
+            "text": "a seamless grey studio backdrop",
+            "source": {
+              "asset_id": "asset-1",
+              "track": "visual"
+            }
+          },
+          {
+            "id": "card-asset-1-3",
+            "text": "even, diffused studio lighting from the front",
+            "source": {
+              "asset_id": "asset-1",
+              "track": "visual"
+            }
+          },
+          {
+            "id": "card-asset-1-4",
+            "text": "a full-body shot",
+            "source": {
+              "asset_id": "asset-1",
+              "track": "visual"
+            }
+          },
+          {
+            "id": "card-asset-1-5",
+            "text": "Clean, high-resolution studio photography",
+            "source": {
+              "asset_id": "asset-1",
+              "track": "visual"
+            }
+          },
+          {
+            "id": "card-asset-1-6",
+            "text": "the elderly woman",
+            "source": {
+              "asset_id": "asset-1",
+              "track": "visual"
+            }
+          },
+          {
+            "id": "card-asset-1-7",
+            "text": "short white hair",
+            "source": {
+              "asset_id": "asset-1",
+              "track": "visual"
+            }
+          },
+          {
+            "id": "card-asset-1-8",
+            "text": "a bright yellow raincoat",
+            "source": {
+              "asset_id": "asset-1",
+              "track": "visual"
+            }
+          }
+        ],
+        "analyzer_version": "1",
+        "coverage": {
+          "status": "complete",
+          "tracks": [
+            "visual"
+          ]
+        }
+      },
+      {
+        "card": {
+          "asset_id": "asset-2",
+          "summary": "a bearded man drives a nail at a workbench and turns to the camera",
+          "subjects": [
+            {
+              "kind": "person",
+              "descriptor": "the bearded man in the plaid shirt"
+            },
+            {
+              "kind": "person",
+              "descriptor": "the older man at the lathe"
+            }
+          ],
+          "environment": "a wood-panelled carpentry workshop with large multi-paned windows",
+          "lighting": "bright natural daylight from the windows",
+          "framing": "a medium-wide shot",
+          "style": "Live-action, cinematic",
+          "motion": "he raises the hammer and strikes",
+          "camera": "the framing tightens on the subject",
+          "frames_seen": 3,
+          "composition": "unknown",
+          "analyzer_version": "1",
+          "coverage": {
+            "status": "partial",
+            "tracks": [
+              "visual"
+            ]
+          }
+        },
+        "asset_id": "asset-2",
+        "facts": [
+          {
+            "id": "card-asset-2-1",
+            "text": "a bearded man drives a nail at a workbench and turns to the camera",
+            "source": {
+              "asset_id": "asset-2",
+              "track": "visual"
+            }
+          },
+          {
+            "id": "card-asset-2-2",
+            "text": "a wood-panelled carpentry workshop with large multi-paned windows",
+            "source": {
+              "asset_id": "asset-2",
+              "track": "visual"
+            }
+          },
+          {
+            "id": "card-asset-2-3",
+            "text": "bright natural daylight from the windows",
+            "source": {
+              "asset_id": "asset-2",
+              "track": "visual"
+            }
+          },
+          {
+            "id": "card-asset-2-4",
+            "text": "a medium-wide shot",
+            "source": {
+              "asset_id": "asset-2",
+              "track": "visual"
+            }
+          },
+          {
+            "id": "card-asset-2-5",
+            "text": "Live-action, cinematic",
+            "source": {
+              "asset_id": "asset-2",
+              "track": "visual"
+            }
+          },
+          {
+            "id": "card-asset-2-6",
+            "text": "he raises the hammer and strikes",
+            "source": {
+              "asset_id": "asset-2",
+              "track": "visual"
+            }
+          },
+          {
+            "id": "card-asset-2-7",
+            "text": "the framing tightens on the subject",
+            "source": {
+              "asset_id": "asset-2",
+              "track": "visual"
+            }
+          },
+          {
+            "id": "card-asset-2-8",
+            "text": "the bearded man in the plaid shirt",
+            "source": {
+              "asset_id": "asset-2",
+              "track": "visual"
+            }
+          },
+          {
+            "id": "card-asset-2-9",
+            "text": "the older man at the lathe",
+            "source": {
+              "asset_id": "asset-2",
+              "track": "visual"
+            }
+          }
+        ],
+        "analyzer_version": "1",
+        "limitations": [
+          "The video card was constructed from 3 sampled frames, not the entire clip."
+        ],
+        "coverage": {
+          "status": "partial",
+          "tracks": [
+            "visual"
+          ]
+        }
+      }
+    ],
+    "decisions": [
+      {
+        "field": "target",
+        "source": "computed",
+        "value": {
+          "effective_seconds": 5.166666666666667,
+          "frame_count": 124,
+          "nominal_seconds": 5.167,
+          "policy": "snap_up"
+        },
+        "explanation": "Effective timing and nominal duration are recorded separately; generated cuts use effective timing."
+      },
+      {
+        "field": "canvas",
+        "source": "computed",
+        "value": [
+          1344,
+          768
+        ],
+        "explanation": "Native short-edge canvas is aligned to 32 pixels; explicit megapixels replaces the native area budget."
+      },
+      {
+        "field": "assets.asset-1.preparation",
+        "source": "required_adapter_instruction",
+        "value": {
+          "sizing": "match",
+          "width": 1344,
+          "height": 768
+        },
+        "explanation": "These required input transforms are recorded separately from the original source metadata; the compiler has not executed media IO."
+      },
+      {
+        "field": "assets.asset-2.preparation",
+        "source": "required_adapter_instruction",
+        "value": {
+          "width": 1344,
+          "height": 768,
+          "frames": 124
+        },
+        "explanation": "These required input transforms are recorded separately from the original source metadata; the compiler has not executed media IO."
+      },
+      {
+        "field": "execution",
+        "source": "explicit_adapter_policy",
+        "value": {
+          "effort": "standard"
+        },
+        "explanation": "The injected adapters and explicit compiler repair configuration implement standard effort."
+      },
+      {
+        "field": "mode",
+        "source": "12.2#1",
+        "value": {
+          "clarification_policy": "continue_with_recorded_choice",
+          "confidence_kind": "routing_policy",
+          "aspect_mismatch": false,
+          "needs_clarification": false,
+          "mode": "ref2va",
+          "confidence": 1,
+          "rule": "12.2#1",
+          "signals": [
+            "Mode follows explicit structured choices and media socket requirements."
+          ]
+        },
+        "explanation": "Mode follows the production typed routing contract; publication capabilities are checked separately."
+      },
+      {
+        "field": "replacement_targets",
+        "source": "typed_identity_resolution",
+        "value": {
+          "targets": {
+            "\u003cPicture 1\u003e": ""
+          },
+          "bindings": [
+            {
+              "picture": "\u003cPicture 1\u003e",
+              "target": "",
+              "compatible": [
+                "\u003cSubject 2\u003e",
+                "\u003cSubject 3\u003e"
+              ],
+              "unsupported_qualifier": false,
+              "status": "user_symbolic",
+              "reason": "\"the man\" is a broad description compatible with both observed male candidates: \u003cSubject 2\u003e (the bearded man in the plaid shirt) and \u003cSubject 3\u003e (the older man at the lathe). It does not uniquely identify either."
+            }
+          ],
+          "calls": [
+            {
+              "stage": "replacement",
+              "attempt": 1,
+              "model": "deepseek-flash",
+              "usage": {
+                "input_tokens": 924,
+                "output_tokens": 226
+              },
+              "valid": true
+            }
+          ]
+        },
+        "explanation": "Named figures unsupported by observed identity evidence remain user-symbolic; source look and leftover identity are never guessed."
+      },
+      {
+        "field": "content_scope",
+        "source": "typed_request_interpretation",
+        "value": {
+          "conflict_policy": "supplied_content_wins",
+          "requested": {
+            "speech": false,
+            "music": false,
+            "onscreen_text": false,
+            "magnitude": ""
+          },
+          "forbidden": {
+            "speech": false,
+            "music": false,
+            "onscreen_text": false,
+            "magnitude": ""
+          },
+          "allowed": {
+            "speech": false,
+            "music": true,
+            "onscreen_text": false,
+            "magnitude": "measured"
+          },
+          "dialogue": [],
+          "onscreen_text": [],
+          "reasoning": "The intent only requests replacing the man with her while changing nothing else. It does not request speech, music, or onscreen text, and the free-text instruction contains no prohibitions for those classes.",
+          "calls": [
+            {
+              "stage": "scope",
+              "attempt": 1,
+              "model": "deepseek-flash",
+              "usage": {
+                "input_tokens": 1120,
+                "output_tokens": 163
+              },
+              "valid": true
+            }
+          ]
+        },
+        "explanation": "Caller requests and prohibitions are interpreted before code applies the explicit creativity level."
+      },
+      {
+        "field": "reference_licence",
+        "source": "typed_attribute_precedence",
+        "value": {
+          "reference_permissions": {
+            "action": true,
+            "framing": true,
+            "lighting": true,
+            "medium": true,
+            "palette": true,
+            "wardrobe": true
+          },
+          "medium_decision": {
+            "rendering_permission": {
+              "kind": "preserve",
+              "disposition": "preserve",
+              "operation_quote": "",
+              "target": "",
+              "reasoning": "The caller only requests a subject swap (the man for her) and explicitly says to change nothing else. There is no authorizing instruction to transform or reinterpret the rendering, and no target style or medium is specified.",
+              "calls": [
+                {
+                  "stage": "rendering_permission",
+                  "attempt": 1,
+                  "model": "deepseek-flash",
+                  "usage": {
+                    "input_tokens": 439,
+                    "output_tokens": 148
+                  },
+                  "valid": true
+                }
+              ]
+            },
+            "disposition": "preserve",
+            "operation_quote": "",
+            "target": "",
+            "requested_style": "",
+            "reference_medium": "live-action",
+            "requested_medium": "",
+            "treatments": [],
+            "reasoning": "The rendering permission is host-owned and preserves the edit source unchanged: the caller requests only a subject swap and explicitly says to change nothing else. The edit-source clip is live-action, and no requested medium, style phrase, or compatible treatments are specified.",
+            "calls": [
+              {
+                "stage": "rendering_permission",
+                "attempt": 1,
+                "model": "deepseek-flash",
+                "usage": {
+                  "input_tokens": 439,
+                  "output_tokens": 148
+                },
+                "valid": true
+              },
+              {
+                "stage": "medium",
+                "attempt": 1,
+                "model": "deepseek-flash",
+                "usage": {
+                  "input_tokens": 1408,
+                  "output_tokens": 315
+                },
+                "valid": true
+              }
+            ]
+          },
+          "identity": [
+            {
+              "descriptor_source": "reference",
+              "kind": "person",
+              "label": "\u003cSubject 1\u003e",
+              "descriptor": "the elderly woman",
+              "retained_attributes": [
+                "short white hair",
+                "a bright yellow raincoat"
+              ],
+              "requested_attributes": [],
+              "request_quote": "",
+              "wardrobe_attributes": [
+                "a bright yellow raincoat"
+              ]
+            },
+            {
+              "descriptor_source": "request",
+              "target_mention": "her",
+              "kind": "person",
+              "claims": [
+                {
+                  "dimension": "identity",
+                  "value": "the elderly woman",
+                  "quote": "her"
+                },
+                {
+                  "dimension": "gender",
+                  "value": "female",
+                  "quote": "her"
+                }
+              ],
+              "label": "\u003cSubject 2\u003e",
+              "descriptor": "the elderly woman in the plaid shirt",
+              "retained_attributes": [],
+              "requested_attributes": [
+                "the elderly woman"
+              ],
+              "request_quote": "swap the man for her and change nothing else",
+              "wardrobe_attributes": []
+            },
+            {
+              "descriptor_source": "reference",
+              "kind": "person",
+              "label": "\u003cSubject 3\u003e",
+              "descriptor": "the older man at the lathe",
+              "retained_attributes": [],
+              "requested_attributes": [],
+              "request_quote": "",
+              "wardrobe_attributes": []
+            }
+          ],
+          "governs": {
+            "action": "reference",
+            "framing": "reference",
+            "lighting": "reference",
+            "medium": "reference",
+            "palette": "reference",
+            "wardrobe": "reference"
+          },
+          "reasons": {
+            "action": "The caller only asks to swap the man for her and change nothing else; no new behavior or performance is requested, so the edit source's performed action (raising the hammer, driving the nail, turning to camera) persists.",
+            "framing": "No shot scale, viewpoint or camera move is requested; 'change nothing else' leaves the medium-wide workshop composition and the clip's tightening camera to govern.",
+            "lighting": "The portrait's diffused studio light is identity-plate presentation, not a lighting instruction; the workshop's bright natural daylight from the windows remains.",
+            "medium": "Host medium decision preserves the live-action edit source; no restyling is authorized.",
+            "palette": "No grade, saturation or contrast treatment is requested; the edit source's existing cinematic color and tonal rendering is retained.",
+            "wardrobe": "No clothing or accessory change is requested; the yellow raincoat arrives only as the replacement portrait's identity, and observed wardrobe otherwise stays with the edit source."
+          },
+          "transform_phrase": null,
+          "transform_target": "",
+          "medium_transferred": false,
+          "style": {
+            "observed_phrase": "Live-action, cinematic, bright natural daylight from the windows",
+            "phrase": "Live-action, cinematic, bright natural daylight from the windows",
+            "source": "reference",
+            "reference_medium": "live-action",
+            "requested_medium": "",
+            "discrepancy": false,
+            "note": ""
+          },
+          "subjects": [
+            {
+              "label": "\u003cSubject 1\u003e",
+              "kind": "person",
+              "sources": [
+                "\u003cPicture 1\u003e"
+              ],
+              "descriptor": "the elderly woman",
+              "attributes": [
+                "short white hair",
+                "a bright yellow raincoat"
+              ],
+              "pose": [],
+              "pose_licensed": false,
+              "retention": "fully_preserved",
+              "retention_note": "",
+              "appears_in": [],
+              "taken_over_by": ""
+            },
+            {
+              "label": "\u003cSubject 2\u003e",
+              "kind": "person",
+              "sources": [
+                "\u003cVideo 1\u003e"
+              ],
+              "descriptor": "the bearded man in the plaid shirt",
+              "attributes": [],
+              "pose": [],
+              "pose_licensed": false,
+              "retention": "fully_preserved",
+              "retention_note": "",
+              "appears_in": [],
+              "taken_over_by": ""
+            },
+            {
+              "label": "\u003cSubject 3\u003e",
+              "kind": "person",
+              "sources": [
+                "\u003cVideo 1\u003e"
+              ],
+              "descriptor": "the older man at the lathe",
+              "attributes": [],
+              "pose": [],
+              "pose_licensed": false,
+              "retention": "fully_preserved",
+              "retention_note": "",
+              "appears_in": [],
+              "taken_over_by": ""
+            }
+          ],
+          "calls": [
+            {
+              "stage": "rendering_permission",
+              "attempt": 1,
+              "model": "deepseek-flash",
+              "usage": {
+                "input_tokens": 439,
+                "output_tokens": 148
+              },
+              "valid": true
+            },
+            {
+              "stage": "medium",
+              "attempt": 1,
+              "model": "deepseek-flash",
+              "usage": {
+                "input_tokens": 1408,
+                "output_tokens": 315
+              },
+              "valid": true
+            },
+            {
+              "stage": "identity_requirements",
+              "attempt": 1,
+              "model": "deepseek-flash",
+              "usage": {
+                "input_tokens": 2279,
+                "output_tokens": 8859
+              },
+              "valid": true
+            },
+            {
+              "stage": "identity_requirements",
+              "attempt": 2,
+              "model": "deepseek-flash",
+              "usage": {
+                "input_tokens": 2317,
+                "output_tokens": 5078
+              },
+              "valid": true
+            },
+            {
+              "stage": "licence",
+              "attempt": 1,
+              "model": "deepseek-flash",
+              "usage": {
+                "input_tokens": 2856,
+                "output_tokens": 458
+              },
+              "valid": true
+            }
+          ]
+        },
+        "explanation": "Each attribute follows explicit request or observed reference; poses and reference-sheet presentation are not subject identity."
+      },
+      {
+        "field": "shots.camera",
+        "source": "host_template",
+        "value": [
+          {
+            "subjects": [
+              "\u003cSubject 1\u003e",
+              "\u003cSubject 3\u003e"
+            ],
+            "sync_sound": [
+              "the sharp crack of the hammer striking the nail head",
+              "low workshop room tone under the daylight"
+            ],
+            "start_ms": 0,
+            "purpose": "develop",
+            "framing": "medium wide",
+            "action": "Inside the wood-panelled carpentry workshop, the elderly woman in the bright yellow raincoat with short white hair now stands where the bearded man worked: she raises the hammer and strikes it down onto the nail head at the workbench, then turns her head toward the camera as the older man continues at the lathe in the background and bright natural daylight pours through the large multi-paned windows.",
+            "what_changes": "The figure driving the nail changes from the bearded man to the elderly woman in the yellow raincoat, while the hammer strike, the turn to camera, the workshop, the lighting and the slowly tightening framing stay as they were.",
+            "camera": {
+              "type": "Push In",
+              "amplitude": "small",
+              "speed": "slow"
+            }
+          }
+        ],
+        "explanation": "Canonical camera events are assembled from the typed structural plan after prose."
+      }
+    ],
+    "calls": [
+      {
+        "stage": "replacement",
+        "attempt": 1,
+        "model": "deepseek-flash",
+        "usage": {
+          "input_tokens": 924,
+          "output_tokens": 226
+        },
+        "valid": true
+      },
+      {
+        "stage": "scope",
+        "attempt": 1,
+        "model": "deepseek-flash",
+        "usage": {
+          "input_tokens": 1120,
+          "output_tokens": 163
+        },
+        "valid": true
+      },
+      {
+        "stage": "rendering_permission",
+        "attempt": 1,
+        "model": "deepseek-flash",
+        "usage": {
+          "input_tokens": 439,
+          "output_tokens": 148
+        },
+        "valid": true
+      },
+      {
+        "stage": "medium",
+        "attempt": 1,
+        "model": "deepseek-flash",
+        "usage": {
+          "input_tokens": 1408,
+          "output_tokens": 315
+        },
+        "valid": true
+      },
+      {
+        "stage": "identity_requirements",
+        "attempt": 1,
+        "model": "deepseek-flash",
+        "usage": {
+          "input_tokens": 2279,
+          "output_tokens": 8859
+        },
+        "valid": true
+      },
+      {
+        "stage": "identity_requirements",
+        "attempt": 2,
+        "model": "deepseek-flash",
+        "usage": {
+          "input_tokens": 2317,
+          "output_tokens": 5078
+        },
+        "valid": true
+      },
+      {
+        "stage": "licence",
+        "attempt": 1,
+        "model": "deepseek-flash",
+        "usage": {
+          "input_tokens": 2856,
+          "output_tokens": 458
+        },
+        "valid": true
+      },
+      {
+        "stage": "structure",
+        "attempt": 1,
+        "model": "deepseek-flash",
+        "usage": {
+          "input_tokens": 5403,
+          "output_tokens": 1156
+        },
+        "valid": true
+      }
+    ]
+  }
+}

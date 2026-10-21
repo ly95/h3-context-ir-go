@@ -1,0 +1,614 @@
+// This source is copied into an isolated external consumer module by
+// release_consumer.py. It makes no network or provider calls. Model output is
+// replayed only after the complete production request and images match a
+// recording made by the release candidate's live executable.
+package main
+
+import (
+	"bytes"
+	"context"
+	"crypto/sha256"
+	"encoding/base64"
+	"encoding/hex"
+	"encoding/json"
+	"errors"
+	"flag"
+	"fmt"
+	"io"
+	"net/http"
+	"os"
+	"path/filepath"
+	"reflect"
+	"runtime/debug"
+	"strings"
+
+	contextir "github.com/ly95/contextir"
+	"github.com/ly95/contextir/compiler"
+	"github.com/ly95/contextir/deepseek"
+	"github.com/ly95/contextir/h3"
+	"github.com/ly95/contextir/plan"
+	"github.com/ly95/contextir/planner"
+)
+
+type fixtureCase struct {
+	ID       string          `json:"case_id"`
+	Brief    *compiler.Brief `json:"brief"`
+	Original *struct {
+		Brief plan.Brief                `json:"brief"`
+		Cards map[string]plan.AssetCard `json:"cards"`
+	} `json:"original"`
+	Changes       []string                     `json:"changes"`
+	Clarification compiler.ClarificationPolicy `json:"clarification_policy"`
+	AllowPartial  bool                         `json:"allow_partial_perception"`
+	Profile       string                       `json:"profile"`
+	RetryLimits   *struct {
+		Structure *int `json:"structure"`
+		Planner   *int `json:"planner"`
+	} `json:"retry_limits"`
+	Media map[string]struct {
+		Path   string `json:"path"`
+		SHA256 string `json:"sha256"`
+	} `json:"media"`
+}
+
+type fixture struct {
+	Schema       string        `json:"schema"`
+	SourceCommit string        `json:"source_commit"`
+	Cases        []fixtureCase `json:"cases"`
+}
+
+type safeError struct {
+	Code   contextir.Code    `json:"code"`
+	Stage  string            `json:"stage"`
+	Issues []contextir.Issue `json:"issues"`
+}
+
+type call struct {
+	Index        int             `json:"index"`
+	Stage        string          `json:"stage"`
+	Model        string          `json:"model"`
+	Usage        contextir.Usage `json:"usage"`
+	UsageValid   bool            `json:"usage_valid"`
+	RequestFile  string          `json:"request_file"`
+	ResponseFile string          `json:"response_file"`
+	OutputFile   string          `json:"output_file"`
+	ImagesFile   string          `json:"images_file"`
+}
+
+type operation struct {
+	Index        int             `json:"index"`
+	Operation    string          `json:"operation"`
+	Change       string          `json:"change"`
+	Status       string          `json:"status"`
+	Passed       bool            `json:"passed"`
+	ResultFile   string          `json:"result_file"`
+	DocumentFile string          `json:"document_file"`
+	ArtifactFile string          `json:"artifact_file"`
+	Error        json.RawMessage `json:"error"`
+	ErrorCode    contextir.Code  `json:"error_code"`
+	Calls        []call          `json:"calls"`
+}
+
+type recordedCase struct {
+	ID         string          `json:"case_id"`
+	Brief      compiler.Brief  `json:"brief"`
+	Options    recordedOptions `json:"options"`
+	Operations []operation     `json:"operations"`
+}
+
+type recordedOptions struct {
+	Profile          h3.Profile                   `json:"profile"`
+	Frame            compiler.FramePolicy         `json:"frame_policy"`
+	Failure          compiler.FailurePolicy       `json:"failure_policy"`
+	StructureRetries *int                         `json:"max_structure_retries"`
+	PlannerRetries   *int                         `json:"planner_max_retries"`
+	Scope            compiler.ScopeConflictPolicy `json:"scope_conflict_policy"`
+	Clarification    compiler.ClarificationPolicy `json:"clarification_policy"`
+	Partial          *bool                        `json:"allow_partial_perception"`
+	ImageIncludeCard *bool                        `json:"image_include_card"`
+	ImageMaxRetries  *int                         `json:"image_max_retries"`
+}
+
+func actualCompilerOptions(input fixtureCase, options recordedOptions) (compiler.Options, deepseek.PerceptionOptions, error) {
+	if input.Clarification == "" {
+		input.Clarification = compiler.ClarificationRequire
+	}
+	profile := h3.OfficialProfile()
+	switch input.Profile {
+	case "", "official", h3.OfficialProfile().Name:
+	case "comfy", h3.ComfyUIProfile().Name:
+		profile = h3.ComfyUIProfile()
+	default:
+		return compiler.Options{}, deepseek.PerceptionOptions{}, errors.New("explicit fixture profile is unsupported")
+	}
+	if !equalValue(options.Profile, profile) || options.Frame != compiler.FramePolicySnapUp || options.Failure != compiler.FailurePolicyFail || options.Scope != compiler.ScopeConflictSuppliedWins || options.Clarification != input.Clarification || options.Partial == nil || *options.Partial != input.AllowPartial || options.StructureRetries == nil || options.PlannerRetries == nil || *options.StructureRetries < 0 || *options.StructureRetries > 3 || *options.PlannerRetries < 0 || *options.PlannerRetries > 3 || options.ImageIncludeCard == nil || !*options.ImageIncludeCard || options.ImageMaxRetries == nil || *options.ImageMaxRetries != 1 {
+		return compiler.Options{}, deepseek.PerceptionOptions{}, errors.New("recorded profile/options are missing, unsupported or disagree with explicit fixture")
+	}
+	if input.RetryLimits != nil && (input.RetryLimits.Structure == nil || input.RetryLimits.Planner == nil || *input.RetryLimits.Structure < 0 || *input.RetryLimits.Structure > 3 || *input.RetryLimits.Planner < 0 || *input.RetryLimits.Planner > 3 || *input.RetryLimits.Structure != *options.StructureRetries || *input.RetryLimits.Planner != *options.PlannerRetries) {
+		return compiler.Options{}, deepseek.PerceptionOptions{}, errors.New("explicit fixture retry override differs from actual recorded options")
+	}
+	return compiler.Options{Profile: options.Profile, FramePolicy: options.Frame, FailurePolicy: options.Failure, ScopeConflictPolicy: options.Scope, ClarificationPolicy: options.Clarification, MaxStructureRetries: *options.StructureRetries, Planner: planner.Options{MaxRetries: *options.PlannerRetries, AllowPartialPerception: *options.Partial}}, deepseek.PerceptionOptions{IncludeCard: *options.ImageIncludeCard, MaxRetries: *options.ImageMaxRetries}, nil
+}
+
+type liveReport struct {
+	Schema           string         `json:"schema"`
+	BinarySHA256     string         `json:"binary_sha256"`
+	FixtureFile      string         `json:"fixture_file"`
+	FixtureSHA256    string         `json:"fixture_sha256"`
+	StructureRetries *int           `json:"max_structure_retries"`
+	PlannerRetries   *int           `json:"max_planner_retries"`
+	Cases            []recordedCase `json:"cases"`
+}
+
+type responseRecord struct {
+	Response contextir.ModelResponse `json:"response"`
+	Rejected string                  `json:"rejected_output"`
+	Error    *safeError              `json:"error"`
+	Images   []struct {
+		SHA256        string `json:"sha256"`
+		FixtureSHA256 string `json:"fixture_sha256"`
+		Detail        string `json:"detail"`
+	} `json:"images"`
+}
+
+type replay struct {
+	Root        string
+	Operation   operation
+	Position    int
+	Mismatch    error
+	MediaHashes map[string]bool
+}
+
+func digest(data []byte) string {
+	hash := sha256.Sum256(data)
+	return hex.EncodeToString(hash[:])
+}
+
+func readJSON(path string, value any) error {
+	data, err := os.ReadFile(path)
+	if err != nil {
+		return errors.New("evidence file is unavailable")
+	}
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	if err := decoder.Decode(value); err != nil {
+		return errors.New("evidence JSON is malformed")
+	}
+	var extra any
+	if decoder.Decode(&extra) != io.EOF {
+		return errors.New("evidence contains trailing or malformed JSON")
+	}
+	return nil
+}
+
+func relativeFile(root, relative string) (string, error) {
+	if relative == "" || filepath.IsAbs(relative) || filepath.Clean(relative) != relative || relative == "." || relative == ".." || strings.HasPrefix(relative, ".."+string(filepath.Separator)) {
+		return "", errors.New("evidence path is not a clean relative path")
+	}
+	canonicalRoot, err := filepath.EvalSymlinks(root)
+	if err != nil {
+		return "", errors.New("evidence root is unavailable")
+	}
+	path := filepath.Join(canonicalRoot, relative)
+	resolved, err := filepath.EvalSymlinks(path)
+	if err != nil || resolved != path {
+		return "", errors.New("evidence file is missing or indirect")
+	}
+	info, err := os.Stat(path)
+	if err != nil || !info.Mode().IsRegular() {
+		return "", errors.New("evidence is not a regular file")
+	}
+	return path, nil
+}
+
+func readRelative(root, relative string, value any) error {
+	path, err := relativeFile(root, relative)
+	if err != nil {
+		return err
+	}
+	return readJSON(path, value)
+}
+
+// A caller-selected media fixture may legitimately live beside its input
+// directory (for example ../third_party/...). This is distinct from a recording
+// member, which must stay inside the recording root. Its exact bytes are still
+// pinned by the explicit fixture SHA before any replayed image call is made.
+func explicitMediaFile(root, relative string) (string, error) {
+	if relative == "" || filepath.IsAbs(relative) {
+		return "", errors.New("media requires an explicit relative fixture path")
+	}
+	path := filepath.Clean(filepath.Join(root, relative))
+	info, err := os.Stat(path)
+	if err != nil || !info.Mode().IsRegular() {
+		return "", errors.New("explicit media fixture is unavailable or nonregular")
+	}
+	return path, nil
+}
+
+func resolveFixtureImage(root, relative, expectedSHA256 string) (deepseek.Image, error) {
+	path, err := explicitMediaFile(root, relative)
+	if err != nil {
+		return deepseek.Image{}, err
+	}
+	data, err := os.ReadFile(path)
+	if err != nil || len(data) > 32<<20 || digest(data) != expectedSHA256 {
+		return deepseek.Image{}, errors.New("local image fixture hash differs or exceeds the producer size limit")
+	}
+	return deepseek.Image{URI: "data:" + http.DetectContentType(data) + ";base64," + base64.StdEncoding.EncodeToString(data), Detail: "original"}, nil
+}
+
+func equalJSON(a, b []byte) bool {
+	var left, right any
+	ld, rd := json.NewDecoder(bytes.NewReader(a)), json.NewDecoder(bytes.NewReader(b))
+	ld.UseNumber()
+	rd.UseNumber()
+	return ld.Decode(&left) == nil && rd.Decode(&right) == nil && reflect.DeepEqual(left, right)
+}
+
+func equalValue(a, b any) bool {
+	left, le := json.Marshal(a)
+	right, re := json.Marshal(b)
+	return le == nil && re == nil && equalJSON(left, right)
+}
+
+func (r *replay) Generate(ctx context.Context, request contextir.ModelRequest) (contextir.ModelResponse, error) {
+	return r.GenerateWithImages(ctx, request, nil)
+}
+
+func (r *replay) fail(reason string) (contextir.ModelResponse, error) {
+	r.Mismatch = errors.New(reason)
+	return contextir.ModelResponse{UsageInvalid: true}, r.Mismatch
+}
+
+func (r *replay) GenerateWithImages(ctx context.Context, request contextir.ModelRequest, images []deepseek.Image) (contextir.ModelResponse, error) {
+	if err := ctx.Err(); err != nil {
+		return contextir.ModelResponse{UsageInvalid: true}, err
+	}
+	if r.Mismatch != nil {
+		return contextir.ModelResponse{UsageInvalid: true}, r.Mismatch
+	}
+	if r.Position >= len(r.Operation.Calls) {
+		return r.fail("production requested an unrecorded model call")
+	}
+	entry := r.Operation.Calls[r.Position]
+	if entry.Index != r.Position+1 || entry.Stage != request.Stage {
+		return r.fail("recorded call order or stage differs")
+	}
+	var expected contextir.ModelRequest
+	if err := readRelative(r.Root, entry.RequestFile, &expected); err != nil {
+		return r.fail("recorded request could not be read")
+	}
+	if request.Stage != expected.Stage || request.System != expected.System || !equalJSON(request.Input, expected.Input) || !equalJSON(request.ResponseSchema, expected.ResponseSchema) {
+		return r.fail("production stage/system/input/schema differs; response reuse prohibited")
+	}
+	var observed struct {
+		Images []deepseek.Image `json:"images"`
+	}
+	if entry.ImagesFile != "" {
+		if err := readRelative(r.Root, entry.ImagesFile, &observed); err != nil {
+			return r.fail("recorded image input could not be read")
+		}
+	} else if len(images) != 0 {
+		return r.fail("image input has no recorded actual conditioning")
+	}
+	if len(images) != len(observed.Images) {
+		return r.fail("image conditioning count differs")
+	}
+	for index := range images {
+		if images[index] != observed.Images[index] {
+			return r.fail("actual image conditioning bytes/detail differ")
+		}
+	}
+	var response responseRecord
+	if err := readRelative(r.Root, entry.ResponseFile, &response); err != nil {
+		return r.fail("complete recorded model response could not be read")
+	}
+	usageValid := !response.Response.UsageInvalid && response.Response.Usage.InputTokens >= 0 && response.Response.Usage.OutputTokens >= 0
+	if entry.Model != response.Response.Model || entry.Usage != response.Response.Usage || entry.UsageValid != usageValid {
+		return r.fail("recorded call accounting differs from the complete response")
+	}
+	response.Response.RejectedOutput = response.Rejected
+	if len(images) != len(response.Images) {
+		return r.fail("recorded image provenance count differs")
+	}
+	for index, image := range images {
+		metadata := response.Images[index]
+		_, encoded, ok := strings.Cut(image.URI, ",")
+		actual, err := base64.StdEncoding.DecodeString(encoded)
+		if !ok || err != nil || metadata.SHA256 != digest([]byte(image.URI)) || metadata.Detail != image.Detail || metadata.FixtureSHA256 != digest(actual) {
+			return r.fail("recorded image hashes do not match actual conditioning bytes")
+		}
+		if !r.MediaHashes[metadata.FixtureSHA256] {
+			return r.fail("image conditioning has no original fixture behind it")
+		}
+	}
+	if entry.OutputFile != "" {
+		outputPath, err := relativeFile(r.Root, entry.OutputFile)
+		if err != nil {
+			return r.fail("recorded response output is unavailable")
+		}
+		output, err := os.ReadFile(outputPath)
+		if err != nil || !equalJSON(output, response.Response.JSON) {
+			return r.fail("recorded output differs from complete response")
+		}
+	} else {
+		// The recorder writes an output file only for a nonempty original
+		// RawMessage. Encoding a nil RawMessage in the complete response emits
+		// JSON null; decoding that packet yields the four bytes "null". The
+		// absent output file plus typed failure distinguishes this from an
+		// actual model JSON value null, whose output file must still be checked.
+		if len(response.Response.JSON) != 0 && !bytes.Equal(bytes.TrimSpace(response.Response.JSON), []byte("null")) {
+			return r.fail("nonempty recorded response has no original output file")
+		}
+		if response.Error == nil || response.Error.Code == "" {
+			return r.fail("recorded absent output lacks its typed failed-call contract")
+		}
+		response.Response.JSON = nil
+	}
+	r.Position++
+	if response.Error != nil {
+		if response.Error.Code == "" {
+			return r.fail("recorded failed call lacks its typed error contract")
+		}
+		return response.Response, &contextir.Error{Code: response.Error.Code, Stage: response.Error.Stage, Issues: response.Error.Issues}
+	}
+	return response.Response, nil
+}
+
+func persisted(result compiler.Result, directory string) (compiler.Result, error) {
+	var decoded compiler.Result
+	if err := os.Mkdir(directory, 0700); err != nil {
+		return decoded, errors.New("could not create new persistence directory")
+	}
+	encoded, err := json.Marshal(result)
+	if err != nil {
+		return decoded, err
+	}
+	path := filepath.Join(directory, "result.json")
+	if err := os.WriteFile(path, encoded, 0600); err != nil {
+		return decoded, err
+	}
+	if err := readJSON(path, &decoded); err != nil {
+		return decoded, err
+	}
+	if !equalValue(result, decoded) {
+		return decoded, errors.New("saved Result changed after disk round trip")
+	}
+	if result.Status != "compiled" {
+		return decoded, nil
+	}
+	document, err := contextir.Encode(result.Document)
+	if err != nil {
+		return decoded, err
+	}
+	path = filepath.Join(directory, "document.json")
+	if err := os.WriteFile(path, document, 0600); err != nil {
+		return decoded, err
+	}
+	file, err := os.Open(path)
+	if err != nil {
+		return decoded, err
+	}
+	restored, decodeErr := contextir.Decode(file)
+	closeErr := file.Close()
+	if decodeErr != nil || closeErr != nil {
+		return decoded, errors.New("saved Document could not be decoded")
+	}
+	if !equalValue(restored, result.Document) {
+		return decoded, errors.New("saved Document changed after disk round trip")
+	}
+	artifact, err := h3.Compile(restored, result.Artifact.Profile)
+	if err != nil || !equalValue(artifact, result.Artifact) {
+		return decoded, errors.New("saved Document did not reproduce the exact artifact")
+	}
+	decoded.Document = restored
+	return decoded, nil
+}
+
+func operationErrorMatches(expected operation, actual error) bool {
+	if len(expected.Error) == 0 || bytes.Equal(expected.Error, []byte("null")) {
+		return actual == nil && expected.ErrorCode == ""
+	}
+	if actual == nil {
+		return false
+	}
+	var typed *contextir.Error
+	if !errors.As(actual, &typed) || typed == nil {
+		return false
+	}
+	var observed safeError
+	if json.Unmarshal(expected.Error, &observed) == nil && observed.Code != "" {
+		return observed.Code == typed.Code && observed.Stage == typed.Stage && equalValue(observed.Issues, typed.Issues)
+	}
+	return expected.ErrorCode != "" && expected.ErrorCode == typed.Code
+}
+
+func runCase(input fixtureCase, recorded recordedCase, root, fixtureRoot, output string) (map[string]any, error) {
+	if (input.Brief == nil) == (input.Original == nil) {
+		return nil, errors.New("case requires exactly one Brief representation")
+	}
+	var brief compiler.Brief
+	var err error
+	if input.Brief != nil {
+		brief = *input.Brief
+	} else {
+		brief, err = compiler.FromOriginal(input.Original.Brief, input.Original.Cards)
+	}
+	if err != nil || !equalValue(brief, recorded.Brief) {
+		return nil, errors.New("recorded initial Brief differs from original fixture conversion")
+	}
+	compilerOptions, imageOptions, err := actualCompilerOptions(input, recorded.Options)
+	if err != nil {
+		return nil, err
+	}
+	model := &replay{Root: root, MediaHashes: map[string]bool{}}
+	for _, media := range input.Media {
+		model.MediaHashes[media.SHA256] = true
+	}
+	perceiver, err := deepseek.NewImagePerceiver(model, func(_ context.Context, asset contextir.Asset) (deepseek.Image, error) {
+		media, ok := input.Media[asset.ID]
+		if !ok {
+			return deepseek.Image{}, errors.New("no explicit local image fixture exists for asset")
+		}
+		return resolveFixtureImage(fixtureRoot, media.Path, media.SHA256)
+	}, imageOptions)
+	if err != nil {
+		return nil, err
+	}
+	engine, err := compiler.New(model, perceiver, compilerOptions)
+	if err != nil {
+		return nil, err
+	}
+	if len(recorded.Operations) == 0 || len(recorded.Operations) > len(input.Changes)+1 {
+		return nil, errors.New("recorded operation count differs from fixture")
+	}
+	caseOutput := filepath.Join(output, input.ID)
+	if filepath.Base(input.ID) != input.ID || input.ID == "." || input.ID == ".." {
+		return nil, errors.New("invalid case identifier")
+	}
+	if err := os.Mkdir(caseOutput, 0700); err != nil {
+		return nil, err
+	}
+	var previous compiler.Result
+	operations := []map[string]any{}
+	for index, op := range recorded.Operations {
+		if op.Index != index || (index == 0 && op.Operation != "compile") || (index > 0 && (op.Operation != "refine" || op.Change != input.Changes[index-1])) {
+			return nil, errors.New("operation order or refinement instruction differs")
+		}
+		model.Operation, model.Position, model.Mismatch = op, 0, nil
+		var actual compiler.Result
+		var compileErr error
+		if index == 0 {
+			actual, compileErr = engine.Compile(context.Background(), brief)
+		} else {
+			actual, compileErr = engine.Refine(context.Background(), previous, op.Change)
+		}
+		if model.Mismatch != nil {
+			return nil, model.Mismatch
+		}
+		if model.Position != len(op.Calls) {
+			return nil, errors.New("production did not consume every recorded model attempt")
+		}
+		if !operationErrorMatches(op, compileErr) {
+			return nil, errors.New("operation failure contract differs from live execution")
+		}
+		var expected compiler.Result
+		if err := readRelative(root, op.ResultFile, &expected); err != nil {
+			return nil, err
+		}
+		if !equalValue(actual, expected) {
+			return nil, errors.New("final Result differs from live execution")
+		}
+		previous, err = persisted(actual, filepath.Join(caseOutput, fmt.Sprintf("operation-%02d", index)))
+		if err != nil {
+			return nil, err
+		}
+		if compileErr == nil {
+			if actual.Status != "compiled" {
+				return nil, errors.New("successful operation did not publish a compiled artifact")
+			}
+			var document contextir.Document
+			var artifact h3.Artifact
+			if err := readRelative(root, op.DocumentFile, &document); err != nil {
+				return nil, err
+			}
+			if err := readRelative(root, op.ArtifactFile, &artifact); err != nil {
+				return nil, err
+			}
+			if !equalValue(actual.Document, document) || !equalValue(actual.Artifact, artifact) {
+				return nil, errors.New("published Document/Artifact files differ from actual final Result")
+			}
+		}
+		operations = append(operations, map[string]any{"index": index, "operation": op.Operation, "model_attempts": model.Position, "live_checks_passed": op.Passed, "disk_result_roundtrip": true, "disk_document_artifact_roundtrip": actual.Status == "compiled", "artifact_sha256": actual.Artifact.SHA256, "matched_live_error": compileErr != nil})
+		if compileErr != nil {
+			if index != len(recorded.Operations)-1 {
+				return nil, errors.New("live report continued refinement after a failed operation")
+			}
+			break
+		}
+	}
+	last := recorded.Operations[len(recorded.Operations)-1]
+	if len(recorded.Operations) != len(input.Changes)+1 && (len(last.Error) == 0 || bytes.Equal(last.Error, []byte("null"))) {
+		return nil, errors.New("successful live case omitted requested refinements")
+	}
+	return map[string]any{"case_id": input.ID, "operations": operations, "all_recorded_outputs_matched": true}, nil
+}
+
+func run() error {
+	runDirectory := flag.String("run-directory", "", "Absolute live run directory")
+	fixturePath := flag.String("fixture", "", "Original fixture JSON; media paths remain relative to its directory")
+	output := flag.String("output", "", "New empty persistence directory")
+	version := flag.String("module-version", "", "Exact remotely downloaded module version")
+	flag.Parse()
+	if flag.NArg() != 0 || !filepath.IsAbs(*runDirectory) || !filepath.IsAbs(*fixturePath) || !filepath.IsAbs(*output) || *version == "" {
+		return errors.New("explicit absolute evidence/persistence paths and module version are required")
+	}
+	info, ok := debug.ReadBuildInfo()
+	if !ok {
+		return errors.New("build information missing")
+	}
+	resolved := ""
+	for _, dep := range info.Deps {
+		if dep.Path == "github.com/ly95/contextir" {
+			if dep.Replace != nil {
+				return errors.New("external consumer dependency has a replacement")
+			}
+			resolved = dep.Version
+		}
+	}
+	if resolved != *version {
+		return errors.New("external consumer imports a different module version")
+	}
+	var input fixture
+	var report liveReport
+	if err := readJSON(*fixturePath, &input); err != nil {
+		return err
+	}
+	if err := readRelative(*runDirectory, "report.json", &report); err != nil {
+		return err
+	}
+	if input.Schema != "contextir-live-eval/v1" || input.SourceCommit != compiler.UpstreamRevision || report.Schema != "contextir-live-eval-report/v1" || len(input.Cases) == 0 || len(input.Cases) != len(report.Cases) {
+		return errors.New("unsupported or incomplete live suite evidence")
+	}
+	if (report.StructureRetries == nil) != (report.PlannerRetries == nil) || report.StructureRetries != nil && (*report.StructureRetries < 0 || *report.StructureRetries > 3 || *report.PlannerRetries < 0 || *report.PlannerRetries > 3) {
+		return errors.New("recorded global retry configuration is incomplete or unsupported")
+	}
+	fixtureBytes, err := os.ReadFile(*fixturePath)
+	if err != nil || digest(fixtureBytes) != report.FixtureSHA256 {
+		return errors.New("fixture bytes differ from live run")
+	}
+	copyPath, err := relativeFile(*runDirectory, report.FixtureFile)
+	if err != nil {
+		return err
+	}
+	copyBytes, err := os.ReadFile(copyPath)
+	if err != nil || !bytes.Equal(fixtureBytes, copyBytes) {
+		return errors.New("recorded input snapshot differs")
+	}
+	if err := os.Mkdir(*output, 0700); err != nil {
+		return errors.New("persistence directory must be new")
+	}
+	results := []map[string]any{}
+	seen := map[string]bool{}
+	for index, inputCase := range input.Cases {
+		if inputCase.ID == "" || seen[inputCase.ID] || report.Cases[index].ID != inputCase.ID {
+			return errors.New("live suite case identity or ordering differs")
+		}
+		seen[inputCase.ID] = true
+		if inputCase.RetryLimits == nil && report.StructureRetries != nil && (report.Cases[index].Options.StructureRetries == nil || report.Cases[index].Options.PlannerRetries == nil || *report.Cases[index].Options.StructureRetries != *report.StructureRetries || *report.Cases[index].Options.PlannerRetries != *report.PlannerRetries) {
+			return errors.New("case changed global retry budgets without explicit fixture override")
+		}
+		result, err := runCase(inputCase, report.Cases[index], *runDirectory, filepath.Dir(*fixturePath), *output)
+		if err != nil {
+			return fmt.Errorf("case %d: %w", index+1, err)
+		}
+		results = append(results, result)
+	}
+	return json.NewEncoder(os.Stdout).Encode(map[string]any{"schema": "contextir-release-replay/v1", "passed": true, "module_version": resolved, "go_version": info.GoVersion, "live_binary_sha256": report.BinarySHA256, "fixture_sha256": report.FixtureSHA256, "provider_calls": 0, "cases": results, "scope": "Exact archived model/image request replay through the published Go compiler, real disk persistence, and Refine; live semantic checks are separately retained."})
+}
+
+func main() {
+	if err := run(); err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
+	}
+}

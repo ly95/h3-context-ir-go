@@ -20,6 +20,9 @@
         "metadata": {
           "$ref": "#/$defs/MediaMetadata"
         },
+        "preparation": {
+          "$ref": "#/$defs/MediaPreparation"
+        },
         "sha256": {
           "type": "string"
         },
@@ -30,6 +33,108 @@
       "required": [
         "id",
         "kind"
+      ],
+      "type": "object"
+    },
+    "AssetCard": {
+      "additionalProperties": false,
+      "properties": {
+        "analyzer_version": {
+          "type": "string"
+        },
+        "asset_id": {
+          "type": "string"
+        },
+        "camera": {
+          "type": "string"
+        },
+        "characterisation": {
+          "type": "string"
+        },
+        "composition": {
+          "enum": [
+            "",
+            "unknown",
+            "bare_plate",
+            "composed_scene"
+          ],
+          "type": "string"
+        },
+        "coverage": {
+          "$ref": "#/$defs/PerceptionCoverage"
+        },
+        "environment": {
+          "type": "string"
+        },
+        "frames_seen": {
+          "maximum": 9223372036854775807,
+          "minimum": -9223372036854775808,
+          "type": "integer"
+        },
+        "framing": {
+          "type": "string"
+        },
+        "is_reference_sheet": {
+          "type": "boolean"
+        },
+        "language": {
+          "type": "string"
+        },
+        "lighting": {
+          "type": "string"
+        },
+        "model": {
+          "type": "string"
+        },
+        "motion": {
+          "type": "string"
+        },
+        "music": {
+          "type": "string"
+        },
+        "palette": {
+          "items": {
+            "type": "string"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "style": {
+          "type": "string"
+        },
+        "subjects": {
+          "items": {
+            "$ref": "#/$defs/SubjectCard"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "summary": {
+          "type": "string"
+        },
+        "timbre": {
+          "type": "string"
+        },
+        "transcript": {
+          "type": "string"
+        },
+        "visible_text": {
+          "items": {
+            "type": "string"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "asset_id",
+        "analyzer_version"
       ],
       "type": "object"
     },
@@ -68,7 +173,13 @@
             "music",
             "rhythm",
             "soundtrack",
-            "sound_effect"
+            "sound_effect",
+            "structure",
+            "placed_subject",
+            "replacement_subject",
+            "music_style",
+            "beat_reference",
+            "sfx"
           ],
           "type": "string"
         },
@@ -79,6 +190,26 @@
       "required": [
         "source",
         "role"
+      ],
+      "type": "object"
+    },
+    "AudioCue": {
+      "additionalProperties": false,
+      "properties": {
+        "language": {
+          "type": "string"
+        },
+        "reference_id": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "reference_id",
+        "language",
+        "text"
       ],
       "type": "object"
     },
@@ -128,6 +259,7 @@
             "prohibition",
             "silence",
             "no_music",
+            "no_added_music",
             "no_dialogue"
           ],
           "type": "string"
@@ -150,6 +282,14 @@
           "type": "string"
         },
         "id": {
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "",
+            "speech",
+            "singing"
+          ],
           "type": "string"
         },
         "language": {
@@ -252,6 +392,15 @@
             "null"
           ]
         },
+        "loras": {
+          "items": {
+            "$ref": "#/$defs/LoRAChoice"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
         "mode": {
           "enum": [
             "t2va",
@@ -342,6 +491,9 @@
           "minimum": -9223372036854775808,
           "type": "integer"
         },
+        "audio_cue": {
+          "$ref": "#/$defs/AudioCue"
+        },
         "description": {
           "items": {
             "$ref": "#/$defs/Span"
@@ -361,7 +513,8 @@
             "camera",
             "sound",
             "dialogue",
-            "visible_text"
+            "visible_text",
+            "audio_cue"
           ],
           "type": "string"
         },
@@ -382,6 +535,12 @@
         },
         "asset_id": {
           "type": "string"
+        },
+        "card": {
+          "$ref": "#/$defs/AssetCard"
+        },
+        "coverage": {
+          "$ref": "#/$defs/PerceptionCoverage"
         },
         "facts": {
           "items": {
@@ -415,6 +574,9 @@
     "Fact": {
       "additionalProperties": false,
       "properties": {
+        "analyzer_version": {
+          "type": "string"
+        },
         "id": {
           "type": "string"
         },
@@ -452,6 +614,72 @@
       ],
       "type": "object"
     },
+    "LoRAChoice": {
+      "additionalProperties": false,
+      "properties": {
+        "checkpoint": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "registry_revision": {
+          "type": "string"
+        },
+        "strength": {
+          "type": "number"
+        },
+        "triggers": {
+          "items": {
+            "$ref": "#/$defs/LoRATrigger"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "version": {
+          "type": "string"
+        },
+        "weights_sha256": {
+          "type": "string"
+        },
+        "weights_uri": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "weights_sha256",
+        "weights_uri",
+        "checkpoint",
+        "strength",
+        "triggers"
+      ],
+      "type": "object"
+    },
+    "LoRATrigger": {
+      "additionalProperties": false,
+      "properties": {
+        "count": {
+          "maximum": 100,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "slot": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "text",
+        "count",
+        "slot"
+      ],
+      "type": "object"
+    },
     "MediaMetadata": {
       "additionalProperties": false,
       "properties": {
@@ -475,6 +703,99 @@
         }
       },
       "required": [],
+      "type": "object"
+    },
+    "MediaPreparation": {
+      "additionalProperties": false,
+      "properties": {
+        "frames": {
+          "maximum": 9223372036854775807,
+          "minimum": -9223372036854775808,
+          "type": "integer"
+        },
+        "height": {
+          "maximum": 9223372036854775807,
+          "minimum": -9223372036854775808,
+          "type": "integer"
+        },
+        "sizing": {
+          "enum": [
+            "",
+            "match",
+            "max"
+          ],
+          "type": "string"
+        },
+        "width": {
+          "maximum": 9223372036854775807,
+          "minimum": -9223372036854775808,
+          "type": "integer"
+        }
+      },
+      "required": [],
+      "type": "object"
+    },
+    "PerceptionCoverage": {
+      "additionalProperties": false,
+      "properties": {
+        "absent_tracks": {
+          "items": {
+            "enum": [
+              "visual",
+              "audio"
+            ],
+            "type": "string"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "intervals": {
+          "items": {
+            "$ref": "#/$defs/Interval"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "sample_times_ms": {
+          "items": {
+            "maximum": 9223372036854775807,
+            "minimum": -9223372036854775808,
+            "type": "integer"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "status": {
+          "enum": [
+            "complete",
+            "partial"
+          ],
+          "type": "string"
+        },
+        "tracks": {
+          "items": {
+            "enum": [
+              "visual",
+              "audio"
+            ],
+            "type": "string"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "status",
+        "tracks"
+      ],
       "type": "object"
     },
     "Rational": {
@@ -519,6 +840,12 @@
           ],
           "type": "string"
         },
+        "paired_video_id": {
+          "type": "string"
+        },
+        "replaces": {
+          "type": "string"
+        },
         "retention": {
           "enum": [
             "fully_preserved",
@@ -555,7 +882,13 @@
               "music",
               "rhythm",
               "soundtrack",
-              "sound_effect"
+              "sound_effect",
+              "structure",
+              "placed_subject",
+              "replacement_subject",
+              "music_style",
+              "beat_reference",
+              "sfx"
             ],
             "type": "string"
           },
@@ -704,6 +1037,9 @@
         "id": {
           "type": "string"
         },
+        "onscreen": {
+          "type": "boolean"
+        },
         "subject_id": {
           "type": "string"
         },
@@ -720,11 +1056,58 @@
     "Subject": {
       "additionalProperties": false,
       "properties": {
+        "attributes": {
+          "items": {
+            "type": "string"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
         "description": {
+          "type": "string"
+        },
+        "descriptor": {
           "type": "string"
         },
         "id": {
           "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "",
+            "subject",
+            "person",
+            "animal",
+            "object",
+            "environment",
+            "style",
+            "action"
+          ],
+          "type": "string"
+        },
+        "origin": {
+          "enum": [
+            "",
+            "observed",
+            "user",
+            "creative",
+            "user_symbolic"
+          ],
+          "type": "string"
+        },
+        "pose": {
+          "items": {
+            "type": "string"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "pose_licensed": {
+          "type": "boolean"
         },
         "retention": {
           "enum": [
@@ -758,11 +1141,57 @@
             "array",
             "null"
           ]
+        },
+        "taken_over_by": {
+          "type": "string"
         }
       },
       "required": [
         "id",
         "description"
+      ],
+      "type": "object"
+    },
+    "SubjectCard": {
+      "additionalProperties": false,
+      "properties": {
+        "attributes": {
+          "items": {
+            "type": "string"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "descriptor": {
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "subject",
+            "person",
+            "animal",
+            "object",
+            "environment",
+            "style",
+            "action"
+          ],
+          "type": "string"
+        },
+        "pose": {
+          "items": {
+            "type": "string"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "kind",
+        "descriptor"
       ],
       "type": "object"
     },

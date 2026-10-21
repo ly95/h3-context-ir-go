@@ -1,0 +1,96 @@
+{
+  "started_at": "2026-10-20T03:29:38Z",
+  "requested_model": "deepseek-flash",
+  "reasoning_effort": "none",
+  "max_output_tokens": 8192,
+  "planner_version": "contextir/planner/v2",
+  "cases": [
+    {
+      "id": "text-red-ball",
+      "passed": false,
+      "stage": "plan",
+      "issues": [
+        {
+          "code": "invalid_document",
+          "path": "music",
+          "message": "music conflicts with an explicit constraint"
+        },
+        {
+          "code": "invalid_document",
+          "path": "soundscape",
+          "message": "soundscape conflicts with an explicit silence constraint"
+        }
+      ],
+      "calls": [
+        {
+          "stage": "plan",
+          "model": "deepseek-flash",
+          "usage": {
+            "input_tokens": 4401,
+            "output_tokens": 504
+          },
+          "success": true
+        }
+      ],
+      "elapsed_ms": 2431
+    },
+    {
+      "id": "exact-dialogue",
+      "passed": false,
+      "stage": "plan",
+      "issues": [
+        {
+          "code": "invalid_model_output",
+          "path": "dialogue[0]",
+          "message": "Preserve the complete supplied dialogue line, including exact text, speakers, language, and delivery."
+        }
+      ],
+      "calls": [
+        {
+          "stage": "plan",
+          "model": "deepseek-flash",
+          "usage": {
+            "input_tokens": 4463,
+            "output_tokens": 624
+          },
+          "success": true
+        }
+      ],
+      "elapsed_ms": 2806
+    },
+    {
+      "id": "image-first-frame",
+      "passed": false,
+      "stage": "plan",
+      "issues": [
+        {
+          "code": "invalid_model_output",
+          "path": "subjects[0].sources[0]",
+          "message": "Use only the exact sources, roles, source intervals, and anchors authorized by Request.Bindings."
+        }
+      ],
+      "calls": [
+        {
+          "stage": "perception",
+          "model": "deepseek-flash",
+          "usage": {
+            "input_tokens": 1296,
+            "output_tokens": 214
+          },
+          "success": true
+        },
+        {
+          "stage": "plan",
+          "model": "deepseek-flash",
+          "usage": {
+            "input_tokens": 4743,
+            "output_tokens": 1006
+          },
+          "success": true
+        }
+      ],
+      "elapsed_ms": 5737
+    }
+  ],
+  "requires_semantic_review": true
+}

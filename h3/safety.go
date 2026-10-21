@@ -9,12 +9,16 @@ import (
 )
 
 var speakerToken = regexp.MustCompile(`(?i)\(S[0-9]+(?:,S[0-9]+)*\)`)
+var sectionToken = regexp.MustCompile(`(?mi)^(?:subject_definitions|summary|retention_analysis|detailed_description|integrated_multimodal_description|overall_soundscape|non_diegetic_music):`)
 
 // This is a format boundary check, not an intent classifier. Reserved protocol
 // markers must come from typed bindings and renderer code, never literal text.
 // H3 cannot escape those markers while retaining their original literal bytes.
 func checkTextProtocol(doc contextir.Document) error {
 	check := func(path, value string) error {
+		if sectionToken.MatchString(value) {
+			return profileIssue(contextir.CodeUnsupported, path, "literal text contains a reserved H3 section heading")
+		}
 		if speakerToken.MatchString(value) {
 			return profileIssue(contextir.CodeUnsupported, path, "literal text contains a reserved H3 speaker token; use typed speakers")
 		}
@@ -23,9 +27,6 @@ func checkTextProtocol(doc contextir.Document) error {
 			if strings.Contains(low, marker) {
 				return profileIssue(contextir.CodeUnsupported, path, "literal text contains a reserved H3 protocol marker; use a typed binding")
 			}
-		}
-		if strings.ContainsAny(value, "\r\n\x00") {
-			return profileIssue(contextir.CodeUnsupported, path, "this H3 profile requires single-line literal fields; content has not been normalized or truncated")
 		}
 		return nil
 	}
@@ -57,6 +58,13 @@ func checkTextProtocol(doc contextir.Document) error {
 	} {
 		if err := check(item.path, item.text); err != nil {
 			return err
+		}
+	}
+	for i, choice := range doc.LoRAs {
+		for j, trigger := range choice.Triggers {
+			if err := check(fmt.Sprintf("loras[%d].triggers[%d].text", i, j), trigger.Text); err != nil {
+				return err
+			}
 		}
 	}
 	if err := checkRich("summary", doc.Summary); err != nil {
@@ -92,7 +100,7 @@ func checkTextProtocol(doc contextir.Document) error {
 				return err
 			}
 		}
-		if strings.ContainsAny(line.Language, "[]<>") {
+		if strings.ContainsAny(line.Language, "[]<>\r\n") {
 			return profileIssue(contextir.CodeUnsupported, fmt.Sprintf("dialogue[%d].language", i), "language must fit an H3 bracketed language tag")
 		}
 	}
@@ -113,6 +121,17 @@ func checkTextProtocol(doc contextir.Document) error {
 			}
 			if strings.ContainsRune(event.VisibleText, '"') {
 				return profileIssue(contextir.CodeUnsupported, path+".visible_text", "the published H3 format has no unambiguous escape for literal double quotes inside quoted visible text")
+			}
+			if event.AudioCue != nil {
+				if err := check(path+".audio_cue.text", event.AudioCue.Text); err != nil {
+					return err
+				}
+				if err := check(path+".audio_cue.language", event.AudioCue.Language); err != nil {
+					return err
+				}
+				if strings.ContainsAny(event.AudioCue.Language, "[]<>\r\n") {
+					return profileIssue(contextir.CodeUnsupported, path+".audio_cue.language", "language must fit an H3 bracketed language tag")
+				}
 			}
 			if event.Dialogue != nil {
 				if err := check(path+".dialogue.text", event.Dialogue.Text); err != nil {

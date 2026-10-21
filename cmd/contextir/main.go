@@ -1,5 +1,6 @@
-// Command contextir validates and compiles already structured IR documents.
-// It performs no model calls, media downloads, or video generation.
+// Command contextir exposes deterministic IR tools and an explicitly configured
+// Brief compiler. Only brief or media perception with a selected provider makes
+// model calls; no command downloads media or renders video.
 package main
 
 import (
@@ -18,15 +19,34 @@ func main() { os.Exit(run(os.Args[1:], os.Stdin, os.Stdout, os.Stderr)) }
 
 func run(args []string, in io.Reader, out, errOut io.Writer) int {
 	if len(args) == 0 {
-		fmt.Fprintln(errOut, "usage: contextir schema | validate | compile [-profile official|comfyui] < document.json")
+		fmt.Fprintln(errOut, "usage: contextir schema | validate | compile | contract [-js] | directors | budget | tokens | check-h3 | draft | brief (use command -h for flags)")
 		return 2
 	}
 	command := args[0]
+	switch command {
+	case "contract", "directors", "budget", "tokens", "check-h3", "checkH3":
+		return runDeterministic(command, args[1:], in, out, errOut)
+	case "brief", "draft":
+		return runBrief(command, args[1:], in, out, errOut)
+	}
 	if command == "schema" {
-		if len(args) != 1 {
+		flags := flag.NewFlagSet(command, flag.ContinueOnError)
+		flags.SetOutput(errOut)
+		typeName := flags.String("type", "document", "Schema root: document or evidence")
+		if err := flags.Parse(args[1:]); err != nil || flags.NArg() != 0 {
 			return 2
 		}
-		if _, err := fmt.Fprintln(out, string(contextir.DocumentSchema())); err != nil {
+		var schema json.RawMessage
+		switch *typeName {
+		case "document":
+			schema = contextir.DocumentSchema()
+		case "evidence":
+			schema = contextir.EvidenceSchema()
+		default:
+			fmt.Fprintln(errOut, "unsupported schema type")
+			return 2
+		}
+		if _, err := fmt.Fprintln(out, string(schema)); err != nil {
 			return 1
 		}
 		return 0
@@ -78,7 +98,7 @@ func run(args []string, in io.Reader, out, errOut io.Writer) int {
 
 func report(out io.Writer, err error) int {
 	var typed *contextir.Error
-	if errors.As(err, &typed) {
+	if errors.As(err, &typed) && typed != nil {
 		_ = json.NewEncoder(out).Encode(struct {
 			Code   contextir.Code    `json:"code"`
 			Stage  string            `json:"stage"`

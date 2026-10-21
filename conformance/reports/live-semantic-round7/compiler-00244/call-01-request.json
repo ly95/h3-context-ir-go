@@ -1,0 +1,45 @@
+{
+  "stage": "mode_conflict",
+  "system": "Read only the user's words under a counterfactual: no asset responsibility or output mode has been declared. Does this request ask the provided still image itself to become moving footage, preserving it as the starting image, or does it ask to extract its subject/style into a newly composed scene?\nThis is an intent audit, not mode selection. First distinguish the requested relationship to the INPUT IMAGE from a depicted entity's action. As a semantic counterfactual, remove the attached image: a complete independent scene-action request does not thereby instruct that image itself to become a frame. An image-directed operation instead depends on the input image being its object, or expressly binds that input as a first/last frame. ordinary_scene_action describes what a person/object does in the proposed scene, without instructing that the supplied image itself become footage. The mere presence of an attachment does not turn such an action into image animation. image_as_moving_frame requires a semantically image-directed instruction: the input still/photo itself is to become the moving footage. This does not require spelling out exact pixels, opening frame or first frame. A deictic request to animate the supplied still itself expresses that relationship even without those technical words. image_as_content extracts depicted person/object/style for a newly composed scene. unspecified has no clear relationship.\nDo not assume that the image is a plate, storyboard or contact sheet; no such role has been supplied. Interpret the complete sentence semantically, without keyword lists. Return anchor_instruction_present true ONLY for image_as_moving_frame. Its exact source_quote must support the relationship to the supplied image itself, not merely quote a person's or vehicle's physical action. For all other relationships return false and an empty quote. Return JSON only.",
+  "input": {
+    "diagnostics": null,
+    "image_count": 1,
+    "intent": "Animate this photo so the car pulls forward out of the dark."
+  },
+  "response_schema": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+      "input_relationship",
+      "anchor_instruction_present",
+      "source_quote",
+      "confidence",
+      "reason"
+    ],
+    "properties": {
+      "input_relationship": {
+        "type": "string",
+        "enum": [
+          "image_as_moving_frame",
+          "image_as_content",
+          "ordinary_scene_action",
+          "unspecified"
+        ]
+      },
+      "anchor_instruction_present": {
+        "type": "boolean"
+      },
+      "source_quote": {
+        "type": "string"
+      },
+      "confidence": {
+        "type": "number",
+        "minimum": 0,
+        "maximum": 1
+      },
+      "reason": {
+        "type": "string"
+      }
+    }
+  }
+}

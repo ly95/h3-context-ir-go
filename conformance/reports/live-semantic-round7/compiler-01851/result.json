@@ -1,0 +1,2003 @@
+{
+  "case_id": "compiler-01851",
+  "input_sha256": "3fb8bdc4932e147b9f22a9675f19e4843627d32b1af1fd9c907a9ff9f0ecf962",
+  "status": "proposed",
+  "calls": [
+    {
+      "stage": "scope",
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 1205,
+        "output_tokens": 148
+      },
+      "usage_valid": true,
+      "images": 0
+    },
+    {
+      "stage": "rendering_permission",
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 433,
+        "output_tokens": 167
+      },
+      "usage_valid": true,
+      "images": 0
+    },
+    {
+      "stage": "medium",
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 1542,
+        "output_tokens": 288
+      },
+      "usage_valid": true,
+      "images": 0
+    },
+    {
+      "stage": "identity_requirements",
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 3155,
+        "output_tokens": 5271
+      },
+      "usage_valid": true,
+      "images": 0
+    },
+    {
+      "stage": "licence",
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 3461,
+        "output_tokens": 1090
+      },
+      "usage_valid": true,
+      "images": 0
+    },
+    {
+      "stage": "structure",
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 6427,
+        "output_tokens": 801
+      },
+      "usage_valid": true,
+      "images": 0
+    }
+  ],
+  "elapsed_ms": 41232,
+  "result": {
+    "usage_complete": true,
+    "clarification_policy": "continue_with_recorded_choice",
+    "mode_decision": {
+      "clarification_policy": "continue_with_recorded_choice",
+      "confidence_kind": "routing_policy",
+      "aspect_mismatch": false,
+      "needs_clarification": false,
+      "mode": "ref2va",
+      "confidence": 1,
+      "rule": "12.2#1",
+      "signals": [
+        "Mode follows explicit structured choices and media socket requirements."
+      ]
+    },
+    "scope_decision": {
+      "conflict_policy": "supplied_content_wins",
+      "requested": {
+        "speech": false,
+        "music": false,
+        "onscreen_text": false,
+        "magnitude": ""
+      },
+      "forbidden": {
+        "speech": false,
+        "music": false,
+        "onscreen_text": false,
+        "magnitude": ""
+      },
+      "allowed": {
+        "speech": false,
+        "music": true,
+        "onscreen_text": false,
+        "magnitude": "measured"
+      },
+      "dialogue": [],
+      "onscreen_text": [],
+      "reasoning": "The intent 'swap them both' is a pure subject-replacement edit instruction referencing two replacement_subject assets. It contains no request for speech, singing, music, or visible lettering, and no prohibition of any content class. No dialogue or onscreen text is supplied or implied.",
+      "calls": [
+        {
+          "stage": "scope",
+          "attempt": 1,
+          "model": "deepseek-flash",
+          "usage": {
+            "input_tokens": 1205,
+            "output_tokens": 148
+          },
+          "valid": true
+        }
+      ]
+    },
+    "licence": {
+      "reference_permissions": {
+        "action": true,
+        "framing": true,
+        "lighting": true,
+        "medium": true,
+        "palette": true,
+        "wardrobe": true
+      },
+      "medium_decision": {
+        "rendering_permission": {
+          "kind": "preserve",
+          "disposition": "preserve",
+          "operation_quote": "",
+          "target": "",
+          "reasoning": "The request \"swap them both\" does not expressly authorize transforming or reinterpreting the attached visual reference's rendering, nor does it specify a target style or medium for the result. It is too underspecified to constitute a rendering conversion.",
+          "calls": [
+            {
+              "stage": "rendering_permission",
+              "attempt": 1,
+              "model": "deepseek-flash",
+              "usage": {
+                "input_tokens": 433,
+                "output_tokens": 167
+              },
+              "valid": true
+            }
+          ]
+        },
+        "disposition": "preserve",
+        "operation_quote": "",
+        "target": "",
+        "requested_style": "",
+        "reference_medium": "live-action",
+        "requested_medium": "",
+        "treatments": [],
+        "reasoning": "The edit source is a live-action cinematic clip, and the request only swaps both replacement subjects without authorizing a rendering-family or style change. No requested medium or treatment is specified, so the reference rendering remains preserved.",
+        "calls": [
+          {
+            "stage": "rendering_permission",
+            "attempt": 1,
+            "model": "deepseek-flash",
+            "usage": {
+              "input_tokens": 433,
+              "output_tokens": 167
+            },
+            "valid": true
+          },
+          {
+            "stage": "medium",
+            "attempt": 1,
+            "model": "deepseek-flash",
+            "usage": {
+              "input_tokens": 1542,
+              "output_tokens": 288
+            },
+            "valid": true
+          }
+        ]
+      },
+      "identity": [
+        {
+          "descriptor_source": "request",
+          "target_mention": "them both",
+          "kind": "person",
+          "claims": [
+            {
+              "dimension": "identity",
+              "value": "the young man",
+              "quote": "swap them both"
+            }
+          ],
+          "label": "\u003cSubject 1\u003e",
+          "descriptor": "the young man",
+          "retained_attributes": [
+            "short white hair",
+            "a bright yellow raincoat"
+          ],
+          "requested_attributes": [],
+          "request_quote": "swap them both",
+          "wardrobe_attributes": [
+            "a bright yellow raincoat"
+          ]
+        },
+        {
+          "descriptor_source": "request",
+          "target_mention": "them both",
+          "kind": "person",
+          "claims": [
+            {
+              "dimension": "identity",
+              "value": "the elderly woman",
+              "quote": "swap them both"
+            }
+          ],
+          "label": "\u003cSubject 2\u003e",
+          "descriptor": "the elderly woman",
+          "retained_attributes": [
+            "a blue coat"
+          ],
+          "requested_attributes": [],
+          "request_quote": "swap them both",
+          "wardrobe_attributes": [
+            "a blue coat"
+          ]
+        },
+        {
+          "descriptor_source": "reference",
+          "kind": "person",
+          "label": "\u003cSubject 3\u003e",
+          "descriptor": "the bearded man",
+          "retained_attributes": [
+            "a red plaid flannel shirt"
+          ],
+          "requested_attributes": [],
+          "request_quote": "",
+          "wardrobe_attributes": [
+            "a red plaid flannel shirt"
+          ]
+        },
+        {
+          "descriptor_source": "reference",
+          "kind": "object",
+          "label": "\u003cSubject 4\u003e",
+          "descriptor": "the hammer",
+          "retained_attributes": [
+            "a yellow and black handle"
+          ],
+          "requested_attributes": [],
+          "request_quote": "",
+          "wardrobe_attributes": []
+        }
+      ],
+      "governs": {
+        "action": "reference",
+        "framing": "reference",
+        "lighting": "reference",
+        "medium": "reference",
+        "palette": "reference",
+        "wardrobe": "reference"
+      },
+      "reasons": {
+        "action": "The request “swap them both” changes identities, not what the figure is asked to do; the edit source’s existing action remains reference-governed.",
+        "framing": "“Swap them both” contains no camera composition, shot scale, viewpoint, or movement instruction; framing follows the edit source.",
+        "lighting": "No lighting instruction is given; the replacement portraits’ studio lighting and backdrop must not replace the edit source’s workshop lighting.",
+        "medium": "The medium decision preserves the live-action rendering; no rendering-family or style conversion is authorized.",
+        "palette": "No color grade or tonal treatment is requested; the edit source’s palette governs.",
+        "wardrobe": "No clothing or accessory change is requested; wardrobe follows the supplied reference appearances, not the swap wording."
+      },
+      "transform_phrase": null,
+      "transform_target": "",
+      "medium_transferred": false,
+      "style": {
+        "observed_phrase": "Live-action, cinematic, bright natural daylight from the windows",
+        "phrase": "Live-action, cinematic, bright natural daylight from the windows",
+        "source": "reference",
+        "reference_medium": "live-action",
+        "requested_medium": "",
+        "discrepancy": false,
+        "note": ""
+      },
+      "subjects": [
+        {
+          "label": "\u003cSubject 1\u003e",
+          "kind": "person",
+          "sources": [
+            "\u003cPicture 1\u003e"
+          ],
+          "descriptor": "the elderly woman",
+          "attributes": [
+            "short white hair",
+            "a bright yellow raincoat"
+          ],
+          "pose": [],
+          "pose_licensed": false,
+          "retention": "fully_preserved",
+          "retention_note": "",
+          "appears_in": [],
+          "taken_over_by": ""
+        },
+        {
+          "label": "\u003cSubject 2\u003e",
+          "kind": "person",
+          "sources": [
+            "\u003cPicture 2\u003e"
+          ],
+          "descriptor": "the young man",
+          "attributes": [
+            "a blue coat"
+          ],
+          "pose": [],
+          "pose_licensed": false,
+          "retention": "fully_preserved",
+          "retention_note": "",
+          "appears_in": [],
+          "taken_over_by": ""
+        },
+        {
+          "label": "\u003cSubject 3\u003e",
+          "kind": "person",
+          "sources": [
+            "\u003cVideo 1\u003e"
+          ],
+          "descriptor": "the bearded man",
+          "attributes": [
+            "a red plaid flannel shirt"
+          ],
+          "pose": [],
+          "pose_licensed": false,
+          "retention": "fully_preserved",
+          "retention_note": "",
+          "appears_in": [],
+          "taken_over_by": ""
+        },
+        {
+          "label": "\u003cSubject 4\u003e",
+          "kind": "object",
+          "sources": [
+            "\u003cVideo 1\u003e"
+          ],
+          "descriptor": "the hammer",
+          "attributes": [
+            "a yellow and black handle"
+          ],
+          "pose": [],
+          "pose_licensed": false,
+          "retention": "fully_preserved",
+          "retention_note": "",
+          "appears_in": [],
+          "taken_over_by": ""
+        }
+      ],
+      "calls": [
+        {
+          "stage": "rendering_permission",
+          "attempt": 1,
+          "model": "deepseek-flash",
+          "usage": {
+            "input_tokens": 433,
+            "output_tokens": 167
+          },
+          "valid": true
+        },
+        {
+          "stage": "medium",
+          "attempt": 1,
+          "model": "deepseek-flash",
+          "usage": {
+            "input_tokens": 1542,
+            "output_tokens": 288
+          },
+          "valid": true
+        },
+        {
+          "stage": "identity_requirements",
+          "attempt": 1,
+          "model": "deepseek-flash",
+          "usage": {
+            "input_tokens": 3155,
+            "output_tokens": 5271
+          },
+          "valid": true
+        },
+        {
+          "stage": "licence",
+          "attempt": 1,
+          "model": "deepseek-flash",
+          "usage": {
+            "input_tokens": 3461,
+            "output_tokens": 1090
+          },
+          "valid": true
+        }
+      ]
+    },
+    "budget": {
+      "prompt_tokens": 0,
+      "target_video_rows": 0,
+      "target_audio_rows": 0,
+      "known_reference_rows": 0,
+      "in_trained_band": false
+    },
+    "status": "proposed",
+    "version": "contextir/compiler/v1",
+    "brief": {
+      "effort": "standard",
+      "seconds_explicit": true,
+      "aspect_explicit": true,
+      "intent": "swap them both",
+      "assets": [
+        {
+          "preparation_computed": true,
+          "id": "asset-1",
+          "kind": "image",
+          "metadata": {
+            "width": 1344,
+            "height": 768,
+            "fps": {
+              "numerator": 0,
+              "denominator": 0
+            }
+          },
+          "preparation": {
+            "sizing": "match",
+            "width": 1344,
+            "height": 768
+          },
+          "role": "replacement_subject",
+          "replaces": "the bearded man",
+          "composition": "unknown",
+          "sizing": "match"
+        },
+        {
+          "preparation_computed": true,
+          "id": "asset-2",
+          "kind": "image",
+          "metadata": {
+            "width": 1344,
+            "height": 768,
+            "fps": {
+              "numerator": 0,
+              "denominator": 0
+            }
+          },
+          "preparation": {
+            "sizing": "match",
+            "width": 1344,
+            "height": 768
+          },
+          "role": "replacement_subject",
+          "replaces": "the woman who walks in at the end",
+          "composition": "unknown",
+          "sizing": "match"
+        },
+        {
+          "preparation_computed": true,
+          "id": "asset-3",
+          "kind": "video",
+          "metadata": {
+            "duration_ms": 5167,
+            "fps": {
+              "numerator": 0,
+              "denominator": 0
+            }
+          },
+          "preparation": {
+            "width": 1344,
+            "height": 768,
+            "frames": 124
+          },
+          "role": "edit_source",
+          "composition": "unknown",
+          "sizing": "match",
+          "frames": 124
+        }
+      ],
+      "seconds": 5.167,
+      "aspect": "16:9",
+      "shots": 1,
+      "creativity": "balanced",
+      "evidence": [
+        {
+          "card": {
+            "asset_id": "asset-1",
+            "summary": "a full-body studio portrait of an elderly woman in a yellow raincoat",
+            "subjects": [
+              {
+                "kind": "person",
+                "descriptor": "the elderly woman",
+                "attributes": [
+                  "short white hair",
+                  "a bright yellow raincoat"
+                ]
+              }
+            ],
+            "environment": "a seamless grey studio backdrop",
+            "lighting": "even, diffused studio lighting from the front",
+            "framing": "a full-body shot",
+            "style": "Clean, high-resolution studio photography",
+            "composition": "bare_plate",
+            "analyzer_version": "1",
+            "coverage": {
+              "status": "complete",
+              "tracks": [
+                "visual"
+              ]
+            }
+          },
+          "asset_id": "asset-1",
+          "facts": [
+            {
+              "id": "card-asset-1-1",
+              "text": "a full-body studio portrait of an elderly woman in a yellow raincoat",
+              "source": {
+                "asset_id": "asset-1",
+                "track": "visual"
+              }
+            },
+            {
+              "id": "card-asset-1-2",
+              "text": "a seamless grey studio backdrop",
+              "source": {
+                "asset_id": "asset-1",
+                "track": "visual"
+              }
+            },
+            {
+              "id": "card-asset-1-3",
+              "text": "even, diffused studio lighting from the front",
+              "source": {
+                "asset_id": "asset-1",
+                "track": "visual"
+              }
+            },
+            {
+              "id": "card-asset-1-4",
+              "text": "a full-body shot",
+              "source": {
+                "asset_id": "asset-1",
+                "track": "visual"
+              }
+            },
+            {
+              "id": "card-asset-1-5",
+              "text": "Clean, high-resolution studio photography",
+              "source": {
+                "asset_id": "asset-1",
+                "track": "visual"
+              }
+            },
+            {
+              "id": "card-asset-1-6",
+              "text": "the elderly woman",
+              "source": {
+                "asset_id": "asset-1",
+                "track": "visual"
+              }
+            },
+            {
+              "id": "card-asset-1-7",
+              "text": "short white hair",
+              "source": {
+                "asset_id": "asset-1",
+                "track": "visual"
+              }
+            },
+            {
+              "id": "card-asset-1-8",
+              "text": "a bright yellow raincoat",
+              "source": {
+                "asset_id": "asset-1",
+                "track": "visual"
+              }
+            }
+          ],
+          "analyzer_version": "1",
+          "coverage": {
+            "status": "complete",
+            "tracks": [
+              "visual"
+            ]
+          }
+        },
+        {
+          "card": {
+            "asset_id": "asset-2",
+            "summary": "a full-body studio portrait of a young man in a blue coat",
+            "subjects": [
+              {
+                "kind": "person",
+                "descriptor": "the young man",
+                "attributes": [
+                  "a blue coat"
+                ]
+              }
+            ],
+            "environment": "a seamless grey studio backdrop",
+            "lighting": "even studio lighting",
+            "framing": "a full-body shot",
+            "style": "Clean, high-resolution studio photography",
+            "composition": "bare_plate",
+            "analyzer_version": "1",
+            "coverage": {
+              "status": "complete",
+              "tracks": [
+                "visual"
+              ]
+            }
+          },
+          "asset_id": "asset-2",
+          "facts": [
+            {
+              "id": "card-asset-2-1",
+              "text": "a full-body studio portrait of a young man in a blue coat",
+              "source": {
+                "asset_id": "asset-2",
+                "track": "visual"
+              }
+            },
+            {
+              "id": "card-asset-2-2",
+              "text": "a seamless grey studio backdrop",
+              "source": {
+                "asset_id": "asset-2",
+                "track": "visual"
+              }
+            },
+            {
+              "id": "card-asset-2-3",
+              "text": "even studio lighting",
+              "source": {
+                "asset_id": "asset-2",
+                "track": "visual"
+              }
+            },
+            {
+              "id": "card-asset-2-4",
+              "text": "a full-body shot",
+              "source": {
+                "asset_id": "asset-2",
+                "track": "visual"
+              }
+            },
+            {
+              "id": "card-asset-2-5",
+              "text": "Clean, high-resolution studio photography",
+              "source": {
+                "asset_id": "asset-2",
+                "track": "visual"
+              }
+            },
+            {
+              "id": "card-asset-2-6",
+              "text": "the young man",
+              "source": {
+                "asset_id": "asset-2",
+                "track": "visual"
+              }
+            },
+            {
+              "id": "card-asset-2-7",
+              "text": "a blue coat",
+              "source": {
+                "asset_id": "asset-2",
+                "track": "visual"
+              }
+            }
+          ],
+          "analyzer_version": "1",
+          "coverage": {
+            "status": "complete",
+            "tracks": [
+              "visual"
+            ]
+          }
+        },
+        {
+          "card": {
+            "asset_id": "asset-3",
+            "summary": "a bearded man drives a nail at a workbench and turns to the camera",
+            "subjects": [
+              {
+                "kind": "person",
+                "descriptor": "the bearded man",
+                "attributes": [
+                  "a red plaid flannel shirt"
+                ]
+              },
+              {
+                "kind": "object",
+                "descriptor": "the hammer",
+                "attributes": [
+                  "a yellow and black handle"
+                ]
+              }
+            ],
+            "environment": "a wood-panelled carpentry workshop with large multi-paned windows",
+            "lighting": "bright natural daylight from the windows",
+            "framing": "a medium-wide shot",
+            "style": "Live-action, cinematic",
+            "motion": "he raises the hammer and strikes",
+            "camera": "the framing tightens on the subject",
+            "frames_seen": 3,
+            "composition": "unknown",
+            "analyzer_version": "1",
+            "coverage": {
+              "status": "partial",
+              "tracks": [
+                "visual"
+              ]
+            }
+          },
+          "asset_id": "asset-3",
+          "facts": [
+            {
+              "id": "card-asset-3-1",
+              "text": "a bearded man drives a nail at a workbench and turns to the camera",
+              "source": {
+                "asset_id": "asset-3",
+                "track": "visual"
+              }
+            },
+            {
+              "id": "card-asset-3-2",
+              "text": "a wood-panelled carpentry workshop with large multi-paned windows",
+              "source": {
+                "asset_id": "asset-3",
+                "track": "visual"
+              }
+            },
+            {
+              "id": "card-asset-3-3",
+              "text": "bright natural daylight from the windows",
+              "source": {
+                "asset_id": "asset-3",
+                "track": "visual"
+              }
+            },
+            {
+              "id": "card-asset-3-4",
+              "text": "a medium-wide shot",
+              "source": {
+                "asset_id": "asset-3",
+                "track": "visual"
+              }
+            },
+            {
+              "id": "card-asset-3-5",
+              "text": "Live-action, cinematic",
+              "source": {
+                "asset_id": "asset-3",
+                "track": "visual"
+              }
+            },
+            {
+              "id": "card-asset-3-6",
+              "text": "he raises the hammer and strikes",
+              "source": {
+                "asset_id": "asset-3",
+                "track": "visual"
+              }
+            },
+            {
+              "id": "card-asset-3-7",
+              "text": "the framing tightens on the subject",
+              "source": {
+                "asset_id": "asset-3",
+                "track": "visual"
+              }
+            },
+            {
+              "id": "card-asset-3-8",
+              "text": "the bearded man",
+              "source": {
+                "asset_id": "asset-3",
+                "track": "visual"
+              }
+            },
+            {
+              "id": "card-asset-3-9",
+              "text": "a red plaid flannel shirt",
+              "source": {
+                "asset_id": "asset-3",
+                "track": "visual"
+              }
+            },
+            {
+              "id": "card-asset-3-10",
+              "text": "the hammer",
+              "source": {
+                "asset_id": "asset-3",
+                "track": "visual"
+              }
+            },
+            {
+              "id": "card-asset-3-11",
+              "text": "a yellow and black handle",
+              "source": {
+                "asset_id": "asset-3",
+                "track": "visual"
+              }
+            }
+          ],
+          "analyzer_version": "1",
+          "limitations": [
+            "The video card was constructed from 3 sampled frames, not the entire clip."
+          ],
+          "coverage": {
+            "status": "partial",
+            "tracks": [
+              "visual"
+            ]
+          }
+        }
+      ],
+      "cards": [
+        {
+          "asset_id": "asset-1",
+          "summary": "a full-body studio portrait of an elderly woman in a yellow raincoat",
+          "subjects": [
+            {
+              "kind": "person",
+              "descriptor": "the elderly woman",
+              "attributes": [
+                "short white hair",
+                "a bright yellow raincoat"
+              ]
+            }
+          ],
+          "environment": "a seamless grey studio backdrop",
+          "lighting": "even, diffused studio lighting from the front",
+          "framing": "a full-body shot",
+          "style": "Clean, high-resolution studio photography",
+          "composition": "bare_plate",
+          "analyzer_version": "1",
+          "coverage": {
+            "status": "complete",
+            "tracks": [
+              "visual"
+            ]
+          }
+        },
+        {
+          "asset_id": "asset-2",
+          "summary": "a full-body studio portrait of a young man in a blue coat",
+          "subjects": [
+            {
+              "kind": "person",
+              "descriptor": "the young man",
+              "attributes": [
+                "a blue coat"
+              ]
+            }
+          ],
+          "environment": "a seamless grey studio backdrop",
+          "lighting": "even studio lighting",
+          "framing": "a full-body shot",
+          "style": "Clean, high-resolution studio photography",
+          "composition": "bare_plate",
+          "analyzer_version": "1",
+          "coverage": {
+            "status": "complete",
+            "tracks": [
+              "visual"
+            ]
+          }
+        },
+        {
+          "asset_id": "asset-3",
+          "summary": "a bearded man drives a nail at a workbench and turns to the camera",
+          "subjects": [
+            {
+              "kind": "person",
+              "descriptor": "the bearded man",
+              "attributes": [
+                "a red plaid flannel shirt"
+              ]
+            },
+            {
+              "kind": "object",
+              "descriptor": "the hammer",
+              "attributes": [
+                "a yellow and black handle"
+              ]
+            }
+          ],
+          "environment": "a wood-panelled carpentry workshop with large multi-paned windows",
+          "lighting": "bright natural daylight from the windows",
+          "framing": "a medium-wide shot",
+          "style": "Live-action, cinematic",
+          "motion": "he raises the hammer and strikes",
+          "camera": "the framing tightens on the subject",
+          "frames_seen": 3,
+          "composition": "unknown",
+          "analyzer_version": "1",
+          "coverage": {
+            "status": "partial",
+            "tracks": [
+              "visual"
+            ]
+          }
+        }
+      ]
+    },
+    "request": {
+      "instruction": "swap them both",
+      "mode": "ref2va",
+      "target": {
+        "duration_ms": 5167,
+        "frame_count": 124,
+        "aspect_ratio": "16:9",
+        "fps": {
+          "numerator": 24,
+          "denominator": 1
+        },
+        "width": 1344,
+        "height": 768
+      },
+      "assets": [
+        {
+          "id": "asset-1",
+          "kind": "image",
+          "metadata": {
+            "width": 1344,
+            "height": 768,
+            "fps": {
+              "numerator": 0,
+              "denominator": 0
+            }
+          },
+          "preparation": {
+            "sizing": "match",
+            "width": 1344,
+            "height": 768
+          }
+        },
+        {
+          "id": "asset-2",
+          "kind": "image",
+          "metadata": {
+            "width": 1344,
+            "height": 768,
+            "fps": {
+              "numerator": 0,
+              "denominator": 0
+            }
+          },
+          "preparation": {
+            "sizing": "match",
+            "width": 1344,
+            "height": 768
+          }
+        },
+        {
+          "id": "asset-3",
+          "kind": "video",
+          "metadata": {
+            "duration_ms": 5167,
+            "fps": {
+              "numerator": 0,
+              "denominator": 0
+            }
+          },
+          "preparation": {
+            "width": 1344,
+            "height": 768,
+            "frames": 124
+          }
+        }
+      ],
+      "bindings": [
+        {
+          "source": {
+            "asset_id": "asset-1",
+            "track": "visual"
+          },
+          "role": "replacement_subject",
+          "replaces": "the bearded man"
+        },
+        {
+          "source": {
+            "asset_id": "asset-2",
+            "track": "visual"
+          },
+          "role": "replacement_subject",
+          "replaces": "the woman who walks in at the end"
+        },
+        {
+          "source": {
+            "asset_id": "asset-3",
+            "track": "visual"
+          },
+          "role": "edit_source"
+        }
+      ],
+      "constraints": [
+        {
+          "id": "compiler-no-dialogue",
+          "kind": "no_dialogue",
+          "text": "Do not add spoken or sung lines."
+        }
+      ],
+      "allow_creative_additions": true,
+      "allow_generated_dialogue": false,
+      "pinned_shots": [
+        {
+          "id": "shot-1",
+          "start_ms": 0,
+          "end_ms": 5167
+        }
+      ],
+      "addition_scope": {
+        "dialogue": false,
+        "music": true,
+        "visible_text": false
+      }
+    },
+    "structure": {
+      "replacement_targets": {
+        "\u003cPicture 1\u003e": "\u003cSubject 3\u003e",
+        "\u003cPicture 2\u003e": ""
+      },
+      "style": "Live-action, cinematic, bright natural daylight from the windows",
+      "mode": "ref2va",
+      "assets": [
+        {
+          "asset_id": "asset-1",
+          "role": "replacement_subject",
+          "replaces": "the bearded man"
+        },
+        {
+          "asset_id": "asset-2",
+          "role": "replacement_subject",
+          "replaces": "the woman who walks in at the end"
+        },
+        {
+          "asset_id": "asset-3",
+          "role": "edit_source",
+          "replaces": ""
+        }
+      ],
+      "shots": [
+        {
+          "subjects": [
+            "\u003cSubject 1\u003e",
+            "\u003cSubject 4\u003e"
+          ],
+          "sync_sound": [
+            "hammer blows on the nail head",
+            "workshop room tone"
+          ],
+          "start_ms": 0,
+          "purpose": "develop",
+          "framing": "medium wide",
+          "action": "In the wood-panelled carpentry workshop with large multi-paned windows and bright natural daylight, the elderly woman with short white hair, now wearing the bright yellow raincoat in place of the bearded man's red plaid flannel shirt, stands at the workbench and drives a nail with the yellow-and-black-handled hammer — raising it and striking, then turning her head toward the camera as the frame tightens on her.",
+          "what_changes": "The workbench figure's identity and wardrobe change from the bearded man in flannel to the elderly woman in the yellow raincoat, while the strike continues and the framing slowly tightens.",
+          "camera": {
+            "type": "Push In",
+            "amplitude": "small",
+            "speed": "slow"
+          }
+        }
+      ],
+      "dialogue": [],
+      "onscreen_text": [],
+      "requested": {
+        "speech": false,
+        "music": false,
+        "onscreen_text": false,
+        "magnitude": ""
+      },
+      "forbidden": {
+        "speech": false,
+        "music": false,
+        "onscreen_text": false,
+        "magnitude": ""
+      },
+      "reasoning": "Request is 'swap them both': a pure subject-replacement edit on the single edit-source clip. \u003cPicture 1\u003e carries the elderly woman in a bright yellow raincoat (droppable into the live-action workshop as \u003cSubject 3\u003e, the bearded man, keeping his red plaid flannel shirt action silhouette but a new identity). \u003cPicture 2\u003e was named as replacing 'the woman who walks in at the end', a figure never observed in the supplied partial-coverage edit source, so it has no observed candidate and the map value is empty — it must not be silently bound to an unrelated leftover subject. The edit source's workshop environment, bright window daylight, hammer, hammering action and tightening framing remain reference-governed; only identity/wardrobe of the central figure changes. One continuous shot is pinned, so the whole 5167ms stays a single take with a slow push in. No speech, no visible lettering, and no music prohibition was stated; balanced permits optional score but nothing is required, so quiet conservatism keeps speech and onscreen text off."
+    },
+    "scope": {
+      "speech": false,
+      "music": true,
+      "onscreen_text": false,
+      "magnitude": "measured"
+    },
+    "document": {
+      "version": "",
+      "mode": "",
+      "target": {
+        "duration_ms": 0,
+        "aspect_ratio": "",
+        "fps": {
+          "numerator": 0,
+          "denominator": 0
+        }
+      },
+      "shots": null,
+      "soundscape": "",
+      "music": ""
+    },
+    "artifact": {
+      "version": "",
+      "compiler_version": "",
+      "format_version": "",
+      "mode": "",
+      "target": {
+        "duration_ms": 0,
+        "aspect_ratio": "",
+        "fps": {
+          "numerator": 0,
+          "denominator": 0
+        }
+      },
+      "profile": {
+        "name": "",
+        "format": "",
+        "fps": {
+          "numerator": 0,
+          "denominator": 0
+        },
+        "modes": null,
+        "limits": {
+          "pictures": 0,
+          "videos": 0,
+          "video_audio": 0,
+          "standalone_audio": 0
+        },
+        "supports_reference_frame_anchors": false,
+        "supports_source_intervals": false
+      },
+      "prompt": "",
+      "manifest": {
+        "media": null,
+        "subjects": null,
+        "references": null,
+        "speakers": null
+      },
+      "frames": 0,
+      "effective_duration_seconds": {
+        "numerator": 0,
+        "denominator": 0
+      },
+      "document_sha256": "",
+      "profile_sha256": "",
+      "prompt_sha256": "",
+      "manifest_sha256": "",
+      "sha256": ""
+    },
+    "evidence": [
+      {
+        "card": {
+          "asset_id": "asset-1",
+          "summary": "a full-body studio portrait of an elderly woman in a yellow raincoat",
+          "subjects": [
+            {
+              "kind": "person",
+              "descriptor": "the elderly woman",
+              "attributes": [
+                "short white hair",
+                "a bright yellow raincoat"
+              ]
+            }
+          ],
+          "environment": "a seamless grey studio backdrop",
+          "lighting": "even, diffused studio lighting from the front",
+          "framing": "a full-body shot",
+          "style": "Clean, high-resolution studio photography",
+          "composition": "bare_plate",
+          "analyzer_version": "1",
+          "coverage": {
+            "status": "complete",
+            "tracks": [
+              "visual"
+            ]
+          }
+        },
+        "asset_id": "asset-1",
+        "facts": [
+          {
+            "id": "card-asset-1-1",
+            "text": "a full-body studio portrait of an elderly woman in a yellow raincoat",
+            "source": {
+              "asset_id": "asset-1",
+              "track": "visual"
+            }
+          },
+          {
+            "id": "card-asset-1-2",
+            "text": "a seamless grey studio backdrop",
+            "source": {
+              "asset_id": "asset-1",
+              "track": "visual"
+            }
+          },
+          {
+            "id": "card-asset-1-3",
+            "text": "even, diffused studio lighting from the front",
+            "source": {
+              "asset_id": "asset-1",
+              "track": "visual"
+            }
+          },
+          {
+            "id": "card-asset-1-4",
+            "text": "a full-body shot",
+            "source": {
+              "asset_id": "asset-1",
+              "track": "visual"
+            }
+          },
+          {
+            "id": "card-asset-1-5",
+            "text": "Clean, high-resolution studio photography",
+            "source": {
+              "asset_id": "asset-1",
+              "track": "visual"
+            }
+          },
+          {
+            "id": "card-asset-1-6",
+            "text": "the elderly woman",
+            "source": {
+              "asset_id": "asset-1",
+              "track": "visual"
+            }
+          },
+          {
+            "id": "card-asset-1-7",
+            "text": "short white hair",
+            "source": {
+              "asset_id": "asset-1",
+              "track": "visual"
+            }
+          },
+          {
+            "id": "card-asset-1-8",
+            "text": "a bright yellow raincoat",
+            "source": {
+              "asset_id": "asset-1",
+              "track": "visual"
+            }
+          }
+        ],
+        "analyzer_version": "1",
+        "coverage": {
+          "status": "complete",
+          "tracks": [
+            "visual"
+          ]
+        }
+      },
+      {
+        "card": {
+          "asset_id": "asset-2",
+          "summary": "a full-body studio portrait of a young man in a blue coat",
+          "subjects": [
+            {
+              "kind": "person",
+              "descriptor": "the young man",
+              "attributes": [
+                "a blue coat"
+              ]
+            }
+          ],
+          "environment": "a seamless grey studio backdrop",
+          "lighting": "even studio lighting",
+          "framing": "a full-body shot",
+          "style": "Clean, high-resolution studio photography",
+          "composition": "bare_plate",
+          "analyzer_version": "1",
+          "coverage": {
+            "status": "complete",
+            "tracks": [
+              "visual"
+            ]
+          }
+        },
+        "asset_id": "asset-2",
+        "facts": [
+          {
+            "id": "card-asset-2-1",
+            "text": "a full-body studio portrait of a young man in a blue coat",
+            "source": {
+              "asset_id": "asset-2",
+              "track": "visual"
+            }
+          },
+          {
+            "id": "card-asset-2-2",
+            "text": "a seamless grey studio backdrop",
+            "source": {
+              "asset_id": "asset-2",
+              "track": "visual"
+            }
+          },
+          {
+            "id": "card-asset-2-3",
+            "text": "even studio lighting",
+            "source": {
+              "asset_id": "asset-2",
+              "track": "visual"
+            }
+          },
+          {
+            "id": "card-asset-2-4",
+            "text": "a full-body shot",
+            "source": {
+              "asset_id": "asset-2",
+              "track": "visual"
+            }
+          },
+          {
+            "id": "card-asset-2-5",
+            "text": "Clean, high-resolution studio photography",
+            "source": {
+              "asset_id": "asset-2",
+              "track": "visual"
+            }
+          },
+          {
+            "id": "card-asset-2-6",
+            "text": "the young man",
+            "source": {
+              "asset_id": "asset-2",
+              "track": "visual"
+            }
+          },
+          {
+            "id": "card-asset-2-7",
+            "text": "a blue coat",
+            "source": {
+              "asset_id": "asset-2",
+              "track": "visual"
+            }
+          }
+        ],
+        "analyzer_version": "1",
+        "coverage": {
+          "status": "complete",
+          "tracks": [
+            "visual"
+          ]
+        }
+      },
+      {
+        "card": {
+          "asset_id": "asset-3",
+          "summary": "a bearded man drives a nail at a workbench and turns to the camera",
+          "subjects": [
+            {
+              "kind": "person",
+              "descriptor": "the bearded man",
+              "attributes": [
+                "a red plaid flannel shirt"
+              ]
+            },
+            {
+              "kind": "object",
+              "descriptor": "the hammer",
+              "attributes": [
+                "a yellow and black handle"
+              ]
+            }
+          ],
+          "environment": "a wood-panelled carpentry workshop with large multi-paned windows",
+          "lighting": "bright natural daylight from the windows",
+          "framing": "a medium-wide shot",
+          "style": "Live-action, cinematic",
+          "motion": "he raises the hammer and strikes",
+          "camera": "the framing tightens on the subject",
+          "frames_seen": 3,
+          "composition": "unknown",
+          "analyzer_version": "1",
+          "coverage": {
+            "status": "partial",
+            "tracks": [
+              "visual"
+            ]
+          }
+        },
+        "asset_id": "asset-3",
+        "facts": [
+          {
+            "id": "card-asset-3-1",
+            "text": "a bearded man drives a nail at a workbench and turns to the camera",
+            "source": {
+              "asset_id": "asset-3",
+              "track": "visual"
+            }
+          },
+          {
+            "id": "card-asset-3-2",
+            "text": "a wood-panelled carpentry workshop with large multi-paned windows",
+            "source": {
+              "asset_id": "asset-3",
+              "track": "visual"
+            }
+          },
+          {
+            "id": "card-asset-3-3",
+            "text": "bright natural daylight from the windows",
+            "source": {
+              "asset_id": "asset-3",
+              "track": "visual"
+            }
+          },
+          {
+            "id": "card-asset-3-4",
+            "text": "a medium-wide shot",
+            "source": {
+              "asset_id": "asset-3",
+              "track": "visual"
+            }
+          },
+          {
+            "id": "card-asset-3-5",
+            "text": "Live-action, cinematic",
+            "source": {
+              "asset_id": "asset-3",
+              "track": "visual"
+            }
+          },
+          {
+            "id": "card-asset-3-6",
+            "text": "he raises the hammer and strikes",
+            "source": {
+              "asset_id": "asset-3",
+              "track": "visual"
+            }
+          },
+          {
+            "id": "card-asset-3-7",
+            "text": "the framing tightens on the subject",
+            "source": {
+              "asset_id": "asset-3",
+              "track": "visual"
+            }
+          },
+          {
+            "id": "card-asset-3-8",
+            "text": "the bearded man",
+            "source": {
+              "asset_id": "asset-3",
+              "track": "visual"
+            }
+          },
+          {
+            "id": "card-asset-3-9",
+            "text": "a red plaid flannel shirt",
+            "source": {
+              "asset_id": "asset-3",
+              "track": "visual"
+            }
+          },
+          {
+            "id": "card-asset-3-10",
+            "text": "the hammer",
+            "source": {
+              "asset_id": "asset-3",
+              "track": "visual"
+            }
+          },
+          {
+            "id": "card-asset-3-11",
+            "text": "a yellow and black handle",
+            "source": {
+              "asset_id": "asset-3",
+              "track": "visual"
+            }
+          }
+        ],
+        "analyzer_version": "1",
+        "limitations": [
+          "The video card was constructed from 3 sampled frames, not the entire clip."
+        ],
+        "coverage": {
+          "status": "partial",
+          "tracks": [
+            "visual"
+          ]
+        }
+      }
+    ],
+    "decisions": [
+      {
+        "field": "target",
+        "source": "computed",
+        "value": {
+          "effective_seconds": 5.166666666666667,
+          "frame_count": 124,
+          "nominal_seconds": 5.167,
+          "policy": "snap_up"
+        },
+        "explanation": "Effective timing and nominal duration are recorded separately; generated cuts use effective timing."
+      },
+      {
+        "field": "canvas",
+        "source": "computed",
+        "value": [
+          1344,
+          768
+        ],
+        "explanation": "Native short-edge canvas is aligned to 32 pixels; explicit megapixels replaces the native area budget."
+      },
+      {
+        "field": "assets.asset-1.preparation",
+        "source": "required_adapter_instruction",
+        "value": {
+          "sizing": "match",
+          "width": 1344,
+          "height": 768
+        },
+        "explanation": "These required input transforms are recorded separately from the original source metadata; the compiler has not executed media IO."
+      },
+      {
+        "field": "assets.asset-2.preparation",
+        "source": "required_adapter_instruction",
+        "value": {
+          "sizing": "match",
+          "width": 1344,
+          "height": 768
+        },
+        "explanation": "These required input transforms are recorded separately from the original source metadata; the compiler has not executed media IO."
+      },
+      {
+        "field": "assets.asset-3.preparation",
+        "source": "required_adapter_instruction",
+        "value": {
+          "width": 1344,
+          "height": 768,
+          "frames": 124
+        },
+        "explanation": "These required input transforms are recorded separately from the original source metadata; the compiler has not executed media IO."
+      },
+      {
+        "field": "execution",
+        "source": "explicit_adapter_policy",
+        "value": {
+          "effort": "standard"
+        },
+        "explanation": "The injected adapters and explicit compiler repair configuration implement standard effort."
+      },
+      {
+        "field": "mode",
+        "source": "12.2#1",
+        "value": {
+          "clarification_policy": "continue_with_recorded_choice",
+          "confidence_kind": "routing_policy",
+          "aspect_mismatch": false,
+          "needs_clarification": false,
+          "mode": "ref2va",
+          "confidence": 1,
+          "rule": "12.2#1",
+          "signals": [
+            "Mode follows explicit structured choices and media socket requirements."
+          ]
+        },
+        "explanation": "Mode follows the production typed routing contract; publication capabilities are checked separately."
+      },
+      {
+        "field": "replacement_targets",
+        "source": "typed_identity_resolution",
+        "value": {
+          "targets": {
+            "\u003cPicture 1\u003e": "\u003cSubject 3\u003e",
+            "\u003cPicture 2\u003e": ""
+          },
+          "bindings": [
+            {
+              "picture": "\u003cPicture 1\u003e",
+              "target": "\u003cSubject 3\u003e",
+              "compatible": [
+                "\u003cSubject 3\u003e"
+              ],
+              "unsupported_qualifier": false,
+              "status": "observed_unique",
+              "reason": "The typed source reading establishes a unique compatible figure, or the caller names an unobserved one."
+            },
+            {
+              "picture": "\u003cPicture 2\u003e",
+              "target": "",
+              "compatible": [
+                "\u003cSubject 3\u003e"
+              ],
+              "unsupported_qualifier": false,
+              "status": "user_symbolic",
+              "reason": "The typed source reading establishes a unique compatible figure, or the caller names an unobserved one."
+            }
+          ]
+        },
+        "explanation": "Named figures unsupported by observed identity evidence remain user-symbolic; source look and leftover identity are never guessed."
+      },
+      {
+        "field": "content_scope",
+        "source": "typed_request_interpretation",
+        "value": {
+          "conflict_policy": "supplied_content_wins",
+          "requested": {
+            "speech": false,
+            "music": false,
+            "onscreen_text": false,
+            "magnitude": ""
+          },
+          "forbidden": {
+            "speech": false,
+            "music": false,
+            "onscreen_text": false,
+            "magnitude": ""
+          },
+          "allowed": {
+            "speech": false,
+            "music": true,
+            "onscreen_text": false,
+            "magnitude": "measured"
+          },
+          "dialogue": [],
+          "onscreen_text": [],
+          "reasoning": "The intent 'swap them both' is a pure subject-replacement edit instruction referencing two replacement_subject assets. It contains no request for speech, singing, music, or visible lettering, and no prohibition of any content class. No dialogue or onscreen text is supplied or implied.",
+          "calls": [
+            {
+              "stage": "scope",
+              "attempt": 1,
+              "model": "deepseek-flash",
+              "usage": {
+                "input_tokens": 1205,
+                "output_tokens": 148
+              },
+              "valid": true
+            }
+          ]
+        },
+        "explanation": "Caller requests and prohibitions are interpreted before code applies the explicit creativity level."
+      },
+      {
+        "field": "reference_licence",
+        "source": "typed_attribute_precedence",
+        "value": {
+          "reference_permissions": {
+            "action": true,
+            "framing": true,
+            "lighting": true,
+            "medium": true,
+            "palette": true,
+            "wardrobe": true
+          },
+          "medium_decision": {
+            "rendering_permission": {
+              "kind": "preserve",
+              "disposition": "preserve",
+              "operation_quote": "",
+              "target": "",
+              "reasoning": "The request \"swap them both\" does not expressly authorize transforming or reinterpreting the attached visual reference's rendering, nor does it specify a target style or medium for the result. It is too underspecified to constitute a rendering conversion.",
+              "calls": [
+                {
+                  "stage": "rendering_permission",
+                  "attempt": 1,
+                  "model": "deepseek-flash",
+                  "usage": {
+                    "input_tokens": 433,
+                    "output_tokens": 167
+                  },
+                  "valid": true
+                }
+              ]
+            },
+            "disposition": "preserve",
+            "operation_quote": "",
+            "target": "",
+            "requested_style": "",
+            "reference_medium": "live-action",
+            "requested_medium": "",
+            "treatments": [],
+            "reasoning": "The edit source is a live-action cinematic clip, and the request only swaps both replacement subjects without authorizing a rendering-family or style change. No requested medium or treatment is specified, so the reference rendering remains preserved.",
+            "calls": [
+              {
+                "stage": "rendering_permission",
+                "attempt": 1,
+                "model": "deepseek-flash",
+                "usage": {
+                  "input_tokens": 433,
+                  "output_tokens": 167
+                },
+                "valid": true
+              },
+              {
+                "stage": "medium",
+                "attempt": 1,
+                "model": "deepseek-flash",
+                "usage": {
+                  "input_tokens": 1542,
+                  "output_tokens": 288
+                },
+                "valid": true
+              }
+            ]
+          },
+          "identity": [
+            {
+              "descriptor_source": "request",
+              "target_mention": "them both",
+              "kind": "person",
+              "claims": [
+                {
+                  "dimension": "identity",
+                  "value": "the young man",
+                  "quote": "swap them both"
+                }
+              ],
+              "label": "\u003cSubject 1\u003e",
+              "descriptor": "the young man",
+              "retained_attributes": [
+                "short white hair",
+                "a bright yellow raincoat"
+              ],
+              "requested_attributes": [],
+              "request_quote": "swap them both",
+              "wardrobe_attributes": [
+                "a bright yellow raincoat"
+              ]
+            },
+            {
+              "descriptor_source": "request",
+              "target_mention": "them both",
+              "kind": "person",
+              "claims": [
+                {
+                  "dimension": "identity",
+                  "value": "the elderly woman",
+                  "quote": "swap them both"
+                }
+              ],
+              "label": "\u003cSubject 2\u003e",
+              "descriptor": "the elderly woman",
+              "retained_attributes": [
+                "a blue coat"
+              ],
+              "requested_attributes": [],
+              "request_quote": "swap them both",
+              "wardrobe_attributes": [
+                "a blue coat"
+              ]
+            },
+            {
+              "descriptor_source": "reference",
+              "kind": "person",
+              "label": "\u003cSubject 3\u003e",
+              "descriptor": "the bearded man",
+              "retained_attributes": [
+                "a red plaid flannel shirt"
+              ],
+              "requested_attributes": [],
+              "request_quote": "",
+              "wardrobe_attributes": [
+                "a red plaid flannel shirt"
+              ]
+            },
+            {
+              "descriptor_source": "reference",
+              "kind": "object",
+              "label": "\u003cSubject 4\u003e",
+              "descriptor": "the hammer",
+              "retained_attributes": [
+                "a yellow and black handle"
+              ],
+              "requested_attributes": [],
+              "request_quote": "",
+              "wardrobe_attributes": []
+            }
+          ],
+          "governs": {
+            "action": "reference",
+            "framing": "reference",
+            "lighting": "reference",
+            "medium": "reference",
+            "palette": "reference",
+            "wardrobe": "reference"
+          },
+          "reasons": {
+            "action": "The request “swap them both” changes identities, not what the figure is asked to do; the edit source’s existing action remains reference-governed.",
+            "framing": "“Swap them both” contains no camera composition, shot scale, viewpoint, or movement instruction; framing follows the edit source.",
+            "lighting": "No lighting instruction is given; the replacement portraits’ studio lighting and backdrop must not replace the edit source’s workshop lighting.",
+            "medium": "The medium decision preserves the live-action rendering; no rendering-family or style conversion is authorized.",
+            "palette": "No color grade or tonal treatment is requested; the edit source’s palette governs.",
+            "wardrobe": "No clothing or accessory change is requested; wardrobe follows the supplied reference appearances, not the swap wording."
+          },
+          "transform_phrase": null,
+          "transform_target": "",
+          "medium_transferred": false,
+          "style": {
+            "observed_phrase": "Live-action, cinematic, bright natural daylight from the windows",
+            "phrase": "Live-action, cinematic, bright natural daylight from the windows",
+            "source": "reference",
+            "reference_medium": "live-action",
+            "requested_medium": "",
+            "discrepancy": false,
+            "note": ""
+          },
+          "subjects": [
+            {
+              "label": "\u003cSubject 1\u003e",
+              "kind": "person",
+              "sources": [
+                "\u003cPicture 1\u003e"
+              ],
+              "descriptor": "the elderly woman",
+              "attributes": [
+                "short white hair",
+                "a bright yellow raincoat"
+              ],
+              "pose": [],
+              "pose_licensed": false,
+              "retention": "fully_preserved",
+              "retention_note": "",
+              "appears_in": [],
+              "taken_over_by": ""
+            },
+            {
+              "label": "\u003cSubject 2\u003e",
+              "kind": "person",
+              "sources": [
+                "\u003cPicture 2\u003e"
+              ],
+              "descriptor": "the young man",
+              "attributes": [
+                "a blue coat"
+              ],
+              "pose": [],
+              "pose_licensed": false,
+              "retention": "fully_preserved",
+              "retention_note": "",
+              "appears_in": [],
+              "taken_over_by": ""
+            },
+            {
+              "label": "\u003cSubject 3\u003e",
+              "kind": "person",
+              "sources": [
+                "\u003cVideo 1\u003e"
+              ],
+              "descriptor": "the bearded man",
+              "attributes": [
+                "a red plaid flannel shirt"
+              ],
+              "pose": [],
+              "pose_licensed": false,
+              "retention": "fully_preserved",
+              "retention_note": "",
+              "appears_in": [],
+              "taken_over_by": ""
+            },
+            {
+              "label": "\u003cSubject 4\u003e",
+              "kind": "object",
+              "sources": [
+                "\u003cVideo 1\u003e"
+              ],
+              "descriptor": "the hammer",
+              "attributes": [
+                "a yellow and black handle"
+              ],
+              "pose": [],
+              "pose_licensed": false,
+              "retention": "fully_preserved",
+              "retention_note": "",
+              "appears_in": [],
+              "taken_over_by": ""
+            }
+          ],
+          "calls": [
+            {
+              "stage": "rendering_permission",
+              "attempt": 1,
+              "model": "deepseek-flash",
+              "usage": {
+                "input_tokens": 433,
+                "output_tokens": 167
+              },
+              "valid": true
+            },
+            {
+              "stage": "medium",
+              "attempt": 1,
+              "model": "deepseek-flash",
+              "usage": {
+                "input_tokens": 1542,
+                "output_tokens": 288
+              },
+              "valid": true
+            },
+            {
+              "stage": "identity_requirements",
+              "attempt": 1,
+              "model": "deepseek-flash",
+              "usage": {
+                "input_tokens": 3155,
+                "output_tokens": 5271
+              },
+              "valid": true
+            },
+            {
+              "stage": "licence",
+              "attempt": 1,
+              "model": "deepseek-flash",
+              "usage": {
+                "input_tokens": 3461,
+                "output_tokens": 1090
+              },
+              "valid": true
+            }
+          ]
+        },
+        "explanation": "Each attribute follows explicit request or observed reference; poses and reference-sheet presentation are not subject identity."
+      },
+      {
+        "field": "shots.camera",
+        "source": "host_template",
+        "value": [
+          {
+            "subjects": [
+              "\u003cSubject 1\u003e",
+              "\u003cSubject 4\u003e"
+            ],
+            "sync_sound": [
+              "hammer blows on the nail head",
+              "workshop room tone"
+            ],
+            "start_ms": 0,
+            "purpose": "develop",
+            "framing": "medium wide",
+            "action": "In the wood-panelled carpentry workshop with large multi-paned windows and bright natural daylight, the elderly woman with short white hair, now wearing the bright yellow raincoat in place of the bearded man's red plaid flannel shirt, stands at the workbench and drives a nail with the yellow-and-black-handled hammer — raising it and striking, then turning her head toward the camera as the frame tightens on her.",
+            "what_changes": "The workbench figure's identity and wardrobe change from the bearded man in flannel to the elderly woman in the yellow raincoat, while the strike continues and the framing slowly tightens.",
+            "camera": {
+              "type": "Push In",
+              "amplitude": "small",
+              "speed": "slow"
+            }
+          }
+        ],
+        "explanation": "Canonical camera events are assembled from the typed structural plan after prose."
+      }
+    ],
+    "calls": [
+      {
+        "stage": "scope",
+        "attempt": 1,
+        "model": "deepseek-flash",
+        "usage": {
+          "input_tokens": 1205,
+          "output_tokens": 148
+        },
+        "valid": true
+      },
+      {
+        "stage": "rendering_permission",
+        "attempt": 1,
+        "model": "deepseek-flash",
+        "usage": {
+          "input_tokens": 433,
+          "output_tokens": 167
+        },
+        "valid": true
+      },
+      {
+        "stage": "medium",
+        "attempt": 1,
+        "model": "deepseek-flash",
+        "usage": {
+          "input_tokens": 1542,
+          "output_tokens": 288
+        },
+        "valid": true
+      },
+      {
+        "stage": "identity_requirements",
+        "attempt": 1,
+        "model": "deepseek-flash",
+        "usage": {
+          "input_tokens": 3155,
+          "output_tokens": 5271
+        },
+        "valid": true
+      },
+      {
+        "stage": "licence",
+        "attempt": 1,
+        "model": "deepseek-flash",
+        "usage": {
+          "input_tokens": 3461,
+          "output_tokens": 1090
+        },
+        "valid": true
+      },
+      {
+        "stage": "structure",
+        "attempt": 1,
+        "model": "deepseek-flash",
+        "usage": {
+          "input_tokens": 6427,
+          "output_tokens": 801
+        },
+        "valid": true
+      }
+    ]
+  }
+}

@@ -26,7 +26,7 @@ func (p *Planner) collectEvidence(ctx context.Context, assets []contextir.Asset,
 		if _, exists := byID[observation.AssetID]; exists {
 			return nil, issueError(contextir.CodePerception, "perception", path+".asset_id", "Each asset must have exactly one evidence record.", nil)
 		}
-		if err := validateEvidence(asset, observation, facts, path); err != nil {
+		if err := p.validateEvidence(asset, observation, facts, path); err != nil {
 			return nil, err
 		}
 		byID[observation.AssetID] = observation
@@ -60,7 +60,7 @@ func (p *Planner) collectEvidence(ctx context.Context, assets []contextir.Asset,
 				}
 				return collected, issueError(code, "perception", fmt.Sprintf("assets[%d]", i), "Perception could not inspect this asset.", err)
 			}
-			if err := validateEvidence(asset, observation, facts, fmt.Sprintf("evidence[%d]", i)); err != nil {
+			if err := p.validateEvidence(asset, observation, facts, fmt.Sprintf("evidence[%d]", i)); err != nil {
 				return collected, err
 			}
 			observation = cloneEvidence([]contextir.Evidence{observation})[0]
@@ -70,7 +70,7 @@ func (p *Planner) collectEvidence(ctx context.Context, assets []contextir.Asset,
 	return collected, nil
 }
 
-func validateEvidence(asset contextir.Asset, observation contextir.Evidence, knownFacts map[string]contextir.Fact, path string) error {
+func (p *Planner) validateEvidence(asset contextir.Asset, observation contextir.Evidence, knownFacts map[string]contextir.Fact, path string) error {
 	if observation.AssetID != asset.ID {
 		return issueError(contextir.CodePerception, "perception", path+".asset_id", "Evidence must identify the asset that was inspected.", nil)
 	}
@@ -82,7 +82,7 @@ func validateEvidence(asset contextir.Asset, observation contextir.Evidence, kno
 	}
 	if err := contextir.ValidateEvidence([]contextir.Asset{asset}, []contextir.Evidence{observation}); err != nil {
 		var typed *contextir.Error
-		if errors.As(err, &typed) {
+		if errors.As(err, &typed) && typed != nil {
 			issues := make([]contextir.Issue, len(typed.Issues))
 			for i, issue := range typed.Issues {
 				issue.Path = strings.Replace(issue.Path, "evidence[0]", path, 1)
@@ -91,6 +91,9 @@ func validateEvidence(asset contextir.Asset, observation contextir.Evidence, kno
 			return &contextir.Error{Code: contextir.CodePerception, Stage: "perception", Issues: issues, Cause: err}
 		}
 		return issueError(contextir.CodePerception, "perception", path, "Evidence must satisfy the observation schema.", err)
+	}
+	if err := p.validateCoveragePolicy(observation, path); err != nil {
+		return err
 	}
 	for i, fact := range observation.Facts {
 		factPath := fmt.Sprintf("%s.facts[%d]", path, i)
@@ -105,15 +108,34 @@ func validateEvidence(asset contextir.Asset, observation contextir.Evidence, kno
 	return nil
 }
 
+// Root validation owns coverage shape, required tracks, and fact-track checks.
+// The planner additionally requires callers to explicitly admit limited evidence.
+func (p *Planner) validateCoveragePolicy(observation contextir.Evidence, path string) error {
+	coverage := observation.Coverage
+	if coverage == nil {
+		if p.options.AllowUnspecifiedCoverage {
+			return nil
+		}
+		return issueError(contextir.CodePerception, "perception", path+".coverage", "Declare perception coverage or explicitly enable AllowUnspecifiedCoverage for known legacy limitations.", nil)
+	}
+	if coverage.Status == contextir.CoveragePartial && !p.options.AllowPartialPerception {
+		return issueError(contextir.CodePerception, "perception", path+".coverage.status", "Partial perception requires explicit AllowPartialPerception; unsupported modalities must not be treated as understood.", nil)
+	}
+	return nil
+}
+
 func perceptionError(cause error) *contextir.Error {
 	var typed *contextir.Error
-	if errors.As(cause, &typed) && len(typed.Issues) > 0 {
+	if errors.As(cause, &typed) && typed != nil && len(typed.Issues) > 0 {
 		return &contextir.Error{Code: contextir.CodePerception, Stage: "perception", Issues: append([]contextir.Issue(nil), typed.Issues...), Cause: cause}
 	}
 	return issueError(contextir.CodePerception, "perception", "evidence", "Evidence must satisfy the observation schema.", cause)
 }
 
 func validateLocked(request contextir.Request, document contextir.Document, evidence []contextir.Evidence) error {
+	if !reflect.DeepEqual(request.LoRAs, document.LoRAs) && (len(request.LoRAs) != 0 || len(document.LoRAs) != 0) {
+		return issueError(contextir.CodeModelOutput, "plan", "loras", "Preserve all resolved LoRA decisions unchanged.", nil)
+	}
 	if document.Mode != request.Mode {
 		return issueError(contextir.CodeModelOutput, "plan", "mode", "Copy the explicit request mode unchanged.", nil)
 	}
@@ -145,10 +167,83 @@ func validateLocked(request contextir.Request, document contextir.Document, evid
 			return issueError(contextir.CodeModelOutput, "plan", fmt.Sprintf("dialogue[%d]", i), "Preserve the complete supplied dialogue line, including exact text, speakers, language, and delivery.", nil)
 		}
 	}
+	if !request.AllowGeneratedDialogue {
+		requested := make(map[string]bool, len(request.Dialogue))
+		for _, line := range request.Dialogue {
+			requested[line.ID] = true
+		}
+		for i, line := range document.Dialogue {
+			if !requested[line.ID] {
+				return issueError(contextir.CodeModelOutput, "plan", fmt.Sprintf("dialogue[%d]", i), "Additional dialogue requires structured Request.Dialogue or explicit AllowGeneratedDialogue. Supply free-form dialogue as structured input; it is never silently removed.", nil)
+			}
+		}
+	}
+	if err := validateBindings(request.Bindings, document); err != nil {
+		return err
+	}
 	if len(document.Evidence) != 0 && !reflect.DeepEqual(document.Evidence, evidence) {
 		return issueError(contextir.CodeModelOutput, "plan", "evidence", "Do not alter or invent evidence; omit it so the host can attach the original records.", nil)
 	}
+	if err := validateControls(request, document); err != nil {
+		return err
+	}
 	return validateProvenance(request, document, evidence)
+}
+
+type bindingKey struct {
+	source sourceKey
+	role   contextir.Role
+}
+
+func binding(source contextir.SourceRef, role contextir.Role) bindingKey {
+	return bindingKey{source: key(source), role: role}
+}
+
+func validateBindings(bindings []contextir.AssetBinding, document contextir.Document) error {
+	if len(bindings) == 0 {
+		return nil // Free-form role interpretation remains the model's responsibility.
+	}
+	allowed := make(map[bindingKey][]int, len(bindings))
+	used := make([]bool, len(bindings))
+	for i, item := range bindings {
+		value := binding(item.Source, item.Role)
+		allowed[value] = append(allowed[value], i)
+	}
+	check := func(source contextir.SourceRef, role contextir.Role, anchor *contextir.Time, path string) error {
+		permitted := false
+		for _, i := range allowed[binding(source, role)] {
+			// Only an explicitly supplied anchor locks target time. Other roles
+			// may share a reference carrying an independent keyframe role/anchor.
+			fixed := bindings[i].Anchor
+			if fixed == nil || anchor != nil && *fixed == *anchor {
+				used[i], permitted = true, true
+			}
+		}
+		if !permitted {
+			return issueError(contextir.CodeModelOutput, "plan", path, "Use only the exact sources, roles, source intervals, and anchors authorized by Request.Bindings.", nil)
+		}
+		return nil
+	}
+	for i, subject := range document.Subjects {
+		for j, attribution := range subject.Sources {
+			if err := check(attribution.Source, attribution.Role, nil, fmt.Sprintf("subjects[%d].sources[%d]", i, j)); err != nil {
+				return err
+			}
+		}
+	}
+	for i, reference := range document.References {
+		for j, role := range reference.Roles {
+			if err := check(reference.Source, role, reference.Anchor, fmt.Sprintf("references[%d].roles[%d]", i, j)); err != nil {
+				return err
+			}
+		}
+	}
+	for i := range bindings {
+		if !used[i] {
+			return issueError(contextir.CodeModelOutput, "plan", fmt.Sprintf("bindings[%d]", i), "Preserve every explicit Request.Binding in the document; do not silently omit a requested source responsibility.", nil)
+		}
+	}
+	return nil
 }
 
 type sourceKey struct {

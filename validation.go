@@ -18,6 +18,7 @@ func Inspect(d Document) []Issue {
 	}
 	v.mode(d.Mode)
 	v.target(d.Target)
+	v.loras(d.LoRAs, d.Mode)
 	v.assetsCheck(d.Assets)
 	v.constraintsCheck(d.Constraints)
 	v.modeAssets(d.Mode, d.Assets)
@@ -35,11 +36,12 @@ func Inspect(d Document) []Issue {
 	}
 	v.evidenceCheck(d.Evidence)
 	for i, s := range d.Subjects {
-		v.subject(s, vp("subjects", i))
+		v.subject(s, vp("subjects", i), d)
 	}
 	for i, r := range d.References {
 		v.reference(r, vp("references", i), d)
 	}
+	v.soundtrackPairs(d)
 	for i, s := range d.Speakers {
 		v.speaker(s, vp("speakers", i), d)
 	}
@@ -73,10 +75,13 @@ func ValidateRequest(r Request) error {
 	v.text(r.Instruction, "instruction", true)
 	v.mode(r.Mode)
 	v.target(r.Target)
+	v.loras(r.LoRAs, r.Mode)
 	v.assetsCheck(r.Assets)
 	v.modeAssets(r.Mode, r.Assets)
+	v.bindingsCheck(r)
 	v.constraintsCheck(r.Constraints)
 	v.dialogueCheck(r.Dialogue, false)
+	v.requestControls(r)
 	if v.constraints[ConstraintSilence] || v.constraints[ConstraintNoDialogue] {
 		if len(r.Dialogue) != 0 {
 			v.bad("dialogue", "dialogue conflicts with an explicit constraint")
@@ -186,6 +191,9 @@ func (v *validationState) dimensions(w, h int, path string) {
 	if w < 0 || h < 0 || (w == 0) != (h == 0) {
 		v.bad(path, "width and height must both be positive or both omitted")
 	}
+	if w > 0 && h > 0 && w > int(^uint(0)>>1)/h {
+		v.bad(path, "pixel area exceeds the representable dimension budget")
+	}
 }
 func (v *validationState) target(t Target) {
 	if t.Duration <= 0 {
@@ -248,6 +256,19 @@ func (v *validationState) assetsCheck(assets []Asset) {
 			}
 		}
 		m := a.Metadata
+		prep := a.Preparation
+		v.dimensions(prep.Width, prep.Height, p+".preparation")
+		switch prep.Sizing {
+		case "", "match", "max":
+		default:
+			v.bad(p+".preparation.sizing", "unsupported explicit conditioning sizing policy")
+		}
+		if prep.Frames < 0 || a.Kind != MediaVideo && prep.Frames != 0 {
+			v.bad(p+".preparation.frames", "a nonnegative conditioning frame count is valid only for a video")
+		}
+		if a.Kind == MediaAudio && prep != (MediaPreparation{}) {
+			v.bad(p+".preparation", "audio conditioning cannot carry visual preparation instructions")
+		}
 		if m.Duration < 0 {
 			v.bad(p+".metadata.duration_ms", "must not be negative")
 		}
@@ -313,6 +334,9 @@ func (v *validationState) source(s SourceRef, path string) {
 func (v *validationState) evidenceCheck(evidence []Evidence) {
 	seen := map[string]bool{}
 	for i, e := range evidence {
+		if e.Card != nil {
+			v.card(*e.Card, e)
+		}
 		p := vp("evidence", i)
 		v.id(e.AssetID, p+".asset_id")
 		if _, exists := v.assets[e.AssetID]; !exists {
@@ -327,13 +351,18 @@ func (v *validationState) evidenceCheck(evidence []Evidence) {
 		for j, limitation := range e.Limitations {
 			v.text(limitation, vp(p+".limitations", j), true)
 		}
+		checkedTracks := v.coverage(e, p+".coverage")
 		for j, f := range e.Facts {
 			q := vp(p+".facts", j)
 			v.id(f.ID, q+".id")
 			v.text(f.Text, q+".text", true)
+			v.text(f.AnalyzerVersion, q+".analyzer_version", false)
 			v.source(f.Source, q+".source")
 			if f.Source.AssetID != e.AssetID {
 				v.bad(q+".source.asset_id", "fact source must match its evidence asset")
+			}
+			if e.Coverage != nil && !checkedTracks[f.Source.Track] {
+				v.bad(q+".source.track", "facts must use a track declared as inspected by coverage")
 			}
 			if _, exists := v.facts[f.ID]; exists {
 				v.bad(q+".id", "fact identifier must be unique")
@@ -343,16 +372,198 @@ func (v *validationState) evidenceCheck(evidence []Evidence) {
 		}
 	}
 }
+
+// Coverage records an adapter's explicit declaration. It cannot establish that
+// a model actually inspected the media or that its observations are accurate.
+func (v *validationState) coverage(e Evidence, path string) map[Track]bool {
+	checked := map[Track]bool{}
+	if e.Coverage == nil {
+		return checked
+	}
+	c := e.Coverage
+	if c.Status != CoverageComplete && c.Status != CoveragePartial {
+		v.bad(path+".status", "unsupported coverage status")
+	}
+	a, known := v.assets[e.AssetID]
+	allowed := func(track Track) bool {
+		if track != TrackVisual && track != TrackAudio {
+			return false
+		}
+		if !known {
+			return true
+		}
+		return a.Kind == MediaVideo || (a.Kind == MediaImage && track == TrackVisual) || (a.Kind == MediaAudio && track == TrackAudio)
+	}
+	for i, track := range c.Tracks {
+		p := vp(path+".tracks", i)
+		if !allowed(track) {
+			v.bad(p, "inspected track is incompatible with the media kind")
+		}
+		if checked[track] {
+			v.bad(p, "inspected track must not repeat")
+		}
+		checked[track] = true
+	}
+	absent := map[Track]bool{}
+	for i, track := range c.AbsentTracks {
+		p := vp(path+".absent_tracks", i)
+		if track != TrackAudio || (known && a.Kind != MediaVideo) {
+			v.bad(p, "only a video's optional audio track may be declared absent")
+		}
+		if absent[track] {
+			v.bad(p, "absent track must not repeat")
+		}
+		absent[track] = true
+		if checked[track] {
+			v.bad(p, "a track cannot be both inspected and absent")
+		}
+	}
+	if len(c.Tracks) == 0 && len(c.AbsentTracks) == 0 {
+		v.bad(path+".tracks", "coverage must declare inspected or explicitly absent tracks")
+	}
+	if known && c.Status == CoverageComplete {
+		switch a.Kind {
+		case MediaImage:
+			if !checked[TrackVisual] {
+				v.bad(path+".tracks", "complete image coverage must inspect the visual track")
+			}
+		case MediaAudio:
+			if !checked[TrackAudio] {
+				v.bad(path+".tracks", "complete audio coverage must inspect the audio track")
+			}
+		case MediaVideo:
+			if !checked[TrackVisual] || (!checked[TrackAudio] && !absent[TrackAudio]) {
+				v.bad(path+".tracks", "complete video coverage must inspect visuals and inspect or probe the audio track")
+			}
+		}
+	}
+	for i, at := range c.SampleTimes {
+		p := vp(path+".sample_times_ms", i)
+		if known && a.Kind == MediaImage {
+			v.bad(p, "still-image coverage cannot declare temporal samples")
+		}
+		if at < 0 || (known && a.Metadata.Duration > 0 && at >= a.Metadata.Duration) {
+			v.bad(p, "sample time must fall within the source timeline")
+		}
+		if i > 0 && at <= c.SampleTimes[i-1] {
+			v.bad(p, "sample times must be strictly increasing")
+		}
+	}
+	for i, interval := range c.Intervals {
+		p := vp(path+".intervals", i)
+		if known && a.Kind == MediaImage {
+			v.bad(p, "still-image coverage cannot declare temporal intervals")
+		}
+		if interval.Start < 0 || interval.End <= interval.Start || (known && a.Metadata.Duration > 0 && interval.End > a.Metadata.Duration) {
+			v.bad(p, "coverage interval must be non-empty and within the source timeline")
+		}
+		if i > 0 && interval.Start < c.Intervals[i-1].End {
+			v.bad(p, "coverage intervals must be ordered and non-overlapping")
+		}
+	}
+	return checked
+}
+
+func (v *validationState) bindingsCheck(r Request) {
+	if len(r.Bindings) == 0 {
+		return
+	}
+	first, last := 0, 0
+	usedAssets := map[string]bool{}
+	for i, binding := range r.Bindings {
+		p := vp("bindings", i)
+		v.source(binding.Source, p+".source")
+		usedAssets[binding.Source.AssetID] = true
+		a, known := v.assets[binding.Source.AssetID]
+		if (binding.Source.Track == TrackVisual && !visualRole(binding.Role)) || (binding.Source.Track == TrackAudio && !audioRole(binding.Role)) {
+			v.bad(p+".role", "binding role is incompatible with the source track")
+		}
+		if !visualRole(binding.Role) && !audioRole(binding.Role) {
+			v.bad(p+".role", "unsupported binding role")
+		}
+		frame := binding.Role == RoleFirstFrame || binding.Role == RoleLastFrame || binding.Role == RoleKeyframe
+		if frame && (binding.Source.Track != TrackVisual || (known && a.Kind != MediaImage)) {
+			v.bad(p+".source", "frame bindings require a still-image visual source")
+		}
+		if (binding.Role == RoleEditSource || binding.Role == RoleContinuation) && (binding.Source.Track != TrackVisual || (known && a.Kind != MediaVideo)) {
+			v.bad(p+".source", "whole-video bindings require a video visual source")
+		}
+		if frame && binding.Anchor == nil {
+			v.bad(p+".anchor_ms", "frame bindings require an explicit target anchor")
+		}
+		if binding.Anchor != nil {
+			if !frame {
+				v.bad(p+".anchor_ms", "only frame bindings may have a target anchor")
+			}
+			if *binding.Anchor < 0 || *binding.Anchor > r.Target.Duration {
+				v.bad(p+".anchor_ms", "anchor must fall within the target timeline")
+			}
+			if binding.Role == RoleFirstFrame && *binding.Anchor != 0 {
+				v.bad(p+".anchor_ms", "first frame must anchor the start")
+			}
+			if binding.Role == RoleLastFrame && *binding.Anchor != r.Target.Duration {
+				v.bad(p+".anchor_ms", "last frame must anchor the end")
+			}
+		}
+		if binding.Role == RoleFirstFrame {
+			first++
+			if first > 1 {
+				v.bad(p+".role", "first-frame responsibility must be unique")
+			}
+		}
+		if binding.Role == RoleLastFrame {
+			last++
+			if last > 1 {
+				v.bad(p+".role", "last-frame responsibility must be unique")
+			}
+		}
+		if r.Mode == ModeReference && (binding.Role == RoleFirstFrame || binding.Role == RoleLastFrame) {
+			v.bad(p+".role", "reference mode uses explicit keyframes rather than first/last-frame mode roles")
+		}
+		if r.Mode != ModeReference && binding.Role != RoleFirstFrame && binding.Role != RoleLastFrame {
+			v.bad(p+".role", "base-mode bindings may only assign first/last-frame responsibilities")
+		}
+		for j := 0; j < i; j++ {
+			previous := r.Bindings[j]
+			sameAnchor := binding.Anchor == nil && previous.Anchor == nil || binding.Anchor != nil && previous.Anchor != nil && *binding.Anchor == *previous.Anchor
+			if previous.Role == binding.Role && sameAnchor && sameValidationSource(previous.Source, binding.Source) {
+				v.bad(p, "source responsibility must not repeat")
+				break
+			}
+		}
+	}
+	for i, asset := range r.Assets {
+		if !usedAssets[asset.ID] {
+			v.bad(vp("assets", i), "explicit bindings must assign a responsibility to every input asset")
+		}
+	}
+	switch r.Mode {
+	case ModeText:
+		v.bad("bindings", "text mode cannot contain media bindings")
+	case ModeFirstFrame:
+		if first != 1 || last != 0 || len(r.Bindings) != 1 {
+			v.bad("bindings", "first-frame mode requires exactly one first-frame binding")
+		}
+	case ModeLastFrame:
+		if first != 0 || last != 1 || len(r.Bindings) != 1 {
+			v.bad("bindings", "last-frame mode requires exactly one last-frame binding")
+		}
+	case ModeFirstLastFrame:
+		if first != 1 || last != 1 || len(r.Bindings) != 2 {
+			v.bad("bindings", "first/last-frame mode requires exactly one binding for each endpoint")
+		}
+	}
+}
 func visualRole(role Role) bool {
 	switch role {
-	case RoleIdentity, RoleAppearance, RoleClothing, RoleScene, RoleStyle, RoleAction, RolePose, RoleCamera, RoleStoryboard, RoleFirstFrame, RoleLastFrame, RoleKeyframe, RoleEditSource, RoleContinuation:
+	case RoleIdentity, RoleAppearance, RoleClothing, RoleScene, RoleStyle, RoleAction, RolePose, RoleCamera, RoleStoryboard, RoleFirstFrame, RoleLastFrame, RoleKeyframe, RoleEditSource, RoleContinuation, RoleStructure, RolePlacedSubject, RoleReplacementSubject:
 		return true
 	}
 	return false
 }
 func audioRole(role Role) bool {
 	switch role {
-	case RoleVoice, RoleMusic, RoleRhythm, RoleSoundtrack, RoleSoundEffect:
+	case RoleVoice, RoleMusic, RoleRhythm, RoleSoundtrack, RoleSoundEffect, RoleMusicStyle, RoleBeatReference, RoleSoundTexture:
 		return true
 	}
 	return false
@@ -371,10 +582,41 @@ func hasRole(roles []Role, role Role) bool {
 	}
 	return false
 }
-func (v *validationState) subject(s Subject, p string) {
+func (v *validationState) subject(s Subject, p string, d Document) {
 	v.text(s.Description, p+".description", true)
+	v.text(s.Descriptor, p+".descriptor", false)
+	if s.Kind != "" {
+		switch s.Kind {
+		case "subject", "person", "animal", "object", "environment", "style", "action":
+		default:
+			v.bad(p+".kind", "unsupported subject kind")
+		}
+	}
+	for i, text := range s.Attributes {
+		v.text(text, vp(p+".attributes", i), true)
+	}
+	for i, text := range s.Pose {
+		v.text(text, vp(p+".pose", i), true)
+	}
+	if len(s.Pose) > 0 && !s.PoseLicensed {
+		v.bad(p+".pose", "target pose requires an explicit pose license; unlicensed observations belong in Evidence.Card")
+	}
+	switch s.Origin {
+	case "", "observed", "user", "creative", "user_symbolic":
+	default:
+		v.bad(p+".origin", "unsupported subject origin")
+	}
 	v.text(s.RetentionDetails, p+".retention_details", false)
 	v.ids(s.ShotIDs, p+".shot_ids", v.shots)
+	if s.TakenOverBy != "" {
+		v.id(s.TakenOverBy, p+".taken_over_by")
+		if _, exists := v.subjects[s.TakenOverBy]; !exists || s.TakenOverBy == s.ID {
+			v.bad(p+".taken_over_by", "transfer must identify a different existing target subject")
+		}
+		if s.Retention != AttributeTransfer {
+			v.bad(p+".retention", "a transferred subject requires attribute_transfer")
+		}
+	}
 	if len(s.Sources) > 0 && !visualRetention(s.Retention) {
 		v.bad(p+".retention", "referenced subjects require a visual retention relationship")
 	}
@@ -388,8 +630,19 @@ func (v *validationState) subject(s Subject, p string) {
 		if attribution.Source.Track != TrackVisual || !visualRole(attribution.Role) {
 			v.bad(q+".role", "subject attribution must describe a visual source role")
 		}
-		if attribution.Role == RoleFirstFrame || attribution.Role == RoleLastFrame || attribution.Role == RoleKeyframe || attribution.Role == RoleEditSource || attribution.Role == RoleContinuation {
+		if attribution.Role == RoleFirstFrame || attribution.Role == RoleLastFrame || attribution.Role == RoleKeyframe || attribution.Role == RoleStructure {
 			v.bad(q+".role", "frame anchors and whole-video relationships require a reference")
+		}
+		if attribution.Role == RoleEditSource || attribution.Role == RoleContinuation {
+			found := false
+			for _, ref := range d.References {
+				if ref.Kind == ReferenceVideo && hasRole(ref.Roles, attribution.Role) && sameValidationSource(ref.Source, attribution.Source) {
+					found = true
+				}
+			}
+			if !found {
+				v.bad(q+".role", "video-owned subjects require the corresponding explicit whole-video reference")
+			}
 		}
 		v.ids(attribution.FactIDs, q+".fact_ids", nil)
 		for j, id := range attribution.FactIDs {
@@ -418,6 +671,52 @@ func (v *validationState) reference(r Reference, p string, d Document) {
 	v.text(r.Description, p+".description", true)
 	v.text(r.RetentionDetails, p+".retention_details", false)
 	v.ids(r.ShotIDs, p+".shot_ids", v.shots)
+	v.text(r.Replaces, p+".replaces", false)
+	if r.Replaces != "" && !hasRole(r.Roles, RoleReplacementSubject) {
+		v.bad(p+".replaces", "only replacement_subject may identify a replaced source figure")
+	}
+	if hasRole(r.Roles, RoleReplacementSubject) && strings.TrimSpace(r.Replaces) == "" {
+		resolved := false
+		for _, original := range d.Subjects {
+			if original.TakenOverBy != "" {
+				for _, incoming := range d.Subjects {
+					if incoming.ID == original.TakenOverBy {
+						for _, source := range incoming.Sources {
+							if source.Source.AssetID == r.Source.AssetID {
+								resolved = true
+							}
+						}
+					}
+				}
+			}
+		}
+		if !resolved {
+			v.bad(p+".replaces", "replacement_subject requires an explicit source figure or a structurally resolved subject transfer")
+		}
+	}
+	if hasRole(r.Roles, RolePlacedSubject) || hasRole(r.Roles, RoleReplacementSubject) {
+		edit := false
+		for _, other := range d.References {
+			if other.Kind == ReferenceVideo && hasRole(other.Roles, RoleEditSource) {
+				edit = true
+			}
+		}
+		if !edit {
+			v.bad(p+".roles", "placement and replacement require an edit-source video")
+		}
+		if r.Kind != ReferencePicture {
+			v.bad(p+".kind", "placement and replacement require a picture reference")
+		}
+	}
+	if hasRole(r.Roles, RoleStructure) && r.Kind != ReferenceVideo {
+		v.bad(p+".kind", "structure requires a video reference")
+	}
+	if r.PairedVideoID != "" {
+		paired, exists := v.assets[r.PairedVideoID]
+		if r.Kind != ReferenceAudio || !exists || paired.Kind != MediaVideo {
+			v.bad(p+".paired_video_id", "paired soundtrack must identify an existing video asset")
+		}
+	}
 	a, exists := v.assets[r.Source.AssetID]
 	switch r.Kind {
 	case ReferencePicture:
@@ -463,6 +762,13 @@ func (v *validationState) reference(r Reference, p string, d Document) {
 		}
 	}
 	anchorRole := hasRole(r.Roles, RoleFirstFrame) || hasRole(r.Roles, RoleLastFrame) || hasRole(r.Roles, RoleKeyframe)
+	if anchorRole {
+		if r.Retention != FullyPreserved {
+			v.bad(p+".retention", "frame anchors require fully_preserved retention")
+		}
+	} else if r.Kind == ReferencePicture && r.Retention == AttributeTransfer {
+		v.bad(p+".retention", "picture references cannot transfer attributes; describe subject transfers on subjects")
+	}
 	if anchorRole && r.Anchor == nil {
 		v.bad(p+".anchor_ms", "frame roles require an explicit anchor")
 	}
@@ -519,6 +825,12 @@ func (v *validationState) reference(r Reference, p string, d Document) {
 	if hasRole(r.Roles, RoleVoice) && r.SpeakerID == "" {
 		v.bad(p+".speaker_id", "voice references require an explicit target speaker binding")
 	}
+	if hasRole(r.Roles, RoleVoice) && r.Retention != AudioReference && r.Retention != WeakReference {
+		v.bad(p+".retention", "voice timbre references cannot copy the source audio signal")
+	}
+	if (hasRole(r.Roles, RoleMusicStyle) || hasRole(r.Roles, RoleBeatReference) || hasRole(r.Roles, RoleSoundTexture)) && r.Retention != AudioReference && r.Retention != WeakReference {
+		v.bad(p+".retention", "property-only audio references cannot copy the source signal")
+	}
 }
 func (v *validationState) speaker(s Speaker, p string, d Document) {
 	v.text(s.Description, p+".description", true)
@@ -548,6 +860,12 @@ func (v *validationState) dialogueCheck(lines []DialogueLine, resolveSpeakers bo
 		v.text(line.Language, p+".language", true)
 		v.text(line.Text, p+".text", true)
 		v.text(line.Delivery, p+".delivery", false)
+		if line.Kind != "" && line.Kind != VocalSpeech && line.Kind != VocalSinging {
+			v.bad(p+".kind", "unsupported vocal kind")
+		}
+		if line.Kind == VocalSinging && line.Voiceover {
+			v.bad(p+".voiceover", "off-screen singing requires a separately supported vocal contract")
+		}
 		if len(line.SpeakerIDs) == 0 {
 			v.bad(p+".speaker_ids", "dialogue requires at least one explicit speaker")
 		}
@@ -624,9 +942,9 @@ func (v *validationState) shotsCheck(d Document) {
 				}
 				lastAt = *event.At
 			}
-			v.rich(event.Description, q+".description", event.Kind != EventDialogue && event.Kind != EventVisibleText)
+			v.rich(event.Description, q+".description", event.Kind != EventDialogue && event.Kind != EventVisibleText && event.Kind != EventAudioCue)
 			switch event.Kind {
-			case EventVisual, EventAction, EventCamera, EventSound, EventDialogue, EventVisibleText:
+			case EventVisual, EventAction, EventCamera, EventSound, EventDialogue, EventVisibleText, EventAudioCue:
 			default:
 				v.bad(q+".kind", "unsupported event kind")
 			}
@@ -636,6 +954,16 @@ func (v *validationState) shotsCheck(d Document) {
 				}
 			} else if event.Dialogue != nil {
 				v.bad(q+".dialogue", "only dialogue events may contain a dialogue part")
+			}
+			if event.Kind == EventAudioCue {
+				if event.AudioCue == nil {
+					v.bad(q+".audio_cue", "audio-cue events require an existing audio phrase cue")
+				}
+			} else if event.AudioCue != nil {
+				v.bad(q+".audio_cue", "only audio-cue events may contain an audio cue")
+			}
+			if event.AudioCue != nil {
+				v.audioCue(*event.AudioCue, q+".audio_cue", shot.ID, d)
 			}
 			if event.Kind == EventVisibleText {
 				v.text(event.VisibleText, q+".visible_text", true)
@@ -686,6 +1014,39 @@ func (v *validationState) shotsCheck(d Document) {
 		}
 	}
 }
+
+func (v *validationState) audioCue(cue AudioCue, path, shotID string, d Document) {
+	v.id(cue.ReferenceID, path+".reference_id")
+	v.text(cue.Language, path+".language", true)
+	v.text(cue.Text, path+".text", true)
+	index, exists := v.refs[cue.ReferenceID]
+	if !exists {
+		v.bad(path+".reference_id", "references an unknown audio reference")
+		return
+	}
+	ref := d.References[index]
+	if ref.Kind != ReferenceAudio || ref.Source.Track != TrackAudio {
+		v.bad(path+".reference_id", "audio cues require an audio-track reference")
+	}
+	if ref.Retention != FullyCopy && ref.Retention != PartiallyCopy {
+		v.bad(path+".reference_id", "existing audio phrase cues require an explicitly copied audio signal")
+	}
+	if _, exists := v.assets[ref.Source.AssetID]; !exists {
+		v.bad(path+".reference_id", "audio cue source asset must exist")
+	}
+	if len(ref.ShotIDs) > 0 {
+		listed := false
+		for _, id := range ref.ShotIDs {
+			if id == shotID {
+				listed = true
+				break
+			}
+		}
+		if !listed {
+			v.bad(path+".reference_id", "cue event must belong to an explicitly declared reference shot")
+		}
+	}
+}
 func (v *validationState) modeReferences(d Document) {
 	first, last := 0, 0
 	var firstAsset, lastAsset string
@@ -703,8 +1064,6 @@ func (v *validationState) modeReferences(d Document) {
 			if completeAudio == nil {
 				source := r.Source
 				completeAudio = &source
-			} else if !sameValidationSource(*completeAudio, r.Source) {
-				v.bad(p+".retention", "only one distinct source can supply the complete final audio track")
 			}
 		}
 		if hasRole(r.Roles, RoleFirstFrame) {
@@ -720,6 +1079,13 @@ func (v *validationState) modeReferences(d Document) {
 		}
 		if d.Mode != ModeReference && !hasRole(r.Roles, RoleFirstFrame) && !hasRole(r.Roles, RoleLastFrame) {
 			v.bad(p+".roles", "base modes only support their first/last-frame references")
+		}
+	}
+	if completeAudio != nil {
+		for i, ref := range d.References {
+			if ref.Kind == ReferenceAudio && (ref.Retention == FullyCopy || ref.Retention == PartiallyCopy) && !sameValidationSource(*completeAudio, ref.Source) {
+				v.bad(vp("references", i)+".retention", "a complete final audio track cannot be mixed with a copied signal from a different source")
+			}
 		}
 	}
 	switch d.Mode {
@@ -757,7 +1123,7 @@ func (v *validationState) constraintsCheck(constraints []Constraint) {
 		v.addID(seen, c.ID, p+".id", i)
 		v.text(c.Text, p+".text", true)
 		switch c.Kind {
-		case ConstraintRequirement, ConstraintProhibition, ConstraintSilence, ConstraintNoMusic, ConstraintNoDialogue:
+		case ConstraintRequirement, ConstraintProhibition, ConstraintSilence, ConstraintNoMusic, ConstraintNoAddedMusic, ConstraintNoDialogue:
 			v.constraints[c.Kind] = true
 		default:
 			v.bad(p+".kind", "unsupported constraint kind")
@@ -769,6 +1135,9 @@ func (v *validationState) constraintConflicts(d Document) {
 	silence := v.constraints[ConstraintSilence]
 	if (silence || v.constraints[ConstraintNoMusic]) && !noAudioLayer(d.Music) {
 		v.bad("music", "music conflicts with an explicit constraint")
+	}
+	if v.constraints[ConstraintNoAddedMusic] && !noAudioLayer(d.Music) {
+		v.bad("music", "the generated score layer is prohibited; copied music remains in its explicit audio reference")
 	}
 	if silence && !noAudioLayer(d.Soundscape) {
 		v.bad("soundscape", "soundscape conflicts with an explicit silence constraint")
@@ -786,7 +1155,7 @@ func (v *validationState) constraintConflicts(d Document) {
 	}
 	for i, shot := range d.Shots {
 		for j, e := range shot.Events {
-			if (silence && (e.Kind == EventSound || e.Kind == EventDialogue)) || (v.constraints[ConstraintNoDialogue] && e.Kind == EventDialogue) {
+			if (silence && (e.Kind == EventSound || e.Kind == EventDialogue || e.Kind == EventAudioCue)) || (v.constraints[ConstraintNoDialogue] && e.Kind == EventDialogue) {
 				v.bad(vp(vp("shots", i)+".events", j)+".kind", "audio event conflicts with an explicit constraint")
 			}
 		}
