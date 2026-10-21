@@ -1,0 +1,51 @@
+{
+  "response": {
+    "json": {
+      "reasoning": "The new instruction authorizes removing only the audio asset asset-1; it does not authorize touching the fixed words. Because asset-1's transcription supplied the fixed selected performance in transcript_uses, that dependent selection cannot survive the removal, so transcript_uses is cleared in the same patch and the still-requested words are preserved verbatim as fixed dialogue for the same speaker ('the man at the counter'), matching the original observed transcript 'We close at six, not half past.'. The intent's only dangling dependency is the phrase 'the line that is on the recording', which no longer exists once asset-1 is removed; the revised intent therefore keeps every unaffected requirement (the same man at the counter, the same word-for-word delivery) while dropping the deleted-recording reference. No other field (seconds, aspect, mode, creativity, effort, evidence, hash/locator data) is touched, and no performance is deleted silently.",
+      "updates": [
+        {
+          "field": "asset_remove",
+          "asset_id": "asset-1",
+          "action": "remove",
+          "quote": "Remove audio asset-1 only.",
+          "value": null
+        },
+        {
+          "field": "transcript_uses",
+          "asset_id": "",
+          "action": "clear",
+          "quote": "Remove audio asset-1 only.",
+          "value": null
+        },
+        {
+          "field": "dialogue",
+          "asset_id": "",
+          "action": "set",
+          "quote": "Keep all selected source words and their source selection unchanged.",
+          "value": [
+            {
+              "speaker": "the man at the counter",
+              "text": "We close at six, not half past.",
+              "language": "English",
+              "voiceover": false
+            }
+          ]
+        },
+        {
+          "field": "intent",
+          "asset_id": "",
+          "action": "set",
+          "quote": "Remove audio asset-1 only.",
+          "value": "Have the man at the counter say again, word for word, \"We close at six, not half past.\""
+        }
+      ]
+    },
+    "model": "deepseek-flash",
+    "usage": {
+      "input_tokens": 1311,
+      "output_tokens": 3565
+    }
+  },
+  "elapsed_ms": 17250,
+  "images": []
+}

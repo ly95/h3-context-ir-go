@@ -797,6 +797,9 @@ func (m controlledModel) Generate(ctx context.Context, req contextir.ModelReques
 	if len(slots) > 0 {
 		req.System += "\n" + fixedDialoguePerformanceInstruction
 	}
+	if len(original.OnscreenText) > 0 {
+		req.System += "\n" + visibleTextPerformanceInstruction
+	}
 	req.System += "\nSubject shot_ids are HOST-OWNED: omit them. Bind referenced identities and environments by subject_id in the actual shot/event descriptions where they contribute; merely listing a source definition does not place it in every shot. An actor which leaves need not remain in later shots. Unsourced new targets should also use actual structural bindings in reference mode. In base modes return no subject metadata: all identities belong in natural literal narrative, while actual source-frame observations remain Evidence."
 	response, err := m.inner.Generate(ctx, req)
 	if m.observePlanCall != nil {

@@ -1,0 +1,1982 @@
+{
+  "composition_reviews": [
+    {
+      "version": "contextir/composition-review/v7",
+      "required": true,
+      "passed": true,
+      "calls": [
+        {
+          "stage": "semantic_review",
+          "attempt": 1,
+          "model": "deepseek-flash",
+          "usage": {
+            "input_tokens": 4397,
+            "output_tokens": 868
+          },
+          "valid": true
+        }
+      ]
+    }
+  ],
+  "usage_complete": true,
+  "clarification_policy": "continue_with_recorded_choice",
+  "mode_decision": {
+    "clarification_policy": "continue_with_recorded_choice",
+    "confidence_kind": "routing_policy",
+    "aspect_mismatch": false,
+    "needs_clarification": false,
+    "mode": "ref2va",
+    "confidence": 1,
+    "rule": "caller-override",
+    "signals": [
+      "Mode follows explicit structured choices and media socket requirements."
+    ]
+  },
+  "scope_decision": {
+    "conflict_policy": "supplied_content_wins",
+    "requested": {
+      "speech": false,
+      "music": false,
+      "onscreen_text": false,
+      "magnitude": ""
+    },
+    "forbidden": {
+      "speech": false,
+      "music": false,
+      "onscreen_text": false,
+      "magnitude": ""
+    },
+    "allowed": {
+      "speech": false,
+      "music": true,
+      "onscreen_text": false,
+      "magnitude": "measured"
+    },
+    "dialogue": [],
+    "onscreen_text": [],
+    "reasoning": "The intent only describes combining visual attributes of a sports car from two image assets. It does not request speech, music, or onscreen text, and no prohibitions are stated.",
+    "calls": [
+      {
+        "stage": "scope",
+        "attempt": 1,
+        "model": "deepseek-flash",
+        "usage": {
+          "input_tokens": 1181,
+          "output_tokens": 153
+        },
+        "valid": true
+      }
+    ]
+  },
+  "licence": {
+    "reference_permissions": {
+      "action": true,
+      "framing": true,
+      "lighting": true,
+      "medium": true,
+      "palette": true,
+      "wardrobe": true
+    },
+    "medium_decision": {
+      "rendering_permission": {
+        "kind": "preserve",
+        "disposition": "preserve",
+        "operation_quote": "",
+        "target": "",
+        "reasoning": "The caller only specifies that the sports car's body and wheels derive from attached assets; this is asset/scene composition, not an instruction to transform or reinterpret the rendering, nor a direct target-style rendition directive.",
+        "calls": [
+          {
+            "stage": "rendering_permission",
+            "attempt": 1,
+            "model": "deepseek-flash",
+            "usage": {
+              "input_tokens": 450,
+              "output_tokens": 118
+            },
+            "valid": true
+          }
+        ]
+      },
+      "disposition": "preserve",
+      "operation_quote": "",
+      "target": "",
+      "requested_style": "",
+      "reference_medium": "live-action",
+      "requested_medium": "",
+      "treatments": [],
+      "reasoning": "The request only composes the sports car from attached subject assets; it does not request a rendering-family change or a new style. The observed reference rendering is live-action, and the preservation permission is copied from the host-owned rendering permission.",
+      "calls": [
+        {
+          "stage": "rendering_permission",
+          "attempt": 1,
+          "model": "deepseek-flash",
+          "usage": {
+            "input_tokens": 450,
+            "output_tokens": 118
+          },
+          "valid": true
+        },
+        {
+          "stage": "medium",
+          "attempt": 1,
+          "model": "deepseek-flash",
+          "usage": {
+            "input_tokens": 1372,
+            "output_tokens": 301
+          },
+          "valid": true
+        }
+      ]
+    },
+    "identity": [
+      {
+        "descriptor_source": "reference",
+        "kind": "object",
+        "label": "\u003cSubject 1\u003e",
+        "descriptor": "the black sports car",
+        "retained_attributes": [
+          "carbon fibre body"
+        ],
+        "requested_attributes": [],
+        "request_quote": "",
+        "wardrobe_attributes": []
+      },
+      {
+        "descriptor_source": "request",
+        "target_mention": "The single sports car",
+        "kind": "object",
+        "claims": [
+          {
+            "dimension": "stable_attribute",
+            "value": "wheels from the second picture",
+            "quote": "wheels from asset-2"
+          }
+        ],
+        "label": "\u003cSubject 2\u003e",
+        "descriptor": "the black sports car with carbon fibre body and wheels from the second picture",
+        "retained_attributes": [
+          "carbon fibre body"
+        ],
+        "requested_attributes": [
+          "wheels from the second picture"
+        ],
+        "request_quote": "The single sports car draws its carbon fibre body from asset-1 and wheels from asset-2.",
+        "wardrobe_attributes": []
+      }
+    ],
+    "governs": {
+      "action": "reference",
+      "framing": "reference",
+      "lighting": "reference",
+      "medium": "reference",
+      "palette": "reference",
+      "wardrobe": "reference"
+    },
+    "reasons": {
+      "action": "No new action, behavior, vocal performance or other requested performance is specified; the reference action/pose remains authoritative.",
+      "framing": "No camera composition, shot scale, viewpoint or camera movement is requested. The 16:9 aspect is only a canvas ratio, so reference framing governs.",
+      "lighting": "No light source, direction, quality or other lighting instruction is given; reference lighting is retained.",
+      "medium": "The medium decision preserves the observed live-action rendering; no restyling or rendering-family change was requested.",
+      "palette": "No hue, color grade, saturation or tonal-contrast instruction is given; the reference palette is retained.",
+      "wardrobe": "No clothing or accessory change is requested. The car-body material and wheel sourcing are handled as target identity/properties by identity_requirements, not as wardrobe, so no wardrobe request overrides the reference."
+    },
+    "transform_phrase": null,
+    "transform_target": "",
+    "medium_transferred": false,
+    "style": {
+      "observed_phrase": "Live-action",
+      "phrase": "Live-action",
+      "source": "reference",
+      "reference_medium": "live-action",
+      "requested_medium": "",
+      "discrepancy": false,
+      "note": ""
+    },
+    "subjects": [
+      {
+        "label": "\u003cSubject 1\u003e",
+        "kind": "object",
+        "sources": [
+          "\u003cPicture 1\u003e"
+        ],
+        "descriptor": "the black sports car",
+        "attributes": [
+          "carbon fibre body"
+        ],
+        "pose": [],
+        "pose_licensed": false,
+        "retention": "fully_preserved",
+        "retention_note": "",
+        "appears_in": [],
+        "taken_over_by": ""
+      },
+      {
+        "label": "\u003cSubject 2\u003e",
+        "kind": "object",
+        "sources": [
+          "\u003cPicture 2\u003e"
+        ],
+        "descriptor": "the black sports car",
+        "attributes": [
+          "carbon fibre body"
+        ],
+        "pose": [],
+        "pose_licensed": false,
+        "retention": "fully_preserved",
+        "retention_note": "",
+        "appears_in": [],
+        "taken_over_by": ""
+      }
+    ],
+    "calls": [
+      {
+        "stage": "rendering_permission",
+        "attempt": 1,
+        "model": "deepseek-flash",
+        "usage": {
+          "input_tokens": 450,
+          "output_tokens": 118
+        },
+        "valid": true
+      },
+      {
+        "stage": "medium",
+        "attempt": 1,
+        "model": "deepseek-flash",
+        "usage": {
+          "input_tokens": 1372,
+          "output_tokens": 301
+        },
+        "valid": true
+      },
+      {
+        "stage": "identity_requirements",
+        "attempt": 1,
+        "model": "deepseek-flash",
+        "usage": {
+          "input_tokens": 2941,
+          "output_tokens": 3298
+        },
+        "valid": true
+      },
+      {
+        "stage": "identity_requirements",
+        "attempt": 2,
+        "model": "deepseek-flash",
+        "usage": {
+          "input_tokens": 2994,
+          "output_tokens": 4299
+        },
+        "valid": true
+      },
+      {
+        "stage": "licence",
+        "attempt": 1,
+        "model": "deepseek-flash",
+        "usage": {
+          "input_tokens": 2463,
+          "output_tokens": 1473
+        },
+        "valid": true
+      }
+    ]
+  },
+  "budget": {
+    "prompt_tokens": 1845,
+    "target_video_rows": 57456,
+    "target_audio_rows": 640,
+    "known_reference_rows": 1152,
+    "in_trained_band": true
+  },
+  "findings": [
+    {
+      "rule": "P3-too-long",
+      "severity": "WARN",
+      "msg": "main description is 780 words; spec guidance 350-500"
+    },
+    {
+      "rule": "A2-sound-duplicated",
+      "severity": "WARN",
+      "msg": "overall_soundscape repeats content already in the description rather than a separate layer"
+    },
+    {
+      "rule": "H3-token-band",
+      "severity": "WARN",
+      "msg": "prompt is 1845 tokens, outside the 350-1400 band"
+    }
+  ],
+  "status": "compiled",
+  "version": "contextir/compiler/v1",
+  "brief": {
+    "subject_projections": [
+      {
+        "subject_id": "subject-1",
+        "descriptor": "the black sports car",
+        "sources": [
+          {
+            "subject_id": "subject-1",
+            "attributes": [
+              "carbon fibre body"
+            ]
+          },
+          {
+            "subject_id": "subject-2",
+            "attributes": [
+              "wheels from the second picture"
+            ]
+          }
+        ]
+      }
+    ],
+    "effort": "standard",
+    "seconds_explicit": true,
+    "aspect_explicit": true,
+    "intent": "The single sports car draws its carbon fibre body from asset-1 and wheels from asset-2.",
+    "assets": [
+      {
+        "preparation_computed": true,
+        "id": "asset-1",
+        "kind": "image",
+        "metadata": {
+          "width": 1024,
+          "height": 576,
+          "fps": {
+            "numerator": 0,
+            "denominator": 0
+          }
+        },
+        "preparation": {
+          "sizing": "match",
+          "width": 1024,
+          "height": 576
+        },
+        "role": "subject",
+        "composition": "unknown",
+        "sizing": "match"
+      },
+      {
+        "preparation_computed": true,
+        "id": "asset-2",
+        "kind": "image",
+        "metadata": {
+          "width": 1024,
+          "height": 576,
+          "fps": {
+            "numerator": 0,
+            "denominator": 0
+          }
+        },
+        "preparation": {
+          "sizing": "match",
+          "width": 1024,
+          "height": 576
+        },
+        "role": "subject",
+        "composition": "unknown",
+        "sizing": "match"
+      }
+    ],
+    "seconds": 8,
+    "aspect": "16:9",
+    "mode": "ref2va",
+    "creativity": "balanced",
+    "evidence": [
+      {
+        "card": {
+          "asset_id": "asset-1",
+          "subjects": [
+            {
+              "kind": "object",
+              "descriptor": "the black sports car",
+              "attributes": [
+                "carbon fibre body"
+              ]
+            }
+          ],
+          "style": "Live-action",
+          "composition": "unknown",
+          "analyzer_version": "1",
+          "coverage": {
+            "status": "complete",
+            "tracks": [
+              "visual"
+            ]
+          }
+        },
+        "asset_id": "asset-1",
+        "facts": [
+          {
+            "id": "card-asset-1-1",
+            "text": "Live-action",
+            "source": {
+              "asset_id": "asset-1",
+              "track": "visual"
+            }
+          },
+          {
+            "id": "card-asset-1-2",
+            "text": "the black sports car",
+            "source": {
+              "asset_id": "asset-1",
+              "track": "visual"
+            }
+          },
+          {
+            "id": "card-asset-1-3",
+            "text": "carbon fibre body",
+            "source": {
+              "asset_id": "asset-1",
+              "track": "visual"
+            }
+          }
+        ],
+        "analyzer_version": "1",
+        "coverage": {
+          "status": "complete",
+          "tracks": [
+            "visual"
+          ]
+        }
+      },
+      {
+        "card": {
+          "asset_id": "asset-2",
+          "subjects": [
+            {
+              "kind": "object",
+              "descriptor": "the black sports car",
+              "attributes": [
+                "carbon fibre body"
+              ]
+            }
+          ],
+          "style": "Live-action",
+          "composition": "unknown",
+          "analyzer_version": "1",
+          "coverage": {
+            "status": "complete",
+            "tracks": [
+              "visual"
+            ]
+          }
+        },
+        "asset_id": "asset-2",
+        "facts": [
+          {
+            "id": "card-asset-2-1",
+            "text": "Live-action",
+            "source": {
+              "asset_id": "asset-2",
+              "track": "visual"
+            }
+          },
+          {
+            "id": "card-asset-2-2",
+            "text": "the black sports car",
+            "source": {
+              "asset_id": "asset-2",
+              "track": "visual"
+            }
+          },
+          {
+            "id": "card-asset-2-3",
+            "text": "carbon fibre body",
+            "source": {
+              "asset_id": "asset-2",
+              "track": "visual"
+            }
+          }
+        ],
+        "analyzer_version": "1",
+        "coverage": {
+          "status": "complete",
+          "tracks": [
+            "visual"
+          ]
+        }
+      }
+    ],
+    "cards": [
+      {
+        "asset_id": "asset-1",
+        "subjects": [
+          {
+            "kind": "object",
+            "descriptor": "the black sports car",
+            "attributes": [
+              "carbon fibre body"
+            ]
+          }
+        ],
+        "style": "Live-action",
+        "composition": "unknown",
+        "analyzer_version": "1",
+        "coverage": {
+          "status": "complete",
+          "tracks": [
+            "visual"
+          ]
+        }
+      },
+      {
+        "asset_id": "asset-2",
+        "subjects": [
+          {
+            "kind": "object",
+            "descriptor": "the black sports car",
+            "attributes": [
+              "carbon fibre body"
+            ]
+          }
+        ],
+        "style": "Live-action",
+        "composition": "unknown",
+        "analyzer_version": "1",
+        "coverage": {
+          "status": "complete",
+          "tracks": [
+            "visual"
+          ]
+        }
+      }
+    ]
+  },
+  "request": {
+    "instruction": "The single sports car draws its carbon fibre body from asset-1 and wheels from asset-2.",
+    "mode": "ref2va",
+    "target": {
+      "duration_ms": 8000,
+      "frame_count": 192,
+      "aspect_ratio": "16:9",
+      "fps": {
+        "numerator": 24,
+        "denominator": 1
+      },
+      "width": 1344,
+      "height": 768
+    },
+    "assets": [
+      {
+        "id": "asset-1",
+        "kind": "image",
+        "metadata": {
+          "width": 1024,
+          "height": 576,
+          "fps": {
+            "numerator": 0,
+            "denominator": 0
+          }
+        },
+        "preparation": {
+          "sizing": "match",
+          "width": 1024,
+          "height": 576
+        }
+      },
+      {
+        "id": "asset-2",
+        "kind": "image",
+        "metadata": {
+          "width": 1024,
+          "height": 576,
+          "fps": {
+            "numerator": 0,
+            "denominator": 0
+          }
+        },
+        "preparation": {
+          "sizing": "match",
+          "width": 1024,
+          "height": 576
+        }
+      }
+    ],
+    "bindings": [
+      {
+        "source": {
+          "asset_id": "asset-1",
+          "track": "visual"
+        },
+        "role": "identity"
+      },
+      {
+        "source": {
+          "asset_id": "asset-2",
+          "track": "visual"
+        },
+        "role": "identity"
+      }
+    ],
+    "constraints": [
+      {
+        "id": "compiler-no-dialogue",
+        "kind": "no_dialogue",
+        "text": "Do not add spoken or sung lines."
+      }
+    ],
+    "allow_creative_additions": true,
+    "allow_generated_dialogue": false,
+    "pinned_shots": [
+      {
+        "id": "shot-1",
+        "start_ms": 0,
+        "end_ms": 2600
+      },
+      {
+        "id": "shot-2",
+        "start_ms": 2600,
+        "end_ms": 5300
+      },
+      {
+        "id": "shot-3",
+        "start_ms": 5300,
+        "end_ms": 8000
+      }
+    ],
+    "addition_scope": {
+      "dialogue": false,
+      "music": true,
+      "visible_text": false
+    }
+  },
+  "structure": {
+    "subject_projections": [
+      {
+        "subject_id": "subject-1",
+        "descriptor": "the black sports car",
+        "sources": [
+          {
+            "subject_id": "subject-1",
+            "attributes": [
+              "carbon fibre body"
+            ]
+          },
+          {
+            "subject_id": "subject-2",
+            "attributes": [
+              "wheels from the second picture"
+            ]
+          }
+        ]
+      }
+    ],
+    "replacement_targets": {},
+    "style": "Live-action",
+    "mode": "ref2va",
+    "assets": [
+      {
+        "asset_id": "asset-1",
+        "role": "subject",
+        "replaces": ""
+      },
+      {
+        "asset_id": "asset-2",
+        "role": "subject",
+        "replaces": ""
+      }
+    ],
+    "shots": [
+      {
+        "subjects": [
+          "subject-1"
+        ],
+        "sync_sound": [
+          "low engine note",
+          "tyre noise on asphalt"
+        ],
+        "start_ms": 0,
+        "purpose": "establish",
+        "framing": "wide",
+        "action": "A black sports car with a carbon fibre body and the wheels taken from the second picture rolls out of shadow onto an open stretch of road, light sliding along its panels as the wheels turn.",
+        "what_changes": "the car emerges from shadow into open light on the road",
+        "camera": {
+          "type": "Tracking Shot",
+          "amplitude": "small",
+          "speed": "slow"
+        }
+      },
+      {
+        "subjects": [
+          "subject-1"
+        ],
+        "sync_sound": [
+          "engine rising in pitch",
+          "road hum"
+        ],
+        "start_ms": 2600,
+        "purpose": "develop",
+        "framing": "medium close",
+        "action": "The camera tracks low alongside the moving car, holding on the carbon fibre weave catching the light while the borrowed wheels rotate at speed.",
+        "what_changes": "the view moves from the whole car to a low pass over its bodywork and spinning wheels",
+        "camera": {
+          "type": "Tracking Shot",
+          "amplitude": "small",
+          "speed": "slow"
+        }
+      },
+      {
+        "subjects": [
+          "subject-1"
+        ],
+        "sync_sound": [
+          "engine note fading with distance"
+        ],
+        "start_ms": 5300,
+        "purpose": "close",
+        "framing": "medium wide",
+        "action": "The car sweeps past the camera and settles onto a straight, the engine note easing as it draws away down the road.",
+        "what_changes": "the car pulls away and recedes into the distance",
+        "camera": {
+          "type": "Arc Shot",
+          "amplitude": "small",
+          "speed": "slow"
+        }
+      }
+    ],
+    "dialogue": [],
+    "onscreen_text": [],
+    "requested": {
+      "speech": false,
+      "music": false,
+      "onscreen_text": false,
+      "magnitude": ""
+    },
+    "forbidden": {
+      "speech": false,
+      "music": false,
+      "onscreen_text": false,
+      "magnitude": ""
+    },
+    "reasoning": "The request asks for one identifiable object — the black sports car — whose carbon fibre body comes from the first picture and whose wheels come from the second. The supplied subject_projections already encode this single target identity (primary subject-1, descriptor 'the black sports car', contributions: carbon fibre body from subject-1 and wheels from the second picture from subject-2), so they are preserved verbatim rather than split into two competing cars. Both attachments are subject references (actual_frame=false), so they are redrawn as identity sources, not preserved frames; their studio presentation and any panel layout carry no weight. No speech, on-screen lettering or prohibitions are requested, so all scope flags stay false. Balanced creativity permits added score only, which may accompany the three shots of the car moving on an open road."
+  },
+  "scope": {
+    "speech": false,
+    "music": true,
+    "onscreen_text": false,
+    "magnitude": "measured"
+  },
+  "document": {
+    "version": "contextir/v1",
+    "mode": "ref2va",
+    "target": {
+      "duration_ms": 8000,
+      "frame_count": 192,
+      "aspect_ratio": "16:9",
+      "fps": {
+        "numerator": 24,
+        "denominator": 1
+      },
+      "width": 1344,
+      "height": 768
+    },
+    "assets": [
+      {
+        "id": "asset-1",
+        "kind": "image",
+        "metadata": {
+          "width": 1024,
+          "height": 576,
+          "fps": {
+            "numerator": 0,
+            "denominator": 0
+          }
+        },
+        "preparation": {
+          "sizing": "match",
+          "width": 1024,
+          "height": 576
+        }
+      },
+      {
+        "id": "asset-2",
+        "kind": "image",
+        "metadata": {
+          "width": 1024,
+          "height": 576,
+          "fps": {
+            "numerator": 0,
+            "denominator": 0
+          }
+        },
+        "preparation": {
+          "sizing": "match",
+          "width": 1024,
+          "height": 576
+        }
+      }
+    ],
+    "evidence": [
+      {
+        "card": {
+          "asset_id": "asset-1",
+          "subjects": [
+            {
+              "kind": "object",
+              "descriptor": "the black sports car",
+              "attributes": [
+                "carbon fibre body"
+              ]
+            }
+          ],
+          "style": "Live-action",
+          "composition": "unknown",
+          "analyzer_version": "1",
+          "coverage": {
+            "status": "complete",
+            "tracks": [
+              "visual"
+            ]
+          }
+        },
+        "asset_id": "asset-1",
+        "facts": [
+          {
+            "id": "card-asset-1-1",
+            "text": "Live-action",
+            "source": {
+              "asset_id": "asset-1",
+              "track": "visual"
+            }
+          },
+          {
+            "id": "card-asset-1-2",
+            "text": "the black sports car",
+            "source": {
+              "asset_id": "asset-1",
+              "track": "visual"
+            }
+          },
+          {
+            "id": "card-asset-1-3",
+            "text": "carbon fibre body",
+            "source": {
+              "asset_id": "asset-1",
+              "track": "visual"
+            }
+          }
+        ],
+        "analyzer_version": "1",
+        "coverage": {
+          "status": "complete",
+          "tracks": [
+            "visual"
+          ]
+        }
+      },
+      {
+        "card": {
+          "asset_id": "asset-2",
+          "subjects": [
+            {
+              "kind": "object",
+              "descriptor": "the black sports car",
+              "attributes": [
+                "carbon fibre body"
+              ]
+            }
+          ],
+          "style": "Live-action",
+          "composition": "unknown",
+          "analyzer_version": "1",
+          "coverage": {
+            "status": "complete",
+            "tracks": [
+              "visual"
+            ]
+          }
+        },
+        "asset_id": "asset-2",
+        "facts": [
+          {
+            "id": "card-asset-2-1",
+            "text": "Live-action",
+            "source": {
+              "asset_id": "asset-2",
+              "track": "visual"
+            }
+          },
+          {
+            "id": "card-asset-2-2",
+            "text": "the black sports car",
+            "source": {
+              "asset_id": "asset-2",
+              "track": "visual"
+            }
+          },
+          {
+            "id": "card-asset-2-3",
+            "text": "carbon fibre body",
+            "source": {
+              "asset_id": "asset-2",
+              "track": "visual"
+            }
+          }
+        ],
+        "analyzer_version": "1",
+        "coverage": {
+          "status": "complete",
+          "tracks": [
+            "visual"
+          ]
+        }
+      }
+    ],
+    "subjects": [
+      {
+        "kind": "object",
+        "descriptor": "the black sports car",
+        "attributes": [
+          "carbon fibre body",
+          "wheels from the second picture"
+        ],
+        "origin": "observed",
+        "id": "subject-1",
+        "description": "the black sports car; carbon fibre body, wheels from the second picture",
+        "sources": [
+          {
+            "source": {
+              "asset_id": "asset-1",
+              "track": "visual"
+            },
+            "role": "identity",
+            "details": "Use only these explicitly selected target characteristics: carbon fibre body. Source observations and caller-requested target claims retain their separate recorded provenance."
+          },
+          {
+            "source": {
+              "asset_id": "asset-2",
+              "track": "visual"
+            },
+            "role": "identity",
+            "details": "Use only these explicitly selected target characteristics: wheels from the second picture. Source observations and caller-requested target claims retain their separate recorded provenance."
+          }
+        ],
+        "retention": "partially_preserved",
+        "retention_details": "One target identity combines only the explicitly selected target characteristics from its named sources; source observations and caller-requested target claims remain separately recorded, and unrelated source appearance is not imported.",
+        "shot_ids": [
+          "shot-1",
+          "shot-2",
+          "shot-3"
+        ]
+      }
+    ],
+    "style": "Live-action",
+    "shots": [
+      {
+        "id": "shot-1",
+        "start_ms": 0,
+        "end_ms": 2600,
+        "description": [
+          {
+            "text": "An open stretch of asphalt runs between low concrete barriers and dark scrub under a pale, late-blue sky. "
+          },
+          {
+            "subject_id": "subject-1"
+          },
+          {
+            "text": " waits at the edge of deep shadow, its black body almost merging with the dark until a thin band of ambient light crosses the bonnet and flank and picks out the carbon fibre weave as a faint, tight grid. The car rolls forward out of the shadow; the motion brings the panels alive with a long, sliding highlight, while the wheels taken from the second picture turn with a clean mechanical rhythm and the tyres hiss softly over the road. The camera tracks with the car at a slow, small-amplitude pace, holding the whole vehicle in frame as it emerges into open light. The finish stays deep black, but the carbon texture separates the bonnet, roof and haunches from the glassy darkness around them. A little dust near the barrier catches the headlamp wash, and the air feels cool and open. The car sits level and planted, its movement steady rather than aggressive, as if drawn out onto the empty road."
+          }
+        ],
+        "events": [
+          {
+            "kind": "visual",
+            "at_ms": 0,
+            "description": [
+              {
+                "text": "The car sits half in shadow at the edge of the road, its black panels almost lost against the dark."
+              }
+            ]
+          },
+          {
+            "kind": "sound",
+            "at_ms": 700,
+            "description": [
+              {
+                "text": "A low engine note begins, soft and even, over faint tyre noise on asphalt."
+              }
+            ]
+          },
+          {
+            "kind": "action",
+            "at_ms": 1500,
+            "description": [
+              {
+                "text": "The car rolls forward out of shadow; light slides along the carbon panels and the wheels start to turn."
+              }
+            ]
+          },
+          {
+            "kind": "camera",
+            "description": [
+              {
+                "text": "The camera tracks with the subject with small amplitude at slow speed."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "shot-2",
+        "start_ms": 2600,
+        "end_ms": 5300,
+        "description": [
+          {
+            "text": "The view drops low and close, tracking alongside the moving car at a measured pace. "
+          },
+          {
+            "subject_id": "subject-1"
+          },
+          {
+            "text": " fills the frame from the shoulder line down, the carbon fibre body close enough for the weave to resolve into fine diagonal bands under the sliding light. The wheels from the second picture rotate at speed, their spokes blurring into a dark disc while the rims catch intermittent flashes from the roadside. The camera holds the low pass, small in amplitude and slow in speed, so the body appears to glide over the asphalt rather than lunge. Grit flicks away from the tyre path; the road surface streams past in a grey blur. The engine note rises in pitch as the car gathers pace, and a low road hum fills the space beneath it. Highlights travel across the door and rear haunch, revealing the shape without softening the black finish. The tight framing keeps the carbon panels and the turning wheels readable as parts of the same single car, with no other traffic and the surrounding darkness holding attention on surface detail."
+          }
+        ],
+        "events": [
+          {
+            "kind": "visual",
+            "at_ms": 2600,
+            "description": [
+              {
+                "text": "The view cuts to a low, close pass beside the moving car; carbon weave and turning wheels fill the frame."
+              }
+            ]
+          },
+          {
+            "kind": "action",
+            "at_ms": 3400,
+            "description": [
+              {
+                "text": "The wheels spin faster, spokes blurring as the car gathers pace."
+              }
+            ]
+          },
+          {
+            "kind": "sound",
+            "at_ms": 4600,
+            "description": [
+              {
+                "text": "The engine note rises in pitch and a low road hum builds beneath it."
+              }
+            ]
+          },
+          {
+            "kind": "camera",
+            "description": [
+              {
+                "text": "The camera tracks with the subject with small amplitude at slow speed."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "shot-3",
+        "start_ms": 5300,
+        "end_ms": 8000,
+        "description": [
+          {
+            "text": "The camera eases into a slow arc as "
+          },
+          {
+            "subject_id": "subject-1"
+          },
+          {
+            "text": " sweeps past and settles onto the straight. Seen medium-wide, the black body is compact against the pale road, the carbon fibre texture still visible along the flank where light grazes it. The wheels from the second picture carry the car away with the same clean rotation, and the whole vehicle draws down the empty stretch, diminishing as the road opens ahead. The arc is small and unhurried, letting the car move through the frame rather than snapping after it. The engine note eases with distance, the tyre noise thins into a soft hiss, and the road hum recedes. Behind the car, the asphalt remains empty; barriers and scrub hold their positions at the edges of the frame. The final view keeps the car in sight as it pulls away, highlights on its panels growing smaller and the carbon weave blending back into the dark body. The motion stays steady as the sound fades down the open road."
+          }
+        ],
+        "events": [
+          {
+            "kind": "visual",
+            "at_ms": 5300,
+            "description": [
+              {
+                "text": "The car sweeps past the camera and settles onto the straight, seen medium-wide."
+              }
+            ]
+          },
+          {
+            "kind": "action",
+            "at_ms": 6900,
+            "description": [
+              {
+                "text": "The car pulls away down the empty road, its outline shrinking against the pale horizon."
+              }
+            ]
+          },
+          {
+            "kind": "sound",
+            "at_ms": 7600,
+            "description": [
+              {
+                "text": "The engine note fades with distance, and the tyre noise thins into a soft hiss."
+              }
+            ]
+          },
+          {
+            "kind": "camera",
+            "description": [
+              {
+                "text": "The camera arcs around the subject with small amplitude at slow speed."
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "soundscape": "Low engine note and tyre noise on asphalt, with a faint road hum that rises through the middle and fades with distance at the end.",
+    "music": "A restrained low atmospheric score with a slow pulse, kept well under the engine and tyre sounds.",
+    "constraints": [
+      {
+        "id": "compiler-no-dialogue",
+        "kind": "no_dialogue",
+        "text": "Do not add spoken or sung lines."
+      }
+    ],
+    "claims": [
+      {
+        "id": "claim-user-1",
+        "origin": "user",
+        "text": "The single sports car draws its carbon fibre body from asset-1 and wheels from asset-2."
+      },
+      {
+        "id": "claim-creative-1",
+        "origin": "creative",
+        "text": "A restrained low atmospheric score supports the car's movement without adding dialogue."
+      }
+    ]
+  },
+  "artifact": {
+    "version": "contextir-h3/artifact-v1",
+    "compiler_version": "contextir-h3/v1.2",
+    "format_version": "minimax-h3/prompt-v1",
+    "mode": "ref2va",
+    "target": {
+      "duration_ms": 8000,
+      "frame_count": 192,
+      "aspect_ratio": "16:9",
+      "fps": {
+        "numerator": 24,
+        "denominator": 1
+      },
+      "width": 1344,
+      "height": 768
+    },
+    "profile": {
+      "name": "h3-published-format-v1",
+      "format": "minimax-h3/prompt-v1",
+      "fps": {
+        "numerator": 24,
+        "denominator": 1
+      },
+      "modes": [
+        "t2va",
+        "i2va",
+        "l2va",
+        "fl2va",
+        "ref2va"
+      ],
+      "limits": {
+        "pictures": 0,
+        "videos": 0,
+        "video_audio": 0,
+        "standalone_audio": 0
+      },
+      "supports_reference_frame_anchors": true,
+      "supports_source_intervals": true
+    },
+    "prompt": "subject_definitions:\n\u003cSubject 1\u003e is the black sports car; carbon fibre body, wheels from the second picture. Its identity is referenced from \u003cPicture 1\u003e Use only these explicitly selected target characteristics: carbon fibre body. Source observations and caller-requested target claims retain their separate recorded provenance. Its identity is referenced from \u003cPicture 2\u003e Use only these explicitly selected target characteristics: wheels from the second picture. Source observations and caller-requested target claims retain their separate recorded provenance.\n\nsummary:\n[reference generation] An open stretch of asphalt runs between low concrete barriers and dark scrub under a pale, late-blue sky. \u003cSubject 1\u003e waits at the edge of deep shadow, its black body almost merging with the dark until a thin band of ambient light crosses the bonnet and flank and picks out the carbon fibre weave as a faint, tight grid. The car rolls forward out of the shadow; the motion brings the panels alive with a long, sliding highlight, while the wheels taken from the second picture turn with a clean mechanical rhythm and the tyres hiss softly over the road. The camera tracks with the car at a slow, small-amplitude pace, holding the whole vehicle in frame as it emerges into open light. The finish stays deep black, but the carbon texture separates the bonnet, roof and haunches from the glassy darkness around them. A little dust near the barrier catches the headlamp wash, and the air feels cool and open. The car sits level and planted, its movement steady rather than aggressive, as if drawn out onto the empty road. The view drops low and close, tracking alongside the moving car at a measured pace. \u003cSubject 1\u003e fills the frame from the shoulder line down, the carbon fibre body close enough for the weave to resolve into fine diagonal bands under the sliding light. The wheels from the second picture rotate at speed, their spokes blurring into a dark disc while the rims catch intermittent flashes from the roadside. The camera holds the low pass, small in amplitude and slow in speed, so the body appears to glide over the asphalt rather than lunge. Grit flicks away from the tyre path; the road surface streams past in a grey blur. The engine note rises in pitch as the car gathers pace, and a low road hum fills the space beneath it. Highlights travel across the door and rear haunch, revealing the shape without softening the black finish. The tight framing keeps the carbon panels and the turning wheels readable as parts of the same single car, with no other traffic and the surrounding darkness holding attention on surface detail. The camera eases into a slow arc as \u003cSubject 1\u003e sweeps past and settles onto the straight. Seen medium-wide, the black body is compact against the pale road, the carbon fibre texture still visible along the flank where light grazes it. The wheels from the second picture carry the car away with the same clean rotation, and the whole vehicle draws down the empty stretch, diminishing as the road opens ahead. The arc is small and unhurried, letting the car move through the frame rather than snapping after it. The engine note eases with distance, the tyre noise thins into a soft hiss, and the road hum recedes. Behind the car, the asphalt remains empty; barriers and scrub hold their positions at the edges of the frame. The final view keeps the car in sight as it pulls away, highlights on its panels growing smaller and the carbon weave blending back into the dark body. The motion stays steady as the sound fades down the open road.\n\nretention_analysis:\n\u003cSubject 1\u003e (appears in [Shot 1], [Shot 2], [Shot 3]): partially_preserved - One target identity combines only the explicitly selected target characteristics from its named sources; source observations and caller-requested target claims remain separately recorded, and unrelated source appearance is not imported.\n\ndetailed_description:\nThe target video is in live-action style.\n[Shot 1] An open stretch of asphalt runs between low concrete barriers and dark scrub under a pale, late-blue sky. \u003cSubject 1\u003e waits at the edge of deep shadow, its black body almost merging with the dark until a thin band of ambient light crosses the bonnet and flank and picks out the carbon fibre weave as a faint, tight grid. The car rolls forward out of the shadow; the motion brings the panels alive with a long, sliding highlight, while the wheels taken from the second picture turn with a clean mechanical rhythm and the tyres hiss softly over the road. The camera tracks with the car at a slow, small-amplitude pace, holding the whole vehicle in frame as it emerges into open light. The finish stays deep black, but the carbon texture separates the bonnet, roof and haunches from the glassy darkness around them. A little dust near the barrier catches the headlamp wash, and the air feels cool and open. The car sits level and planted, its movement steady rather than aggressive, as if drawn out onto the empty road. At 00:00.000, The car sits half in shadow at the edge of the road, its black panels almost lost against the dark. At 00:00.700, A low engine note begins, soft and even, over faint tyre noise on asphalt. At 00:01.500, The car rolls forward out of shadow; light slides along the carbon panels and the wheels start to turn. The camera tracks with the subject with small amplitude at slow speed. Throughout the target video: Do not add spoken or sung lines.\n[Shot 2] At 00:02.600, the shot cuts to The view drops low and close, tracking alongside the moving car at a measured pace. \u003cSubject 1\u003e fills the frame from the shoulder line down, the carbon fibre body close enough for the weave to resolve into fine diagonal bands under the sliding light. The wheels from the second picture rotate at speed, their spokes blurring into a dark disc while the rims catch intermittent flashes from the roadside. The camera holds the low pass, small in amplitude and slow in speed, so the body appears to glide over the asphalt rather than lunge. Grit flicks away from the tyre path; the road surface streams past in a grey blur. The engine note rises in pitch as the car gathers pace, and a low road hum fills the space beneath it. Highlights travel across the door and rear haunch, revealing the shape without softening the black finish. The tight framing keeps the carbon panels and the turning wheels readable as parts of the same single car, with no other traffic and the surrounding darkness holding attention on surface detail. At 00:02.600, The view cuts to a low, close pass beside the moving car; carbon weave and turning wheels fill the frame. At 00:03.400, The wheels spin faster, spokes blurring as the car gathers pace. At 00:04.600, The engine note rises in pitch and a low road hum builds beneath it. The camera tracks with the subject with small amplitude at slow speed.\n[Shot 3] At 00:05.300, the shot cuts to The camera eases into a slow arc as \u003cSubject 1\u003e sweeps past and settles onto the straight. Seen medium-wide, the black body is compact against the pale road, the carbon fibre texture still visible along the flank where light grazes it. The wheels from the second picture carry the car away with the same clean rotation, and the whole vehicle draws down the empty stretch, diminishing as the road opens ahead. The arc is small and unhurried, letting the car move through the frame rather than snapping after it. The engine note eases with distance, the tyre noise thins into a soft hiss, and the road hum recedes. Behind the car, the asphalt remains empty; barriers and scrub hold their positions at the edges of the frame. The final view keeps the car in sight as it pulls away, highlights on its panels growing smaller and the carbon weave blending back into the dark body. The motion stays steady as the sound fades down the open road. At 00:05.300, The car sweeps past the camera and settles onto the straight, seen medium-wide. At 00:06.900, The car pulls away down the empty road, its outline shrinking against the pale horizon. At 00:07.600, The engine note fades with distance, and the tyre noise thins into a soft hiss. The camera arcs around the subject with small amplitude at slow speed.\n\noverall_soundscape:\nLow engine note and tyre noise on asphalt, with a faint road hum that rises through the middle and fades with distance at the end.\n\nnon_diegetic_music:\nA restrained low atmospheric score with a slow pulse, kept well under the engine and tyre sounds.\n",
+    "manifest": {
+      "media": [
+        {
+          "preparation": {
+            "sizing": "match",
+            "width": 1024,
+            "height": 576
+          },
+          "source_metadata": {
+            "width": 1024,
+            "height": 576,
+            "fps": {
+              "numerator": 0,
+              "denominator": 0
+            }
+          },
+          "label": "\u003cPicture 1\u003e",
+          "kind": "picture",
+          "source": {
+            "asset_id": "asset-1",
+            "track": "visual"
+          },
+          "socket": "ref_image_1"
+        },
+        {
+          "preparation": {
+            "sizing": "match",
+            "width": 1024,
+            "height": 576
+          },
+          "source_metadata": {
+            "width": 1024,
+            "height": 576,
+            "fps": {
+              "numerator": 0,
+              "denominator": 0
+            }
+          },
+          "label": "\u003cPicture 2\u003e",
+          "kind": "picture",
+          "source": {
+            "asset_id": "asset-2",
+            "track": "visual"
+          },
+          "socket": "ref_image_2"
+        }
+      ],
+      "subjects": [
+        {
+          "id": "subject-1",
+          "label": "\u003cSubject 1\u003e"
+        }
+      ],
+      "references": [],
+      "speakers": []
+    },
+    "frames": 192,
+    "effective_duration_seconds": {
+      "numerator": 8,
+      "denominator": 1
+    },
+    "document_sha256": "d0f8e95b1947b70a456e7b5b84522ced8cf50f47916386312a822f20be845c78",
+    "profile_sha256": "ce4364d3f1242f5aeb2216db44195fb3897f4828dd9e145c4c16c64315786ab6",
+    "prompt_sha256": "0a36f94f5103a1dbff97524bf8c20a55629440762494426e84dc382bd6cce702",
+    "manifest_sha256": "30d2137c3da0a95a4e40b6c72fa39e4e92ca30f6424693c1983e72cc145d65f3",
+    "sha256": "573ea16be5f46b40f336194eb6e65de368d3a3a26548f3a614dd785dd8d93c05"
+  },
+  "evidence": [
+    {
+      "card": {
+        "asset_id": "asset-1",
+        "subjects": [
+          {
+            "kind": "object",
+            "descriptor": "the black sports car",
+            "attributes": [
+              "carbon fibre body"
+            ]
+          }
+        ],
+        "style": "Live-action",
+        "composition": "unknown",
+        "analyzer_version": "1",
+        "coverage": {
+          "status": "complete",
+          "tracks": [
+            "visual"
+          ]
+        }
+      },
+      "asset_id": "asset-1",
+      "facts": [
+        {
+          "id": "card-asset-1-1",
+          "text": "Live-action",
+          "source": {
+            "asset_id": "asset-1",
+            "track": "visual"
+          }
+        },
+        {
+          "id": "card-asset-1-2",
+          "text": "the black sports car",
+          "source": {
+            "asset_id": "asset-1",
+            "track": "visual"
+          }
+        },
+        {
+          "id": "card-asset-1-3",
+          "text": "carbon fibre body",
+          "source": {
+            "asset_id": "asset-1",
+            "track": "visual"
+          }
+        }
+      ],
+      "analyzer_version": "1",
+      "coverage": {
+        "status": "complete",
+        "tracks": [
+          "visual"
+        ]
+      }
+    },
+    {
+      "card": {
+        "asset_id": "asset-2",
+        "subjects": [
+          {
+            "kind": "object",
+            "descriptor": "the black sports car",
+            "attributes": [
+              "carbon fibre body"
+            ]
+          }
+        ],
+        "style": "Live-action",
+        "composition": "unknown",
+        "analyzer_version": "1",
+        "coverage": {
+          "status": "complete",
+          "tracks": [
+            "visual"
+          ]
+        }
+      },
+      "asset_id": "asset-2",
+      "facts": [
+        {
+          "id": "card-asset-2-1",
+          "text": "Live-action",
+          "source": {
+            "asset_id": "asset-2",
+            "track": "visual"
+          }
+        },
+        {
+          "id": "card-asset-2-2",
+          "text": "the black sports car",
+          "source": {
+            "asset_id": "asset-2",
+            "track": "visual"
+          }
+        },
+        {
+          "id": "card-asset-2-3",
+          "text": "carbon fibre body",
+          "source": {
+            "asset_id": "asset-2",
+            "track": "visual"
+          }
+        }
+      ],
+      "analyzer_version": "1",
+      "coverage": {
+        "status": "complete",
+        "tracks": [
+          "visual"
+        ]
+      }
+    }
+  ],
+  "decisions": [
+    {
+      "field": "refinement",
+      "source": "typed_requested_changes",
+      "value": [
+        {
+          "field": "intent",
+          "asset_id": "",
+          "action": "set",
+          "quote": "Remove only the unrelated reference asset unrelated.",
+          "value": "The single sports car draws its carbon fibre body from asset-1 and wheels from asset-2."
+        },
+        {
+          "field": "asset_remove",
+          "asset_id": "unrelated",
+          "action": "remove",
+          "quote": "Remove only the unrelated reference asset unrelated.",
+          "value": null
+        }
+      ],
+      "explanation": "Only explicitly interpreted fields change; observations and all unaffected caller choices are preserved."
+    },
+    {
+      "field": "subject_projections",
+      "source": "stable_source_graph_remap",
+      "value": {
+        "after": [
+          {
+            "subject_id": "subject-1",
+            "descriptor": "the black sports car",
+            "sources": [
+              {
+                "subject_id": "subject-1",
+                "attributes": [
+                  "carbon fibre body"
+                ]
+              },
+              {
+                "subject_id": "subject-2",
+                "attributes": [
+                  "wheels from the second picture"
+                ]
+              }
+            ]
+          }
+        ],
+        "before": [
+          {
+            "subject_id": "subject-2",
+            "descriptor": "the black sports car",
+            "sources": [
+              {
+                "subject_id": "subject-2",
+                "attributes": [
+                  "carbon fibre body"
+                ]
+              },
+              {
+                "subject_id": "subject-3",
+                "attributes": [
+                  "wheels from the second picture"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "explanation": "Derived subject IDs were mechanically remapped to the same unchanged observed attachment and within-source identity after asset changes; no textual intent or remaining-candidate heuristic selected a new source."
+    },
+    {
+      "field": "target",
+      "source": "computed",
+      "value": {
+        "effective_seconds": 8,
+        "frame_count": 192,
+        "nominal_seconds": 8,
+        "policy": "snap_up"
+      },
+      "explanation": "Effective timing and nominal duration are recorded separately; generated cuts use effective timing."
+    },
+    {
+      "field": "canvas",
+      "source": "computed",
+      "value": [
+        1344,
+        768
+      ],
+      "explanation": "Native short-edge canvas is aligned to 32 pixels; explicit megapixels replaces the native area budget."
+    },
+    {
+      "field": "assets.asset-1.preparation",
+      "source": "required_adapter_instruction",
+      "value": {
+        "sizing": "match",
+        "width": 1024,
+        "height": 576
+      },
+      "explanation": "These required input transforms are recorded separately from the original source metadata; the compiler has not executed media IO."
+    },
+    {
+      "field": "assets.asset-2.preparation",
+      "source": "required_adapter_instruction",
+      "value": {
+        "sizing": "match",
+        "width": 1024,
+        "height": 576
+      },
+      "explanation": "These required input transforms are recorded separately from the original source metadata; the compiler has not executed media IO."
+    },
+    {
+      "field": "execution",
+      "source": "explicit_adapter_policy",
+      "value": {
+        "effort": "standard"
+      },
+      "explanation": "The injected adapters and explicit compiler repair configuration implement standard effort."
+    },
+    {
+      "field": "mode",
+      "source": "caller-override",
+      "value": {
+        "clarification_policy": "continue_with_recorded_choice",
+        "confidence_kind": "routing_policy",
+        "aspect_mismatch": false,
+        "needs_clarification": false,
+        "mode": "ref2va",
+        "confidence": 1,
+        "rule": "caller-override",
+        "signals": [
+          "Mode follows explicit structured choices and media socket requirements."
+        ]
+      },
+      "explanation": "Mode follows the production typed routing contract; publication capabilities are checked separately."
+    },
+    {
+      "field": "content_scope",
+      "source": "typed_request_interpretation",
+      "value": {
+        "conflict_policy": "supplied_content_wins",
+        "requested": {
+          "speech": false,
+          "music": false,
+          "onscreen_text": false,
+          "magnitude": ""
+        },
+        "forbidden": {
+          "speech": false,
+          "music": false,
+          "onscreen_text": false,
+          "magnitude": ""
+        },
+        "allowed": {
+          "speech": false,
+          "music": true,
+          "onscreen_text": false,
+          "magnitude": "measured"
+        },
+        "dialogue": [],
+        "onscreen_text": [],
+        "reasoning": "The intent only describes combining visual attributes of a sports car from two image assets. It does not request speech, music, or onscreen text, and no prohibitions are stated.",
+        "calls": [
+          {
+            "stage": "scope",
+            "attempt": 1,
+            "model": "deepseek-flash",
+            "usage": {
+              "input_tokens": 1181,
+              "output_tokens": 153
+            },
+            "valid": true
+          }
+        ]
+      },
+      "explanation": "Caller requests and prohibitions are interpreted before code applies the explicit creativity level."
+    },
+    {
+      "field": "reference_licence",
+      "source": "typed_attribute_precedence",
+      "value": {
+        "reference_permissions": {
+          "action": true,
+          "framing": true,
+          "lighting": true,
+          "medium": true,
+          "palette": true,
+          "wardrobe": true
+        },
+        "medium_decision": {
+          "rendering_permission": {
+            "kind": "preserve",
+            "disposition": "preserve",
+            "operation_quote": "",
+            "target": "",
+            "reasoning": "The caller only specifies that the sports car's body and wheels derive from attached assets; this is asset/scene composition, not an instruction to transform or reinterpret the rendering, nor a direct target-style rendition directive.",
+            "calls": [
+              {
+                "stage": "rendering_permission",
+                "attempt": 1,
+                "model": "deepseek-flash",
+                "usage": {
+                  "input_tokens": 450,
+                  "output_tokens": 118
+                },
+                "valid": true
+              }
+            ]
+          },
+          "disposition": "preserve",
+          "operation_quote": "",
+          "target": "",
+          "requested_style": "",
+          "reference_medium": "live-action",
+          "requested_medium": "",
+          "treatments": [],
+          "reasoning": "The request only composes the sports car from attached subject assets; it does not request a rendering-family change or a new style. The observed reference rendering is live-action, and the preservation permission is copied from the host-owned rendering permission.",
+          "calls": [
+            {
+              "stage": "rendering_permission",
+              "attempt": 1,
+              "model": "deepseek-flash",
+              "usage": {
+                "input_tokens": 450,
+                "output_tokens": 118
+              },
+              "valid": true
+            },
+            {
+              "stage": "medium",
+              "attempt": 1,
+              "model": "deepseek-flash",
+              "usage": {
+                "input_tokens": 1372,
+                "output_tokens": 301
+              },
+              "valid": true
+            }
+          ]
+        },
+        "identity": [
+          {
+            "descriptor_source": "reference",
+            "kind": "object",
+            "label": "\u003cSubject 1\u003e",
+            "descriptor": "the black sports car",
+            "retained_attributes": [
+              "carbon fibre body"
+            ],
+            "requested_attributes": [],
+            "request_quote": "",
+            "wardrobe_attributes": []
+          },
+          {
+            "descriptor_source": "request",
+            "target_mention": "The single sports car",
+            "kind": "object",
+            "claims": [
+              {
+                "dimension": "stable_attribute",
+                "value": "wheels from the second picture",
+                "quote": "wheels from asset-2"
+              }
+            ],
+            "label": "\u003cSubject 2\u003e",
+            "descriptor": "the black sports car with carbon fibre body and wheels from the second picture",
+            "retained_attributes": [
+              "carbon fibre body"
+            ],
+            "requested_attributes": [
+              "wheels from the second picture"
+            ],
+            "request_quote": "The single sports car draws its carbon fibre body from asset-1 and wheels from asset-2.",
+            "wardrobe_attributes": []
+          }
+        ],
+        "governs": {
+          "action": "reference",
+          "framing": "reference",
+          "lighting": "reference",
+          "medium": "reference",
+          "palette": "reference",
+          "wardrobe": "reference"
+        },
+        "reasons": {
+          "action": "No new action, behavior, vocal performance or other requested performance is specified; the reference action/pose remains authoritative.",
+          "framing": "No camera composition, shot scale, viewpoint or camera movement is requested. The 16:9 aspect is only a canvas ratio, so reference framing governs.",
+          "lighting": "No light source, direction, quality or other lighting instruction is given; reference lighting is retained.",
+          "medium": "The medium decision preserves the observed live-action rendering; no restyling or rendering-family change was requested.",
+          "palette": "No hue, color grade, saturation or tonal-contrast instruction is given; the reference palette is retained.",
+          "wardrobe": "No clothing or accessory change is requested. The car-body material and wheel sourcing are handled as target identity/properties by identity_requirements, not as wardrobe, so no wardrobe request overrides the reference."
+        },
+        "transform_phrase": null,
+        "transform_target": "",
+        "medium_transferred": false,
+        "style": {
+          "observed_phrase": "Live-action",
+          "phrase": "Live-action",
+          "source": "reference",
+          "reference_medium": "live-action",
+          "requested_medium": "",
+          "discrepancy": false,
+          "note": ""
+        },
+        "subjects": [
+          {
+            "label": "\u003cSubject 1\u003e",
+            "kind": "object",
+            "sources": [
+              "\u003cPicture 1\u003e"
+            ],
+            "descriptor": "the black sports car",
+            "attributes": [
+              "carbon fibre body"
+            ],
+            "pose": [],
+            "pose_licensed": false,
+            "retention": "fully_preserved",
+            "retention_note": "",
+            "appears_in": [],
+            "taken_over_by": ""
+          },
+          {
+            "label": "\u003cSubject 2\u003e",
+            "kind": "object",
+            "sources": [
+              "\u003cPicture 2\u003e"
+            ],
+            "descriptor": "the black sports car",
+            "attributes": [
+              "carbon fibre body"
+            ],
+            "pose": [],
+            "pose_licensed": false,
+            "retention": "fully_preserved",
+            "retention_note": "",
+            "appears_in": [],
+            "taken_over_by": ""
+          }
+        ],
+        "calls": [
+          {
+            "stage": "rendering_permission",
+            "attempt": 1,
+            "model": "deepseek-flash",
+            "usage": {
+              "input_tokens": 450,
+              "output_tokens": 118
+            },
+            "valid": true
+          },
+          {
+            "stage": "medium",
+            "attempt": 1,
+            "model": "deepseek-flash",
+            "usage": {
+              "input_tokens": 1372,
+              "output_tokens": 301
+            },
+            "valid": true
+          },
+          {
+            "stage": "identity_requirements",
+            "attempt": 1,
+            "model": "deepseek-flash",
+            "usage": {
+              "input_tokens": 2941,
+              "output_tokens": 3298
+            },
+            "valid": true
+          },
+          {
+            "stage": "identity_requirements",
+            "attempt": 2,
+            "model": "deepseek-flash",
+            "usage": {
+              "input_tokens": 2994,
+              "output_tokens": 4299
+            },
+            "valid": true
+          },
+          {
+            "stage": "licence",
+            "attempt": 1,
+            "model": "deepseek-flash",
+            "usage": {
+              "input_tokens": 2463,
+              "output_tokens": 1473
+            },
+            "valid": true
+          }
+        ]
+      },
+      "explanation": "Each attribute follows explicit request or observed reference; poses and reference-sheet presentation are not subject identity."
+    },
+    {
+      "field": "shots.camera",
+      "source": "host_template",
+      "value": [
+        {
+          "subjects": [
+            "subject-1"
+          ],
+          "sync_sound": [
+            "low engine note",
+            "tyre noise on asphalt"
+          ],
+          "start_ms": 0,
+          "purpose": "establish",
+          "framing": "wide",
+          "action": "A black sports car with a carbon fibre body and the wheels taken from the second picture rolls out of shadow onto an open stretch of road, light sliding along its panels as the wheels turn.",
+          "what_changes": "the car emerges from shadow into open light on the road",
+          "camera": {
+            "type": "Tracking Shot",
+            "amplitude": "small",
+            "speed": "slow"
+          }
+        },
+        {
+          "subjects": [
+            "subject-1"
+          ],
+          "sync_sound": [
+            "engine rising in pitch",
+            "road hum"
+          ],
+          "start_ms": 2600,
+          "purpose": "develop",
+          "framing": "medium close",
+          "action": "The camera tracks low alongside the moving car, holding on the carbon fibre weave catching the light while the borrowed wheels rotate at speed.",
+          "what_changes": "the view moves from the whole car to a low pass over its bodywork and spinning wheels",
+          "camera": {
+            "type": "Tracking Shot",
+            "amplitude": "small",
+            "speed": "slow"
+          }
+        },
+        {
+          "subjects": [
+            "subject-1"
+          ],
+          "sync_sound": [
+            "engine note fading with distance"
+          ],
+          "start_ms": 5300,
+          "purpose": "close",
+          "framing": "medium wide",
+          "action": "The car sweeps past the camera and settles onto a straight, the engine note easing as it draws away down the road.",
+          "what_changes": "the car pulls away and recedes into the distance",
+          "camera": {
+            "type": "Arc Shot",
+            "amplitude": "small",
+            "speed": "slow"
+          }
+        }
+      ],
+      "explanation": "Canonical camera events are assembled from the typed structural plan after prose."
+    },
+    {
+      "field": "subjects.shot_ids",
+      "source": "typed_actual_use_projection",
+      "value": [
+        {
+          "kind": "object",
+          "descriptor": "the black sports car",
+          "attributes": [
+            "carbon fibre body",
+            "wheels from the second picture"
+          ],
+          "origin": "observed",
+          "id": "subject-1",
+          "description": "the black sports car; carbon fibre body, wheels from the second picture",
+          "sources": [
+            {
+              "source": {
+                "asset_id": "asset-1",
+                "track": "visual"
+              },
+              "role": "identity",
+              "details": "Use only these explicitly selected target characteristics: carbon fibre body. Source observations and caller-requested target claims retain their separate recorded provenance."
+            },
+            {
+              "source": {
+                "asset_id": "asset-2",
+                "track": "visual"
+              },
+              "role": "identity",
+              "details": "Use only these explicitly selected target characteristics: wheels from the second picture. Source observations and caller-requested target claims retain their separate recorded provenance."
+            }
+          ],
+          "retention": "partially_preserved",
+          "retention_details": "One target identity combines only the explicitly selected target characteristics from its named sources; source observations and caller-requested target claims remain separately recorded, and unrelated source appearance is not imported.",
+          "shot_ids": [
+            "shot-1",
+            "shot-2",
+            "shot-3"
+          ]
+        }
+      ],
+      "explanation": "High-level target appearances derive only from actual RichText and speaker-dialogue bindings. Removed figures carry their incoming replacement's transfer scope; unused source observations remain in Evidence."
+    },
+    {
+      "field": "creativity",
+      "source": "caller_or_default",
+      "value": {
+        "speech": false,
+        "music": true,
+        "onscreen_text": false,
+        "magnitude": "measured"
+      },
+      "explanation": "Scope reflects requested elements, explicit prohibitions, and the selected four-position creativity control."
+    }
+  ],
+  "calls": [
+    {
+      "stage": "refine",
+      "attempt": 1,
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 1861,
+        "output_tokens": 1396
+      },
+      "valid": true
+    },
+    {
+      "stage": "scope",
+      "attempt": 1,
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 1181,
+        "output_tokens": 153
+      },
+      "valid": true
+    },
+    {
+      "stage": "rendering_permission",
+      "attempt": 1,
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 450,
+        "output_tokens": 118
+      },
+      "valid": true
+    },
+    {
+      "stage": "medium",
+      "attempt": 1,
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 1372,
+        "output_tokens": 301
+      },
+      "valid": true
+    },
+    {
+      "stage": "identity_requirements",
+      "attempt": 1,
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 2941,
+        "output_tokens": 3298
+      },
+      "valid": true
+    },
+    {
+      "stage": "identity_requirements",
+      "attempt": 2,
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 2994,
+        "output_tokens": 4299
+      },
+      "valid": true
+    },
+    {
+      "stage": "licence",
+      "attempt": 1,
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 2463,
+        "output_tokens": 1473
+      },
+      "valid": true
+    },
+    {
+      "stage": "structure",
+      "attempt": 1,
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 4721,
+        "output_tokens": 1294
+      },
+      "valid": true
+    },
+    {
+      "stage": "plan",
+      "attempt": 1,
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 10261,
+        "output_tokens": 7505
+      },
+      "valid": true
+    },
+    {
+      "stage": "semantic_review",
+      "attempt": 1,
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 4397,
+        "output_tokens": 868
+      },
+      "valid": true
+    }
+  ]
+}

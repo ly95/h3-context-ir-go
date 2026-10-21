@@ -9,7 +9,7 @@ import (
 	"github.com/ly95/contextir"
 )
 
-const CompositionReviewVersion = "contextir/composition-review/v7"
+const CompositionReviewVersion = "contextir/composition-review/v8"
 
 type CompositionFinding struct {
 	Code       string `json:"code"`
@@ -29,18 +29,38 @@ type CompositionReview struct {
 }
 
 var compositionRemedies = map[string]string{
-	"subject_projection_mismatch": "Preserve the requested number of identifiable targets and the exact source-property combination; multiple source references must not manufacture duplicate actors or restore unselected source appearance.",
-	"wrong_subject_action":        "Bind actions and pronouns to the correct typed target subject; an environment or style definition cannot act as the requested person or vehicle.",
-	"unlicensed_source_content":   "Keep source content within its declared responsibility. Identity references supply the selected subject properties, not their setting or pose. Environment references supply scene properties, not depicted actor identities. Camera/cutting and storyboard references do not supply their people, objects, setting, lighting or palette.",
-	"missing_placement":           "Show the placed or replacement subject performing its requested role in the actual shot narrative, not only in definitions or retention metadata.",
-	"frame_content_changed":       "Preserve the complete supplied frame at its anchored instant, including its layout, panels, labels and background; do not claim a hero crop or removed panels without a separately prepared source.",
-	"target_identity_changed":     "Keep the accepted target identity and its attributes consistent throughout the narrative; observed source identity cannot override explicit target requirements.",
-	"audio_signal_misuse":         "Without a separately wired audio relationship, never promise that an original video soundtrack is preserved or carried over. Keep copied BGM distinct from property-only voice, music-style, beat or texture references. Property-only references cannot play the original recording; copied BGM must not be described as never copying its signal. N/A music can mean no added score while the supplied BGM is copied.",
-	"replacement_motion_changed":  "Preserve the replaced figure's observed position, actions and timing. A requested action for another actor does not authorize rewriting this figure's motion; apply an override only when the caller explicitly changes this same figure's action.",
-	"dialogue_placement_mismatch": "Align the visual performance narrative with the fixed dialogue events in each shot. Do not direct an actor to deliver the same fixed utterance in a different shot, repeat a completed line after a cut, or describe an absent performance; continuity fragments must describe the one actual continued performance without changing caller words.",
+	"subject_projection_mismatch":     "Preserve the requested number of identifiable targets and the exact source-property combination; multiple source references must not manufacture duplicate actors or restore unselected source appearance.",
+	"wrong_subject_action":            "Bind actions and pronouns to the correct typed target subject; an environment or style definition cannot act as the requested person or vehicle.",
+	"unlicensed_source_content":       "Keep source content within its declared responsibility. Identity references supply the selected subject properties, not their setting or pose. Environment references supply scene properties, not depicted actor identities. Camera/cutting and storyboard references do not supply their people, objects, setting, lighting or palette.",
+	"missing_placement":               "Show the placed or replacement subject performing its requested role in the actual shot narrative, not only in definitions or retention metadata.",
+	"frame_content_changed":           "Preserve the complete supplied frame at its anchored instant, including its layout, panels, labels and background; do not claim a hero crop or removed panels without a separately prepared source.",
+	"target_identity_changed":         "Keep the accepted target identity and its attributes consistent throughout the narrative; observed source identity cannot override explicit target requirements.",
+	"audio_signal_misuse":             "Without a separately wired audio relationship, never promise that an original video soundtrack is preserved or carried over. Keep copied BGM distinct from property-only voice, music-style, beat or texture references. Property-only references cannot play the original recording; copied BGM must not be described as never copying its signal. N/A music can mean no added score while the supplied BGM is copied.",
+	"replacement_motion_changed":      "Preserve the replaced figure's observed position, actions and timing. A requested action for another actor does not authorize rewriting this figure's motion; apply an override only when the caller explicitly changes this same figure's action.",
+	"dialogue_placement_mismatch":     "Align the visual performance narrative with the fixed dialogue events in each shot. Do not direct an actor to deliver the same fixed utterance in a different shot, repeat a completed line after a cut, or describe an absent performance; continuity fragments must describe the one actual continued performance without changing caller words.",
+	"visible_text_placement_mismatch": "Present the exact caller-visible words only in the authorized shots and roles. A visible prop carrying those words can repeat their display even if no second visible-text event is declared. Keep other views out of frame, obscured, facing away or unreadable when the caller restricts the lettering to one shot; do not alter the fixed words or invent a placement from keywords.",
+}
+
+func visibleTextReviewRequired(b Brief, st Structure, documents ...contextir.Document) bool {
+	if len(b.OnscreenText) > 0 || len(st.OnscreenText) > 0 {
+		return true
+	}
+	for _, d := range documents {
+		for _, shot := range d.Shots {
+			for _, event := range shot.Events {
+				if event.VisibleText != "" {
+					return true
+				}
+			}
+		}
+	}
+	return false
 }
 
 func CompositionReviewRequired(b Brief, st Structure, documents ...contextir.Document) bool {
+	if visibleTextReviewRequired(b, st, documents...) {
+		return true
+	}
 	if len(b.Dialogue) > 0 || len(st.Dialogue) > 0 {
 		return true
 	}
@@ -109,6 +129,9 @@ func compositionFragments(d contextir.Document) (map[string]string, []string) {
 		for i, event := range shot.Events {
 			if len(event.Description) > 0 {
 				add(fmt.Sprintf("shot:%s:event:%d", shot.ID, i), reviewRich(event.Description))
+			}
+			if event.VisibleText != "" {
+				add(fmt.Sprintf("shot:%s:visible_text:%d", shot.ID, i), event.VisibleText)
 			}
 		}
 	}
@@ -186,6 +209,9 @@ func (c *Compiler) ReviewComposition(ctx context.Context, b Brief, st Structure,
 	if len(d.Dialogue) > 0 || len(st.Dialogue) > 0 {
 		codes = append(codes, "dialogue_placement_mismatch")
 	}
+	if visibleTextReviewRequired(b, st, d) {
+		codes = append(codes, "visible_text_placement_mismatch")
+	}
 	if hasProjectionCandidates(b) || len(st.SubjectProjections) > 0 {
 		codes = append(codes, "subject_projection_mismatch")
 	}
@@ -244,6 +270,23 @@ Finding thresholds: similar sounds are not evidence of copying a recording. Gene
 		}
 		input, _ = json.Marshal(fields)
 		systemInstructions += "\nThe dialogue_contract gives caller-fixed utterances, explicit voiceover/speaker metadata and the actual dialogue parts emitted in each target shot. Match performance descriptions in each shot/event fragment to those actual parts. Report dialogue_placement_mismatch for a clear contradiction: a shot with no dialogue event explicitly directs vocal delivery of the fixed line, a later shot directs another performance after the line is already complete, or the narrative assigns the utterance to the wrong speaker/shot. Quote the actual contradictory narrative fragment. Mere presence of the actor, a listening reaction, breathing, ambient sound, or a camera view after speech is not an additional performance. Post-speech mouth closing or settling, a final nod and other residual physical reactions at a cut do not by themselves establish an audible continuation or repeated delivery. Read the entire shot and adjacent performance context; ambiguous end-of-speech body movement is not enough for a finding. Still reject an explicit direction to deliver the fixed line in a shot with no corresponding dialogue part. A line explicitly split across shots is one performance whose parts carry the continuity flags; narration outside the picture never requires inventing a visible actor. Unknown precise sub-shot vocal timing is not itself a failure. Do not rewrite or invent dialogue, infer placement from user keywords, or replace the supplied typed events with prose guesses. When transcript_uses is present, it records the selected exact source words and requested performer for a new performance. Reperforming these authorized words is independent of copying or playing the original recorded signal: words-only selection cannot alter composition_facts.audio or the actual voice-property/copy relationship. An actual final narrative promise to play the original recording remains audio_signal_misuse unless the typed signal-copy relationship authorizes it."
+	}
+	if visibleTextReviewRequired(b, st, d) {
+		var fields map[string]json.RawMessage
+		_ = json.Unmarshal(input, &fields)
+		shots := []map[string]any{}
+		for _, shot := range d.Shots {
+			events := []map[string]any{}
+			for _, event := range shot.Events {
+				if event.VisibleText != "" {
+					events = append(events, map[string]any{"text": event.VisibleText, "at_ms": event.At})
+				}
+			}
+			shots = append(shots, map[string]any{"shot_id": shot.ID, "start_ms": shot.Start, "end_ms": shot.End, "visible_text_events": events})
+		}
+		fields["onscreen_text_contract"], _ = json.Marshal(map[string]any{"caller_words": b.OnscreenText, "accepted_words": st.OnscreenText, "shots": shots})
+		input, _ = json.Marshal(fields)
+		systemInstructions += "\nThe onscreen_text_contract preserves caller_words independently of the final document, accepted structural words and actual per-shot visible_text_events. Read the original intent and typed constraints to resolve any expressly requested shot-specific display; event counts alone do not establish compliance. Compare the final visual narrative across all shots: a still-visible prop carrying the same legible lettering can display those words again without another typed text event. Report visible_text_placement_mismatch when actual final prose clearly keeps or presents the readable lettering in a shot outside the caller's explicit placement, changes the displayed words or clearly assigns their display to the wrong shot. A shot explicitly showing only a sign's blank back, an obscured/unreadable face or no view of the lettering is not another display. A generic unlettered prop does not establish a repeated word display; read its full continuity and context, not isolated vocabulary. Do not demand one-shot-only display unless the caller actually requires it, invent visible words from an ordinary prop, infer placement by keyword rules, or report unknown camera/readability quality as a contradiction. A user-origin claim is authorization to compare against, never executable evidence of the display. Every finding must quote the actual contradictory final narrative fragment."
 	}
 	if hasProjectionCandidates(b) || len(st.SubjectProjections) > 0 {
 		var fields map[string]json.RawMessage

@@ -6,9 +6,11 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
+	"fmt"
 	"os"
 	"path/filepath"
 	"reflect"
+	"slices"
 	"strings"
 	"testing"
 
@@ -197,17 +199,186 @@ func TestRemainingHighlevelRecordedCompile(t *testing.T) {
 					t.Fatal("exact words/language/channel changed in full native replay")
 				}
 			} else {
-				if len(r.Document.Subjects) != 1 {
-					t.Fatal("requested one target became multiple identities")
-				}
-				s := r.Document.Subjects[0]
-				if s.ID != "subject-1" || s.Descriptor != "the black sports car" || len(s.Sources) != 2 || s.Sources[0].Source.AssetID != "asset-1" || s.Sources[1].Source.AssetID != "asset-2" || !reflect.DeepEqual(s.Attributes, []string{"carbon fibre body", "wheels from the second picture"}) || strings.Contains(r.Artifact.Prompt, "<Subject 2>") {
-					t.Fatal("one target, two real sources, or selected properties changed", s)
+				if err := remainingHighlevelMergeIntent(r, original.Brief.Intent); err != nil {
+					t.Fatal(err)
 				}
 			}
 			t.Logf("actual-recording=%s model-calls=%d prompt-sha256=%s", tape.Binary, index, r.Artifact.PromptSHA256)
 		})
 	}
+}
+
+// This checks the original request's property/source graph, not the provider's
+// wording of its target descriptor. "wheels" and the older source-qualified
+// attribute express the same selected property only when the typed projection,
+// physical media binding, final attributes and caller provenance all agree.
+func remainingHighlevelMergeIntent(r Result, intent string) error {
+	if r.Licence == nil || len(r.Licence.Subjects) != 2 || len(r.Document.Subjects) != 1 || len(r.Structure.SubjectProjections) != 1 {
+		return fmt.Errorf("one target must have one explicit two-source projection")
+	}
+	target, projection := r.Document.Subjects[0], r.Structure.SubjectProjections[0]
+	if target.ID != projection.SubjectID || strings.TrimSpace(target.Descriptor) == "" || target.Descriptor != projection.Descriptor || len(target.Sources) != 2 || len(target.Attributes) != 2 || len(projection.Sources) != 2 || strings.Contains(r.Artifact.Prompt, "<Subject 2>") {
+		return fmt.Errorf("merged target descriptor, attributes or publication graph changed")
+	}
+	media := map[string]string{}
+	for _, row := range r.Artifact.Manifest.Media {
+		media[row.Label] = row.Source.AssetID
+	}
+	physical := map[string]string{}
+	labels := map[string]string{}
+	for _, subject := range r.Licence.Subjects {
+		var number int
+		if _, err := fmt.Sscanf(subject.Label, "<Subject %d>", &number); err != nil || number <= 0 || subject.Label != fmt.Sprintf("<Subject %d>", number) || len(subject.Sources) != 1 {
+			return fmt.Errorf("pre-projection identity lacks one explicit source address")
+		}
+		id := fmt.Sprintf("subject-%d", number)
+		physical[id], labels[id] = media[subject.Sources[0]], subject.Label
+	}
+	selected := map[string]string{}
+	for _, contribution := range projection.Sources {
+		asset := physical[contribution.SubjectID]
+		if len(contribution.Attributes) != 1 || selected[asset] != "" {
+			return fmt.Errorf("each independent source must contribute one selected property")
+		}
+		attribute := contribution.Attributes[0]
+		if asset == "asset-1" && attribute != "carbon fibre body" || asset == "asset-2" && attribute != "wheels" && attribute != "wheels from the second picture" || asset != "asset-1" && asset != "asset-2" {
+			return fmt.Errorf("body and wheels must come from the separately requested physical sources")
+		}
+		if asset == "asset-2" {
+			licensed := false
+			for _, decision := range r.Licence.Identity {
+				if decision.Label != labels[contribution.SubjectID] || !slices.Contains(decision.RequestedAttributes, attribute) {
+					continue
+				}
+				for _, claim := range decision.Claims {
+					if claim.Dimension == "stable_attribute" && claim.Value == attribute && claim.Quote != "" && strings.Contains(intent, claim.Quote) {
+						licensed = true
+					}
+				}
+			}
+			if !licensed {
+				return fmt.Errorf("second-source wheels need separate exact caller-request provenance")
+			}
+		}
+		if !slices.Contains(target.Attributes, attribute) {
+			return fmt.Errorf("a selected source property was omitted from the final target")
+		}
+		selected[asset] = attribute
+	}
+	bound := map[string]bool{}
+	for _, attribution := range target.Sources {
+		asset := attribution.Source.AssetID
+		if bound[asset] || selected[asset] == "" || attribution.Role != contextir.RoleIdentity || !strings.Contains(attribution.Details, ": "+selected[asset]+".") {
+			return fmt.Errorf("final source attribution does not bind its own selected property")
+		}
+		bound[asset] = true
+	}
+	if len(selected) != 2 || !bound["asset-1"] || !bound["asset-2"] {
+		return fmt.Errorf("the single target must retain both independently selected source contributions")
+	}
+	return nil
+}
+
+func TestRemainingHighlevelMergeIntentRejectsMissingOrWrongSourceProperties(t *testing.T) {
+	wire, err := os.ReadFile(filepath.Join("testdata", "remaining_highlevel", "single-target-model-merge", "result.json"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	var recorded struct {
+		Result Result `json:"result"`
+	}
+	if err := json.Unmarshal(wire, &recorded); err != nil {
+		t.Fatal(err)
+	}
+	intent := recorded.Result.Brief.Intent
+	if err := remainingHighlevelMergeIntent(recorded.Result, intent); err != nil {
+		t.Fatal("actual successful recording does not satisfy the original business intent", err)
+	}
+	for _, equivalent := range []string{"wheels", "wheels from the second picture"} {
+		t.Run("equivalent_"+equivalent, func(t *testing.T) {
+			var changed struct {
+				Result Result `json:"result"`
+			}
+			if err := json.Unmarshal(wire, &changed); err != nil {
+				t.Fatal(err)
+			}
+			r := &changed.Result
+			index := remainingHighlevelWheelContribution(t, *r)
+			previous := r.Structure.SubjectProjections[0].Sources[index].Attributes[0]
+			r.Structure.SubjectProjections[0].Sources[index].Attributes[0] = equivalent
+			for i, attribute := range r.Document.Subjects[0].Attributes {
+				if attribute == previous {
+					r.Document.Subjects[0].Attributes[i] = equivalent
+				}
+			}
+			for i := range r.Document.Subjects[0].Sources {
+				attribution := &r.Document.Subjects[0].Sources[i]
+				if attribution.Source.AssetID == "asset-2" {
+					attribution.Details = strings.ReplaceAll(attribution.Details, ": "+previous+".", ": "+equivalent+".")
+				}
+			}
+			for i := range r.Licence.Identity {
+				decision := &r.Licence.Identity[i]
+				for j, attribute := range decision.RequestedAttributes {
+					if attribute == previous {
+						decision.RequestedAttributes[j] = equivalent
+					}
+				}
+				for j := range decision.Claims {
+					if decision.Claims[j].Value == previous {
+						decision.Claims[j].Value = equivalent
+					}
+				}
+			}
+			if err := remainingHighlevelMergeIntent(*r, intent); err != nil {
+				t.Fatal("equivalent property spelling lost its exact typed source binding", err)
+			}
+		})
+	}
+	for _, defect := range []string{"descriptor_only", "missing_final_attribute", "second_source_carbon_instead_of_wheels", "wrong_physical_source", "wrong_attribution", "unlicensed_requested_property"} {
+		t.Run(defect, func(t *testing.T) {
+			var changed struct {
+				Result Result `json:"result"`
+			}
+			if err := json.Unmarshal(wire, &changed); err != nil {
+				t.Fatal(err)
+			}
+			r := &changed.Result
+			wheelIndex := remainingHighlevelWheelContribution(t, *r)
+			switch defect {
+			case "descriptor_only":
+				r.Structure.SubjectProjections[0].Sources[wheelIndex].Attributes = nil
+			case "missing_final_attribute":
+				r.Document.Subjects[0].Attributes = r.Document.Subjects[0].Attributes[:1]
+			case "second_source_carbon_instead_of_wheels":
+				// This reproduces the real rejected first-round contribution:
+				// source two's available carbon body cannot stand in for wheels.
+				r.Structure.SubjectProjections[0].Sources[wheelIndex].Attributes = []string{"carbon fibre body"}
+			case "wrong_physical_source":
+				r.Licence.Subjects[1].Sources = r.Licence.Subjects[0].Sources
+			case "wrong_attribution":
+				r.Document.Subjects[0].Sources[1].Source.AssetID = "asset-1"
+			case "unlicensed_requested_property":
+				for i := range r.Licence.Identity {
+					r.Licence.Identity[i].Claims = nil
+				}
+			}
+			if err := remainingHighlevelMergeIntent(*r, intent); err == nil {
+				t.Fatal("a missing or incorrectly sourced contribution passed the original intent check")
+			}
+		})
+	}
+}
+
+func remainingHighlevelWheelContribution(t *testing.T, r Result) int {
+	t.Helper()
+	for i, source := range r.Structure.SubjectProjections[0].Sources {
+		if slices.Contains(source.Attributes, "wheels") || slices.Contains(source.Attributes, "wheels from the second picture") {
+			return i
+		}
+	}
+	t.Fatal("actual recording has no selected wheels contribution")
+	return -1
 }
 
 func remainingHighlevelSameRequest(t *testing.T, a, b contextir.ModelRequest) bool {

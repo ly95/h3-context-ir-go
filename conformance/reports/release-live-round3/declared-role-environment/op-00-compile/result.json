@@ -1,0 +1,1548 @@
+{
+  "composition_reviews": [
+    {
+      "version": "contextir/composition-review/v7",
+      "required": true,
+      "passed": true,
+      "calls": [
+        {
+          "stage": "semantic_review",
+          "attempt": 1,
+          "model": "deepseek-flash",
+          "usage": {
+            "input_tokens": 2904,
+            "output_tokens": 1255
+          },
+          "valid": true
+        }
+      ]
+    }
+  ],
+  "usage_complete": true,
+  "clarification_policy": "continue_with_recorded_choice",
+  "mode_decision": {
+    "input_relationship": "ordinary_scene_action",
+    "clarification_policy": "continue_with_recorded_choice",
+    "model_signals": [
+      "The phrase describes a car's action within a scene; it does not direct the supplied still image itself to become moving footage or bind it as a frame. The attachment's mere presence does not make this image animation."
+    ],
+    "confidence_kind": "routing_policy",
+    "model_confidence": 0.96,
+    "interpretation": "declared_reference",
+    "aspect_mismatch": false,
+    "needs_clarification": false,
+    "mode": "ref2va",
+    "confidence": 1,
+    "rule": "explicit-role-reference",
+    "signals": [
+      "The caller declared environment, which is a content reference rather than an actual frame of the video."
+    ],
+    "alternatives": [
+      "i2va",
+      "l2va"
+    ],
+    "calls": [
+      {
+        "stage": "mode_conflict",
+        "attempt": 1,
+        "model": "deepseek-flash",
+        "usage": {
+          "input_tokens": 556,
+          "output_tokens": 238
+        },
+        "valid": true
+      }
+    ]
+  },
+  "scope_decision": {
+    "conflict_policy": "supplied_content_wins",
+    "requested": {
+      "speech": false,
+      "music": false,
+      "onscreen_text": false,
+      "magnitude": ""
+    },
+    "forbidden": {
+      "speech": false,
+      "music": false,
+      "onscreen_text": false,
+      "magnitude": ""
+    },
+    "allowed": {
+      "speech": false,
+      "music": true,
+      "onscreen_text": false,
+      "magnitude": "measured"
+    },
+    "dialogue": [],
+    "onscreen_text": [],
+    "reasoning": "The intent describes only visual action (a car pulling forward out of the dark). It does not request or forbid speech, music, or onscreen text, and no presence claims or explicit dialogue/lettering are supplied.",
+    "calls": [
+      {
+        "stage": "scope",
+        "attempt": 1,
+        "model": "deepseek-flash",
+        "usage": {
+          "input_tokens": 1035,
+          "output_tokens": 197
+        },
+        "valid": true
+      }
+    ]
+  },
+  "licence": {
+    "reference_permissions": {
+      "action": false,
+      "framing": true,
+      "lighting": true,
+      "medium": true,
+      "palette": true,
+      "wardrobe": false
+    },
+    "medium_decision": {
+      "rendering_permission": {
+        "kind": "preserve",
+        "disposition": "preserve",
+        "operation_quote": "",
+        "target": "",
+        "reasoning": "The caller only describes scene action (a car pulling forward out of the dark); there is no instruction to transform, reinterpret, restyle, or directly render in a specified target style or medium.",
+        "calls": [
+          {
+            "stage": "rendering_permission",
+            "attempt": 1,
+            "model": "deepseek-flash",
+            "usage": {
+              "input_tokens": 438,
+              "output_tokens": 112
+            },
+            "valid": true
+          }
+        ]
+      },
+      "disposition": "preserve",
+      "operation_quote": "",
+      "target": "",
+      "requested_style": "",
+      "reference_medium": "live-action",
+      "requested_medium": "",
+      "treatments": [],
+      "reasoning": "The only observed visual reference is a live-action, cinematic showroom image. The request describes scene action—the car pulling forward out of the dark—without asking for any rendering-medium change, restyling, or treatment. The host-owned rendering permission is preserve, so the reference rendering is retained and no requested medium or style phrase is present.",
+      "calls": [
+        {
+          "stage": "rendering_permission",
+          "attempt": 1,
+          "model": "deepseek-flash",
+          "usage": {
+            "input_tokens": 438,
+            "output_tokens": 112
+          },
+          "valid": true
+        },
+        {
+          "stage": "medium",
+          "attempt": 1,
+          "model": "deepseek-flash",
+          "usage": {
+            "input_tokens": 1303,
+            "output_tokens": 189
+          },
+          "valid": true
+        }
+      ]
+    },
+    "identity": [
+      {
+        "request_binding": "describes_other_scene_entity",
+        "descriptor_source": "reference",
+        "target_mention": "the car",
+        "kind": "environment",
+        "label": "\u003cSubject 1\u003e",
+        "descriptor": "an empty showroom floor",
+        "retained_attributes": [
+          "the black sports car — carbon fibre body"
+        ],
+        "requested_attributes": [],
+        "request_quote": "the car pulls forward out of the dark",
+        "wardrobe_attributes": []
+      }
+    ],
+    "governs": {
+      "action": "request",
+      "framing": "reference",
+      "lighting": "request",
+      "medium": "reference",
+      "palette": "reference",
+      "wardrobe": "request"
+    },
+    "reasons": {
+      "action": "The request explicitly asks the car to pull forward, a performed motion that overrides the showroom plate's static pose.",
+      "framing": "No camera composition, shot scale, viewpoint or camera movement is requested; “pulls forward” is vehicle motion and 16:9 is target aspect, not framing, so the reference framing governs.",
+      "lighting": "The request explicitly places the car emerging “out of the dark,” specifying a darkness/light condition that overrides the showroom reference lighting.",
+      "medium": "No rendering-medium change is requested; the supplied live-action cinematic reference therefore governs the medium.",
+      "palette": "No explicit colour or tonal grade is requested; the live-action reference palette remains, while the requested darkness is handled as lighting.",
+      "wardrobe": "No wardrobe or accessory change is requested; the car's retained carbon-fibre body is resolved through target identity requirements, so wardrobe authority is request-governed."
+    },
+    "transform_phrase": null,
+    "transform_target": "",
+    "medium_transferred": false,
+    "style": {
+      "observed_phrase": "Live-action, cinematic",
+      "phrase": "Live-action, cinematic",
+      "source": "reference",
+      "reference_medium": "live-action",
+      "requested_medium": "",
+      "discrepancy": false,
+      "note": ""
+    },
+    "subjects": [
+      {
+        "label": "\u003cSubject 1\u003e",
+        "kind": "environment",
+        "sources": [
+          "\u003cPicture 1\u003e"
+        ],
+        "descriptor": "an empty showroom floor",
+        "attributes": [
+          "the black sports car — carbon fibre body"
+        ],
+        "pose": [],
+        "pose_licensed": false,
+        "retention": "fully_preserved",
+        "retention_note": "",
+        "appears_in": [],
+        "taken_over_by": ""
+      }
+    ],
+    "calls": [
+      {
+        "stage": "rendering_permission",
+        "attempt": 1,
+        "model": "deepseek-flash",
+        "usage": {
+          "input_tokens": 438,
+          "output_tokens": 112
+        },
+        "valid": true
+      },
+      {
+        "stage": "medium",
+        "attempt": 1,
+        "model": "deepseek-flash",
+        "usage": {
+          "input_tokens": 1303,
+          "output_tokens": 189
+        },
+        "valid": true
+      },
+      {
+        "stage": "identity_requirements",
+        "attempt": 1,
+        "model": "deepseek-flash",
+        "usage": {
+          "input_tokens": 1804,
+          "output_tokens": 464
+        },
+        "valid": true
+      },
+      {
+        "stage": "licence",
+        "attempt": 1,
+        "model": "deepseek-flash",
+        "usage": {
+          "input_tokens": 1956,
+          "output_tokens": 2854
+        },
+        "valid": true
+      }
+    ]
+  },
+  "budget": {
+    "prompt_tokens": 1392,
+    "target_video_rows": 32256,
+    "target_audio_rows": 400,
+    "known_reference_rows": 576,
+    "in_trained_band": false
+  },
+  "findings": [
+    {
+      "rule": "A2-sound-duplicated",
+      "severity": "WARN",
+      "msg": "overall_soundscape repeats content already in the description rather than a separate layer"
+    }
+  ],
+  "status": "compiled",
+  "version": "contextir/compiler/v1",
+  "brief": {
+    "effort": "standard",
+    "seconds_explicit": true,
+    "aspect_explicit": true,
+    "intent": "the car pulls forward out of the dark",
+    "assets": [
+      {
+        "preparation_computed": true,
+        "id": "asset-1",
+        "kind": "image",
+        "description": "the black sports car",
+        "metadata": {
+          "width": 1024,
+          "height": 576,
+          "fps": {
+            "numerator": 0,
+            "denominator": 0
+          }
+        },
+        "preparation": {
+          "sizing": "match",
+          "width": 1024,
+          "height": 576
+        },
+        "role": "environment",
+        "composition": "unknown",
+        "sizing": "match"
+      }
+    ],
+    "seconds": 5,
+    "aspect": "16:9",
+    "creativity": "balanced",
+    "evidence": [
+      {
+        "card": {
+          "asset_id": "asset-1",
+          "summary": "a black sports car on a showroom floor",
+          "subjects": [
+            {
+              "kind": "object",
+              "descriptor": "the black sports car",
+              "attributes": [
+                "carbon fibre body"
+              ]
+            }
+          ],
+          "environment": "an empty showroom floor",
+          "style": "Live-action, cinematic",
+          "composition": "unknown",
+          "analyzer_version": "1",
+          "coverage": {
+            "status": "complete",
+            "tracks": [
+              "visual"
+            ]
+          }
+        },
+        "asset_id": "asset-1",
+        "facts": [
+          {
+            "id": "card-asset-1-1",
+            "text": "a black sports car on a showroom floor",
+            "source": {
+              "asset_id": "asset-1",
+              "track": "visual"
+            }
+          },
+          {
+            "id": "card-asset-1-2",
+            "text": "an empty showroom floor",
+            "source": {
+              "asset_id": "asset-1",
+              "track": "visual"
+            }
+          },
+          {
+            "id": "card-asset-1-3",
+            "text": "Live-action, cinematic",
+            "source": {
+              "asset_id": "asset-1",
+              "track": "visual"
+            }
+          },
+          {
+            "id": "card-asset-1-4",
+            "text": "the black sports car",
+            "source": {
+              "asset_id": "asset-1",
+              "track": "visual"
+            }
+          },
+          {
+            "id": "card-asset-1-5",
+            "text": "carbon fibre body",
+            "source": {
+              "asset_id": "asset-1",
+              "track": "visual"
+            }
+          }
+        ],
+        "analyzer_version": "1",
+        "coverage": {
+          "status": "complete",
+          "tracks": [
+            "visual"
+          ]
+        }
+      }
+    ],
+    "cards": [
+      {
+        "asset_id": "asset-1",
+        "summary": "a black sports car on a showroom floor",
+        "subjects": [
+          {
+            "kind": "object",
+            "descriptor": "the black sports car",
+            "attributes": [
+              "carbon fibre body"
+            ]
+          }
+        ],
+        "environment": "an empty showroom floor",
+        "style": "Live-action, cinematic",
+        "composition": "unknown",
+        "analyzer_version": "1",
+        "coverage": {
+          "status": "complete",
+          "tracks": [
+            "visual"
+          ]
+        }
+      }
+    ]
+  },
+  "request": {
+    "instruction": "the car pulls forward out of the dark",
+    "mode": "ref2va",
+    "target": {
+      "duration_ms": 5000,
+      "frame_count": 120,
+      "aspect_ratio": "16:9",
+      "fps": {
+        "numerator": 24,
+        "denominator": 1
+      },
+      "width": 1344,
+      "height": 768
+    },
+    "assets": [
+      {
+        "id": "asset-1",
+        "kind": "image",
+        "description": "the black sports car",
+        "metadata": {
+          "width": 1024,
+          "height": 576,
+          "fps": {
+            "numerator": 0,
+            "denominator": 0
+          }
+        },
+        "preparation": {
+          "sizing": "match",
+          "width": 1024,
+          "height": 576
+        }
+      }
+    ],
+    "bindings": [
+      {
+        "source": {
+          "asset_id": "asset-1",
+          "track": "visual"
+        },
+        "role": "scene"
+      }
+    ],
+    "constraints": [
+      {
+        "id": "compiler-no-dialogue",
+        "kind": "no_dialogue",
+        "text": "Do not add spoken or sung lines."
+      }
+    ],
+    "allow_creative_additions": true,
+    "allow_generated_dialogue": false,
+    "pinned_shots": [
+      {
+        "id": "shot-1",
+        "start_ms": 0,
+        "end_ms": 1600
+      },
+      {
+        "id": "shot-2",
+        "start_ms": 1600,
+        "end_ms": 3300
+      },
+      {
+        "id": "shot-3",
+        "start_ms": 3300,
+        "end_ms": 5000
+      }
+    ],
+    "addition_scope": {
+      "dialogue": false,
+      "music": true,
+      "visible_text": false
+    }
+  },
+  "structure": {
+    "replacement_targets": {},
+    "style": "Live-action, cinematic",
+    "mode": "ref2va",
+    "assets": [
+      {
+        "asset_id": "asset-1",
+        "role": "environment",
+        "replaces": ""
+      }
+    ],
+    "shots": [
+      {
+        "subjects": [
+          "an empty showroom floor"
+        ],
+        "sync_sound": [
+          "low, hollow room ambience",
+          "faint electrical hum"
+        ],
+        "start_ms": 0,
+        "purpose": "establish",
+        "framing": "wide",
+        "action": "Deep in a dark, empty showroom, a car waits far back in shadow, only a faint sheen along its bodywork catching a distant light while the polished floor stretches away in near-blackness.",
+        "what_changes": "The darkness holds, broken only by a faint glint on the car.",
+        "camera": {
+          "type": "Static Shot",
+          "amplitude": "",
+          "speed": ""
+        }
+      },
+      {
+        "subjects": [
+          "an empty showroom floor"
+        ],
+        "sync_sound": [
+          "soft tire creep on polished floor",
+          "rising electric motor whine",
+          "headlight relay click"
+        ],
+        "start_ms": 1600,
+        "purpose": "develop",
+        "framing": "medium wide",
+        "action": "The car rolls forward out of the dark, headlights blooming on and sweeping across the polished floor, reflections sliding beneath it as it noses into the light.",
+        "what_changes": "The car moves out of shadow and into lit space.",
+        "camera": {
+          "type": "Push In",
+          "amplitude": "small",
+          "speed": "slow"
+        }
+      },
+      {
+        "subjects": [
+          "an empty showroom floor"
+        ],
+        "sync_sound": [
+          "motor winding down",
+          "tires compressing to a stop",
+          "room tone settling"
+        ],
+        "start_ms": 3300,
+        "purpose": "resolve",
+        "framing": "medium",
+        "action": "The car eases to a halt in the middle of the showroom floor, headlights washing the clean, empty expanse ahead while the body settles into stillness.",
+        "what_changes": "The car comes to rest and the motion stills in the lit floor.",
+        "camera": {
+          "type": "Push In",
+          "amplitude": "small",
+          "speed": "slow"
+        }
+      }
+    ],
+    "dialogue": [],
+    "onscreen_text": [],
+    "requested": {
+      "speech": false,
+      "music": false,
+      "onscreen_text": false,
+      "magnitude": ""
+    },
+    "forbidden": {
+      "speech": false,
+      "music": false,
+      "onscreen_text": false,
+      "magnitude": ""
+    },
+    "reasoning": "The single picture is a scene reference, not an anchored frame (actual_frame=false), so its showroom floor is redrawn as environment rather than preserved as an exact frame; its panelled layout, labels or photographic presentation are not carried over, and no keyframe completion is claimed for it. The only observed canonical subject is the empty showroom floor, retained as the setting; the car is not a reference subject but is introduced because the user's request explicitly describes it pulling forward out of the dark. The request is purely visual, so speech and onscreen text stay off and nothing is prohibited beyond the scoped defaults; music remains permitted but unrequested, so the soundscape is built only from new, scene-motivated audio. A continuous 5-second build is cut into three beats across a single environment: darkness, emergence, and settling, with framing and camera language choosing how the action is seen within the environment reference's licence rather than inventing new events."
+  },
+  "scope": {
+    "speech": false,
+    "music": true,
+    "onscreen_text": false,
+    "magnitude": "measured"
+  },
+  "document": {
+    "version": "contextir/v1",
+    "mode": "ref2va",
+    "target": {
+      "duration_ms": 5000,
+      "frame_count": 120,
+      "aspect_ratio": "16:9",
+      "fps": {
+        "numerator": 24,
+        "denominator": 1
+      },
+      "width": 1344,
+      "height": 768
+    },
+    "assets": [
+      {
+        "id": "asset-1",
+        "kind": "image",
+        "description": "the black sports car",
+        "metadata": {
+          "width": 1024,
+          "height": 576,
+          "fps": {
+            "numerator": 0,
+            "denominator": 0
+          }
+        },
+        "preparation": {
+          "sizing": "match",
+          "width": 1024,
+          "height": 576
+        }
+      }
+    ],
+    "evidence": [
+      {
+        "card": {
+          "asset_id": "asset-1",
+          "summary": "a black sports car on a showroom floor",
+          "subjects": [
+            {
+              "kind": "object",
+              "descriptor": "the black sports car",
+              "attributes": [
+                "carbon fibre body"
+              ]
+            }
+          ],
+          "environment": "an empty showroom floor",
+          "style": "Live-action, cinematic",
+          "composition": "unknown",
+          "analyzer_version": "1",
+          "coverage": {
+            "status": "complete",
+            "tracks": [
+              "visual"
+            ]
+          }
+        },
+        "asset_id": "asset-1",
+        "facts": [
+          {
+            "id": "card-asset-1-1",
+            "text": "a black sports car on a showroom floor",
+            "source": {
+              "asset_id": "asset-1",
+              "track": "visual"
+            }
+          },
+          {
+            "id": "card-asset-1-2",
+            "text": "an empty showroom floor",
+            "source": {
+              "asset_id": "asset-1",
+              "track": "visual"
+            }
+          },
+          {
+            "id": "card-asset-1-3",
+            "text": "Live-action, cinematic",
+            "source": {
+              "asset_id": "asset-1",
+              "track": "visual"
+            }
+          },
+          {
+            "id": "card-asset-1-4",
+            "text": "the black sports car",
+            "source": {
+              "asset_id": "asset-1",
+              "track": "visual"
+            }
+          },
+          {
+            "id": "card-asset-1-5",
+            "text": "carbon fibre body",
+            "source": {
+              "asset_id": "asset-1",
+              "track": "visual"
+            }
+          }
+        ],
+        "analyzer_version": "1",
+        "coverage": {
+          "status": "complete",
+          "tracks": [
+            "visual"
+          ]
+        }
+      }
+    ],
+    "subjects": [
+      {
+        "kind": "environment",
+        "descriptor": "an empty showroom floor",
+        "origin": "observed",
+        "id": "subject-1",
+        "description": "an empty showroom floor",
+        "sources": [
+          {
+            "source": {
+              "asset_id": "asset-1",
+              "track": "visual"
+            },
+            "role": "scene"
+          }
+        ],
+        "retention": "fully_preserved",
+        "retention_details": "Preserve this canonical target identity and its listed stable attributes.",
+        "shot_ids": [
+          "shot-1",
+          "shot-2",
+          "shot-3"
+        ]
+      }
+    ],
+    "style": "Live-action, cinematic",
+    "shots": [
+      {
+        "id": "shot-1",
+        "start_ms": 0,
+        "end_ms": 1600,
+        "description": [
+          {
+            "text": "A wide, near-black view of "
+          },
+          {
+            "subject_id": "subject-1"
+          },
+          {
+            "text": ". Far back in the shadows, a low car rests with only a thin highlight tracing its roofline and shoulder, its windows and wheels swallowed by darkness. The polished floor stretches toward the foreground in broad, unbroken planes, reflecting a distant overhead light as a faint smear rather than a clear shape. The air feels still and enclosed. No people, signage, or loose objects break the emptiness. The car's presence is read more through silhouette and glint than through detail, and the darkness holds steady across the space. A faint sheen along the bodywork is the only interruption in the gloom, while the floor remains a dark, glossy field with soft gradients where light barely reaches."
+          }
+        ],
+        "events": [
+          {
+            "kind": "sound",
+            "at_ms": 0,
+            "description": [
+              {
+                "text": "A low, hollow room ambience with a faint electrical hum fills the dark showroom."
+              }
+            ]
+          },
+          {
+            "kind": "visual",
+            "at_ms": 700,
+            "description": [
+              {
+                "text": "A faint highlight catches along the car's bodywork while the surrounding floor stays deep in shadow."
+              }
+            ]
+          },
+          {
+            "kind": "camera",
+            "description": [
+              {
+                "text": "The camera holds a static shot."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "shot-2",
+        "start_ms": 1600,
+        "end_ms": 3300,
+        "description": [
+          {
+            "text": "The same "
+          },
+          {
+            "subject_id": "subject-1"
+          },
+          {
+            "text": " comes alive as the car rolls forward out of the dark. Its tires creep across the polished surface, and the floor begins to catch long, sliding reflections under the body. The headlights bloom on with a brief relay click, throwing two pale beams across the empty expanse and lighting the fine dust and the clean seams of the floor. The car noses into the light, its shape clarifying from a shadowed mass into a defined front end, while the room around it stays sparse and quiet. Motion is smooth and deliberate, with the weight of the vehicle settling over the tires as it advances. The beams sweep gradually, changing the floor from a dark mirror into a lit runway, and the car's outline grows sharper against the surrounding black."
+          }
+        ],
+        "events": [
+          {
+            "kind": "sound",
+            "at_ms": 1600,
+            "description": [
+              {
+                "text": "Soft tire creep on the polished floor begins, joined by a rising electric motor whine."
+              }
+            ]
+          },
+          {
+            "kind": "action",
+            "at_ms": 1800,
+            "description": [
+              {
+                "text": "The car starts to roll forward, its silhouette separating from the back wall."
+              }
+            ]
+          },
+          {
+            "kind": "sound",
+            "at_ms": 2300,
+            "description": [
+              {
+                "text": "A headlight relay clicks as the lamps snap on."
+              }
+            ]
+          },
+          {
+            "kind": "visual",
+            "at_ms": 2300,
+            "description": [
+              {
+                "text": "The headlights bloom and sweep pale beams across the empty floor."
+              }
+            ]
+          },
+          {
+            "kind": "visual",
+            "at_ms": 2800,
+            "description": [
+              {
+                "text": "Long reflections slide under the advancing car as it noses into the light."
+              }
+            ]
+          },
+          {
+            "kind": "camera",
+            "description": [
+              {
+                "text": "The camera pushes in with small amplitude at slow speed."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "shot-3",
+        "start_ms": 3300,
+        "end_ms": 5000,
+        "description": [
+          {
+            "text": "The car eases to a halt in the middle of "
+          },
+          {
+            "subject_id": "subject-1"
+          },
+          {
+            "text": ", its headlights washing a clean, empty stretch of floor ahead. The body rocks almost imperceptibly as the tires compress and the motor winds down, then everything settles into stillness. Reflections steady beneath the car, the beam edges stop sweeping, and the polished surface returns to broad, quiet planes. The surrounding showroom remains dark and uncluttered, with no people or signage entering the frame. The final beat is calm and measured, the vehicle at rest within the lit pool it has created, while the room tone settles around it. A thin rim of light remains on the car's body, and the floor ahead stays open and reflective."
+          }
+        ],
+        "events": [
+          {
+            "kind": "sound",
+            "at_ms": 3300,
+            "description": [
+              {
+                "text": "The motor winds down and the tires compress to a stop."
+              }
+            ]
+          },
+          {
+            "kind": "action",
+            "at_ms": 3600,
+            "description": [
+              {
+                "text": "The car settles into stillness in the middle of the lit floor."
+              }
+            ]
+          },
+          {
+            "kind": "sound",
+            "at_ms": 4900,
+            "description": [
+              {
+                "text": "A quiet room tone settles around the stopped vehicle."
+              }
+            ]
+          },
+          {
+            "kind": "camera",
+            "description": [
+              {
+                "text": "The camera pushes in with small amplitude at slow speed."
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "soundscape": "Low, hollow room ambience with a faint electrical hum; soft tire creep and a rising electric motor whine; a brief headlight relay click; the motor winding down to a quiet settle of room tone.",
+    "music": "N/A",
+    "constraints": [
+      {
+        "id": "compiler-no-dialogue",
+        "kind": "no_dialogue",
+        "text": "Do not add spoken or sung lines."
+      }
+    ]
+  },
+  "artifact": {
+    "version": "contextir-h3/artifact-v1",
+    "compiler_version": "contextir-h3/v1.2",
+    "format_version": "minimax-h3/prompt-v1",
+    "mode": "ref2va",
+    "target": {
+      "duration_ms": 5000,
+      "frame_count": 120,
+      "aspect_ratio": "16:9",
+      "fps": {
+        "numerator": 24,
+        "denominator": 1
+      },
+      "width": 1344,
+      "height": 768
+    },
+    "profile": {
+      "name": "h3-published-format-v1",
+      "format": "minimax-h3/prompt-v1",
+      "fps": {
+        "numerator": 24,
+        "denominator": 1
+      },
+      "modes": [
+        "t2va",
+        "i2va",
+        "l2va",
+        "fl2va",
+        "ref2va"
+      ],
+      "limits": {
+        "pictures": 0,
+        "videos": 0,
+        "video_audio": 0,
+        "standalone_audio": 0
+      },
+      "supports_reference_frame_anchors": true,
+      "supports_source_intervals": true
+    },
+    "prompt": "subject_definitions:\n\u003cSubject 1\u003e is an empty showroom floor. Its environment is referenced from \u003cPicture 1\u003e\n\nsummary:\n[reference generation] A wide, near-black view of \u003cSubject 1\u003e. Far back in the shadows, a low car rests with only a thin highlight tracing its roofline and shoulder, its windows and wheels swallowed by darkness. The polished floor stretches toward the foreground in broad, unbroken planes, reflecting a distant overhead light as a faint smear rather than a clear shape. The air feels still and enclosed. No people, signage, or loose objects break the emptiness. The car's presence is read more through silhouette and glint than through detail, and the darkness holds steady across the space. A faint sheen along the bodywork is the only interruption in the gloom, while the floor remains a dark, glossy field with soft gradients where light barely reaches. The same \u003cSubject 1\u003e comes alive as the car rolls forward out of the dark. Its tires creep across the polished surface, and the floor begins to catch long, sliding reflections under the body. The headlights bloom on with a brief relay click, throwing two pale beams across the empty expanse and lighting the fine dust and the clean seams of the floor. The car noses into the light, its shape clarifying from a shadowed mass into a defined front end, while the room around it stays sparse and quiet. Motion is smooth and deliberate, with the weight of the vehicle settling over the tires as it advances. The beams sweep gradually, changing the floor from a dark mirror into a lit runway, and the car's outline grows sharper against the surrounding black. The car eases to a halt in the middle of \u003cSubject 1\u003e, its headlights washing a clean, empty stretch of floor ahead. The body rocks almost imperceptibly as the tires compress and the motor winds down, then everything settles into stillness. Reflections steady beneath the car, the beam edges stop sweeping, and the polished surface returns to broad, quiet planes. The surrounding showroom remains dark and uncluttered, with no people or signage entering the frame. The final beat is calm and measured, the vehicle at rest within the lit pool it has created, while the room tone settles around it. A thin rim of light remains on the car's body, and the floor ahead stays open and reflective.\n\nretention_analysis:\n\u003cSubject 1\u003e (appears in [Shot 1], [Shot 2], [Shot 3]): fully_preserved - Preserve this canonical target identity and its listed stable attributes.\n\ndetailed_description:\nThe target video is in live-action style, cinematic.\n[Shot 1] A wide, near-black view of \u003cSubject 1\u003e. Far back in the shadows, a low car rests with only a thin highlight tracing its roofline and shoulder, its windows and wheels swallowed by darkness. The polished floor stretches toward the foreground in broad, unbroken planes, reflecting a distant overhead light as a faint smear rather than a clear shape. The air feels still and enclosed. No people, signage, or loose objects break the emptiness. The car's presence is read more through silhouette and glint than through detail, and the darkness holds steady across the space. A faint sheen along the bodywork is the only interruption in the gloom, while the floor remains a dark, glossy field with soft gradients where light barely reaches. At 00:00.000, A low, hollow room ambience with a faint electrical hum fills the dark showroom. At 00:00.700, A faint highlight catches along the car's bodywork while the surrounding floor stays deep in shadow. The camera holds a static shot. Throughout the target video: Do not add spoken or sung lines.\n[Shot 2] At 00:01.600, the shot cuts to The same \u003cSubject 1\u003e comes alive as the car rolls forward out of the dark. Its tires creep across the polished surface, and the floor begins to catch long, sliding reflections under the body. The headlights bloom on with a brief relay click, throwing two pale beams across the empty expanse and lighting the fine dust and the clean seams of the floor. The car noses into the light, its shape clarifying from a shadowed mass into a defined front end, while the room around it stays sparse and quiet. Motion is smooth and deliberate, with the weight of the vehicle settling over the tires as it advances. The beams sweep gradually, changing the floor from a dark mirror into a lit runway, and the car's outline grows sharper against the surrounding black. At 00:01.600, Soft tire creep on the polished floor begins, joined by a rising electric motor whine. At 00:01.800, The car starts to roll forward, its silhouette separating from the back wall. At 00:02.300, A headlight relay clicks as the lamps snap on. At 00:02.300, The headlights bloom and sweep pale beams across the empty floor. At 00:02.800, Long reflections slide under the advancing car as it noses into the light. The camera pushes in with small amplitude at slow speed.\n[Shot 3] At 00:03.300, the shot cuts to The car eases to a halt in the middle of \u003cSubject 1\u003e, its headlights washing a clean, empty stretch of floor ahead. The body rocks almost imperceptibly as the tires compress and the motor winds down, then everything settles into stillness. Reflections steady beneath the car, the beam edges stop sweeping, and the polished surface returns to broad, quiet planes. The surrounding showroom remains dark and uncluttered, with no people or signage entering the frame. The final beat is calm and measured, the vehicle at rest within the lit pool it has created, while the room tone settles around it. A thin rim of light remains on the car's body, and the floor ahead stays open and reflective. At 00:03.300, The motor winds down and the tires compress to a stop. At 00:03.600, The car settles into stillness in the middle of the lit floor. At 00:04.900, A quiet room tone settles around the stopped vehicle. The camera pushes in with small amplitude at slow speed.\n\noverall_soundscape:\nLow, hollow room ambience with a faint electrical hum; soft tire creep and a rising electric motor whine; a brief headlight relay click; the motor winding down to a quiet settle of room tone.\n\nnon_diegetic_music:\nN/A\n",
+    "manifest": {
+      "media": [
+        {
+          "preparation": {
+            "sizing": "match",
+            "width": 1024,
+            "height": 576
+          },
+          "source_metadata": {
+            "width": 1024,
+            "height": 576,
+            "fps": {
+              "numerator": 0,
+              "denominator": 0
+            }
+          },
+          "label": "\u003cPicture 1\u003e",
+          "kind": "picture",
+          "source": {
+            "asset_id": "asset-1",
+            "track": "visual"
+          },
+          "socket": "ref_image_1"
+        }
+      ],
+      "subjects": [
+        {
+          "id": "subject-1",
+          "label": "\u003cSubject 1\u003e"
+        }
+      ],
+      "references": [],
+      "speakers": []
+    },
+    "frames": 120,
+    "effective_duration_seconds": {
+      "numerator": 5,
+      "denominator": 1
+    },
+    "document_sha256": "bac6b9bc156c613b7ae65f0b7ea53354eac94cd74d70e0f27215485ea69056a8",
+    "profile_sha256": "ce4364d3f1242f5aeb2216db44195fb3897f4828dd9e145c4c16c64315786ab6",
+    "prompt_sha256": "7d432197cc5f0cf2dea739e12de1df7679c8f0ad9b801e04ce2c4028af151547",
+    "manifest_sha256": "f7b8c4dd65633801dc83e32225069af18c7172397bad7bf78ce76afe6a7f3310",
+    "sha256": "e1ecad3de3a383b5d236c78b298bbe58339bc65099fa96fe1bc7aed1c68e69d2"
+  },
+  "evidence": [
+    {
+      "card": {
+        "asset_id": "asset-1",
+        "summary": "a black sports car on a showroom floor",
+        "subjects": [
+          {
+            "kind": "object",
+            "descriptor": "the black sports car",
+            "attributes": [
+              "carbon fibre body"
+            ]
+          }
+        ],
+        "environment": "an empty showroom floor",
+        "style": "Live-action, cinematic",
+        "composition": "unknown",
+        "analyzer_version": "1",
+        "coverage": {
+          "status": "complete",
+          "tracks": [
+            "visual"
+          ]
+        }
+      },
+      "asset_id": "asset-1",
+      "facts": [
+        {
+          "id": "card-asset-1-1",
+          "text": "a black sports car on a showroom floor",
+          "source": {
+            "asset_id": "asset-1",
+            "track": "visual"
+          }
+        },
+        {
+          "id": "card-asset-1-2",
+          "text": "an empty showroom floor",
+          "source": {
+            "asset_id": "asset-1",
+            "track": "visual"
+          }
+        },
+        {
+          "id": "card-asset-1-3",
+          "text": "Live-action, cinematic",
+          "source": {
+            "asset_id": "asset-1",
+            "track": "visual"
+          }
+        },
+        {
+          "id": "card-asset-1-4",
+          "text": "the black sports car",
+          "source": {
+            "asset_id": "asset-1",
+            "track": "visual"
+          }
+        },
+        {
+          "id": "card-asset-1-5",
+          "text": "carbon fibre body",
+          "source": {
+            "asset_id": "asset-1",
+            "track": "visual"
+          }
+        }
+      ],
+      "analyzer_version": "1",
+      "coverage": {
+        "status": "complete",
+        "tracks": [
+          "visual"
+        ]
+      }
+    }
+  ],
+  "decisions": [
+    {
+      "field": "target",
+      "source": "computed",
+      "value": {
+        "effective_seconds": 5,
+        "frame_count": 120,
+        "nominal_seconds": 5,
+        "policy": "snap_up"
+      },
+      "explanation": "Effective timing and nominal duration are recorded separately; generated cuts use effective timing."
+    },
+    {
+      "field": "canvas",
+      "source": "computed",
+      "value": [
+        1344,
+        768
+      ],
+      "explanation": "Native short-edge canvas is aligned to 32 pixels; explicit megapixels replaces the native area budget."
+    },
+    {
+      "field": "assets.asset-1.preparation",
+      "source": "required_adapter_instruction",
+      "value": {
+        "sizing": "match",
+        "width": 1024,
+        "height": 576
+      },
+      "explanation": "These required input transforms are recorded separately from the original source metadata; the compiler has not executed media IO."
+    },
+    {
+      "field": "execution",
+      "source": "explicit_adapter_policy",
+      "value": {
+        "effort": "standard"
+      },
+      "explanation": "The injected adapters and explicit compiler repair configuration implement standard effort."
+    },
+    {
+      "field": "mode",
+      "source": "explicit-role-reference",
+      "value": {
+        "input_relationship": "ordinary_scene_action",
+        "clarification_policy": "continue_with_recorded_choice",
+        "model_signals": [
+          "The phrase describes a car's action within a scene; it does not direct the supplied still image itself to become moving footage or bind it as a frame. The attachment's mere presence does not make this image animation."
+        ],
+        "confidence_kind": "routing_policy",
+        "model_confidence": 0.96,
+        "interpretation": "declared_reference",
+        "aspect_mismatch": false,
+        "needs_clarification": false,
+        "mode": "ref2va",
+        "confidence": 1,
+        "rule": "explicit-role-reference",
+        "signals": [
+          "The caller declared environment, which is a content reference rather than an actual frame of the video."
+        ],
+        "alternatives": [
+          "i2va",
+          "l2va"
+        ],
+        "calls": [
+          {
+            "stage": "mode_conflict",
+            "attempt": 1,
+            "model": "deepseek-flash",
+            "usage": {
+              "input_tokens": 556,
+              "output_tokens": 238
+            },
+            "valid": true
+          }
+        ]
+      },
+      "explanation": "Mode follows the production typed routing contract; publication capabilities are checked separately."
+    },
+    {
+      "field": "content_scope",
+      "source": "typed_request_interpretation",
+      "value": {
+        "conflict_policy": "supplied_content_wins",
+        "requested": {
+          "speech": false,
+          "music": false,
+          "onscreen_text": false,
+          "magnitude": ""
+        },
+        "forbidden": {
+          "speech": false,
+          "music": false,
+          "onscreen_text": false,
+          "magnitude": ""
+        },
+        "allowed": {
+          "speech": false,
+          "music": true,
+          "onscreen_text": false,
+          "magnitude": "measured"
+        },
+        "dialogue": [],
+        "onscreen_text": [],
+        "reasoning": "The intent describes only visual action (a car pulling forward out of the dark). It does not request or forbid speech, music, or onscreen text, and no presence claims or explicit dialogue/lettering are supplied.",
+        "calls": [
+          {
+            "stage": "scope",
+            "attempt": 1,
+            "model": "deepseek-flash",
+            "usage": {
+              "input_tokens": 1035,
+              "output_tokens": 197
+            },
+            "valid": true
+          }
+        ]
+      },
+      "explanation": "Caller requests and prohibitions are interpreted before code applies the explicit creativity level."
+    },
+    {
+      "field": "reference_licence",
+      "source": "typed_attribute_precedence",
+      "value": {
+        "reference_permissions": {
+          "action": false,
+          "framing": true,
+          "lighting": true,
+          "medium": true,
+          "palette": true,
+          "wardrobe": false
+        },
+        "medium_decision": {
+          "rendering_permission": {
+            "kind": "preserve",
+            "disposition": "preserve",
+            "operation_quote": "",
+            "target": "",
+            "reasoning": "The caller only describes scene action (a car pulling forward out of the dark); there is no instruction to transform, reinterpret, restyle, or directly render in a specified target style or medium.",
+            "calls": [
+              {
+                "stage": "rendering_permission",
+                "attempt": 1,
+                "model": "deepseek-flash",
+                "usage": {
+                  "input_tokens": 438,
+                  "output_tokens": 112
+                },
+                "valid": true
+              }
+            ]
+          },
+          "disposition": "preserve",
+          "operation_quote": "",
+          "target": "",
+          "requested_style": "",
+          "reference_medium": "live-action",
+          "requested_medium": "",
+          "treatments": [],
+          "reasoning": "The only observed visual reference is a live-action, cinematic showroom image. The request describes scene action—the car pulling forward out of the dark—without asking for any rendering-medium change, restyling, or treatment. The host-owned rendering permission is preserve, so the reference rendering is retained and no requested medium or style phrase is present.",
+          "calls": [
+            {
+              "stage": "rendering_permission",
+              "attempt": 1,
+              "model": "deepseek-flash",
+              "usage": {
+                "input_tokens": 438,
+                "output_tokens": 112
+              },
+              "valid": true
+            },
+            {
+              "stage": "medium",
+              "attempt": 1,
+              "model": "deepseek-flash",
+              "usage": {
+                "input_tokens": 1303,
+                "output_tokens": 189
+              },
+              "valid": true
+            }
+          ]
+        },
+        "identity": [
+          {
+            "request_binding": "describes_other_scene_entity",
+            "descriptor_source": "reference",
+            "target_mention": "the car",
+            "kind": "environment",
+            "label": "\u003cSubject 1\u003e",
+            "descriptor": "an empty showroom floor",
+            "retained_attributes": [
+              "the black sports car — carbon fibre body"
+            ],
+            "requested_attributes": [],
+            "request_quote": "the car pulls forward out of the dark",
+            "wardrobe_attributes": []
+          }
+        ],
+        "governs": {
+          "action": "request",
+          "framing": "reference",
+          "lighting": "request",
+          "medium": "reference",
+          "palette": "reference",
+          "wardrobe": "request"
+        },
+        "reasons": {
+          "action": "The request explicitly asks the car to pull forward, a performed motion that overrides the showroom plate's static pose.",
+          "framing": "No camera composition, shot scale, viewpoint or camera movement is requested; “pulls forward” is vehicle motion and 16:9 is target aspect, not framing, so the reference framing governs.",
+          "lighting": "The request explicitly places the car emerging “out of the dark,” specifying a darkness/light condition that overrides the showroom reference lighting.",
+          "medium": "No rendering-medium change is requested; the supplied live-action cinematic reference therefore governs the medium.",
+          "palette": "No explicit colour or tonal grade is requested; the live-action reference palette remains, while the requested darkness is handled as lighting.",
+          "wardrobe": "No wardrobe or accessory change is requested; the car's retained carbon-fibre body is resolved through target identity requirements, so wardrobe authority is request-governed."
+        },
+        "transform_phrase": null,
+        "transform_target": "",
+        "medium_transferred": false,
+        "style": {
+          "observed_phrase": "Live-action, cinematic",
+          "phrase": "Live-action, cinematic",
+          "source": "reference",
+          "reference_medium": "live-action",
+          "requested_medium": "",
+          "discrepancy": false,
+          "note": ""
+        },
+        "subjects": [
+          {
+            "label": "\u003cSubject 1\u003e",
+            "kind": "environment",
+            "sources": [
+              "\u003cPicture 1\u003e"
+            ],
+            "descriptor": "an empty showroom floor",
+            "attributes": [
+              "the black sports car — carbon fibre body"
+            ],
+            "pose": [],
+            "pose_licensed": false,
+            "retention": "fully_preserved",
+            "retention_note": "",
+            "appears_in": [],
+            "taken_over_by": ""
+          }
+        ],
+        "calls": [
+          {
+            "stage": "rendering_permission",
+            "attempt": 1,
+            "model": "deepseek-flash",
+            "usage": {
+              "input_tokens": 438,
+              "output_tokens": 112
+            },
+            "valid": true
+          },
+          {
+            "stage": "medium",
+            "attempt": 1,
+            "model": "deepseek-flash",
+            "usage": {
+              "input_tokens": 1303,
+              "output_tokens": 189
+            },
+            "valid": true
+          },
+          {
+            "stage": "identity_requirements",
+            "attempt": 1,
+            "model": "deepseek-flash",
+            "usage": {
+              "input_tokens": 1804,
+              "output_tokens": 464
+            },
+            "valid": true
+          },
+          {
+            "stage": "licence",
+            "attempt": 1,
+            "model": "deepseek-flash",
+            "usage": {
+              "input_tokens": 1956,
+              "output_tokens": 2854
+            },
+            "valid": true
+          }
+        ]
+      },
+      "explanation": "Each attribute follows explicit request or observed reference; poses and reference-sheet presentation are not subject identity."
+    },
+    {
+      "field": "shots.camera",
+      "source": "host_template",
+      "value": [
+        {
+          "subjects": [
+            "an empty showroom floor"
+          ],
+          "sync_sound": [
+            "low, hollow room ambience",
+            "faint electrical hum"
+          ],
+          "start_ms": 0,
+          "purpose": "establish",
+          "framing": "wide",
+          "action": "Deep in a dark, empty showroom, a car waits far back in shadow, only a faint sheen along its bodywork catching a distant light while the polished floor stretches away in near-blackness.",
+          "what_changes": "The darkness holds, broken only by a faint glint on the car.",
+          "camera": {
+            "type": "Static Shot",
+            "amplitude": "",
+            "speed": ""
+          }
+        },
+        {
+          "subjects": [
+            "an empty showroom floor"
+          ],
+          "sync_sound": [
+            "soft tire creep on polished floor",
+            "rising electric motor whine",
+            "headlight relay click"
+          ],
+          "start_ms": 1600,
+          "purpose": "develop",
+          "framing": "medium wide",
+          "action": "The car rolls forward out of the dark, headlights blooming on and sweeping across the polished floor, reflections sliding beneath it as it noses into the light.",
+          "what_changes": "The car moves out of shadow and into lit space.",
+          "camera": {
+            "type": "Push In",
+            "amplitude": "small",
+            "speed": "slow"
+          }
+        },
+        {
+          "subjects": [
+            "an empty showroom floor"
+          ],
+          "sync_sound": [
+            "motor winding down",
+            "tires compressing to a stop",
+            "room tone settling"
+          ],
+          "start_ms": 3300,
+          "purpose": "resolve",
+          "framing": "medium",
+          "action": "The car eases to a halt in the middle of the showroom floor, headlights washing the clean, empty expanse ahead while the body settles into stillness.",
+          "what_changes": "The car comes to rest and the motion stills in the lit floor.",
+          "camera": {
+            "type": "Push In",
+            "amplitude": "small",
+            "speed": "slow"
+          }
+        }
+      ],
+      "explanation": "Canonical camera events are assembled from the typed structural plan after prose."
+    },
+    {
+      "field": "subjects.shot_ids",
+      "source": "typed_actual_use_projection",
+      "value": [
+        {
+          "kind": "environment",
+          "descriptor": "an empty showroom floor",
+          "origin": "observed",
+          "id": "subject-1",
+          "description": "an empty showroom floor",
+          "sources": [
+            {
+              "source": {
+                "asset_id": "asset-1",
+                "track": "visual"
+              },
+              "role": "scene"
+            }
+          ],
+          "retention": "fully_preserved",
+          "retention_details": "Preserve this canonical target identity and its listed stable attributes.",
+          "shot_ids": [
+            "shot-1",
+            "shot-2",
+            "shot-3"
+          ]
+        }
+      ],
+      "explanation": "High-level target appearances derive only from actual RichText and speaker-dialogue bindings. Removed figures carry their incoming replacement's transfer scope; unused source observations remain in Evidence."
+    },
+    {
+      "field": "creativity",
+      "source": "caller_or_default",
+      "value": {
+        "speech": false,
+        "music": true,
+        "onscreen_text": false,
+        "magnitude": "measured"
+      },
+      "explanation": "Scope reflects requested elements, explicit prohibitions, and the selected four-position creativity control."
+    }
+  ],
+  "calls": [
+    {
+      "stage": "mode_conflict",
+      "attempt": 1,
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 556,
+        "output_tokens": 238
+      },
+      "valid": true
+    },
+    {
+      "stage": "scope",
+      "attempt": 1,
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 1035,
+        "output_tokens": 197
+      },
+      "valid": true
+    },
+    {
+      "stage": "rendering_permission",
+      "attempt": 1,
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 438,
+        "output_tokens": 112
+      },
+      "valid": true
+    },
+    {
+      "stage": "medium",
+      "attempt": 1,
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 1303,
+        "output_tokens": 189
+      },
+      "valid": true
+    },
+    {
+      "stage": "identity_requirements",
+      "attempt": 1,
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 1804,
+        "output_tokens": 464
+      },
+      "valid": true
+    },
+    {
+      "stage": "licence",
+      "attempt": 1,
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 1956,
+        "output_tokens": 2854
+      },
+      "valid": true
+    },
+    {
+      "stage": "structure",
+      "attempt": 1,
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 3501,
+        "output_tokens": 1374
+      },
+      "valid": true
+    },
+    {
+      "stage": "plan",
+      "attempt": 1,
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 9664,
+        "output_tokens": 6285
+      },
+      "valid": true
+    },
+    {
+      "stage": "semantic_review",
+      "attempt": 1,
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 2904,
+        "output_tokens": 1255
+      },
+      "valid": true
+    }
+  ]
+}
