@@ -1,0 +1,31 @@
+{
+  "source_commit": "fd031e136ae3d89147324c0d1b2aa65e838c21f5",
+  "cases": [
+    {
+      "upstream_nodeid": "tests/test_supported_python_versions.py::test_every_module_parses",
+      "verification_kind": "go_test",
+      "go_package": "./",
+      "go_test": "TestGoCompatibilityEverySourceParses",
+      "assertion_intent": "Every shipped native Go source file, including test source, is actually parsed; malformed-source controls must be rejected.",
+      "adaptation": "Python ast.parse is replaced by Go parser checks of actual package sources. It is not a statement-by-statement translation of Python grammar; equivalent native source-parse coverage and malformed controls run on the declared minimum Go toolchain.",
+      "required_compatibility_evidence": "declared_minimum_go_toolchain",
+      "source_file_sha256": "fed738130eb44a1025da79ff592c5588ed2dd05aeb929dcc16687be2ed750005",
+      "source_line": 83,
+      "oracle": "Original source test intent and declared go.mod version; Go parser/language/API negative controls plus exact declared minimum-toolchain full native test execution.",
+      "paid_model_calls": 0
+    },
+    {
+      "upstream_nodeid": "tests/test_supported_python_versions.py::test_no_backslash_inside_an_f_string_expression",
+      "verification_kind": "go_test",
+      "go_package": "./",
+      "go_test": "TestGoCompatibilityDeclaredLanguageVersion",
+      "assertion_intent": "The package does not use language or standard-library features newer than its declared minimum language version; the exact minimum compiler must build/test all native packages.",
+      "adaptation": "The source-specific Python f-string restriction becomes the Go promise in go.mod. Native version-aware checks include negative controls for newer syntax and standard-library APIs; a separate hash-verified real Go1.25.0 full test run is mandatory, and a newer local compiler cannot substitute for it.",
+      "required_compatibility_evidence": "declared_minimum_go_toolchain",
+      "source_file_sha256": "fed738130eb44a1025da79ff592c5588ed2dd05aeb929dcc16687be2ed750005",
+      "source_line": 53,
+      "oracle": "Original source test intent and declared go.mod version; Go parser/language/API negative controls plus exact declared minimum-toolchain full native test execution.",
+      "paid_model_calls": 0
+    }
+  ]
+}

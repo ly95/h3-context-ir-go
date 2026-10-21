@@ -24,10 +24,11 @@ from run_go_adapted import source_files, digest
 ROOT=Path(__file__).resolve().parents[1]
 PIN='fd031e136ae3d89147324c0d1b2aa65e838c21f5'
 MODULE='github.com/ly95/contextir'
-NA={
- 'tests/test_supported_python_versions.py::test_no_backslash_inside_an_f_string_expression':'Python f-string grammar is not a Go runtime feature; native Go parsing/build and vet run separately.',
- 'tests/test_supported_python_versions.py::test_every_module_parses':'Python module grammar is not a Go runtime feature; every native package is compiled and tested separately.',
+COMPATIBILITY_NODES={
+ 'tests/test_supported_python_versions.py::test_every_module_parses':'TestGoCompatibilityEverySourceParses',
+ 'tests/test_supported_python_versions.py::test_no_backslash_inside_an_f_string_expression':'TestGoCompatibilityDeclaredLanguageVersion',
 }
+COMPATIBILITY_EVIDENCE='declared_minimum_go_toolchain'
 
 def require(condition,message):
     if not condition:raise ValueError(message)
@@ -46,6 +47,70 @@ def current_runtime_sources():
     for name in ('go.mod','go.sum'):
         if (ROOT/name).is_file():names.add(name)
     return {name:digest(ROOT/name) for name in sorted(names)}
+
+def compatibility_source_hashes(module_root=None):
+    """Hash all native source and embedded inputs, including tests, without reports.
+
+    Safe to import from the minimum-toolchain recorder. The configured Go command
+    only inventories files; it does not execute a model, test, or application.
+    """
+    root=Path(module_root or ROOT).resolve()
+    names={str(p.relative_to(root)) for p in root.rglob('*.go')
+           if not any(x in ('.git','.codegraph','vendor') for x in p.relative_to(root).parts)
+           and not str(p.relative_to(root)).startswith('conformance/reports/')}
+    for name in ('go.mod','go.sum'):
+        if (root/name).is_file():names.add(name)
+    run=subprocess.run(['go','list','-deps','-json','./...'],cwd=root,capture_output=True,text=True)
+    require(run.returncode==0,'Cannot inventory native compatibility inputs: '+run.stderr)
+    decoder=json.JSONDecoder();at=0
+    while at<len(run.stdout):
+        while at<len(run.stdout) and run.stdout[at].isspace():at+=1
+        if at==len(run.stdout):break
+        pkg,at=decoder.raw_decode(run.stdout,at)
+        if pkg.get('ImportPath','')!=MODULE and not pkg.get('ImportPath','').startswith(MODULE+'/'):continue
+        directory=Path(pkg['Dir']).resolve();require(directory.is_relative_to(root),'Compatibility imports workspace-external source')
+        for key in ('EmbedFiles','TestEmbedFiles','XTestEmbedFiles'):
+            for name in pkg.get(key,[]):names.add(str((directory/name).relative_to(root)))
+    return {name:digest(root/name) for name in sorted(names)}
+
+def declared_go_version():
+    match=re.search(r'^go[ \t]+([0-9]+\.[0-9]+(?:\.[0-9]+)?)[ \t]*$',(ROOT/'go.mod').read_text(),re.M)
+    require(match is not None,'go.mod has no unambiguous declared Go version')
+    return match.group(1)
+
+def require_compatibility_mappings(by_node):
+    for node,test in COMPATIBILITY_NODES.items():
+        case=by_node.get(node)
+        require(case is not None,'Missing native language compatibility mapping: '+node)
+        require(case.get('verification_kind')=='go_test' and case.get('go_package') in ('.','./') and case.get('go_test')==test,'Language compatibility must execute its exact native root test: '+node)
+        require(case.get('required_compatibility_evidence')==COMPATIBILITY_EVIDENCE,'Minimum-toolchain evidence is mandatory: '+node)
+
+def load_compatibility_report(path):
+    report=json.loads(path.read_text())
+    require(report.get('schema')=='contextir-go-minimum-compatibility/v1','Unknown Go compatibility evidence schema')
+    declared=declared_go_version();minimum=declared if declared.count('.')==2 else declared+'.0'
+    require(report.get('declared_go_version')==declared and report.get('actual_go_version')=='go'+minimum,'Compatibility must run the exact declared minimum Go toolchain, not a newer compiler')
+    environment=report.get('go_environment') or {}
+    require(environment.get('GOTOOLCHAIN')=='local' and environment.get('GOWORK')=='off','Minimum toolchain must disable auto-upgrade and workspaces')
+    require(environment.get('GOFLAGS','') in ('','-mod=readonly'),'Compatibility cannot hide test filters or overlays in GOFLAGS')
+    command=report.get('command') or []
+    require(len(command)>=4 and Path(command[0]).name=='go' and command[1]=='test' and '-json' in command and '-count=1' in command and './...' in command,'Compatibility evidence must execute all native tests as JSON without cached results')
+    require(not any(x.startswith(('-run','-skip','-short','-overlay')) for x in command[2:]),'Compatibility evidence cannot filter, skip, or overlay tests')
+    require(report.get('exit_code')==0 and report.get('passed') is True and report.get('source_files_unchanged_during_run') is True,'Minimum-toolchain build/test failed or changed sources')
+    require(report.get('source_sha256')==compatibility_source_hashes(),'Minimum-toolchain evidence does not match current native source/tests/embedded inputs')
+    events_path=Path(report.get('raw_go_events',''));events_path=events_path if events_path.is_absolute() else ROOT/events_path
+    require(events_path.is_file() and digest(events_path)==report.get('raw_go_events_sha256'),'Minimum-toolchain raw event hash is missing or changed')
+    tests={};packages={};output=collections.defaultdict(str)
+    for line in events_path.read_text().splitlines():
+        event=json.loads(line);package=event.get('Package');action=event.get('Action')
+        if event.get('Output'):output[package]+=event['Output']
+        if action not in ('run','pass','skip','fail'):continue
+        if event.get('Test'):tests[(package,event['Test'])]=action
+        else:packages[package]=action
+    require(bool(packages) and bool(tests) and all(x=='pass' for x in tests.values()),'Minimum-toolchain tests contain failure, skipped tests, or missing results')
+    require(all(state=='pass' or (state=='skip' and '[no test files]' in output[package] and not any(p==package for p,_ in tests)) for package,state in packages.items()),'Minimum-toolchain packages did not compile/test successfully')
+    for test in COMPATIBILITY_NODES.values():require(tests.get((MODULE,test))=='pass','Minimum-toolchain run omitted compatibility test '+test)
+    return {'report':str(path),'report_sha256':digest(path),'declared_go_version':declared,'actual_go_version':report['actual_go_version'],'raw_go_events':str(events_path),'raw_go_events_sha256':digest(events_path),'source_sha256':report['source_sha256'],'verified':True}
 
 def load_primary_report(path,provenance_path,inventory):
     report=json.loads(path.read_text());provenance=json.loads(provenance_path.read_text())
@@ -95,7 +160,7 @@ def primary_result(case,report):
     return {'status':'passed' if passed else 'failed','original_call_phase':phase.get('outcome'),'actual_primary_operation_counts':dict(operations),'required_operations_missing':missing,'actual_native_validator_calls':len(validators),'evidence_kind':'unchanged original assertions consume actual immutable native API output; no independent Go leaf is claimed'}
 
 def go_result(case,tests):
-    package=case['go_package'];pkg=MODULE+('/'+package[2:] if package!='.' else '')
+    package=case['go_package'];pkg=MODULE+('/'+package[2:] if package not in ('.','./') else '')
     name=case['go_test'];selected={t:s for (pk,t),s in tests.items() if pk==pkg and (t==name or t.startswith(name+'/'))}
     return {'status':'passed' if selected.get(name)=='pass' and all(x=='pass' for x in selected.values()) else 'failed','actual_go_events':selected,'evidence_kind':'executed native Go test'}
 
@@ -103,22 +168,26 @@ def main():
     p=argparse.ArgumentParser(description=__doc__);p.add_argument('--label',required=True);p.add_argument('--require-all',action='store_true')
     p.add_argument('--original-report',type=Path,help='Fresh full pinned pytest_go_draft report for original_go_primary mappings')
     p.add_argument('--original-provenance',type=Path,help='Defaults to <original-report stem>-provenance.json')
+    p.add_argument('--go-compatibility-report',type=Path,help='Actual full test run under the exact minimum toolchain declared in go.mod')
     a=p.parse_args()
     if not re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9_-]*',a.label):p.error('label must be a plain filename component')
     matrix=json.loads((ROOT/'conformance/matrix.json').read_text());require(matrix['source_commit']==PIN and len(matrix['tests'])==991,'Original pinned inventory changed')
-    inventory={x['nodeid'] for x in matrix['tests']};require(set(NA)<=inventory,'Syntax exclusions differ from original inventory')
+    inventory={x['nodeid'] for x in matrix['tests']};require(len(inventory)==991 and set(COMPATIBILITY_NODES)<=inventory,'Original inventory or compatibility nodeids changed')
     manifests={};by_node={}
     for path in sorted((ROOT/'conformance/adaptations').glob('remaining_*.json')):
         data=json.loads(path.read_text());require(data['source_commit']==PIN,'Unpinned adaptation '+str(path));manifests[str(path.relative_to(ROOT))]=digest(path)
         for case in data['cases']:
             node=case['upstream_nodeid'];kind=case.get('verification_kind','go_test')
-            require(node in inventory and node not in NA,'Invalid adapted nodeid '+node);require(node not in by_node,'Duplicate native adaptation '+node)
+            require(node in inventory,'Invalid adapted nodeid '+node);require(node not in by_node,'Duplicate native adaptation '+node)
             require(kind in ('go_test','original_go_primary'),'Unknown evidence kind '+node)
             if kind=='go_test':require(case.get('go_test') and case.get('go_package'),'Missing actual Go test '+node)
             else:require(case.get('primary_go_boundaries') and (case.get('required_primary_operations') or case.get('require_native_validator_calls')),'Missing actual primary API producer '+node)
             by_node[node]={**case,'verification_kind':kind,'manifest':str(path.relative_to(ROOT))}
-    missing_all=sorted(inventory-set(NA)-set(by_node));gaps=json.loads((ROOT/'conformance/reports/coverage_gaps.json').read_text());missing_gap=sorted({x['nodeid'] for x in gaps['tests']}-set(NA)-set(by_node))
+    require_compatibility_mappings(by_node)
+    missing_all=sorted(inventory-set(by_node));gaps=json.loads((ROOT/'conformance/reports/coverage_gaps.json').read_text());missing_gap=sorted({x['nodeid'] for x in gaps['tests']}-set(by_node))
     require(not missing_gap,'Unmapped original coverage gaps: '+json.dumps(missing_gap));require(not a.require_all or not missing_all,'Missing primary-assertion mappings: '+json.dumps(missing_all))
+    require(a.go_compatibility_report is not None,'--go-compatibility-report is required; language-version tests alone do not prove minimum-toolchain execution')
+    compatibility_evidence=load_compatibility_report(a.go_compatibility_report.resolve())
     primary=None;primary_provenance=None;primary_evidence=None
     if any(x['verification_kind']=='original_go_primary' for x in by_node.values()):
         require(a.original_report is not None,'--original-report is required for original_go_primary cases')
@@ -143,8 +212,10 @@ def main():
         for check in case.get('supplemental_go_checks',[]):supplements.append({**check,**go_result(check,tests)})
         if any(x['status']!='passed' for x in supplements):value['status']='failed'
         results.append({**case,**value,'supplemental_go_results':supplements})
-    unchanged=hashes==source_files();passed=run.returncode==0 and unchanged and all(x['status']=='passed' for x in results) and all(v=='pass' for v in tests.values())
-    report={'schema':'contextir-native-functionality/v2','source_commit':PIN,'started_at':started,'finished_at':dt.datetime.now(dt.timezone.utc).isoformat(),'command':command,'exit_code':run.returncode,'passed':passed,'counts':{'original_nodeids':len(inventory),'mapped_applicable_nodeids':len(results),'mapped_passed':sum(x['status']=='passed' for x in results),'original_go_primary_mappings':sum(x['verification_kind']=='original_go_primary' for x in results),'independent_go_mappings':sum(x['verification_kind']=='go_test' for x in results),'not_applicable_python_syntax':len(NA),'unmapped_original_nodeids':len(missing_all),'go_root_tests':sum('/' not in t for _,t in tests),'go_subtests':sum('/' in t for _,t in tests),'failed_go_events':sum(x=='fail' for x in tests.values()),'skipped_go_events':sum(x=='skip' for x in tests.values())},'cases':results,'not_applicable':[{'upstream_nodeid':n,'reason':s} for n,s in sorted(NA.items())],'unmapped_original_nodeids':missing_all,'original_primary_evidence':primary_evidence,'live_provider_calls':0,'model_execution':'Controlled typed doubles and hash-verified actual model recordings; deterministic native assertions need no provider credentials. This is not a video-model quality test.','scope':'Executed native Go adaptations plus unchanged source assertions consuming actual native primary output; helper reachability alone is not accepted. Original full pytest pass/fail counts remain separately reported and unmodified.','source_files_unchanged_during_run':unchanged,'source_sha256':hashes,'source_archive':str(paths[2].relative_to(ROOT)),'source_archive_sha256':digest(paths[2]),'raw_go_events':str(paths[1].relative_to(ROOT)),'raw_go_events_sha256':digest(paths[1]),'manifests_sha256':manifests,'git_head':subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),'go_version':subprocess.check_output(['go','version'],cwd=ROOT,text=True).strip()}
+    unchanged=hashes==source_files()
+    compatibility_unchanged=(digest(Path(compatibility_evidence['report']))==compatibility_evidence['report_sha256'] and digest(Path(compatibility_evidence['raw_go_events']))==compatibility_evidence['raw_go_events_sha256'])
+    passed=run.returncode==0 and unchanged and compatibility_unchanged and all(x['status']=='passed' for x in results) and all(v=='pass' for v in tests.values())
+    report={'schema':'contextir-native-functionality/v3','source_commit':PIN,'started_at':started,'finished_at':dt.datetime.now(dt.timezone.utc).isoformat(),'command':command,'exit_code':run.returncode,'passed':passed,'counts':{'original_nodeids':len(inventory),'mapped_applicable_nodeids':len(results),'mapped_passed':sum(x['status']=='passed' for x in results),'original_go_primary_mappings':sum(x['verification_kind']=='original_go_primary' for x in results),'independent_go_mappings':sum(x['verification_kind']=='go_test' for x in results),'not_applicable_python_syntax':0,'unmapped_original_nodeids':len(missing_all),'go_root_tests':sum('/' not in t for _,t in tests),'go_subtests':sum('/' in t for _,t in tests),'failed_go_events':sum(x=='fail' for x in tests.values()),'skipped_go_events':sum(x=='skip' for x in tests.values())},'cases':results,'not_applicable':[],'go_compatibility_evidence':compatibility_evidence,'unmapped_original_nodeids':missing_all,'original_primary_evidence':primary_evidence,'live_provider_calls':0,'model_execution':'Controlled typed doubles and hash-verified actual model recordings; deterministic native assertions need no provider credentials. This is not a video-model quality test.','scope':'Executed native Go adaptations plus unchanged source assertions consuming actual native primary output; helper reachability alone is not accepted. Original full pytest pass/fail counts remain separately reported and unmodified.','source_files_unchanged_during_run':unchanged,'go_compatibility_evidence_unchanged_during_run':compatibility_unchanged,'source_sha256':hashes,'source_archive':str(paths[2].relative_to(ROOT)),'source_archive_sha256':digest(paths[2]),'raw_go_events':str(paths[1].relative_to(ROOT)),'raw_go_events_sha256':digest(paths[1]),'manifests_sha256':manifests,'git_head':subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),'go_version':subprocess.check_output(['go','version'],cwd=ROOT,text=True).strip()}
     paths[0].write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n');print(json.dumps({'report':str(paths[0].relative_to(ROOT)),'passed':passed,'counts':report['counts']},ensure_ascii=False));return 0 if passed else 1
 
 if __name__=='__main__':
