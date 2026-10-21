@@ -1,0 +1,372 @@
+#!/usr/bin/env python3
+"""Independently inspect final live acceptance results, never call a model.
+
+Expected values come from a separate assertion file and are not sent to the
+provider. This checker verifies literal channels, reference graphs, source
+roles, endpoint preservation, publication hashes and refinement dependencies.
+It does not certify all free-form prose, real acoustic/video perception, or
+generated video quality. The design manifest records that evidence boundary.
+"""
+from __future__ import annotations
+
+import argparse
+import copy
+import hashlib
+import json
+import re
+from pathlib import Path
+
+
+def sha(data: bytes) -> str:
+    return hashlib.sha256(data).hexdigest()
+
+
+def go_json(value) -> bytes:
+    # Artifacts use encoding/json on structs, preserving their field order.
+    text = json.dumps(value, ensure_ascii=False, separators=(",", ":"))
+    for old, new in [("&", "\\u0026"), ("<", "\\u003c"), (">", "\\u003e"),
+                     ("\u2028", "\\u2028"), ("\u2029", "\\u2029")]:
+        text = text.replace(old, new)
+    return text.encode()
+
+
+def pointer(value, path):
+    if not path:
+        return value
+    if not path.startswith("/"):
+        raise ValueError("JSONPointer must start with /")
+    for part in path[1:].split("/"):
+        part = part.replace("~1", "/").replace("~0", "~")
+        value = value[int(part)] if isinstance(value, list) else value[part]
+    return value
+
+
+def strings(value):
+    if isinstance(value, str):
+        yield value
+    elif isinstance(value, list):
+        for item in value:
+            yield from strings(item)
+    elif isinstance(value, dict):
+        for item in value.values():
+            yield from strings(item)
+
+
+def literal_surface(document):
+    """Only emitted descriptions; source observations may contain transcripts."""
+    result = [document.get("summary", []), document.get("style", ""),
+              document.get("soundscape", ""), document.get("music", "")]
+    for kind in ("subjects", "references", "speakers"):
+        result.extend(row.get("description", "") for row in document.get(kind, []))
+    for shot in document.get("shots", []):
+        result.append(shot.get("description", []))
+        result.extend(event.get("description", []) for event in shot.get("events", []))
+    return "\n".join(strings(result))
+
+
+def inspect(result, semantic, previous=None):
+    problems = []
+    def require(ok, message):
+        if not ok:
+            problems.append(message)
+    artifact = result.get("artifact", {})
+    document = result.get("document", {})
+    prompt = artifact.get("prompt", "")
+    if semantic.get("no_artifact"):
+        require(not prompt and not artifact.get("sha256"), "failed/needs_input result published an artifact")
+        return problems
+    require(result.get("status") == "compiled", "publication did not finish compiled")
+    if not prompt:
+        return problems + ["compiled result lacks final prompt"]
+    require(artifact.get("mode") == document.get("mode"), "artifact mode differs from Document")
+    require(artifact.get("target") == document.get("target"), "artifact target differs from Document")
+    require(sha(prompt.encode()) == artifact.get("prompt_sha256"), "prompt SHA does not match final bytes")
+    for field, value in [("document", document), ("manifest", artifact.get("manifest", {})),
+                         ("profile", artifact.get("profile", {}))]:
+        require(sha(go_json(value)) == artifact.get(field + "_sha256"), field + " SHA does not match publication")
+    identity = copy.deepcopy(artifact)
+    identity["sha256"] = ""
+    require(sha(go_json(identity)) == artifact.get("sha256"), "artifact identity SHA does not match complete artifact")
+
+    target_end = document.get("target", {}).get("duration_ms", 0)
+    assets = {x["id"]: x for x in document.get("assets", [])}
+    subjects = {x["id"]: x for x in document.get("subjects", [])}
+    references = {x["id"]: x for x in document.get("references", [])}
+    speakers = {x["id"]: x for x in document.get("speakers", [])}
+    shots = document.get("shots", [])
+    shot_ids = {x["id"] for x in shots}
+    manifest = artifact.get("manifest", {})
+    media = manifest.get("media", [])
+    actual_source_roles = {}
+    source_ids = set()
+    for subject in subjects.values():
+        for attribution in subject.get("sources", []):
+            source = attribution.get("source", {}).get("asset_id")
+            source_ids.add(source)
+            require(source in assets, "subject attribution names an unattached source")
+            actual_source_roles.setdefault(source, set()).add(attribution.get("role"))
+    for reference in references.values():
+        source = reference.get("source", {}).get("asset_id")
+        source_ids.add(source)
+        require(source in assets, "reference names an unattached source")
+        actual_source_roles.setdefault(source, set()).update(reference.get("roles", []))
+        if reference.get("speaker_id"):
+            require(reference["speaker_id"] in speakers, "reference names a missing speaker")
+        require(set(reference.get("shot_ids", [])) <= shot_ids, "reference names missing target shots")
+        matches = [use for row in media if row.get("source") == reference.get("source")
+                   for use in row.get("target_uses", []) if use.get("reference_id") == reference["id"]]
+        require(len(matches) == 1, "reference lacks exactly one manifest target use")
+        if len(matches) == 1:
+            for key in ("roles", "retention", "anchor_ms", "speaker_id", "replaces", "paired_video_id"):
+                require(matches[0].get(key) == reference.get(key), "manifest target use differs in " + key)
+    require({x.get("source", {}).get("asset_id") for x in media} == source_ids,
+            "manifest media source set differs from final Document source set")
+    for row in media:
+        require(row.get("source", {}).get("asset_id") in assets, "manifest names an unattached asset")
+        require(bool(row.get("label")) and row["label"] in prompt, "manifest media label never occurs in prompt")
+        for use in row.get("target_uses", []):
+            for target in use.get("shots", []):
+                require(target.get("id") in shot_ids, "manifest use names a missing shot")
+                interval = target.get("interval", {})
+                require(0 <= interval.get("start_ms", -1) < interval.get("end_ms", -1) <= target_end,
+                        "manifest target interval escapes final timeline")
+    for name, actual in (("subjects", subjects), ("references", references), ("speakers", speakers)):
+        require({x.get("id") for x in manifest.get(name, [])} == set(actual),
+                "manifest " + name + " ID set differs from Document")
+    labels = {row.get("label") for name in ("media", "subjects", "references", "speakers")
+              for row in manifest.get(name, [])}
+    # Parsing rendered protocol labels is not intent inference.
+    for label in re.findall(r"<(?:Subject|Picture|Image|Video|Audio) \d+>|\(S\d+\)", prompt):
+        require(label in labels, "unbound generated prompt label: " + label)
+    last_end = 0
+    for shot in shots:
+        require(shot.get("start_ms") == last_end, "shots are not contiguous and ordered")
+        require(last_end < shot.get("end_ms", -1) <= target_end, "shot endpoint is outside timeline")
+        last_end = shot.get("end_ms", -1)
+        for event in shot.get("events", []):
+            if "at_ms" in event:
+                require(shot["start_ms"] <= event["at_ms"] < shot["end_ms"], "event time escapes its shot")
+    require(last_end == target_end, "shots do not reach final target end")
+    for speaker in speakers.values():
+        require(not speaker.get("subject_id") or speaker["subject_id"] in subjects, "speaker binds a missing subject")
+        require(not speaker.get("voice_reference_id") or speaker["voice_reference_id"] in references,
+                "speaker binds a missing voice reference")
+
+    lines = document.get("dialogue", [])
+    if "exact_dialogue" in semantic:
+        require([x.get("text") for x in lines] == semantic["exact_dialogue"], "final dialogue definitions differ from fixed words")
+    if "dialogue_languages" in semantic:
+        require([x.get("language") for x in lines] == semantic["dialogue_languages"], "fixed dialogue language changed")
+    line_map = {x["id"]: x for x in lines}
+    parts = {key: [] for key in line_map}
+    parts_shots = {key: set() for key in line_map}
+    for shot in shots:
+        for event in shot.get("events", []):
+            part = event.get("dialogue")
+            if part:
+                require(part.get("line_id") in line_map, "dialogue event references unknown line")
+                if part.get("line_id") in parts:
+                    parts[part["line_id"]].append(part)
+                    parts_shots[part["line_id"]].add(shot["id"])
+    for line in lines:
+        utterance = parts[line["id"]]
+        require("".join(p.get("text", "") for p in utterance) == line.get("text"),
+                "emitted dialogue parts do not concatenate to exact final utterance")
+        require(set(line.get("speaker_ids", [])) <= set(speakers), "dialogue names missing speaker")
+        if semantic.get("literal_only_dialogue"):
+            require(line["text"] not in literal_surface(document), "fixed words leaked into emitted non-dialogue prose")
+        if semantic.get("dialogue_crosses_shots"):
+            require(len(parts_shots[line["id"]]) >= 2, "requested continuous line does not span shots")
+            for i, part in enumerate(utterance):
+                require(bool(part.get("continues_from_previous")) == (i > 0), "incorrect continues-from flag")
+                require(bool(part.get("continues_to_next")) == (i < len(utterance)-1), "incorrect continues-to flag")
+        if semantic.get("offscreen_only"):
+            require(line.get("voiceover") is True, "offscreen words became onscreen dialogue")
+            require(all(speakers[s].get("onscreen") is False and not speakers[s].get("subject_id")
+                        for s in line.get("speaker_ids", []) if s in speakers), "voiceover invented a visual speaker")
+    if "visible_text" in semantic:
+        visible = [event["visible_text"] for shot in shots for event in shot.get("events", []) if event.get("visible_text")]
+        require(visible == semantic["visible_text"], "visible lettering changed, duplicated or was omitted")
+        for word in semantic["visible_text"]:
+            require(prompt.count(word) == 1, "exact visible text is not emitted once")
+    if semantic.get("no_speaker"):
+        require(not speakers, "dormant voice reference introduced a speaker")
+    if "source_subject_count" in semantic:
+        require(sum(bool(x.get("sources")) for x in subjects.values()) == semantic["source_subject_count"],
+                "wrong number of source-bound target identities")
+    for source in semantic.get("required_sources", []):
+        require(source in source_ids, "required source disappeared: " + source)
+    for source in semantic.get("absent_sources", []):
+        require(source not in assets and source not in source_ids, "removed source remains bound: " + source)
+    for source, allowed in semantic.get("source_roles", {}).items():
+        require(bool(actual_source_roles.get(source, set()) & set(allowed)), "declared source role is not used in final Document: " + source)
+    for source, at in semantic.get("required_anchor", {}).items():
+        expected = target_end if at == "end" else at
+        require(any(r.get("source", {}).get("asset_id") == source and r.get("anchor_ms") == expected
+                    for r in references.values()), "missing exact frame anchor: " + source)
+    for source in semantic.get("fully_preserved_sources", []):
+        relevant = [r for r in references.values() if r.get("source", {}).get("asset_id") == source]
+        require(bool(relevant) and all(r.get("retention") == "fully_preserved" for r in relevant),
+                "actual frame pixels are not fully preserved: " + source)
+    for wanted in semantic.get("merged_subject_source_sets", []):
+        require(any({a.get("source", {}).get("asset_id") for a in s.get("sources", [])} == set(wanted)
+                    for s in subjects.values()), "single target lost its selected multi-source projection")
+    attributes = {attribute for s in subjects.values() for attribute in s.get("attributes", [])}
+    for attribute in semantic.get("required_subject_attributes", []):
+        require(attribute in attributes, "required accepted target property absent: " + attribute)
+    if semantic.get("no_subject_pose"):
+        require(all(not s.get("pose") and not s.get("pose_licensed") for s in subjects.values() if s.get("sources")),
+                "content reference was promoted into source-pose lock")
+    if semantic.get("replacement_motion_required"):
+        require(bool(result.get("replacement_motion_obligations")), "incoming/replacement motion obligations absent")
+    if "preserve_dialogue_from_op" in semantic and previous:
+        base = previous[semantic["preserve_dialogue_from_op"]]
+        require(document.get("dialogue") == base.get("document", {}).get("dialogue"), "Refine altered unchanged fixed dialogue")
+    if "preserve_evidence_from_op" in semantic and previous:
+        base = previous[semantic["preserve_evidence_from_op"]]
+        removed = set(semantic.get("allow_removed_evidence", []))
+        expected = [e for e in base.get("evidence", []) if e.get("asset_id") not in removed]
+        require(result.get("evidence", []) == expected, "Refine changed unchanged actual observation evidence")
+    if "preserve_projection_sources_from_op" in semantic and previous:
+        def sets(r):
+            return sorted(sorted(a["source"]["asset_id"] for a in s.get("sources", []))
+                          for s in r.get("document", {}).get("subjects", []) if len(s.get("sources", [])) > 1)
+        require(sets(result) == sets(previous[semantic["preserve_projection_sources_from_op"]]),
+                "Refine rebound selected identities by position instead of stable physical source")
+    return problems
+
+
+def basic(result, check):
+    try:
+        kind = check["kind"]
+        value = pointer(result, check.get("path", ""))
+        prompt = result.get("artifact", {}).get("prompt", "")
+        if kind == "json_equals":
+            return value == check["equals"]
+        if kind == "json_contains":
+            return isinstance(value, str) and check["contains"] in value
+        if kind == "array_length":
+            return isinstance(value, list) and len(value) == check["count"]
+        if kind == "prompt_contains":
+            return check["contains"] in prompt
+        if kind == "prompt_excludes":
+            return check["contains"] not in prompt
+        if kind == "prompt_count":
+            return prompt.count(check["contains"]) == check["count"]
+    except (KeyError, TypeError, IndexError, ValueError):
+        return False
+    return False
+
+
+def run(report_path, fixture_path, assertions_path):
+    report = json.loads(report_path.read_text())
+    fixture = json.loads(fixture_path.read_text())
+    expected = json.loads(assertions_path.read_text())
+    root = report_path.parent
+    failures = []
+    cases = {c["case_id"]: c for c in report.get("cases", [])}
+    ids = [c["case_id"] for c in fixture["cases"]]
+    if len(cases) != len(ids) or set(cases) != set(ids) or set(expected["cases"]) != set(ids):
+        failures.append("case inventory differs from frozen fixture/assertion inventory")
+    for key, path in (("fixture_sha256", fixture_path), ("assertions_sha256", assertions_path)):
+        if report.get(key) != sha(path.read_bytes()):
+            failures.append(key + " differs from actual frozen input bytes")
+    results = []
+    for item in fixture["cases"]:
+        cid = item["case_id"]
+        cr = cases.get(cid, {})
+        operations = cr.get("operations", [])
+        specs = expected["cases"][cid]["operations"]
+        previous = []
+        for index, spec in enumerate(specs):
+            errors = []
+            if index >= len(operations):
+                results.append({"case_id": cid, "operation_index": index, "passed": False, "errors": ["operation never ran"]})
+                continue
+            operation = operations[index]
+            path = (root / operation["result_file"]).resolve()
+            if root.resolve() not in path.parents:
+                raise ValueError("recorded result path escapes report root")
+            result = json.loads(path.read_text())
+            status = spec.get("status", "compiled")
+            if operation.get("status") != status or result.get("status") != status:
+                errors.append("actual status differs from expected " + status)
+            code = operation.get("error_code", operation.get("error", {}).get("code") if operation.get("error") else None)
+            if spec.get("error_code"):
+                if code != spec["error_code"]:
+                    errors.append("typed failure code differs from independent expected error")
+            elif operation.get("error"):
+                errors.append("unexpected operation error")
+            for check in spec.get("checks", []):
+                if not basic(result, check):
+                    errors.append("independent final-result check failed: " + json.dumps(check, ensure_ascii=False))
+            semantic = spec.get("semantic", {})
+            if status == "compiled":
+                errors.extend(inspect(result, semantic, previous))
+                if not operation.get("roundtrip"):
+                    errors.append("persisted Go Document -> Compile roundtrip did not pass")
+                if not result.get("usage_complete") or any(not c.get("usage_valid") for c in operation.get("calls", [])):
+                    errors.append("successful operation has incomplete or invalid usage accounting")
+            elif semantic.get("no_artifact"):
+                errors.extend(inspect(result, semantic, previous))
+            if semantic.get("no_model_calls") and operation.get("calls"):
+                errors.append("invalid boundary input made model calls")
+            if index > 0 and ("preserve_evidence_from_op" in semantic) and any(c.get("images") for c in operation.get("calls", [])):
+                errors.append("Refine made fresh image observations instead of reusing unchanged evidence")
+            for call in operation.get("calls", []):
+                for name in ("request_file", "response_file"):
+                    file = (root / call[name]).resolve()
+                    if root.resolve() not in file.parents or not file.is_file():
+                        errors.append("actual stage recording missing: " + name)
+            if item.get("observation_scope") == "real_png_live_observation" and index == 0 and status == "compiled":
+                observed = {image["fixture_sha256"] for call in operation.get("calls", []) for image in call.get("images", [])}
+                wanted = {media["sha256"] for media in item.get("media", {}).values()}
+                if not wanted or observed != wanted:
+                    errors.append("fresh live PNG observation does not cover actual pinned fixture bytes")
+            previous.append(result)
+            results.append({"case_id": cid, "operation_index": index, "expected_status": status,
+                            "passed": not errors, "errors": errors})
+    return {"schema": "contextir-live-independent-verification/v1", "passed": not failures and all(r["passed"] for r in results),
+            "report_sha256": sha(report_path.read_bytes()), "fixture_sha256": sha(fixture_path.read_bytes()),
+            "assertions_sha256": sha(assertions_path.read_bytes()), "inventory_errors": failures,
+            "operations": results, "total": len(results), "passed_operations": sum(r["passed"] for r in results),
+            "failed_operations": sum(not r["passed"] for r in results),
+            "evidence_scope": "Final publication, typed source graph, literal/timing/role invariants; free-form semantic prose and generated video quality require separately recorded review."}
+
+
+def self_test():
+    source = Path(__file__).parent / "reports/remaining-highlevel-compile-v2/transcript-model-selection/result.json"
+    r = json.loads(source.read_text())["result"]
+    assert not inspect(r, {"exact_dialogue": ["We close at six, not half past."]}), "known archived publication rejected"
+    for name, mutate in [
+        ("prompt hash", lambda d: d["artifact"].update(prompt=d["artifact"]["prompt"]+"x")),
+        ("source graph", lambda d: d["document"]["references"][0]["source"].update(asset_id="phantom")),
+        ("literal words", lambda d: d["document"]["dialogue"][0].update(text="changed")),
+        ("manifest role", lambda d: d["artifact"]["manifest"]["media"][0]["target_uses"][0].update(roles=["music"])),
+        ("publication hash", lambda d: d["artifact"].update(sha256="0"*64)),
+    ]:
+        wrong = copy.deepcopy(r)
+        mutate(wrong)
+        assert inspect(wrong, {"exact_dialogue": ["We close at six, not half past."]}), name + " drift escaped checker"
+    print(json.dumps({"self_test": "passed", "positive_publication": 1, "negative_mutations": 5}))
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--report", type=Path)
+    parser.add_argument("--fixture", type=Path, default=Path(__file__).with_name("release_acceptance_inputs.json"))
+    parser.add_argument("--assertions", type=Path, default=Path(__file__).with_name("release_acceptance_assertions.json"))
+    parser.add_argument("--out", type=Path)
+    parser.add_argument("--self-test", action="store_true")
+    args = parser.parse_args()
+    if args.self_test:
+        self_test()
+    else:
+        if not args.report or not args.out:
+            parser.error("--report and --out are required")
+        result = run(args.report, args.fixture, args.assertions)
+        with args.out.open("x") as stream:
+            json.dump(result, stream, ensure_ascii=False, indent=2)
+            stream.write("\n")
+        print(json.dumps({k: result[k] for k in ("passed", "total", "passed_operations", "failed_operations")}))
+        raise SystemExit(0 if result["passed"] else 1)
