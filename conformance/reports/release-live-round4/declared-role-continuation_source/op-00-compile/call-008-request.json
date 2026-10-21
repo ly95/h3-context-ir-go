@@ -1,0 +1,288 @@
+{
+  "stage": "semantic_review",
+  "system": "Audit this final H3 composition against its typed responsibilities. Return findings only for clear contradictions, not aesthetic preferences, prose length, optional creative choices, or unknown video quality. The supplied fragments are the actual final narrative, with typed subject/reference IDs printed explicitly. Read their full context and the target subject kinds: a floor or other environment must not become a moving vehicle merely because it is Subject 1. A subject/placed_subject/replacement_subject reference supplies its selected identity properties, not its original background, pose or photographic lighting. An environment reference supplies its scene, not the depicted actor identity or actor-specific appearance. An observed claim copying a mixed source summary must obey the same responsibility: citing the source does not authorize importing all its content. Independently requested or creative content is allowed; a generic car or room resembling a source is not itself evidence of misuse. A source structure/storyboard provides only its declared camera/cutting/planning properties, not its people, objects, world, lighting or palette. A placed subject adds to the edited scene; a replacement takes over the identified source figure. Both must actually appear in prose/actions, not only definitions. Accepted target identity outranks raw source observations. A visual source video does not wire its soundtrack. composition_facts.audio declares the actually wired audio relationships. If its attachments are empty, an explicit claim that the original soundtrack is preserved, reused, played or carried over is audio_signal_misuse even if the task prefix omits reuse. Newly generated sound is permitted and a similar sound does not demonstrate copying. Property-only voice, music-style, beat and sound-texture references condition a new sound; they do not play the original recording. BGM music references with partially_copy copy the supplied signal, and prose must not deny that. Music=N/A under no_added_music only prohibits adding a new score; it does not cancel an explicitly copied BGM. References with no actual dialogue do not authorize inventing spoken words. For actual first/last frame responsibilities, the whole supplied still is that frame: reference-sheet panels/labels/background are frame pixels, not packaging to silently remove. Moving one panel within an otherwise preserved sheet is legitimate. A recorded aspect-ratio warning alone is not a contradiction and does not authorize a crop. Do not invent preparation IO or assume its execution. Every finding must identify an actual fragment and an exact nonempty quote from that fragment demonstrating the contradiction, plus the implicated target subject ID when relevant. Empty findings means no clear supported contradiction was found, not proof of overall quality. No Markdown.\nPositive replacement obligations: inspect replacement_inheritance and its observed_motion_contexts, not only exclusions. The replacement must inherit the identified source figure's observed motion, position and timing. A global action-governs=request entry authorizes only the actor/action actually requested; changing the car's action does not change the driver's action. Compare the final replacement narrative with the identified figure's motion in context. Standing still is not inheriting an observed crossing action unless the caller explicitly changes that same figure's action. Do not invent timing facts outside the declared coverage.\nFinding thresholds: similar sounds are not evidence of copying a recording. Generic newly generated engine ambience, a matching pulse, or an appropriate sound texture is legitimate without an assertion that the source recording is played. For audio_signal_misuse quote an explicit source-signal relationship contradicting the typed copy/property role; never infer copying solely from sonic resemblance. Likewise camera movement after an anchored instant is legitimate. A push-in, pan or other dynamic camera event alone does not demonstrate that the initial or final anchor frame was changed. Report frame_content_changed only when actual narrative asserts incompatible frame content or a crop/removal at that anchored instant. These constraints are mandatory; do not report speculative contradictions.\nThe typed claims preserve their explicit origins. A user-origin claim records caller authorization or a requested outcome; it is not itself evidence that the final narrative executes that outcome or copies an original signal. User claims are deliberately absent from executable fragment addresses. Compare the actual final narrative, source bindings and typed performance events to that authorization. Observed and creative claims remain auditable executable assertions.",
+  "input": {
+    "assets": [
+      {
+        "id": "asset-1",
+        "kind": "video",
+        "metadata": {
+          "duration_ms": 5000,
+          "fps": {
+            "numerator": 0,
+            "denominator": 0
+          }
+        },
+        "preparation": {
+          "width": 1344,
+          "height": 768,
+          "frames": 120
+        }
+      }
+    ],
+    "claims": [
+      {
+        "id": "user-1",
+        "origin": "user",
+        "text": "The car pulls forward out of the dark."
+      },
+      {
+        "id": "obs-1",
+        "origin": "observed",
+        "text": "A car rolls through a tunnel.",
+        "sources": [
+          {
+            "asset_id": "asset-1",
+            "track": "visual"
+          }
+        ]
+      },
+      {
+        "id": "obs-2",
+        "origin": "observed",
+        "text": "The car crosses frame left to right.",
+        "sources": [
+          {
+            "asset_id": "asset-1",
+            "track": "visual"
+          }
+        ]
+      },
+      {
+        "id": "creative-1",
+        "origin": "creative",
+        "text": "Creative addition: the tunnel has a pool of overhead light that catches the car body, glass, headlights and tail lights with a cool sheen."
+      },
+      {
+        "id": "creative-2",
+        "origin": "creative",
+        "text": "Creative addition: a restrained low drone score and newly generated engine and tyre sounds fill the scene."
+      }
+    ],
+    "composition_facts": {
+      "source_videos": [
+        {
+          "asset_id": "asset-1",
+          "relationship": "source video continuation",
+          "camera_observed": false
+        }
+      ],
+      "audio": {
+        "attachments": [],
+        "may_claim_signal_reuse": false,
+        "may_claim_audio_reference": false
+      }
+    },
+    "constraints": null,
+    "declared_roles": [
+      {
+        "asset_id": "asset-1",
+        "role": "continuation_source",
+        "replaces": ""
+      }
+    ],
+    "fragments": {
+      "claim:creative-1": "Creative addition: the tunnel has a pool of overhead light that catches the car body, glass, headlights and tail lights with a cool sheen.",
+      "claim:creative-2": "Creative addition: a restrained low drone score and newly generated engine and tyre sounds fill the scene.",
+      "claim:obs-1": "A car rolls through a tunnel.",
+      "claim:obs-2": "The car crosses frame left to right.",
+      "music": "A restrained low drone score, newly generated, sits underneath the scene and eases down as the car recedes.",
+      "shot:shot-1:description": "Deep darkness fills the tunnel, broken only by a faint pair of headlights and the first glint of \u003cSubject:subject-1\u003e easing forward out of the black. The car advances slowly toward the lens, its shape still mostly swallowed by shadow, while a thin band of light catches the asphalt beneath it. The tunnel walls remain low and indistinct; the only readable surfaces are the dark road, a pale edge of the car body, and the small reflective points of the headlights. The camera pushes in with small amplitude at slow speed, tightening the space around the emerging shape without revealing more than the dark allows. A low, distant engine note rises out of near silence, with a faint tyre roll underneath, and the sound stays restrained rather than loud. The air feels enclosed and close, with no visible traffic or roadside detail beyond the narrow lit strip. The contrast between the black surround and the narrow highlights makes the approach feel measured. By the end of the shot the car has moved from total obscurity to a first readable silhouette, but it has not yet crossed into full light.",
+      "shot:shot-1:event:0": "A low, distant engine note swells out of near silence, with a faint tyre roll on tunnel asphalt underneath.",
+      "shot:shot-1:event:1": "Deep darkness fills the tunnel, broken only by a faint pair of headlights and the first glint of \u003cSubject:subject-1\u003e easing forward out of the black.",
+      "shot:shot-1:event:2": "\u003cSubject:subject-1\u003e advances slowly toward the lens, its shape still mostly swallowed by shadow, the road surface catching a thin band of light beneath it.",
+      "shot:shot-1:event:3": "The engine note grows steadier and the tyre hiss widens as the car closes the distance.",
+      "shot:shot-1:event:4": "The headlights strengthen, tracing a narrow corridor through the dark as the silhouette becomes more readable.",
+      "shot:shot-1:event:5": "The camera pushes in with small amplitude at slow speed.",
+      "shot:shot-2:description": "The shot cuts to a medium-wide view as the \u003cSubject:subject-1\u003e pulls fully forward out of the dark and crosses the frame from left to right. Its body and glass are now clearly lit as it passes through a pool of tunnel light, the reflective surfaces picking up a cool sheen while the road and walls remain dark around it. The camera tracks with the subject at small amplitude and slow speed, keeping the car centered as it moves, then lets it continue away with its tail lights receding down the tunnel. The road surface streaks beneath the tyres, and the tunnel walls slide past as soft, dark bands at the frame edges. The engine note rises to a clear, steady growl and the tyres hiss across the tunnel floor; both sounds stretch thin as the car recedes. A low score drone holds underneath, then eases down as the vehicle fades. The change is complete: the car passes from a shadowed emerging shape to a fully lit vehicle crossing the frame and receding into the distance, leaving the tunnel to settle back into darkness behind it.",
+      "shot:shot-2:event:0": "The engine note rises to a clear, steady growl, tyres hiss across the tunnel floor, and the low score drone holds underneath.",
+      "shot:shot-2:event:1": "The \u003cSubject:subject-1\u003e pulls fully forward out of the dark and crosses the frame from left to right, its body and glass now clearly lit as it passes through the pool of tunnel light.",
+      "shot:shot-2:event:2": "\u003cSubject:subject-1\u003e continues away down the tunnel, tail lights receding and the lit body thinning into the distance.",
+      "shot:shot-2:event:3": "The engine note softens into a low, steady growl and the tyre hiss stretches thin as the car recedes; the score drone eases down.",
+      "shot:shot-2:event:4": "The camera tracks with the subject with small amplitude at slow speed.",
+      "soundscape": "Newly generated sound only: a low, distant engine note swells out of near silence, joined by a faint tyre roll on tunnel asphalt; the engine grows into a clear, steady growl and the tyre hiss widens as the car passes, then both soften and stretch thin as it recedes.",
+      "subject:subject-1:definition": "{\"kind\":\"subject\",\"descriptor\":\"a car rolling through a tunnel\",\"origin\":\"observed\",\"id\":\"subject-1\",\"description\":\"a car rolling through a tunnel\",\"sources\":[{\"source\":{\"asset_id\":\"asset-1\",\"track\":\"visual\"},\"role\":\"continuation_source\"}],\"retention\":\"partially_preserved\",\"retention_details\":\"Preserve this canonical target identity and its listed stable attributes.\",\"shot_ids\":[\"shot-1\",\"shot-2\"]}",
+      "summary": "A car emerges from tunnel darkness, pulls forward toward the lens, then crosses left to right and recedes."
+    },
+    "intent": "the car pulls forward out of the dark",
+    "mode": "ref2va",
+    "references": [
+      {
+        "id": "reference-asset-1-1",
+        "kind": "video",
+        "source": {
+          "asset_id": "asset-1",
+          "track": "visual"
+        },
+        "roles": [
+          "continuation_source"
+        ],
+        "description": "The source video being continued from its final observed state.",
+        "retention": "partially_preserved",
+        "retention_details": "The source setting and subject continue; unseen source intervals are not established by partial observations.",
+        "shot_ids": [
+          "shot-1",
+          "shot-2"
+        ]
+      }
+    ],
+    "replacement_inheritance": [],
+    "replacement_motion_obligations": [],
+    "source_evidence": [
+      {
+        "card": {
+          "asset_id": "asset-1",
+          "summary": "a car rolling through a tunnel",
+          "motion": "the car crosses frame left to right",
+          "frames_seen": 3,
+          "composition": "unknown",
+          "analyzer_version": "1",
+          "coverage": {
+            "status": "partial",
+            "tracks": [
+              "visual"
+            ]
+          }
+        },
+        "asset_id": "asset-1",
+        "facts": [
+          {
+            "id": "card-asset-1-1",
+            "text": "a car rolling through a tunnel",
+            "source": {
+              "asset_id": "asset-1",
+              "track": "visual"
+            }
+          },
+          {
+            "id": "card-asset-1-2",
+            "text": "the car crosses frame left to right",
+            "source": {
+              "asset_id": "asset-1",
+              "track": "visual"
+            }
+          }
+        ],
+        "analyzer_version": "1",
+        "limitations": [
+          "The video card was constructed from 3 sampled frames, not the entire clip."
+        ],
+        "coverage": {
+          "status": "partial",
+          "tracks": [
+            "visual"
+          ]
+        }
+      }
+    ],
+    "target": {
+      "duration_ms": 5000,
+      "frame_count": 120,
+      "aspect_ratio": "16:9",
+      "fps": {
+        "numerator": 24,
+        "denominator": 1
+      },
+      "width": 1344,
+      "height": 768
+    },
+    "target_subjects": [
+      {
+        "kind": "subject",
+        "descriptor": "a car rolling through a tunnel",
+        "origin": "observed",
+        "id": "subject-1",
+        "description": "a car rolling through a tunnel",
+        "sources": [
+          {
+            "source": {
+              "asset_id": "asset-1",
+              "track": "visual"
+            },
+            "role": "continuation_source"
+          }
+        ],
+        "retention": "partially_preserved",
+        "retention_details": "Preserve this canonical target identity and its listed stable attributes.",
+        "shot_ids": [
+          "shot-1",
+          "shot-2"
+        ]
+      }
+    ],
+    "version": "contextir/composition-review/v8"
+  },
+  "response_schema": {
+    "additionalProperties": false,
+    "properties": {
+      "findings": {
+        "items": {
+          "additionalProperties": false,
+          "properties": {
+            "code": {
+              "enum": [
+                "wrong_subject_action",
+                "unlicensed_source_content",
+                "missing_placement",
+                "frame_content_changed",
+                "target_identity_changed",
+                "audio_signal_misuse",
+                "replacement_motion_changed"
+              ],
+              "type": "string"
+            },
+            "fragment_id": {
+              "enum": [
+                "summary",
+                "soundscape",
+                "music",
+                "subject:subject-1:definition",
+                "claim:obs-1",
+                "claim:obs-2",
+                "claim:creative-1",
+                "claim:creative-2",
+                "shot:shot-1:description",
+                "shot:shot-1:event:0",
+                "shot:shot-1:event:1",
+                "shot:shot-1:event:2",
+                "shot:shot-1:event:3",
+                "shot:shot-1:event:4",
+                "shot:shot-1:event:5",
+                "shot:shot-2:description",
+                "shot:shot-2:event:0",
+                "shot:shot-2:event:1",
+                "shot:shot-2:event:2",
+                "shot:shot-2:event:3",
+                "shot:shot-2:event:4"
+              ],
+              "type": "string"
+            },
+            "quote": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "subject_id": {
+              "enum": [
+                "",
+                "subject-1"
+              ],
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "fragment_id",
+            "quote",
+            "subject_id"
+          ],
+          "type": "object"
+        },
+        "type": "array"
+      }
+    },
+    "required": [
+      "findings"
+    ],
+    "type": "object"
+  }
+}

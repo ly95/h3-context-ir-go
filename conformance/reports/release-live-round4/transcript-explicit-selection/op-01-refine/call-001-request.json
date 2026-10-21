@@ -1,0 +1,202 @@
+{
+  "stage": "refine",
+  "system": "Interpret a refinement of an existing video brief as explicit typed updates. Preserve every prior asset locator/hash, observed evidence, fixed dialogue, onscreen words, target, role and constraint unless the new instruction expressly authorizes changing that field. Never replace the original request by merely concatenating the new instruction. For intent, return the complete revised intent preserving every unaffected requirement. Do not rewrite observations or Asset.Description to simulate a target appearance change: express the target change in intent. New media cannot be invented or fetched; ask for an explicitly supplied resource through a caller-visible failure. Each update must quote the exact portion of the NEW instruction that authorizes it. Empty asset_id denotes a Brief field; asset_role, asset_replaces and asset_remove identify an existing asset. set supplies a correctly typed JSON value, clear removes an optional value, asset_remove uses remove. Do not remove an asset or dialogue merely because it is omitted from the edit request. Dialogue values use the public Dialogue shape and preserve exact new words. Explicit transcript_uses, subject_projections and replacement_targets are independently editable fields. Preserve fixed selected performances and source identities unless the new instruction authorizes changing them. Removing a selected source requires an explicit update/clear of the dependent choice in the same patch; never delete its performance merely to make the asset removal compile. New explicit subject selectors identify the amended graph; unchanged selectors are mechanically remapped by the host to their same observed source identity. Return only the schema.",
+  "input": {
+    "change": "Remove audio asset-1 only. Keep all selected source words and their source selection unchanged.",
+    "diagnostics": null,
+    "previous_brief": {
+      "transcript_uses": [
+        {
+          "asset_id": "asset-1",
+          "text": "We close at six, not half past.",
+          "language": "English",
+          "speaker_hint": "the man at the counter",
+          "voiceover": false
+        }
+      ],
+      "effort": "standard",
+      "transcripts": {
+        "asset-1": "We close at six, not half past."
+      },
+      "seconds_explicit": true,
+      "aspect_explicit": true,
+      "intent": "Have the man at the counter say again, word for word, the line that is on the recording.",
+      "assets": [
+        {
+          "preparation_computed": true,
+          "id": "asset-1",
+          "kind": "audio",
+          "description": "a flat male voice, close mic",
+          "metadata": {
+            "duration_ms": 3000,
+            "fps": {
+              "numerator": 0,
+              "denominator": 0
+            }
+          },
+          "preparation": {},
+          "role": "voice_timbre",
+          "composition": "unknown",
+          "sizing": "match"
+        }
+      ],
+      "seconds": 8,
+      "aspect": "16:9",
+      "mode": "ref2va",
+      "creativity": "balanced",
+      "evidence": [
+        {
+          "card": {
+            "asset_id": "asset-1",
+            "summary": "a spoken vocal reference supplying voice timbre and delivery, described by the caller as: a flat male voice, close mic (3.00s).",
+            "characterisation": "a flat male voice, close mic",
+            "composition": "unknown",
+            "transcript": "We close at six, not half past.",
+            "analyzer_version": "5",
+            "model": "none (typed metadata only)",
+            "coverage": {
+              "status": "partial",
+              "tracks": [
+                "audio"
+              ]
+            }
+          },
+          "asset_id": "asset-1",
+          "facts": [
+            {
+              "id": "card-asset-1-1",
+              "text": "a spoken vocal reference supplying voice timbre and delivery, described by the caller as: a flat male voice, close mic (3.00s).",
+              "source": {
+                "asset_id": "asset-1",
+                "track": "audio"
+              }
+            },
+            {
+              "id": "card-asset-1-2",
+              "text": "a flat male voice, close mic",
+              "source": {
+                "asset_id": "asset-1",
+                "track": "audio"
+              }
+            },
+            {
+              "id": "card-asset-1-3",
+              "text": "We close at six, not half past.",
+              "source": {
+                "asset_id": "asset-1",
+                "track": "audio"
+              }
+            }
+          ],
+          "model": "none (typed metadata only)",
+          "analyzer_version": "5",
+          "coverage": {
+            "status": "partial",
+            "tracks": [
+              "audio"
+            ]
+          }
+        }
+      ],
+      "cards": [
+        {
+          "asset_id": "asset-1",
+          "summary": "a spoken vocal reference supplying voice timbre and delivery, described by the caller as: a flat male voice, close mic (3.00s).",
+          "characterisation": "a flat male voice, close mic",
+          "composition": "unknown",
+          "transcript": "We close at six, not half past.",
+          "analyzer_version": "5",
+          "model": "none (typed metadata only)",
+          "coverage": {
+            "status": "partial",
+            "tracks": [
+              "audio"
+            ]
+          }
+        }
+      ]
+    },
+    "version": "contextir/compiler/v1"
+  },
+  "response_schema": {
+    "additionalProperties": false,
+    "properties": {
+      "reasoning": {
+        "type": "string"
+      },
+      "updates": {
+        "items": {
+          "additionalProperties": false,
+          "properties": {
+            "action": {
+              "enum": [
+                "set",
+                "clear",
+                "remove"
+              ],
+              "type": "string"
+            },
+            "asset_id": {
+              "type": "string"
+            },
+            "field": {
+              "enum": [
+                "intent",
+                "style",
+                "seconds",
+                "aspect",
+                "canvas",
+                "megapixels",
+                "frame_count",
+                "mode",
+                "shots",
+                "cuts_ms",
+                "creativity",
+                "director",
+                "director_profile",
+                "silent",
+                "silence_all",
+                "dialogue",
+                "onscreen_text",
+                "constraints",
+                "frame_anchors",
+                "voice_bindings",
+                "audio_copy_modes",
+                "transcript_uses",
+                "subject_projections",
+                "replacement_targets",
+                "loras",
+                "seed",
+                "effort",
+                "transcripts",
+                "asset_role",
+                "asset_replaces",
+                "asset_remove"
+              ],
+              "type": "string"
+            },
+            "quote": {
+              "type": "string"
+            },
+            "value": {}
+          },
+          "required": [
+            "field",
+            "asset_id",
+            "action",
+            "quote",
+            "value"
+          ],
+          "type": "object"
+        },
+        "minItems": 1,
+        "type": "array"
+      }
+    },
+    "required": [
+      "updates",
+      "reasoning"
+    ],
+    "type": "object"
+  }
+}

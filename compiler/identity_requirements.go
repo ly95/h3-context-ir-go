@@ -3,6 +3,7 @@ package compiler
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"sort"
 	"strings"
 
@@ -129,7 +130,7 @@ wardrobe_attributes is exactly the retained garments/accessories subset, excludi
 		}
 		diagnostics = repairDiagnostics(lastErr, "identity_requirements", "Honor every explicit caller identity assertion; preserve unaffected observed traits and give exact authorization quotes for changes.")
 	}
-	return nil, calls, failure(contextir.CodeModelOutput, "identity_requirements", "identity", "Target identity requirements did not satisfy the typed contract.", lastErr)
+	return nil, calls, &contextir.Error{Code: contextir.CodeModelOutput, Stage: "identity_requirements", Issues: repairDiagnostics(lastErr, "identity", "Target identity requirements did not satisfy the typed contract."), Cause: lastErr}
 }
 
 func validateIdentityRequirements(b Brief, observed []plan.SubjectPlan, sheets map[string]bool, identities []IdentityDecision, responsibilityInputs ...map[string][]Role) error {
@@ -138,6 +139,9 @@ func validateIdentityRequirements(b Brief, observed []plan.SubjectPlan, sheets m
 	}
 	for i := range identities {
 		identity, original := &identities[i], observed[i]
+		fail := func(field, message string) error {
+			return invalid(fmt.Sprintf("identity[%d].%s", i, field), fmt.Sprintf("For %s: %s", original.Label, message))
+		}
 		otherEntityContext := identity.RequestBinding == "describes_other_scene_entity"
 		var responsibilities map[string][]Role
 		if len(responsibilityInputs) > 0 {
@@ -145,25 +149,25 @@ func validateIdentityRequirements(b Brief, observed []plan.SubjectPlan, sheets m
 		}
 		if environmentIdentity(original, responsibilities) {
 			if identity.Kind != "environment" {
-				return invalid("identity.kind", "An environment reference remains an environment; another requested actor does not change its responsibility or kind.")
+				return fail("kind", "An environment reference remains an environment; another requested actor does not change its responsibility or kind.")
 			}
 			switch identity.RequestBinding {
 			case "changes_this_reference_entity":
 				if identity.DescriptorSource != "request" {
-					return invalid("identity.request_binding", "A change of this environment entity requires its own quoted request authority.")
+					return fail("request_binding", "A change of this environment entity requires its own quoted request authority.")
 				}
 			case "no_reference_change", "describes_other_scene_entity":
 				if identity.DescriptorSource == "request" {
-					return invalid("identity.request_binding", "A different requested actor cannot rename or replace the environment reference.")
+					return fail("request_binding", "A different requested actor cannot rename or replace the environment reference.")
 				}
 			default:
-				return invalid("identity.request_binding", "Resolve whether the caller changes this environment entity or describes a different scene entity.")
+				return fail("request_binding", "Resolve whether the caller changes this environment entity or describes a different scene entity.")
 			}
 		} else if identity.RequestBinding != "" {
-			return invalid("identity.request_binding", "The environment binding field does not apply to an identity-only source.")
+			return fail("request_binding", "The environment binding field does not apply to an identity-only source.")
 		}
 		if identity.Label != original.Label || strings.TrimSpace(identity.Descriptor) == "" {
-			return invalid("identity.descriptor", "Each target identity needs its original label and a nonempty stable descriptor.")
+			return fail("descriptor", "Each target identity needs its original label and a nonempty stable descriptor.")
 		}
 		sheet := false
 		for _, source := range original.Sources {
@@ -172,53 +176,53 @@ func validateIdentityRequirements(b Brief, observed []plan.SubjectPlan, sheets m
 		switch identity.DescriptorSource {
 		case "reference":
 			if identity.Descriptor != original.Descriptor || identity.TargetMention != "" && !otherEntityContext {
-				return invalid("identity.descriptor", "Reference identity preserves its exact descriptor and has no requested target mention.")
+				return fail("descriptor", "Reference identity preserves its exact descriptor and has no requested target mention.")
 			}
 		case "presentation_cleanup":
 			if !sheet || identity.TargetMention != "" && !otherEntityContext {
-				return invalid("identity.descriptor_source", "Presentation cleanup is available only for a declared observed reference sheet.")
+				return fail("descriptor_source", "Presentation cleanup is available only for a declared observed reference sheet.")
 			}
 		case "request":
 			if identity.TargetMention == "" || !scopeTextContains(b, identity.TargetMention, nil) || len(identity.Claims) == 0 {
-				return invalid("identity.target_mention", "A target identity must quote the caller's exact noun phrase and enumerate its explicit identity claims.")
+				return fail("target_mention", "A target identity must quote the caller's exact noun phrase and enumerate its explicit identity claims.")
 			}
 		default:
-			return invalid("identity.descriptor_source", "Choose reference, presentation_cleanup or request explicitly.")
+			return fail("descriptor_source", "Choose reference, presentation_cleanup or request explicitly.")
 		}
 		seen := map[string]bool{}
 		for _, attr := range identity.RetainedAttributes {
 			if !contains(original.Attributes, attr) || seen[attr] {
-				return invalid("identity.retained_attributes", "Retain unique exact observed attributes only.")
+				return fail("retained_attributes", "Retain unique exact observed attributes only.")
 			}
 			seen[attr] = true
 		}
 		for _, garment := range identity.WardrobeAttributes {
 			if !seen[garment] {
-				return invalid("identity.wardrobe_attributes", "Wardrobe guards must refer to retained observed garments only.")
+				return fail("wardrobe_attributes", "Wardrobe guards must refer to retained observed garments only.")
 			}
 		}
 		adjusted := map[string]bool{}
 		alignedIdentity := false
 		for _, adjustment := range identity.AdjustedAttributes {
 			if !seen[adjustment.Source] || adjusted[adjustment.Source] || strings.TrimSpace(adjustment.Target) == "" {
-				return invalid("identity.adjusted_attributes", "Identity wording adjustments need a unique retained source attribute and complete target wording.")
+				return fail("adjusted_attributes", "Identity wording adjustments need a unique retained source attribute and complete target wording.")
 			}
 			adjusted[adjustment.Source] = true
 			switch adjustment.Kind {
 			case "presentation_cleanup":
 				if !sheet {
-					return invalid("identity.adjusted_attributes.kind", "Presentation cleanup requires a declared reference sheet that is not an actual frame anchor.")
+					return fail("adjusted_attributes.kind", "Presentation cleanup requires a declared reference sheet that is not an actual frame anchor.")
 				}
 			case "target_identity_alignment":
 				alignedIdentity = true
 			default:
-				return invalid("identity.adjusted_attributes.kind", "Choose presentation_cleanup or target_identity_alignment explicitly.")
+				return fail("adjusted_attributes.kind", "Choose presentation_cleanup or target_identity_alignment explicitly.")
 			}
 		}
 		excluded := map[string]bool{}
 		for _, presentation := range identity.ExcludedPresentation {
 			if !sheet || !contains(original.Attributes, presentation) || seen[presentation] || excluded[presentation] {
-				return invalid("identity.excluded_presentation", "Only unique unretained observed reference-sheet presentation attributes may be excluded without a caller change.")
+				return fail("excluded_presentation", "Only unique unretained observed reference-sheet presentation attributes may be excluded without a caller change.")
 			}
 			excluded[presentation] = true
 		}
@@ -229,31 +233,34 @@ func validateIdentityRequirements(b Brief, observed []plan.SubjectPlan, sheets m
 		changed := identity.DescriptorSource == "request" || identity.Kind != original.Kind || len(identity.RequestedAttributes) > 0 || removedIdentity || alignedIdentity
 		if otherEntityContext {
 			if changed || len(identity.Claims) > 0 {
-				return invalid("identity.request_binding", "Words about another scene entity are contextual only; preserve this environment identity and unaffected source attributes, without target claims or requested attributes.")
+				return fail("request_binding", "Words about another scene entity are contextual only; preserve this environment identity and unaffected source attributes, without target claims or requested attributes.")
 			}
 			if identity.RequestQuote != "" || identity.TargetMention != "" {
 				if identity.RequestQuote == "" || identity.TargetMention == "" || !scopeTextContains(b, identity.RequestQuote, nil) || !scopeTextContains(b, identity.TargetMention, nil) {
-					return invalid("identity.request_quote", "Other-entity context must provide both an exact caller mention and its exact supporting quote, or leave both empty.")
+					return fail("request_quote", "Other-entity context must provide both an exact caller mention and its exact supporting quote, or leave both empty.")
 				}
 			}
 		}
 		if changed {
 			if identity.RequestQuote == "" || !scopeTextContains(b, identity.RequestQuote, nil) || len(identity.Claims) == 0 {
-				return invalid("identity.request_quote", "Every target identity/property change needs explicit caller claims and an exact authorization quote.")
+				return fail("request_quote", "Every target identity/property change needs explicit caller claims and an exact authorization quote.")
 			}
 		} else if !otherEntityContext && (identity.RequestQuote != "" || len(identity.Claims) > 0) {
-			return invalid("identity.request_quote", "Do not invent change authority when the source identity was kept unchanged.")
+			return fail("request_quote", "Do not invent change authority when the source identity was kept unchanged.")
 		}
 		supportedValues := map[string]bool{}
-		for _, claim := range identity.Claims {
-			if strings.TrimSpace(claim.Value) == "" || claim.Quote == "" || !scopeTextContains(b, claim.Quote, nil) {
-				return invalid("identity.claims", "Every target claim needs a nonempty supported semantic value and an exact supporting caller quote.")
+		for claimIndex, claim := range identity.Claims {
+			if strings.TrimSpace(claim.Value) == "" {
+				return fail(fmt.Sprintf("claims[%d].value", claimIndex), "Every target claim needs a nonempty supported semantic value.")
+			}
+			if claim.Quote == "" || !scopeTextContains(b, claim.Quote, nil) {
+				return fail(fmt.Sprintf("claims[%d].quote", claimIndex), "Use a byte-exact nonempty quote from the caller intent or constraints for this claim; do not append words or complete an implied noun.")
 			}
 			supportedValues[claim.Value] = true
 		}
 		for _, attribute := range identity.RequestedAttributes {
 			if attribute == "" || !supportedValues[attribute] && !scopeTextContains(b, attribute, nil) {
-				return invalid("identity.requested_attributes", "Additional target attributes must equal a supported identity claim value or exact caller wording; do not embellish them.")
+				return fail("requested_attributes", "Additional target attributes must equal a supported identity claim value or exact caller wording; do not embellish them.")
 			}
 		}
 	}

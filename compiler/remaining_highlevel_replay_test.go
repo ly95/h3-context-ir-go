@@ -109,7 +109,7 @@ func TestRemainingHighlevelRecordedCompile(t *testing.T) {
 					}
 					left, _ := json.Marshal(b)
 					right, _ := json.Marshal(metadata.Brief)
-					if found || !bytes.Equal(left, right) || !reflect.DeepEqual(metadata.Options.Profile, h3.OfficialProfile()) || metadata.Options.Frame != FramePolicySnapUp || metadata.Options.Failure != FailurePolicyFail || metadata.Options.StructureRetries != 1 || metadata.Options.PlannerRetries != 1 || metadata.Options.Scope != ScopeConflictSuppliedWins || metadata.Options.Clarification != ClarificationContinue || !metadata.Options.Partial || len(metadata.Responses) != len(entry.Calls) {
+					if found || !bytes.Equal(left, right) || !reflect.DeepEqual(metadata.Options.Profile, h3.OfficialProfile()) || metadata.Options.Frame != FramePolicySnapUp || metadata.Options.Failure != FailurePolicyFail || metadata.Options.StructureRetries < 0 || metadata.Options.StructureRetries > 3 || metadata.Options.PlannerRetries < 0 || metadata.Options.PlannerRetries > 3 || metadata.Options.Scope != ScopeConflictSuppliedWins || metadata.Options.Clarification != ClarificationContinue || !metadata.Options.Partial || len(metadata.Responses) != len(entry.Calls) {
 						t.Fatal("new original FromOriginal Brief, actual profile/options or complete attempts drifted")
 					}
 					options = Options{Profile: metadata.Options.Profile, FramePolicy: metadata.Options.Frame, FailurePolicy: metadata.Options.Failure, ScopeConflictPolicy: metadata.Options.Scope, ClarificationPolicy: metadata.Options.Clarification, MaxStructureRetries: metadata.Options.StructureRetries, Planner: planner.Options{MaxRetries: metadata.Options.PlannerRetries, AllowPartialPerception: metadata.Options.Partial}}

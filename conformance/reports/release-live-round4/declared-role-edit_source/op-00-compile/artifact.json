@@ -1,0 +1,108 @@
+{
+  "version": "contextir-h3/artifact-v1",
+  "compiler_version": "contextir-h3/v1.2",
+  "format_version": "minimax-h3/prompt-v1",
+  "mode": "ref2va",
+  "target": {
+    "duration_ms": 5000,
+    "frame_count": 120,
+    "aspect_ratio": "16:9",
+    "fps": {
+      "numerator": 24,
+      "denominator": 1
+    },
+    "width": 1344,
+    "height": 768
+  },
+  "profile": {
+    "name": "h3-published-format-v1",
+    "format": "minimax-h3/prompt-v1",
+    "fps": {
+      "numerator": 24,
+      "denominator": 1
+    },
+    "modes": [
+      "t2va",
+      "i2va",
+      "l2va",
+      "fl2va",
+      "ref2va"
+    ],
+    "limits": {
+      "pictures": 0,
+      "videos": 0,
+      "video_audio": 0,
+      "standalone_audio": 0
+    },
+    "supports_reference_frame_anchors": true,
+    "supports_source_intervals": true
+  },
+  "prompt": "subject_definitions:\n\u003cSubject 1\u003e is a car rolling through a tunnel. Its source video for the target video edit is referenced from \u003cVideo 1\u003e\n\u003cVideo 1\u003e is The source video being edited. Its role is source video for the target video edit.\n\nsummary:\n[video editing] The target video is an edited version of \u003cVideo 1\u003e. At the start, the tunnel holds the \u003cSubject 1\u003e in deep shadow. The car pulls forward along the tunnel road; as it advances, the dark recedes behind it and brighter tunnel light spills across the body and road surface, revealing more of the tunnel interior. The edited action preserves the continuous forward motion and the scene's transition from near-black shadow to readable light.\n\nretention_analysis:\n\u003cSubject 1\u003e (appears in [Shot 1]): fully_preserved - Preserve this canonical target identity and its listed stable attributes.\n\u003cVideo 1\u003e ([Shot 1]; source video for the target video edit): fully_preserved - Preserve the source except for the caller's explicitly authorised edit; do not introduce unrelated replacements.\n\ndetailed_description:\nThe target video is in live-action style, cinematic.\n[Shot 1] At the start, the tunnel holds the \u003cSubject 1\u003e in deep shadow. The car pulls forward along the tunnel road; as it advances, the dark recedes behind it and brighter tunnel light spills across the body and road surface, revealing more of the tunnel interior. The edited action preserves the continuous forward motion and the scene's transition from near-black shadow to readable light. At 00:00.000, Deep shadow covers the tunnel and the \u003cSubject 1\u003e. At 00:00.000, The \u003cSubject 1\u003e pulls forward along the tunnel road, beginning to emerge from darkness. At 00:00.000, A low engine hum, tyres hissing on the road, and a soft echoing tunnel ambience begin. At 00:02.500, Brighter tunnel light spreads across the \u003cSubject 1\u003e and the road surface as the dark recedes. At 00:04.000, The \u003cSubject 1\u003e continues forward, now clearly lit against the tunnel interior. The camera pushes in with small amplitude at slow speed. Throughout the target video: Do not add spoken or sung lines.\n\noverall_soundscape:\nNewly generated diegetic sound: a low engine hum, tyres hissing on the tunnel road, and a soft echoing tunnel ambience.\n\nnon_diegetic_music:\nN/A\n",
+  "manifest": {
+    "media": [
+      {
+        "preparation": {
+          "width": 1344,
+          "height": 768,
+          "frames": 120
+        },
+        "source_metadata": {
+          "duration_ms": 5000,
+          "fps": {
+            "numerator": 0,
+            "denominator": 0
+          }
+        },
+        "label": "\u003cVideo 1\u003e",
+        "kind": "video",
+        "source": {
+          "asset_id": "asset-1",
+          "track": "visual"
+        },
+        "socket": "ref_video_1",
+        "target_uses": [
+          {
+            "reference_id": "reference-asset-1-1",
+            "roles": [
+              "edit_source"
+            ],
+            "retention": "fully_preserved",
+            "shots": [
+              {
+                "id": "shot-1",
+                "index": 1,
+                "interval": {
+                  "start_ms": 0,
+                  "end_ms": 5000
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "subjects": [
+      {
+        "id": "subject-1",
+        "label": "\u003cSubject 1\u003e"
+      }
+    ],
+    "references": [
+      {
+        "id": "reference-asset-1-1",
+        "label": "\u003cVideo 1\u003e"
+      }
+    ],
+    "speakers": []
+  },
+  "frames": 120,
+  "effective_duration_seconds": {
+    "numerator": 5,
+    "denominator": 1
+  },
+  "document_sha256": "dffd414baa0741ac9e1bb50ad99b7660415e20f9188370200c6261f7766c634e",
+  "profile_sha256": "ce4364d3f1242f5aeb2216db44195fb3897f4828dd9e145c4c16c64315786ab6",
+  "prompt_sha256": "9847cefae35f9fda035c8aa9b5259f8f01afb5e2f2eaa254ff679fd709e8672f",
+  "manifest_sha256": "25d6e98195a56936b627ec3120f0905f99e0f78b07ce7c354b0017f0af72f828",
+  "sha256": "fb7e155b1911a8b20500683e44dff151b27d13b7ffd8c522a2a35a2de6f91a42"
+}

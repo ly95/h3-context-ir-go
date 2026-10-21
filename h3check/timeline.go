@@ -2,8 +2,30 @@ package h3check
 
 import (
 	"fmt"
+	"math/big"
+	"strconv"
 	"strings"
 )
+
+// durationMilliseconds floors the public seconds value at the protocol's
+// millisecond resolution. Its shortest decimal form preserves integer-ms caller
+// values without a float multiply/subtract error. Flooring keeps a fractional-ms
+// end from making a genuinely shorter-than-1200ms last shot pass.
+func durationMilliseconds(seconds float64) (*big.Int, bool) {
+	d, ok := new(big.Rat).SetString(strconv.FormatFloat(seconds, 'f', -1, 64))
+	if !ok {
+		// FALLBACK: nonfinite Go-only contexts have no comparable final mark,
+		// matching the previous T12 behavior; finite inter-cut gaps still check.
+		return nil, false
+	}
+	d.Mul(d, big.NewRat(1000, 1))
+	q, remainder := new(big.Int), new(big.Int)
+	q.QuoRem(d.Num(), d.Denom(), remainder)
+	if d.Sign() < 0 && remainder.Sign() != 0 {
+		q.Sub(q, big.NewInt(1))
+	}
+	return q, true
+}
 
 func (c *checker) checkTimeline() {
 	c.shots = extractShots(c.desc)
@@ -11,8 +33,9 @@ func (c *checker) checkTimeline() {
 		c.err("T1-no-shot", "main description has no [Shot N] marker")
 	}
 	type cut struct {
-		n int
-		t float64
+		n  int
+		t  float64
+		ms int64
 	}
 	var seen []cut
 	var nums []int
@@ -27,7 +50,8 @@ func (c *checker) checkTimeline() {
 				c.err("T2-shot1-timestamp", "[Shot 1] must not carry a timestamp")
 			}
 		} else if ts != nil {
-			seen = append(seen, cut{s.n, float64(atoi(ts[1])*60+atoi(ts[2])) + float64(atoi(ts[3]))/1000})
+			seconds := atoi(ts[1])*60 + atoi(ts[2])
+			seen = append(seen, cut{s.n, float64(seconds) + float64(atoi(ts[3]))/1000, int64(seconds)*1000 + int64(atoi(ts[3]))})
 		} else if loose {
 			c.err("T3-timestamp-format", fmt.Sprintf("[Shot %d] time must be MM:SS.mmm", s.n))
 		} else {
@@ -55,16 +79,23 @@ func (c *checker) checkTimeline() {
 				c.err("T6-time-past-end", fmt.Sprintf("[Shot %d] cuts at %.3fs, at or beyond the real duration %.3fs", x.n, x.t, d))
 			}
 		}
-		marks := []float64{0}
+		marks := []int64{0}
 		for _, x := range seen {
-			marks = append(marks, x.t)
+			marks = append(marks, x.ms)
 		}
-		marks = append(marks, d)
+		short := false
 		for i := 1; i < len(marks); i++ {
 			gap := marks[i] - marks[i-1]
-			if gap >= 0 && gap < 1.2 {
-				c.err("T12-cut-inside-the-floor", fmt.Sprintf("a cut leaves only %.3fs; every shot needs at least 1.2s", gap))
+			if gap >= 0 && gap < 1200 {
+				c.err("T12-cut-inside-the-floor", fmt.Sprintf("a cut leaves only %.3fs; every shot needs at least 1.2s", float64(gap)/1000))
+				short = true
 				break
+			}
+		}
+		if end, ok := durationMilliseconds(d); !short && ok {
+			gap := new(big.Int).Sub(end, big.NewInt(marks[len(marks)-1]))
+			if gap.Sign() >= 0 && gap.Cmp(big.NewInt(1200)) < 0 {
+				c.err("T12-cut-inside-the-floor", fmt.Sprintf("a cut leaves only %.3fs; every shot needs at least 1.2s", float64(gap.Int64())/1000))
 			}
 		}
 		if !onGrid(d) {

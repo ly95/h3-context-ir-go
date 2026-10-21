@@ -123,29 +123,51 @@ func validateIdentityContributions(b Brief, bindings []identitySourceBinding, id
 	if len(explicit) > 0 && len(targets) != len(explicit) {
 		return invalid("identity.source_contributions.explicit_projection", "Keep exactly the caller's explicitly selected combined targets.")
 	}
-	for _, target := range targets {
+	for targetIndex, target := range targets {
+		fail := func(field, message string) error {
+			return invalid(fmt.Sprintf("source_contributions[%d].%s", targetIndex, field), message)
+		}
 		primary, ok := byID[target.SubjectID]
-		if !ok || usedTargets[target.SubjectID] || len(target.Sources) < 2 || strings.TrimSpace(target.TargetMention) == "" || !scopeTextContains(b, target.TargetMention, nil) || strings.TrimSpace(target.Quote) == "" || !scopeTextContains(b, target.Quote, nil) {
-			return invalid("identity.source_contributions.target", "A combined target needs a distinct real primary source, at least two contributions and exact caller target/authorization quotes.")
+		if !ok || usedTargets[target.SubjectID] {
+			return fail("target_subject_id", "A combined target needs a distinct real primary source.")
+		}
+		if len(target.Sources) < 2 {
+			return fail("sources", "A combined target needs at least two source contributions.")
+		}
+		if strings.TrimSpace(target.TargetMention) == "" || !scopeTextContains(b, target.TargetMention, nil) {
+			return fail("target_mention", "Use an exact nonempty caller expression identifying this combined target.")
+		}
+		if strings.TrimSpace(target.Quote) == "" || !scopeTextContains(b, target.Quote, nil) {
+			return fail("quote", "Use an exact nonempty caller authorization quote for this combined target.")
 		}
 		usedTargets[target.SubjectID] = true
 		coverage[target.SubjectID] = map[string]map[string]bool{}
 		subjects, assets := map[string]bool{}, map[string]bool{}
 		primaryPresent := false
-		for _, contribution := range target.Sources {
+		for sourceIndex, contribution := range target.Sources {
+			sourcePath := fmt.Sprintf("sources[%d]", sourceIndex)
+			sourceFailure := func(field, message string) error {
+				return fail(sourcePath+"."+field, fmt.Sprintf("For selected contribution %d: %s", sourceIndex, message))
+			}
 			binding, exists := byTriple[contribution.SubjectLabel+"/"+contribution.SourceLabel+"/"+contribution.AssetID]
 			if !exists || binding.Kind != primary.Kind {
-				return invalid("identity.source_contributions.sources", "Each contribution must identify its exact host-bound source subject, conditioning label, asset ID and target kind.")
+				return sourceFailure("source_binding", "Each contribution must identify its exact host-bound source subject, conditioning label, asset ID and target kind.")
 			}
-			if strings.TrimSpace(contribution.Attribute) == "" || strings.TrimSpace(contribution.Quote) == "" || !scopeTextContains(b, contribution.Quote, nil) {
-				return invalid("identity.source_contributions.quote", "Every source-specific target property requires a nonempty attribute and exact caller authorization quote.")
+			sourceFailure = func(field, message string) error {
+				return fail(sourcePath+"."+field, fmt.Sprintf("For %s (source %s): %s", binding.SubjectLabel, binding.SourceLabel, message))
+			}
+			if strings.TrimSpace(contribution.Attribute) == "" {
+				return sourceFailure("attribute", "Every source-specific target property requires a nonempty attribute.")
+			}
+			if strings.TrimSpace(contribution.Quote) == "" || !scopeTextContains(b, contribution.Quote, nil) {
+				return sourceFailure("quote", "Use a byte-exact nonempty caller authorization quote for this source-specific property; do not append words.")
 			}
 			identity, exists := identityByLabel[binding.SubjectLabel]
 			if !exists {
-				return invalid("identity.source_contributions.identity", "A contributed source must have its own accepted target identity.")
+				return sourceFailure("subject_label", "A contributed source must have its own accepted target identity.")
 			}
 			if usedSources[binding.SubjectID] && !subjects[binding.SubjectID] {
-				return invalid("identity.source_contributions.sources", "One source identity cannot be merged into different target identities.")
+				return sourceFailure("subject_label", "One source identity cannot be merged into different target identities.")
 			}
 			usedSources[binding.SubjectID] = true
 			subjects[binding.SubjectID] = true
@@ -155,34 +177,34 @@ func validateIdentityContributions(b Brief, bindings []identitySourceBinding, id
 				coverage[target.SubjectID][binding.SubjectID] = map[string]bool{}
 			}
 			if coverage[target.SubjectID][binding.SubjectID][contribution.Attribute] {
-				return invalid("identity.source_contributions.attribute", "Do not duplicate a selected source/property contribution.")
+				return sourceFailure("attribute", "Do not duplicate a selected source/property contribution.")
 			}
 			if len(explicit) > 0 && !explicit[target.SubjectID][binding.SubjectID][contribution.Attribute] {
-				return invalid("identity.source_contributions.explicit_projection", "Do not expand or replace the caller's explicit target/source/property selections.")
+				return sourceFailure("attribute", "Do not expand or replace the caller's explicit target/source/property selections.")
 			}
 			coverage[target.SubjectID][binding.SubjectID][contribution.Attribute] = true
 			switch contribution.Origin {
 			case "observed":
 				if !contains(binding.ObservedAttributes, contribution.Attribute) || !contains(identity.RetainedAttributes, contribution.Attribute) {
-					return invalid("identity.source_contributions.origin", "An observed contribution must be the exact property actually observed and retained on that same source.")
+					return sourceFailure("origin", "An observed contribution must be the exact property actually observed and retained on that same source.")
 				}
 			case "caller_requested":
 				if contains(binding.ObservedAttributes, contribution.Attribute) || !contains(identity.RequestedAttributes, contribution.Attribute) {
-					return invalid("identity.source_contributions.requested_attributes", "An unobserved selected target property must appear exactly in this source identity's requested_attributes, never be substituted by an unrelated observed attribute or hidden in its descriptor.")
+					return sourceFailure("attribute", "An unobserved selected target property must appear exactly in this source identity's requested_attributes, never be substituted by an unrelated observed attribute or hidden in its descriptor.")
 				}
 				claimFound := false
 				for _, claim := range identity.Claims {
 					claimFound = claimFound || claim.Dimension == "stable_attribute" && claim.Value == contribution.Attribute && claim.Quote == contribution.Quote
 				}
 				if !claimFound {
-					return invalid("identity.source_contributions.claims", "A caller-requested contribution needs a stable_attribute claim with the exact same target value and caller quote on that source identity.")
+					return sourceFailure("quote", "A caller-requested contribution needs a stable_attribute claim with the exact same target value and caller quote on that source identity.")
 				}
 			default:
-				return invalid("identity.source_contributions.origin", "Distinguish observed source properties from explicitly caller-requested target properties.")
+				return sourceFailure("origin", "Distinguish observed source properties from explicitly caller-requested target properties.")
 			}
 		}
 		if len(subjects) < 2 || len(assets) < 2 || !primaryPresent {
-			return invalid("identity.source_contributions.sources", "A combined target needs at least two distinct source identities from distinct assets, including its selected primary.")
+			return fail("sources", "A combined target needs at least two distinct source identities from distinct assets, including its selected primary.")
 		}
 	}
 	for _, projection := range b.SubjectProjections {

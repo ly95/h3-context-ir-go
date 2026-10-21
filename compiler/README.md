@@ -230,6 +230,24 @@ Document appearance declarations retain their normal contract.
 The `plan` stage composes a versioned root `Document` inside those constraints.
 The same document produces the H3 prompt, socket manifest, hashes, and budget
 report. A second rendering reproduces those outputs.
+Timeline minimum-shot comparisons use integer protocol milliseconds: a valid
+1200 ms shot passes regardless of its preceding cut, while 1199 ms fails.
+
+Role-scoped composition receives selected identity properties without the source
+background or transient pose, and scene properties without depicted actor
+identity. The earlier licence decision still sees the original observations so
+it can resolve medium and caller overrides. Original Evidence is never rewritten
+by these views. Multi-source identity decisions separately bind every selected
+property to its actual source asset. Unobserved caller-requested properties need
+a quoted target claim; they cannot be relabeled as observed or hidden only in a
+descriptor.
+
+Fixed dialogue slots expose their shot IDs, shared line IDs and continuation
+flags, while keeping original words hidden from the writer. Render validation
+compares actual fragments byte-for-byte without inserting boundary spaces. An
+unseen voiceover does not create an on-screen actor; a visible voiceover speaker
+still has the applicable mouth-closure requirement. The final performance
+schedule governs prose as well as dialogue events.
 
 Sensitive responsibilities and caller identity changes also receive a narrow
 `semantic_review` of the final narrative. Supported findings cite exact emitted
@@ -239,6 +257,30 @@ review transport failures, cancellation or invalid usage stop immediately.
 `Result.Calls` preserves actual writer/reviewer order without counting nested
 trace copies twice. An empty review is a bounded contradiction check, not a claim
 that a generated video was inspected or that prose quality is proven.
+
+The review receives explicit caller projection choices separately from model
+choices, plus the pre-projection source-ID/asset graph. Removing a consumed
+source subject from final target definitions does not erase that provenance.
+Typed claim origins distinguish caller authorization from emitted execution
+assertions. Selected transcript words authorize a new performance rather than
+copying an audio signal. Dialogue and visible-text audits compare each shot's
+actual events and narrative to the original request: counting a word once is not
+enough if prose carries its readable sign into another prohibited shot. An
+explicitly unreadable back of a sign is not another presentation of its words.
+These checks also run after Refine.
+
+Audio properties keep a typed recipient as well as their source: voice belongs
+only to its bound vocal speaker, music style to a new score, beat to cut/action
+timing, and SFX to new sound texture. A dormant voice reference does not authorize
+shaping engine noise with that voice. Independent ambient sounds and explicitly
+authorized nonverbal vocals remain valid. Findings must cite the actual source,
+wrong recipient and emitted fragment; sonic resemblance alone is insufficient.
+
+Writer hygiene instructions concern generated English punctuation. Caller
+words, visible text, exact names and observations keep their original Unicode;
+the host does not clean them globally to make validation pass. Identical
+role/anchor declarations produce one frame binding. Conflicting declarations
+still fail; base first/last-frame bindings do not become reference keyframes.
 
 Every model stage has bounded, explicitly configured repair calls and actionable
 schema diagnostics. Rejected model content with valid usage can use that budget;

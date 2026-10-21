@@ -33,6 +33,8 @@ def main():
     parser.add_argument('--reasoning-effort', required=True)
     parser.add_argument('--max-output-tokens', type=int, required=True)
     parser.add_argument('--parallel', type=int, default=3)
+    parser.add_argument('--max-structure-retries', type=int, choices=range(4), default=1)
+    parser.add_argument('--max-planner-retries', type=int, choices=range(4), default=1)
     args = parser.parse_args()
     if not re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9_-]*', args.label):
         parser.error('label must be one filename component')
@@ -76,7 +78,9 @@ def main():
                '-out', str(output), '-base-url', args.base_url, '-model', args.model,
                '-api-key-env', 'DEEPSEEK_API_KEY', '-parallel', str(args.parallel),
                '-profile', 'official', '-reasoning-effort', args.reasoning_effort,
-               '-max-output-tokens', str(args.max_output_tokens)]
+               '-max-output-tokens', str(args.max_output_tokens),
+               '-max-structure-retries', str(args.max_structure_retries),
+               '-max-planner-retries', str(args.max_planner_retries)]
     env = dict(os.environ, GOWORK='off')
     for key in ('DEEPSEEK_API_KEY', 'OPENAI_API_KEY', 'ANTHROPIC_API_KEY'):
         env.pop(key, None)
@@ -106,6 +110,10 @@ def main():
         'input_sha256': digest(fixture),
         'assertions_sha256': digest(assertions),
         'requested_model': args.model,
+        'reasoning_effort': args.reasoning_effort,
+        'max_output_tokens': args.max_output_tokens,
+        'max_structure_retries': args.max_structure_retries,
+        'max_planner_retries': args.max_planner_retries,
         'base_url': args.base_url,
         'output_directory': str(output),
         'source_runtime_unchanged': unchanged,

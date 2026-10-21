@@ -9,13 +9,16 @@ import (
 	"github.com/ly95/contextir"
 )
 
-const CompositionReviewVersion = "contextir/composition-review/v8"
+const CompositionReviewVersion = "contextir/composition-review/v9"
 
 type CompositionFinding struct {
-	Code       string `json:"code"`
-	FragmentID string `json:"fragment_id"`
-	Quote      string `json:"quote"`
-	SubjectID  string `json:"subject_id"`
+	Code          string                     `json:"code"`
+	FragmentID    string                     `json:"fragment_id"`
+	Quote         string                     `json:"quote"`
+	SubjectID     string                     `json:"subject_id"`
+	ReferenceID   string                     `json:"reference_id,omitempty"`
+	RecipientKind AudioPropertyRecipientKind `json:"recipient_kind,omitempty"`
+	SpeakerID     string                     `json:"speaker_id,omitempty"`
 }
 
 // CompositionReview concerns the final document, not a generated video's quality.
@@ -36,6 +39,7 @@ var compositionRemedies = map[string]string{
 	"frame_content_changed":           "Preserve the complete supplied frame at its anchored instant, including its layout, panels, labels and background; do not claim a hero crop or removed panels without a separately prepared source.",
 	"target_identity_changed":         "Keep the accepted target identity and its attributes consistent throughout the narrative; observed source identity cannot override explicit target requirements.",
 	"audio_signal_misuse":             "Without a separately wired audio relationship, never promise that an original video soundtrack is preserved or carried over. Keep copied BGM distinct from property-only voice, music-style, beat or texture references. Property-only references cannot play the original recording; copied BGM must not be described as never copying its signal. N/A music can mean no added score while the supplied BGM is copied.",
+	"audio_property_target_mismatch":  "Keep each property attached only to its typed recipient: voice to the bound vocal speaker, music style to a new score, beat to cut/action timing, and SFX to new sound texture. Do not redirect a dormant voice reference into mechanical sound or ambience. Independent creative engine/ambient sounds remain allowed; similar sound is not evidence of source guidance or signal copying.",
 	"replacement_motion_changed":      "Preserve the replaced figure's observed position, actions and timing. A requested action for another actor does not authorize rewriting this figure's motion; apply an override only when the caller explicitly changes this same figure's action.",
 	"dialogue_placement_mismatch":     "Align the visual performance narrative with the fixed dialogue events in each shot. Do not direct an actor to deliver the same fixed utterance in a different shot, repeat a completed line after a cut, or describe an absent performance; continuity fragments must describe the one actual continued performance without changing caller words.",
 	"visible_text_placement_mismatch": "Present the exact caller-visible words only in the authorized shots and roles. A visible prop carrying those words can repeat their display even if no second visible-text event is declared. Keep other views out of frame, obscured, facing away or unreadable when the caller restricts the lettering to one shot; do not alter the fixed words or invent a placement from keywords.",
@@ -68,6 +72,13 @@ func CompositionReviewRequired(b Brief, st Structure, documents ...contextir.Doc
 		return true
 	}
 	for _, doc := range documents {
+		for _, reference := range doc.References {
+			for _, role := range reference.Roles {
+				if audioPropertyRecipient(role) != "" {
+					return true
+				}
+			}
+		}
 		if len(doc.Dialogue) > 0 {
 			return true
 		}
@@ -200,6 +211,10 @@ func (c *Compiler) ReviewComposition(ctx context.Context, b Brief, st Structure,
 	if err := RequiredPlacedAppearances(d); err != nil {
 		return out, err
 	}
+	audioTargets, err := actualAudioPropertyTargets(d)
+	if err != nil {
+		return out, err
+	}
 	fragments, fragmentIDs := compositionFragments(d)
 	subjectIDs := []string{""}
 	for _, s := range d.Subjects {
@@ -215,7 +230,23 @@ func (c *Compiler) ReviewComposition(ctx context.Context, b Brief, st Structure,
 	if hasProjectionCandidates(b) || len(st.SubjectProjections) > 0 {
 		codes = append(codes, "subject_projection_mismatch")
 	}
-	schema, _ := json.Marshal(map[string]any{"type": "object", "additionalProperties": false, "required": []string{"findings"}, "properties": map[string]any{"findings": map[string]any{"type": "array", "items": map[string]any{"type": "object", "additionalProperties": false, "required": []string{"code", "fragment_id", "quote", "subject_id"}, "properties": map[string]any{"code": map[string]any{"type": "string", "enum": codes}, "fragment_id": map[string]any{"type": "string", "enum": fragmentIDs}, "quote": map[string]any{"type": "string", "minLength": 1}, "subject_id": map[string]any{"type": "string", "enum": subjectIDs}}}}}})
+	if len(audioTargets) > 0 {
+		codes = append(codes, "audio_property_target_mismatch")
+	}
+	findingProperties := map[string]any{"code": map[string]any{"type": "string", "enum": codes}, "fragment_id": map[string]any{"type": "string", "enum": fragmentIDs}, "quote": map[string]any{"type": "string", "minLength": 1}, "subject_id": map[string]any{"type": "string", "enum": subjectIDs}}
+	if len(audioTargets) > 0 {
+		referenceIDs, speakerIDs := []string{""}, []string{""}
+		for _, target := range audioTargets {
+			referenceIDs = append(referenceIDs, target.ReferenceID)
+		}
+		for _, speaker := range d.Speakers {
+			speakerIDs = append(speakerIDs, speaker.ID)
+		}
+		findingProperties["reference_id"] = map[string]any{"type": "string", "enum": referenceIDs}
+		findingProperties["recipient_kind"] = map[string]any{"type": "string", "enum": []audioRecipientKind{"", audioRecipientVocal, audioRecipientScore, audioRecipientTiming, audioRecipientSFX}}
+		findingProperties["speaker_id"] = map[string]any{"type": "string", "enum": speakerIDs}
+	}
+	schema, _ := json.Marshal(map[string]any{"type": "object", "additionalProperties": false, "required": []string{"findings"}, "properties": map[string]any{"findings": map[string]any{"type": "array", "items": map[string]any{"type": "object", "additionalProperties": false, "required": []string{"code", "fragment_id", "quote", "subject_id"}, "properties": findingProperties}}}})
 	// Locators, director names, and unrelated execution configuration have no role
 	// in the audit. Original source evidence is intentionally visible to the critic
 	// so it can detect source content borrowed beyond the writer's authorized view.
@@ -243,7 +274,7 @@ func (c *Compiler) ReviewComposition(ctx context.Context, b Brief, st Structure,
 		inheritance = append(inheritance, map[string]any{"removed_subject_id": removed.ID, "replacement_subject_id": removed.TakenOverBy, "source_motion_contexts": contexts})
 	}
 	input, _ := json.Marshal(map[string]any{"composition_facts": compositionFacts(b, st, actualFramePreservations(b, d.Target)), "version": CompositionReviewVersion, "intent": b.Intent, "constraints": b.Constraints, "mode": d.Mode, "target": d.Target, "assets": assets, "declared_roles": st.Assets, "target_subjects": d.Subjects, "references": d.References, "source_evidence": d.Evidence, "claims": d.Claims, "replacement_motion_obligations": motionObligations, "replacement_inheritance": inheritance, "fragments": fragments})
-	const system = `Audit this final H3 composition against its typed responsibilities. Return findings only for clear contradictions, not aesthetic preferences, prose length, optional creative choices, or unknown video quality. The supplied fragments are the actual final narrative, with typed subject/reference IDs printed explicitly. Read their full context and the target subject kinds: a floor or other environment must not become a moving vehicle merely because it is Subject 1. A subject/placed_subject/replacement_subject reference supplies its selected identity properties, not its original background, pose or photographic lighting. An environment reference supplies its scene, not the depicted actor identity or actor-specific appearance. An observed claim copying a mixed source summary must obey the same responsibility: citing the source does not authorize importing all its content. Independently requested or creative content is allowed; a generic car or room resembling a source is not itself evidence of misuse. A source structure/storyboard provides only its declared camera/cutting/planning properties, not its people, objects, world, lighting or palette. A placed subject adds to the edited scene; a replacement takes over the identified source figure. Both must actually appear in prose/actions, not only definitions. Accepted target identity outranks raw source observations. A visual source video does not wire its soundtrack. composition_facts.audio declares the actually wired audio relationships. If its attachments are empty, an explicit claim that the original soundtrack is preserved, reused, played or carried over is audio_signal_misuse even if the task prefix omits reuse. Newly generated sound is permitted and a similar sound does not demonstrate copying. Property-only voice, music-style, beat and sound-texture references condition a new sound; they do not play the original recording. BGM music references with partially_copy copy the supplied signal, and prose must not deny that. Music=N/A under no_added_music only prohibits adding a new score; it does not cancel an explicitly copied BGM. References with no actual dialogue do not authorize inventing spoken words. For actual first/last frame responsibilities, the whole supplied still is that frame: reference-sheet panels/labels/background are frame pixels, not packaging to silently remove. Moving one panel within an otherwise preserved sheet is legitimate. A recorded aspect-ratio warning alone is not a contradiction and does not authorize a crop. Do not invent preparation IO or assume its execution. Every finding must identify an actual fragment and an exact nonempty quote from that fragment demonstrating the contradiction, plus the implicated target subject ID when relevant. Empty findings means no clear supported contradiction was found, not proof of overall quality. No Markdown.`
+	const system = `Audit this final H3 composition against its typed responsibilities. Return findings only for clear contradictions, not aesthetic preferences, prose length, optional creative choices, or unknown video quality. The supplied fragments are the actual final narrative, with typed subject/reference IDs printed explicitly. Read their full context and the target subject kinds: a floor or other environment must not become a moving vehicle merely because it is Subject 1. A subject/placed_subject/replacement_subject reference supplies its selected identity properties, not its original background, pose or photographic lighting. An environment reference supplies its scene, not the depicted actor identity or actor-specific appearance. An observed claim copying a mixed source summary must obey the same responsibility: citing the source does not authorize importing all its content. Independently requested or creative content is allowed; a generic car or room resembling a source is not itself evidence of misuse. A source structure/storyboard provides only its declared camera/cutting/planning properties, not its people, objects, world, lighting or palette. A placed subject adds to the edited scene; a replacement takes over the identified source figure. Both must actually appear in prose/actions, not only definitions. Accepted target identity outranks raw source observations. A visual source video does not wire its soundtrack. composition_facts.audio declares the actually wired audio relationships. If its attachments are empty, an explicit claim that the original soundtrack is preserved, reused, played or carried over is audio_signal_misuse even if the task prefix omits reuse. Newly generated sound is permitted and a similar sound does not demonstrate copying. Property-only references preserve their role-specific recipient and do not play the original recording; voice, new-score style, cut/action timing and new sound texture are distinct relationships, never general permission to condition any new sound. BGM music references with partially_copy copy the supplied signal, and prose must not deny that. Music=N/A under no_added_music only prohibits adding a new score; it does not cancel an explicitly copied BGM. References with no actual dialogue do not authorize inventing spoken words. For actual first/last frame responsibilities, the whole supplied still is that frame: reference-sheet panels/labels/background are frame pixels, not packaging to silently remove. Moving one panel within an otherwise preserved sheet is legitimate. A recorded aspect-ratio warning alone is not a contradiction and does not authorize a crop. Do not invent preparation IO or assume its execution. Every finding must identify an actual fragment and an exact nonempty quote from that fragment demonstrating the contradiction, plus the implicated target subject ID when relevant. Empty findings means no clear supported contradiction was found, not proof of overall quality. No Markdown.`
 	if ctx.Err() != nil {
 		return out, failure(contextir.CodeCanceled, "semantic_review", "context", "Composition review was canceled.", ctx.Err())
 	}
@@ -251,6 +282,13 @@ func (c *Compiler) ReviewComposition(ctx context.Context, b Brief, st Structure,
 Positive replacement obligations: inspect replacement_inheritance and its observed_motion_contexts, not only exclusions. The replacement must inherit the identified source figure's observed motion, position and timing. A global action-governs=request entry authorizes only the actor/action actually requested; changing the car's action does not change the driver's action. Compare the final replacement narrative with the identified figure's motion in context. Standing still is not inheriting an observed crossing action unless the caller explicitly changes that same figure's action. Do not invent timing facts outside the declared coverage.
 Finding thresholds: similar sounds are not evidence of copying a recording. Generic newly generated engine ambience, a matching pulse, or an appropriate sound texture is legitimate without an assertion that the source recording is played. For audio_signal_misuse quote an explicit source-signal relationship contradicting the typed copy/property role; never infer copying solely from sonic resemblance. Likewise camera movement after an anchored instant is legitimate. A push-in, pan or other dynamic camera event alone does not demonstrate that the initial or final anchor frame was changed. Report frame_content_changed only when actual narrative asserts incompatible frame content or a crop/removal at that anchored instant. These constraints are mandatory; do not report speculative contradictions.`
 	systemInstructions += "\nThe typed claims preserve their explicit origins. A user-origin claim records caller authorization or a requested outcome; it is not itself evidence that the final narrative executes that outcome or copies an original signal. User claims are deliberately absent from executable fragment addresses. Compare the actual final narrative, source bindings and typed performance events to that authorization. Observed and creative claims remain auditable executable assertions."
+	if len(audioTargets) > 0 {
+		var fields map[string]json.RawMessage
+		_ = json.Unmarshal(input, &fields)
+		fields["audio_property_targets"], _ = json.Marshal(audioTargets)
+		input, _ = json.Marshal(fields)
+		systemInstructions += "\n" + audioPropertyTargetInstruction + " For audio_property_target_mismatch, cite the exact source-to-incompatible-recipient relationship in an actual narrative fragment, and return its reference_id plus recipient_kind naming the actual incorrect recipient. For an actual vocal recipient also return its speaker_id; for a non-vocal recipient omit speaker_id. Merely having dormant voice metadata, no fixed dialogue, independent engine ambience, similar timbre or no copied signal does not demonstrate a mismatch. Do not require silence or invent a vocal performance. A caller-authorized breath, hum or other nonverbal vocalization can use its bound vocal reference even without a fixed utterance. A specific assertion that a voice reference shapes mechanical engine texture is a recipient mismatch even though the engine is newly generated and no signal is copied. This code concerns the recipient, independently of audio_signal_misuse. Omit these additional audio fields for every other finding code."
+	}
 	if len(d.Dialogue) > 0 || len(st.Dialogue) > 0 {
 		var fields map[string]json.RawMessage
 		_ = json.Unmarshal(input, &fields)
@@ -340,6 +378,9 @@ Finding thresholds: similar sounds are not evidence of copying a recording. Gene
 		fragment, exists := fragments[finding.FragmentID]
 		if compositionRemedies[finding.Code] == "" || !exists || strings.TrimSpace(finding.Quote) == "" || !strings.Contains(fragment, finding.Quote) || !knownSubjects[finding.SubjectID] {
 			return out, failure(contextir.CodeModelOutput, "semantic_review", "findings", "A composition finding must cite a known subject and exact existing narrative fragment.", nil)
+		}
+		if err := validateAudioPropertyFinding(finding, audioTargets, d.Speakers); err != nil {
+			return out, err
 		}
 	}
 	out.Findings = answer.Findings

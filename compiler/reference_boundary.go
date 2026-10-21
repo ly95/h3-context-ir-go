@@ -37,9 +37,10 @@ type audioBoundary struct {
 }
 
 type audioRelationship struct {
-	AssetID    string `json:"asset_id"`
-	Property   string `json:"property,omitempty"`
-	SignalUsed bool   `json:"source_signal_is_used"`
+	AssetID    string             `json:"asset_id"`
+	Property   string             `json:"property,omitempty"`
+	Recipient  audioRecipientKind `json:"recipient_kind,omitempty"`
+	SignalUsed bool               `json:"source_signal_is_used"`
 }
 
 func compositionFacts(b Brief, st Structure, anchors []FramePreservation) compositionBoundary {
@@ -90,6 +91,7 @@ func compositionFacts(b Brief, st Structure, anchors []FramePreservation) compos
 			case RoleSFX:
 				a.Property, out.Audio.MayReference = "sound texture", true
 			}
+			a.Recipient = audioPropertyRecipient(rootRole(role))
 			out.Audio.Attachments = append(out.Audio.Attachments, a)
 		}
 	}
@@ -107,7 +109,7 @@ func observedCamera(value string) string {
 	}
 }
 
-const compositionBoundaryInstruction = `Canonical target subjects supply the accepted target identities; raw licence identity readings are deliberately withheld. Subject/placed_subject/replacement_subject cards expose reusable identity only, not their source backgrounds, transient poses or photographic lighting. Environment cards expose scene properties only, not source actors or their appearance. Missing excluded fields are an intentional responsibility projection, not permission to infer them from metadata. Preserve full source evidence separately and never label an independently chosen creative setting or actor property as an observed source fact. Resolved composition_facts describe the actual wired relationships. A video file alone does not wire its soundtrack as audio. If audio.attachments is empty, neither audio reuse nor audio reference is available: do not claim in any section that original audio is preserved, reused or carried over. Describe newly generated sound in overall_soundscape instead. A property reference follows the named property and never plays, copies or reuses the source signal, including in summary, definitions, descriptions or music. Use natural descriptive English rather than wiring identifiers in H3. Only source_signal_is_used=true authorizes copying; fully_copy means the complete final track with nothing added, removed or laid over it; a copied part or any mix is partially_copy. A source video's camera_observed=false means NOT observed, never a static-camera observation: do not assert that source framing was static. This does not forbid choosing a new camera when the request licenses it. No source_videos entry makes any promise about source video editing or continuation. A picture with actual_frame=false is content/property reference rather than a target frame; never invent keyframe completion for it. actual_frame=true preserves its complete frame at anchor_ms. Where the request does not specify an attribute, use the applicable observed reference property within its declared responsibility; no reference role grants its unrelated contents. For cuts use the closed vocabulary: the camera cuts to, the shot cuts to, the shot transitions to, the shot changes to, the shot switches to.`
+const compositionBoundaryInstruction = `Canonical target subjects supply the accepted target identities; raw licence identity readings are deliberately withheld. Subject/placed_subject/replacement_subject cards expose reusable identity only, not their source backgrounds, transient poses or photographic lighting. Environment cards expose scene properties only, not source actors or their appearance. Missing excluded fields are an intentional responsibility projection, not permission to infer them from metadata. Preserve full source evidence separately and never label an independently chosen creative setting or actor property as an observed source fact. Resolved composition_facts describe the actual wired relationships. A video file alone does not wire its soundtrack as audio. If audio.attachments is empty, neither audio reuse nor audio reference is available: do not claim in any section that original audio is preserved, reused or carried over. Describe newly generated sound in overall_soundscape instead. A property reference follows the named property and never plays, copies or reuses the source signal, including in summary, definitions, descriptions or music. Use natural descriptive English rather than wiring identifiers in H3. Only source_signal_is_used=true authorizes copying; fully_copy means the complete final track with nothing added, removed or laid over it; a copied part or any mix is partially_copy. A source video's camera_observed=false means NOT observed, never a static-camera observation: do not assert that source framing was static. This does not forbid choosing a new camera when the request licenses it. No source_videos entry makes any promise about source video editing or continuation. A picture with actual_frame=false is content/property reference rather than a target frame; never invent keyframe completion for it. actual_frame=true preserves its complete frame at anchor_ms. Where the request does not specify an attribute, use the applicable observed reference property within its declared responsibility; no reference role grants its unrelated contents. For cuts use the closed vocabulary: the camera cuts to, the shot cuts to, the shot transitions to, the shot changes to, the shot switches to.` + "\n" + audioPropertyTargetInstruction
 
 // Base composition has no summary/task prefix or audio-reference sockets.
 // Keep those reference-format concepts out of its actual ask.

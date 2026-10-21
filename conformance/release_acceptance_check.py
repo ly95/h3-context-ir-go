@@ -122,6 +122,33 @@ def media_address_is_rendered(row, document, prompt):
     return bool(row.get("label")) and row["label"] in prompt
 
 
+def caller_property_reaches_source_target(result, source):
+    """Check explicit claim provenance and publication, not color-word intent.
+
+    The semantic reviewer separately compares the actual new garment/color to
+    the original request. Here quoted authority cannot live only in metadata.
+    """
+    media = {row.get("label"): row.get("source", {}).get("asset_id")
+             for row in result.get("artifact", {}).get("manifest", {}).get("media", [])}
+    labels = {row.get("label") for row in result.get("licence", {}).get("subjects", [])
+              if any(media.get(address) == source for address in row.get("sources", []))}
+    brief = result.get("brief", {})
+    caller = [brief.get("intent", "")] + [row.get("text", "") for row in brief.get("constraints", [])]
+    quoted = lambda quote: bool(quote) and any(quote in text for text in caller)
+    targets = [row for row in result.get("document", {}).get("subjects", [])
+               if any(edge.get("source", {}).get("asset_id") == source for edge in row.get("sources", []))]
+    for identity in result.get("licence", {}).get("identity", []):
+        if identity.get("label") not in labels or identity.get("descriptor_source") != "request" or not quoted(identity.get("request_quote")):
+            continue
+        supported = {claim.get("value") for claim in identity.get("claims", [])
+                     if claim.get("value") and quoted(claim.get("quote"))}
+        selected = {value for value in identity.get("requested_attributes", [])
+                    if value in supported or quoted(value)}
+        if selected and any(selected <= set(target.get("attributes", [])) for target in targets):
+            return True
+    return False
+
+
 def inspect(result, semantic, previous=None):
     problems = []
     def require(ok, message):
@@ -293,6 +320,11 @@ def inspect(result, semantic, previous=None):
     attributes = {attribute for s in subjects.values() for attribute in s.get("attributes", [])}
     for attribute in semantic.get("required_subject_attributes", []):
         require(attribute in attributes, "required accepted target property absent: " + attribute)
+    for attribute in semantic.get("absent_subject_attributes", []):
+        require(attribute not in attributes, "replaced source property remains in target: " + attribute)
+    for source in semantic.get("caller_property_from_sources", []):
+        require(caller_property_reaches_source_target(result, source),
+                "caller-authorized property did not reach the source-bound target: " + source)
     for alternatives in semantic.get("required_subject_attribute_alternatives", []):
         require(bool(attributes & set(alternatives)),
                 "required accepted target property absent: " + " or ".join(alternatives))
@@ -474,11 +506,32 @@ def self_test():
         wrong_label = copy.deepcopy(row)
         wrong_label["label"] = "<Picture 9>"
         assert not media_address_is_rendered(wrong_label, paired["document"], paired["artifact"]["prompt"])
+    property_control = {
+        "brief": {"intent": "Change the shirt to the new requested color."},
+        "artifact": {"manifest": {"media": [{"label": "<Picture 1>", "source": {"asset_id": "one"}}]}},
+        "licence": {"subjects": [{"label": "<Subject 1>", "sources": ["<Picture 1>"]}],
+                    "identity": [{"label": "<Subject 1>", "descriptor_source": "request",
+                                  "request_quote": "Change the shirt", "requested_attributes": ["new-color shirt"],
+                                  "claims": [{"value": "new-color shirt", "quote": "new requested color"}]}]},
+        "document": {"subjects": [{"attributes": ["new-color shirt", "unchanged jeans"],
+                                     "sources": [{"source": {"asset_id": "one"}}]}]},
+    }
+    assert caller_property_reaches_source_target(property_control, "one")
+    for name, mutate in [
+        ("descriptor only", lambda d: d["document"]["subjects"][0].update(attributes=["unchanged jeans"], descriptor="new-color shirt")),
+        ("wrong source", lambda d: d["document"]["subjects"][0]["sources"][0]["source"].update(asset_id="other")),
+        ("unquoted authority", lambda d: d["licence"]["identity"][0].update(request_quote="Words the caller never wrote")),
+        ("unsupported new property", lambda d: d["licence"]["identity"][0].update(claims=[])),
+    ]:
+        wrong = copy.deepcopy(property_control)
+        mutate(wrong)
+        assert not caller_property_reaches_source_target(wrong, "one"), name + " escaped property provenance"
     print(json.dumps({"self_test": "passed", "positive_publication": 1, "negative_mutations": 5,
                       "independent_sources_positive_and_negative": True,
                       "semantic_dialogue_id_change_and_word_drift": True,
                       "source_bound_equivalent_wheels_positive_and_firstwave_negative": True,
-                      "paired_frame_official_addresses_and_header_drift": True}))
+                      "paired_frame_official_addresses_and_header_drift": True,
+                      "caller_property_provenance_and_final_target": True}))
 
 
 if __name__ == "__main__":

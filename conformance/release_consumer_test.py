@@ -96,6 +96,36 @@ func TestFailedAttemptsAreReproducedWithUsage(t *testing.T) {
  if !errors.As(err,&typed)||typed.Code!=contextir.CodeModelOutput||typed.Stage!="deepseek.response"||response.Usage.InputTokens!=3||model.Position!=1||model.Mismatch!=nil {t.Fatal("original failed attempt disappeared",err)}
 }
 
+func TestActualRecordedRetryOptionsNeverUseHiddenDefaults(t *testing.T) {
+ for _,budget:=range []int{0,1,2,3} {
+  partial,include,imageRetries:=true,true,1
+  input:=fixtureCase{Clarification:compiler.ClarificationContinue,AllowPartial:true}
+  options:=recordedOptions{Profile:h3.OfficialProfile(),Frame:compiler.FramePolicySnapUp,Failure:compiler.FailurePolicyFail,Scope:compiler.ScopeConflictSuppliedWins,Clarification:compiler.ClarificationContinue,Partial:&partial,StructureRetries:&budget,PlannerRetries:&budget,ImageIncludeCard:&include,ImageMaxRetries:&imageRetries}
+  actual,images,err:=actualCompilerOptions(input,options)
+  if err!=nil||actual.MaxStructureRetries!=budget||actual.Planner.MaxRetries!=budget||!images.IncludeCard||images.MaxRetries!=1 {t.Fatal("actual retry budget was replaced",budget,actual,err)}
+  options.StructureRetries=nil
+  if _,_,err:=actualCompilerOptions(input,options);err==nil {t.Fatal("missing structure retry budget silently defaulted")}
+  options.StructureRetries=&budget;options.PlannerRetries=nil
+  if _,_,err:=actualCompilerOptions(input,options);err==nil {t.Fatal("missing planner retry budget silently defaulted")}
+ }
+ for _,budget:=range []int{-1,4} {
+  partial,include,imageRetries:=true,true,1
+  options:=recordedOptions{Profile:h3.OfficialProfile(),Frame:compiler.FramePolicySnapUp,Failure:compiler.FailurePolicyFail,Scope:compiler.ScopeConflictSuppliedWins,Clarification:compiler.ClarificationContinue,Partial:&partial,StructureRetries:&budget,PlannerRetries:&budget,ImageIncludeCard:&include,ImageMaxRetries:&imageRetries}
+  if _,_,err:=actualCompilerOptions(fixtureCase{Clarification:compiler.ClarificationContinue,AllowPartial:true},options);err==nil {t.Fatal("unsupported retry budget accepted",budget)}
+ }
+ partial,include,imageRetries,one,two:=true,true,1,1,2
+ input:=fixtureCase{Clarification:compiler.ClarificationContinue,AllowPartial:true,Profile:"comfy"}
+ input.RetryLimits=&struct{Structure *int `json:"structure"`;Planner *int `json:"planner"`}{&one,&one}
+ options:=recordedOptions{Profile:h3.ComfyUIProfile(),Frame:compiler.FramePolicySnapUp,Failure:compiler.FailurePolicyFail,Scope:compiler.ScopeConflictSuppliedWins,Clarification:compiler.ClarificationContinue,Partial:&partial,StructureRetries:&one,PlannerRetries:&one,ImageIncludeCard:&include,ImageMaxRetries:&imageRetries}
+ if actual,_,err:=actualCompilerOptions(input,options);err!=nil||actual.Profile.Name!=h3.ComfyUIProfile().Name||actual.MaxStructureRetries!=1 {t.Fatal("explicit original-case profile/budget override was rejected",err)}
+ options.PlannerRetries=&two
+ if _,_,err:=actualCompilerOptions(input,options);err==nil {t.Fatal("recorded budget contradicted explicit override")}
+ options.PlannerRetries=&one;options.Profile=h3.OfficialProfile()
+ if _,_,err:=actualCompilerOptions(input,options);err==nil {t.Fatal("original comfy profile was silently replaced")}
+ options.Profile=h3.ComfyUIProfile();input.Profile="unknown"
+ if _,_,err:=actualCompilerOptions(input,options);err==nil {t.Fatal("unknown profile silently defaulted")}
+}
+
 func TestExplicitMediaMayBeBesideFixtureButRecordingMembersCannotEscape(t *testing.T) {
  root:=t.TempDir();fixture:=filepath.Join(root,"conformance");media:=filepath.Join(root,"third_party","image.png")
  if err:=os.Mkdir(fixture,0700);err!=nil {t.Fatal(err)}

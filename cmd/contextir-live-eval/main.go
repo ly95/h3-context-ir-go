@@ -51,6 +51,7 @@ type inputCase struct {
 	Media            map[string]mediaSource       `json:"media,omitempty"`
 	ObservationScope string                       `json:"observation_scope,omitempty"`
 	Profile          string                       `json:"profile,omitempty"`
+	RetryLimits      *caseRetryLimits             `json:"retry_limits,omitempty"`
 	Origin           json.RawMessage              `json:"origin,omitempty"`
 	Source           json.RawMessage              `json:"source,omitempty"`
 	EvidenceClass    string                       `json:"evidence_class,omitempty"`
@@ -183,7 +184,38 @@ type optionsRecord struct {
 	ImageRetries     int                          `json:"image_max_retries"`
 }
 
-func nativeOptions(item inputCase) (compiler.Options, optionsRecord, error) {
+type retryLimits struct {
+	Structure int
+	Planner   int
+}
+
+// A case override is explicit in both dimensions: zero is a supported budget,
+// so omitted fields cannot be interpreted as zero.
+type caseRetryLimits struct {
+	Structure *int `json:"structure"`
+	Planner   *int `json:"planner"`
+}
+
+func defaultRetries() retryLimits { return retryLimits{Structure: 1, Planner: 1} }
+func (r retryLimits) validate() error {
+	if r.Structure < 0 || r.Structure > 3 || r.Planner < 0 || r.Planner > 3 {
+		return errors.New("structure and planner retry budgets must each be between zero and three")
+	}
+	return nil
+}
+func nativeOptions(item inputCase, retries retryLimits) (compiler.Options, optionsRecord, error) {
+	if err := retries.validate(); err != nil {
+		return compiler.Options{}, optionsRecord{}, err
+	}
+	if item.RetryLimits != nil {
+		if item.RetryLimits.Structure == nil || item.RetryLimits.Planner == nil {
+			return compiler.Options{}, optionsRecord{}, errors.New("case retry_limits requires explicit structure and planner budgets")
+		}
+		retries = retryLimits{Structure: *item.RetryLimits.Structure, Planner: *item.RetryLimits.Planner}
+		if err := retries.validate(); err != nil {
+			return compiler.Options{}, optionsRecord{}, err
+		}
+	}
 	policy := item.Clarification
 	if policy == "" {
 		policy = compiler.ClarificationRequire
@@ -191,11 +223,16 @@ func nativeOptions(item inputCase) (compiler.Options, optionsRecord, error) {
 	if policy != compiler.ClarificationRequire && policy != compiler.ClarificationContinue {
 		return compiler.Options{}, optionsRecord{}, errors.New("invalid explicit clarification policy")
 	}
-	if item.Profile != "" && item.Profile != "official" && item.Profile != h3.OfficialProfile().Name {
-		return compiler.Options{}, optionsRecord{}, errors.New("all cases must use the explicit official profile")
+	profile := h3.OfficialProfile()
+	switch item.Profile {
+	case "", "official", h3.OfficialProfile().Name:
+	case "comfy", h3.ComfyUIProfile().Name:
+		profile = h3.ComfyUIProfile()
+	default:
+		return compiler.Options{}, optionsRecord{}, errors.New("case profile must be explicitly official or comfy")
 	}
-	o := compiler.Options{Profile: h3.OfficialProfile(), FramePolicy: compiler.FramePolicySnapUp, FailurePolicy: compiler.FailurePolicyFail, MaxStructureRetries: 1, ScopeConflictPolicy: compiler.ScopeConflictSuppliedWins, ClarificationPolicy: policy, Planner: planner.Options{MaxRetries: 1, AllowPartialPerception: item.Partial}}
-	w := optionsRecord{o.Profile, o.FramePolicy, o.FailurePolicy, 1, 1, o.ScopeConflictPolicy, policy, item.Partial, true, 1}
+	o := compiler.Options{Profile: profile, FramePolicy: compiler.FramePolicySnapUp, FailurePolicy: compiler.FailurePolicyFail, MaxStructureRetries: retries.Structure, ScopeConflictPolicy: compiler.ScopeConflictSuppliedWins, ClarificationPolicy: policy, Planner: planner.Options{MaxRetries: retries.Planner, AllowPartialPerception: item.Partial}}
+	w := optionsRecord{o.Profile, o.FramePolicy, o.FailurePolicy, retries.Structure, retries.Planner, o.ScopeConflictPolicy, policy, item.Partial, true, 1}
 	return o, w, nil
 }
 
@@ -256,23 +293,25 @@ type caseResult struct {
 	Passed           bool              `json:"passed"`
 }
 type report struct {
-	Schema            string       `json:"schema"`
-	Source            string       `json:"source_commit"`
-	Started           string       `json:"started_at"`
-	Finished          string       `json:"finished_at,omitempty"`
-	FixtureFile       string       `json:"fixture_file"`
-	FixtureSHA256     string       `json:"fixture_sha256"`
-	AssertionsFile    string       `json:"assertions_file,omitempty"`
-	AssertionsSHA256  string       `json:"assertions_sha256,omitempty"`
-	AssertionsApplied bool         `json:"assertions_applied"`
-	BinarySHA256      string       `json:"binary_sha256"`
-	GoVersion         string       `json:"go_version"`
-	Model             string       `json:"model"`
-	Reasoning         string       `json:"reasoning_effort"`
-	MaxOutputTokens   int          `json:"max_output_tokens"`
-	EndpointSHA256    string       `json:"endpoint_sha256"`
-	Passed            bool         `json:"passed"`
-	Cases             []caseResult `json:"cases"`
+	Schema              string       `json:"schema"`
+	Source              string       `json:"source_commit"`
+	Started             string       `json:"started_at"`
+	Finished            string       `json:"finished_at,omitempty"`
+	FixtureFile         string       `json:"fixture_file"`
+	FixtureSHA256       string       `json:"fixture_sha256"`
+	AssertionsFile      string       `json:"assertions_file,omitempty"`
+	AssertionsSHA256    string       `json:"assertions_sha256,omitempty"`
+	AssertionsApplied   bool         `json:"assertions_applied"`
+	BinarySHA256        string       `json:"binary_sha256"`
+	GoVersion           string       `json:"go_version"`
+	Model               string       `json:"model"`
+	Reasoning           string       `json:"reasoning_effort"`
+	MaxOutputTokens     int          `json:"max_output_tokens"`
+	MaxStructureRetries int          `json:"max_structure_retries"`
+	MaxPlannerRetries   int          `json:"max_planner_retries"`
+	EndpointSHA256      string       `json:"endpoint_sha256"`
+	Passed              bool         `json:"passed"`
+	Cases               []caseResult `json:"cases"`
 }
 
 func main() {
@@ -288,11 +327,17 @@ func run() error {
 	model := flag.String("model", "", "Explicit model name")
 	keyEnv := flag.String("api-key-env", "", "Explicit credential environment variable name")
 	parallel := flag.Int("parallel", 1, "Concurrent cases, 1 to 3")
-	profile := flag.String("profile", "", "Explicit profile: official")
+	profile := flag.String("profile", "", "Explicit default profile: official; cases may explicitly select comfy")
 	effort := flag.String("reasoning-effort", "", "Explicit DeepSeek reasoning effort")
 	limit := flag.Int("max-output-tokens", 0, "Explicit output-token hard limit per call")
 	assertPath := flag.String("assertions", "", "Independent assertions file; never passed to the model")
+	structureRetries := flag.Int("max-structure-retries", 1, "Extra structural interpretation calls per invalid output, 0 to 3")
+	plannerRetries := flag.Int("max-planner-retries", 1, "Extra writer calls per invalid document, 0 to 3")
 	flag.Parse()
+	retries := retryLimits{Structure: *structureRetries, Planner: *plannerRetries}
+	if err := retries.validate(); err != nil {
+		return err
+	}
 	if flag.NArg() != 0 || *input == "" || *output == "" || *base == "" || *model == "" || *keyEnv == "" || *effort == "" || *limit <= 0 || *parallel < 1 || *parallel > 3 || (*profile != "official" && *profile != h3.OfficialProfile().Name) {
 		return errors.New("explicit valid -input, -out, -base-url, -model, -api-key-env, -parallel (1..3), -profile official, -reasoning-effort and -max-output-tokens required")
 	}
@@ -339,7 +384,7 @@ func run() error {
 	if err != nil {
 		return err
 	}
-	r := report{Schema: "contextir-live-eval-report/v1", Source: data.Source, Started: time.Now().UTC().Format(time.RFC3339Nano), FixtureFile: "input.json", FixtureSHA256: digest(inputBytes), BinarySHA256: digest(binary), GoVersion: runtime.Version(), Model: *model, Reasoning: *effort, MaxOutputTokens: *limit, EndpointSHA256: digest([]byte(*base)), AssertionsApplied: *assertPath != "", Cases: make([]caseResult, len(data.Cases))}
+	r := report{Schema: "contextir-live-eval-report/v1", Source: data.Source, Started: time.Now().UTC().Format(time.RFC3339Nano), FixtureFile: "input.json", FixtureSHA256: digest(inputBytes), BinarySHA256: digest(binary), GoVersion: runtime.Version(), Model: *model, Reasoning: *effort, MaxOutputTokens: *limit, MaxStructureRetries: retries.Structure, MaxPlannerRetries: retries.Planner, EndpointSHA256: digest([]byte(*base)), AssertionsApplied: *assertPath != "", Cases: make([]caseResult, len(data.Cases))}
 	if len(assertionBytes) > 0 {
 		r.AssertionsFile = "assertions.json"
 		r.AssertionsSHA256 = digest(assertionBytes)
@@ -367,7 +412,7 @@ func run() error {
 				r.Cases[index] = cr
 				return writeJSON(filepath.Join(*output, "report.json"), r)
 			}
-			cr, e := evaluateCase(context.Background(), item, expected.Cases[item.ID].Operations, *output, filepath.Dir(inputAbsolute), client, checkpoint)
+			cr, e := evaluateCase(context.Background(), item, expected.Cases[item.ID].Operations, *output, filepath.Dir(inputAbsolute), client, retries, checkpoint)
 			lock.Lock()
 			r.Cases[index] = cr
 			if e != nil {
@@ -419,7 +464,7 @@ func validateFixture(f fixture) error {
 		if (item.Brief == nil) == (item.Original == nil) {
 			return errors.New("each case requires exactly one native brief or original input")
 		}
-		if _, _, err := nativeOptions(item); err != nil {
+		if _, _, err := nativeOptions(item, defaultRetries()); err != nil {
 			return err
 		}
 		if item.ObservationScope == "" && (item.Original != nil && len(item.Original.Cards) > 0 || item.Brief != nil && (len(item.Brief.Cards) > 0 || len(item.Brief.Evidence) > 0)) {
@@ -482,10 +527,10 @@ func validateExpectation(op operationExpectation) error {
 	return nil
 }
 
-func evaluateCase(ctx context.Context, item inputCase, expected []operationExpectation, root, inputDirectory string, model deepseek.ImageModel, checkpoint func(caseResult) error) (caseResult, error) {
+func evaluateCase(ctx context.Context, item inputCase, expected []operationExpectation, root, inputDirectory string, model deepseek.ImageModel, retries retryLimits, checkpoint func(caseResult) error) (caseResult, error) {
 	wire, _ := json.Marshal(item)
 	cr := caseResult{ID: item.ID, InputSHA256: digest(wire), ObservationScope: item.ObservationScope, Operations: []operationResult{}, Remaining: len(item.Changes)}
-	options, stored, err := nativeOptions(item)
+	options, stored, err := nativeOptions(item, retries)
 	cr.Options = stored
 	if err != nil {
 		return cr, err

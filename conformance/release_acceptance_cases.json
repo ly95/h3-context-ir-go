@@ -31,13 +31,21 @@
     "semantic_review": "Review the final prose against the original requested entities, actions, spatial/temporal order and evidence. Do not use the same model response as its own semantic oracle; record concrete pass/fail evidence and unresolved findings."
   },
   "cost_control": {
-    "parallel_cases": 2,
-    "max_structure_repairs": 1,
-    "max_writer_repairs": 1,
+    "parallel_cases": 3,
+    "max_structure_repairs": 3,
+    "max_writer_repairs": 3,
     "reuse_observations": true,
     "deduplicate_only_identical_full_model_requests": true,
     "no_selective_success_reporting": true,
-    "recommendation": "Run the 6 suite plus 3 highlevel cases first, then all 16 declared-role cases. Added combinations and 4 Refine chains close gaps. Do not replay old model bytes as fresh current-version evidence. If code changes, rerun every affected live case; explicitly label unaffected earlier-revision results."
+    "recommendation": "Run the 6 suite plus 3 highlevel cases first, then all 16 declared-role cases. Added combinations and 4 Refine chains close gaps. Do not replay old model bytes as fresh current-version evidence. If code changes, rerun every affected live case; explicitly label unaffected earlier-revision results.",
+    "explicit_case_exceptions": {
+      "original-wardrobe-request-authority": {
+        "profile": "comfy",
+        "max_structure_repairs": 1,
+        "max_writer_repairs": 1
+      }
+    },
+    "note": "Final executor declares 3/3 finite repairs explicitly; core library defaults are unchanged. The original wardrobe reproduction intentionally preserves its original comfy profile and 1/1 repair options. Every failed attempt and usage stays recorded."
   },
   "evidence_classes": {
     "real_png_live_observation": {
@@ -1000,6 +1008,37 @@
         "choice_preservation",
         "semantic_review"
       ]
+    },
+    {
+      "case_id": "original-wardrobe-request-authority",
+      "source": {
+        "origin": "unchanged_upstream_brief_and_card",
+        "upstream_node": "tests/test_reference_licence.py::test_the_wardrobe_guard_defers_to_who_governs_wardrobe",
+        "upstream_commit": "fd031e136ae3d89147324c0d1b2aa65e838c21f5",
+        "recording_manifest": "compiler/testdata/remaining_wardrobe/manifest.json",
+        "original_recording_case_id": "licence-01108",
+        "original_input_sha256": "966730e96f5e1e88e954e6702ddf1134ff932babe29ab23112ea5e025f853add",
+        "api_adapter": "FromOriginal then full Compile; inspect the actual LicenceDecision and final target, then use that fresh full-Compile tape for the native wardrobe guard. This is not the historical standalone DecideLicenceWithReferences call chain.",
+        "options_preserved": {
+          "profile": "comfy",
+          "frame_policy": "snap_up",
+          "failure_policy": "fail",
+          "scope_conflict_policy": "supplied_content_wins",
+          "clarification_policy": "continue_with_recorded_choice",
+          "max_structure_retries": 1,
+          "planner_max_retries": 1,
+          "allow_partial_perception": true
+        }
+      },
+      "origin": "unchanged_upstream_brief_and_card_full_compile_adapter",
+      "execution": "FromOriginal then full Compile (fresh actual chain, not historical standalone DecideLicenceWithReferences)",
+      "evidence_class": "supplied_typed_observation",
+      "profile": "comfy with explicit snap_up; preserve original one structure/one planner repair",
+      "assertions": [
+        "Typed Licence.governs.wardrobe=request; the original navy blue t-shirt does not become a target wardrobe guard or remain in target clothing.",
+        "The unchanged dark blue jeans survive. The accepted caller-quoted new shirt property reaches the source-bound final target; descriptor-only authorization is insufficient.",
+        "An independent actual final-prose review checks that the shirt is mossy grey-green. Original source observation retains the navy shirt as provenance, not an emitted target requirement."
+      ]
     }
   ],
   "refinement_chains": [
@@ -1124,7 +1163,7 @@
     "existing_highlevel": 3,
     "declared_roles": 16,
     "new_combinations": 6,
-    "compile_total": 31,
+    "compile_total": 35,
     "refine_chains": 4,
     "negative_controls": 10,
     "report_required": [
@@ -1136,24 +1175,27 @@
       "unresolved semantic findings",
       "exact product revision and binary SHA",
       "aggregate totals without selective case removal"
-    ]
+    ],
+    "refine_operations": 5,
+    "total_operations": 40,
+    "existing_wardrobe_guard_full_compile": 1
   },
   "executable_files": {
     "conformance/release_acceptance_inputs.json": {
-      "sha256": "3783e51a8fbeda9a83750f802c1a48f27850410800fbc171f3df0202d0747a11"
+      "sha256": "e1442df904a3cfde1a25eaec2cfb0008f9d290423bf9334835e0a45f86a06ed0"
     },
     "conformance/release_acceptance_assertions.json": {
-      "sha256": "8132f50fa945eee189cd740feafc0e18cedf13fb93e4d210691d68160b532332"
+      "sha256": "6e01a373ed132dbcebdab991dc5548e769aa1c0a8213977ffcb9207b29d7181e"
     },
     "conformance/release_acceptance_check.py": {
-      "sha256": "597865dd339cbc220b19a034e0b60f223b60034b2fa5ca9c4d85cd653721720e"
+      "sha256": "7548ddbf2f5c78c73e6eb29e2d3ca80d236f921e19ae50401bec1768f55ce9e0"
     }
   },
   "executable_suite_summary": {
-    "compile_cases": 34,
+    "compile_cases": 35,
     "refine_operations": 5,
-    "total_operations": 39,
-    "expected_compiled_operations": 35,
+    "total_operations": 40,
+    "expected_compiled_operations": 36,
     "expected_rejections": 4,
     "distinct_supplied_roles": 16,
     "fresh_png_compile_cases": [
@@ -1161,7 +1203,10 @@
       "original-i2va_animate",
       "paired-first-last-style-transform"
     ],
-    "note": "Earlier descriptive cases below are design rationale; the executable inputs/assertions are the frozen execution inventory. This manifest is not run evidence."
+    "note": "Earlier descriptive cases below are design rationale; the executable inputs/assertions are the frozen execution inventory. This manifest is not run evidence.",
+    "additional_original_guard_cases": [
+      "original-wardrobe-request-authority"
+    ]
   },
   "pre_live_assertion_corrections": [
     {

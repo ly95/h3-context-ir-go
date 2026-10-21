@@ -1,0 +1,1166 @@
+{
+  "composition_reviews": [
+    {
+      "version": "contextir/composition-review/v8",
+      "required": true,
+      "passed": true,
+      "calls": [
+        {
+          "stage": "semantic_review",
+          "attempt": 1,
+          "model": "deepseek-flash",
+          "usage": {
+            "input_tokens": 3365,
+            "output_tokens": 1460
+          },
+          "valid": true
+        }
+      ]
+    }
+  ],
+  "usage_complete": true,
+  "clarification_policy": "continue_with_recorded_choice",
+  "mode_decision": {
+    "clarification_policy": "continue_with_recorded_choice",
+    "confidence_kind": "routing_policy",
+    "aspect_mismatch": false,
+    "needs_clarification": false,
+    "mode": "ref2va",
+    "confidence": 1,
+    "rule": "caller-override",
+    "signals": [
+      "Mode follows explicit structured choices and media socket requirements."
+    ]
+  },
+  "scope_decision": {
+    "transcript_uses": [
+      {
+        "asset_id": "asset-1",
+        "text": "We close at six, not half past.",
+        "language": "English",
+        "speaker_hint": "man at the counter",
+        "voiceover": false
+      }
+    ],
+    "conflict_policy": "supplied_content_wins",
+    "requested": {
+      "speech": true,
+      "music": false,
+      "onscreen_text": false,
+      "magnitude": ""
+    },
+    "forbidden": {
+      "speech": false,
+      "music": false,
+      "onscreen_text": false,
+      "magnitude": ""
+    },
+    "allowed": {
+      "speech": true,
+      "music": true,
+      "onscreen_text": false,
+      "magnitude": "measured"
+    },
+    "dialogue": [
+      {
+        "text": "We close at six, not half past.",
+        "language": "English",
+        "speaker_hint": "man at the counter",
+        "voiceover": false,
+        "kind": "",
+        "delivery": ""
+      }
+    ],
+    "onscreen_text": [],
+    "reasoning": "The caller explicitly asks the man at the counter to say the recorded line word for word, which requests speech. The exact recorded line is selected from asset-1 for performance rather than duplicated in dialogue. No music or visible lettering is requested, and no prohibitions are stated.",
+    "calls": [
+      {
+        "stage": "scope",
+        "attempt": 1,
+        "model": "deepseek-flash",
+        "usage": {
+          "input_tokens": 1386,
+          "output_tokens": 766
+        },
+        "valid": true
+      }
+    ]
+  },
+  "licence": {
+    "medium_decision": {
+      "rendering_permission": {
+        "kind": "no_reference",
+        "disposition": "no_reference",
+        "operation_quote": "",
+        "target": "",
+        "reasoning": "No supplied reference has authority over the rendering medium."
+      },
+      "disposition": "no_reference",
+      "operation_quote": "",
+      "target": "",
+      "requested_style": "",
+      "reference_medium": "",
+      "requested_medium": "",
+      "treatments": [],
+      "reasoning": "No visual reference or rendering-medium instruction is supplied. The request concerns repeating a spoken line from an audio reference, which does not specify a rendering family or style phrase.",
+      "calls": [
+        {
+          "stage": "medium",
+          "attempt": 1,
+          "model": "deepseek-flash",
+          "usage": {
+            "input_tokens": 1226,
+            "output_tokens": 144
+          },
+          "valid": true
+        }
+      ]
+    },
+    "identity": [],
+    "governs": {
+      "action": "request",
+      "framing": "request",
+      "lighting": "request",
+      "medium": "request",
+      "palette": "request",
+      "wardrobe": "request"
+    },
+    "reasons": {
+      "action": "The caller explicitly asks the man at the counter to again speak the recorded line verbatim; that requested vocal performance governs action regardless of the audio reference, which only supplies voice timbre and delivery.",
+      "framing": "No visual reference supplies a shot scale or composition, and merely being at a counter does not constitute a framing instruction; framing is request-governed.",
+      "lighting": "No visual reference establishes lighting and the caller gives no instruction about light, a source, or its direction/quality; 'man at the counter' is placement only, so lighting is request-governed.",
+      "medium": "No visual reference is supplied and the request gives no rendering-family or style instruction; the audio reference has no authority over rendering medium, so the request governs.",
+      "palette": "No visual reference or grade instruction is provided; no hue, tonal contrast, saturation or grading is requested, so palette remains request-governed.",
+      "wardrobe": "No visual reference depicts clothing and the request names no garment or accessory, so no observed or requested wardrobe overrides the default; wardrobe is request-governed."
+    },
+    "transform_phrase": null,
+    "transform_target": "",
+    "medium_transferred": false,
+    "style": {
+      "observed_phrase": "",
+      "phrase": "Live-action, cinematic",
+      "source": "default",
+      "reference_medium": "",
+      "requested_medium": "",
+      "discrepancy": false,
+      "note": ""
+    },
+    "calls": [
+      {
+        "stage": "medium",
+        "attempt": 1,
+        "model": "deepseek-flash",
+        "usage": {
+          "input_tokens": 1226,
+          "output_tokens": 144
+        },
+        "valid": true
+      },
+      {
+        "stage": "licence",
+        "attempt": 1,
+        "model": "deepseek-flash",
+        "usage": {
+          "input_tokens": 1638,
+          "output_tokens": 500
+        },
+        "valid": true
+      }
+    ]
+  },
+  "budget": {
+    "prompt_tokens": 879,
+    "target_video_rows": 57456,
+    "target_audio_rows": 640,
+    "known_reference_rows": 0,
+    "unknown_reference_rows": [
+      "\u003cAudio 1\u003e"
+    ],
+    "in_trained_band": true
+  },
+  "findings": [
+    {
+      "rule": "R5-unanalysed-subject",
+      "severity": "WARN",
+      "msg": "\u003cSubject 1\u003e defined but absent from retention_analysis"
+    },
+    {
+      "rule": "A2-sound-duplicated",
+      "severity": "WARN",
+      "msg": "overall_soundscape repeats content already in the description rather than a separate layer"
+    }
+  ],
+  "status": "compiled",
+  "version": "contextir/compiler/v1",
+  "brief": {
+    "effort": "standard",
+    "transcripts": {
+      "asset-1": "We close at six, not half past."
+    },
+    "seconds_explicit": true,
+    "aspect_explicit": true,
+    "intent": "Have the man at the counter say again, word for word, the line that is on the recording.",
+    "assets": [
+      {
+        "preparation_computed": true,
+        "id": "asset-1",
+        "kind": "audio",
+        "description": "a flat male voice, close mic",
+        "metadata": {
+          "duration_ms": 3000,
+          "fps": {
+            "numerator": 0,
+            "denominator": 0
+          }
+        },
+        "preparation": {},
+        "role": "voice_timbre",
+        "composition": "unknown",
+        "sizing": "match"
+      }
+    ],
+    "seconds": 8,
+    "aspect": "16:9",
+    "mode": "ref2va",
+    "creativity": "balanced",
+    "evidence": [
+      {
+        "card": {
+          "asset_id": "asset-1",
+          "summary": "a spoken vocal reference supplying voice timbre and delivery, described by the caller as: a flat male voice, close mic (3.00s).",
+          "characterisation": "a flat male voice, close mic",
+          "composition": "unknown",
+          "transcript": "We close at six, not half past.",
+          "analyzer_version": "5",
+          "model": "none (typed metadata only)",
+          "coverage": {
+            "status": "partial",
+            "tracks": [
+              "audio"
+            ]
+          }
+        },
+        "asset_id": "asset-1",
+        "facts": [
+          {
+            "id": "card-asset-1-1",
+            "text": "a spoken vocal reference supplying voice timbre and delivery, described by the caller as: a flat male voice, close mic (3.00s).",
+            "source": {
+              "asset_id": "asset-1",
+              "track": "audio"
+            }
+          },
+          {
+            "id": "card-asset-1-2",
+            "text": "a flat male voice, close mic",
+            "source": {
+              "asset_id": "asset-1",
+              "track": "audio"
+            }
+          },
+          {
+            "id": "card-asset-1-3",
+            "text": "We close at six, not half past.",
+            "source": {
+              "asset_id": "asset-1",
+              "track": "audio"
+            }
+          }
+        ],
+        "model": "none (typed metadata only)",
+        "analyzer_version": "5",
+        "coverage": {
+          "status": "partial",
+          "tracks": [
+            "audio"
+          ]
+        }
+      }
+    ],
+    "cards": [
+      {
+        "asset_id": "asset-1",
+        "summary": "a spoken vocal reference supplying voice timbre and delivery, described by the caller as: a flat male voice, close mic (3.00s).",
+        "characterisation": "a flat male voice, close mic",
+        "composition": "unknown",
+        "transcript": "We close at six, not half past.",
+        "analyzer_version": "5",
+        "model": "none (typed metadata only)",
+        "coverage": {
+          "status": "partial",
+          "tracks": [
+            "audio"
+          ]
+        }
+      }
+    ]
+  },
+  "request": {
+    "instruction": "Have the man at the counter say again, word for word, the line that is on the recording.",
+    "mode": "ref2va",
+    "target": {
+      "duration_ms": 8000,
+      "frame_count": 192,
+      "aspect_ratio": "16:9",
+      "fps": {
+        "numerator": 24,
+        "denominator": 1
+      },
+      "width": 1344,
+      "height": 768
+    },
+    "assets": [
+      {
+        "id": "asset-1",
+        "kind": "audio",
+        "description": "a flat male voice, close mic",
+        "metadata": {
+          "duration_ms": 3000,
+          "fps": {
+            "numerator": 0,
+            "denominator": 0
+          }
+        },
+        "preparation": {}
+      }
+    ],
+    "bindings": [
+      {
+        "source": {
+          "asset_id": "asset-1",
+          "track": "audio"
+        },
+        "role": "voice"
+      }
+    ],
+    "dialogue": [
+      {
+        "id": "line-1",
+        "speaker_ids": [
+          "speaker-1"
+        ],
+        "language": "English",
+        "text": "We close at six, not half past."
+      }
+    ],
+    "allow_creative_additions": true,
+    "allow_generated_dialogue": false,
+    "pinned_shots": [
+      {
+        "id": "shot-1",
+        "start_ms": 0,
+        "end_ms": 8000
+      }
+    ],
+    "addition_scope": {
+      "dialogue": true,
+      "music": true,
+      "visible_text": false
+    }
+  },
+  "structure": {
+    "transcript_uses": [
+      {
+        "asset_id": "asset-1",
+        "text": "We close at six, not half past.",
+        "language": "English",
+        "speaker_hint": "man at the counter",
+        "voiceover": false
+      }
+    ],
+    "replacement_targets": {},
+    "style": "Live-action, cinematic",
+    "mode": "ref2va",
+    "assets": [
+      {
+        "asset_id": "asset-1",
+        "role": "voice_timbre",
+        "replaces": ""
+      }
+    ],
+    "shots": [
+      {
+        "subjects": [
+          "man at the counter"
+        ],
+        "sync_sound": [
+          "quiet indoor room tone beneath his voice"
+        ],
+        "start_ms": 0,
+        "purpose": "develop",
+        "framing": "medium",
+        "action": "At a plain wooden counter in a small, otherwise quiet shop, a man in a work shirt stands behind the counter, lifts his eyes, and speaks the supplied line with an even, flat delivery; his expression barely changes except for a slight tightening on the correction, then he gives a single small nod.",
+        "what_changes": "The shot begins on his neutral, waiting posture, then settles as he delivers the line and finishes with a small nod; the framing eases in slightly.",
+        "camera": {
+          "type": "Push In",
+          "amplitude": "small",
+          "speed": "slow"
+        }
+      }
+    ],
+    "dialogue": [
+      {
+        "text": "We close at six, not half past.",
+        "language": "English",
+        "speaker_hint": "man at the counter",
+        "voiceover": false,
+        "kind": "",
+        "delivery": ""
+      }
+    ],
+    "onscreen_text": [],
+    "requested": {
+      "speech": true,
+      "music": false,
+      "onscreen_text": false,
+      "magnitude": ""
+    },
+    "forbidden": {
+      "speech": false,
+      "music": false,
+      "onscreen_text": false,
+      "magnitude": ""
+    },
+    "reasoning": "The caller asks the man at the counter to repeat the recorded line verbatim, so speech is requested and the dialogue carries the exact transcript. No music or visible lettering is requested, and neither is added; the plain exchange is enough. A single continuous take keeps the focus on his flat, close-mic delivery. The voice-timbre reference guides vocal quality only, with no reuse of the original recording's signal."
+  },
+  "scope": {
+    "speech": true,
+    "music": true,
+    "onscreen_text": false,
+    "magnitude": "measured"
+  },
+  "document": {
+    "version": "contextir/v1",
+    "mode": "ref2va",
+    "target": {
+      "duration_ms": 8000,
+      "frame_count": 192,
+      "aspect_ratio": "16:9",
+      "fps": {
+        "numerator": 24,
+        "denominator": 1
+      },
+      "width": 1344,
+      "height": 768
+    },
+    "assets": [
+      {
+        "id": "asset-1",
+        "kind": "audio",
+        "description": "a flat male voice, close mic",
+        "metadata": {
+          "duration_ms": 3000,
+          "fps": {
+            "numerator": 0,
+            "denominator": 0
+          }
+        },
+        "preparation": {}
+      }
+    ],
+    "evidence": [
+      {
+        "card": {
+          "asset_id": "asset-1",
+          "summary": "a spoken vocal reference supplying voice timbre and delivery, described by the caller as: a flat male voice, close mic (3.00s).",
+          "characterisation": "a flat male voice, close mic",
+          "composition": "unknown",
+          "transcript": "We close at six, not half past.",
+          "analyzer_version": "5",
+          "model": "none (typed metadata only)",
+          "coverage": {
+            "status": "partial",
+            "tracks": [
+              "audio"
+            ]
+          }
+        },
+        "asset_id": "asset-1",
+        "facts": [
+          {
+            "id": "card-asset-1-1",
+            "text": "a spoken vocal reference supplying voice timbre and delivery, described by the caller as: a flat male voice, close mic (3.00s).",
+            "source": {
+              "asset_id": "asset-1",
+              "track": "audio"
+            }
+          },
+          {
+            "id": "card-asset-1-2",
+            "text": "a flat male voice, close mic",
+            "source": {
+              "asset_id": "asset-1",
+              "track": "audio"
+            }
+          },
+          {
+            "id": "card-asset-1-3",
+            "text": "We close at six, not half past.",
+            "source": {
+              "asset_id": "asset-1",
+              "track": "audio"
+            }
+          }
+        ],
+        "model": "none (typed metadata only)",
+        "analyzer_version": "5",
+        "coverage": {
+          "status": "partial",
+          "tracks": [
+            "audio"
+          ]
+        }
+      }
+    ],
+    "subjects": [
+      {
+        "kind": "person",
+        "attributes": [
+          "adult man",
+          "standing behind a counter"
+        ],
+        "origin": "user",
+        "id": "man-at-counter",
+        "description": "A man standing behind a plain shop counter, seen onscreen.",
+        "shot_ids": [
+          "shot-1"
+        ]
+      }
+    ],
+    "references": [
+      {
+        "id": "reference-asset-1-1",
+        "kind": "audio",
+        "source": {
+          "asset_id": "asset-1",
+          "track": "audio"
+        },
+        "roles": [
+          "voice"
+        ],
+        "description": "Voice timbre and delivery property reference only. Caller-provided reference metadata: a flat male voice, close mic. This description does not establish an auditory observation, authorize additional speech, or change the declared copy/property relationship.",
+        "retention": "reference",
+        "retention_details": "Only timbre and delivery are referenced; the source recording and its words are not copied.",
+        "shot_ids": [
+          "shot-1"
+        ],
+        "speaker_id": "speaker-1"
+      }
+    ],
+    "speakers": [
+      {
+        "onscreen": true,
+        "id": "speaker-1",
+        "description": "The man at the counter, speaking with the target timbre and delivery guided by the supplied voice reference.",
+        "subject_id": "man-at-counter",
+        "voice_reference_id": "reference-asset-1-1"
+      }
+    ],
+    "dialogue": [
+      {
+        "id": "line-1",
+        "speaker_ids": [
+          "speaker-1"
+        ],
+        "language": "English",
+        "text": "We close at six, not half past."
+      }
+    ],
+    "summary": [
+      {
+        "text": "A quiet shop exchange: a man behind a plain counter repeats a supplied line with flat delivery, then gives a small nod."
+      }
+    ],
+    "style": "Live-action, cinematic",
+    "shots": [
+      {
+        "id": "shot-1",
+        "start_ms": 0,
+        "end_ms": 8000,
+        "description": [
+          {
+            "text": "The shot opens inside a small, otherwise quiet shop, where a plain wooden counter runs across the middle ground and the background is kept simple and close. The space is compact, with the counter close enough to read as a real point of contact rather than a backdrop. "
+          },
+          {
+            "subject_id": "man-at-counter"
+          },
+          {
+            "text": " stands behind the counter in a work shirt, his posture relaxed and his attention initially lowered, as if he has been waiting for someone to approach. The room is lit by soft, even indoor light that picks out the grain of the counter and the folds of his shirt without creating hard shadows; the surrounding shelves and wall surfaces stay muted, giving the space a lived-in but uncluttered feel. A few plain packages and a shallow shelf sit behind him, just enough to suggest a working shop without pulling focus from the exchange. The counter's edge is smooth from use, and the wall behind him carries a faint, warm tone. "
+          },
+          {
+            "text": "He lifts his eyes toward the person across the counter, meets them with a level gaze, and begins to speak the supplied line in an even, flat delivery. His mouth moves at an unhurried pace, and his expression remains largely neutral; the only visible change is a slight tightening around his eyes and mouth on the correction, a small emphasis that reads as precise rather than emotional. He keeps his shoulders squared to the counter and his hands resting near the edge, avoiding broad gestures. A quiet indoor room tone sits under his voice, close and flat, with no music or added sound. "
+          },
+          {
+            "text": "The counter between them stays visible, its worn surface and the man's work shirt giving the exchange a practical, everyday texture. The light remains soft and unchanged across the scene, and the muted background keeps the focus on his face, the counter edge, and the small distance between him and the listener. He does not step away or turn aside; his posture stays grounded, and his gaze holds steady through the delivery. After the line, the tension in his face eases and he gives a single small nod, brief and understated, not a bow or a shrug, as if confirming that the correction has been made and the exchange is complete. The room remains still, and the scene settles on his neutral expression and the quiet counter between them. "
+          }
+        ],
+        "events": [
+          {
+            "kind": "visual",
+            "at_ms": 0,
+            "description": [
+              {
+                "text": "A compact, quiet shop interior with a plain wooden counter across the middle ground, muted shelves and walls behind it, and soft, even indoor light."
+              }
+            ]
+          },
+          {
+            "kind": "action",
+            "at_ms": 0,
+            "description": [
+              {
+                "subject_id": "man-at-counter"
+              },
+              {
+                "text": " stands behind the counter in a work shirt, his posture relaxed and his attention initially lowered, then lifts his eyes toward the person across from him."
+              }
+            ]
+          },
+          {
+            "kind": "sound",
+            "at_ms": 0,
+            "description": [
+              {
+                "text": "A quiet indoor room tone sits beneath his voice."
+              }
+            ]
+          },
+          {
+            "kind": "camera",
+            "description": [
+              {
+                "text": "The camera pushes in with small amplitude at slow speed."
+              }
+            ]
+          },
+          {
+            "kind": "dialogue",
+            "dialogue": {
+              "line_id": "line-1",
+              "text": "We close at six, not half past."
+            }
+          }
+        ]
+      }
+    ],
+    "soundscape": "A quiet indoor room tone sits beneath his voice.",
+    "music": "N/A",
+    "claims": [
+      {
+        "id": "claim-user-1",
+        "origin": "user",
+        "text": "The man at the counter should repeat the recorded line word for word."
+      },
+      {
+        "id": "claim-observed-1",
+        "origin": "observed",
+        "text": "The supplied voice reference is described as a flat male voice, close mic.",
+        "sources": [
+          {
+            "asset_id": "asset-1",
+            "track": "audio"
+          }
+        ]
+      },
+      {
+        "id": "claim-creative-1",
+        "origin": "creative",
+        "text": "The shop interior, plain wooden counter, work shirt, soft indoor light, quiet room tone, small nod, and background shelf details are creative additions permitted by the request."
+      }
+    ]
+  },
+  "artifact": {
+    "version": "contextir-h3/artifact-v1",
+    "compiler_version": "contextir-h3/v1.2",
+    "format_version": "minimax-h3/prompt-v1",
+    "mode": "ref2va",
+    "target": {
+      "duration_ms": 8000,
+      "frame_count": 192,
+      "aspect_ratio": "16:9",
+      "fps": {
+        "numerator": 24,
+        "denominator": 1
+      },
+      "width": 1344,
+      "height": 768
+    },
+    "profile": {
+      "name": "h3-published-format-v1",
+      "format": "minimax-h3/prompt-v1",
+      "fps": {
+        "numerator": 24,
+        "denominator": 1
+      },
+      "modes": [
+        "t2va",
+        "i2va",
+        "l2va",
+        "fl2va",
+        "ref2va"
+      ],
+      "limits": {
+        "pictures": 0,
+        "videos": 0,
+        "video_audio": 0,
+        "standalone_audio": 0
+      },
+      "supports_reference_frame_anchors": true,
+      "supports_source_intervals": true
+    },
+    "prompt": "subject_definitions:\n\u003cSubject 1\u003e is A man standing behind a plain shop counter, seen onscreen.\n\u003cAudio 1\u003e is Voice timbre and delivery property reference only. Caller-provided reference metadata: a flat male voice, close mic. This description does not establish an auditory observation, authorize additional speech, or change the declared copy/property relationship. Its role is voice timbre and delivery. It supplies the voice reference for \u003cSubject 1\u003e (S1).\n\nsummary:\n[reference generation + audio reference] A quiet shop exchange: a man behind a plain counter repeats a supplied line with flat delivery, then gives a small nod.\n\nretention_analysis:\n\u003cAudio 1\u003e: reference - Only timbre and delivery are referenced; the source recording and its words are not copied. Applicable scope: ([Shot 1]; voice timbre and delivery).\n\ndetailed_description:\nThe target video is in live-action style, cinematic.\n[Shot 1] The shot opens inside a small, otherwise quiet shop, where a plain wooden counter runs across the middle ground and the background is kept simple and close. The space is compact, with the counter close enough to read as a real point of contact rather than a backdrop. \u003cSubject 1\u003e stands behind the counter in a work shirt, his posture relaxed and his attention initially lowered, as if he has been waiting for someone to approach. The room is lit by soft, even indoor light that picks out the grain of the counter and the folds of his shirt without creating hard shadows; the surrounding shelves and wall surfaces stay muted, giving the space a lived-in but uncluttered feel. A few plain packages and a shallow shelf sit behind him, just enough to suggest a working shop without pulling focus from the exchange. The counter's edge is smooth from use, and the wall behind him carries a faint, warm tone. He lifts his eyes toward the person across the counter, meets them with a level gaze, and begins to speak the supplied line in an even, flat delivery. His mouth moves at an unhurried pace, and his expression remains largely neutral; the only visible change is a slight tightening around his eyes and mouth on the correction, a small emphasis that reads as precise rather than emotional. He keeps his shoulders squared to the counter and his hands resting near the edge, avoiding broad gestures. A quiet indoor room tone sits under his voice, close and flat, with no music or added sound. The counter between them stays visible, its worn surface and the man's work shirt giving the exchange a practical, everyday texture. The light remains soft and unchanged across the scene, and the muted background keeps the focus on his face, the counter edge, and the small distance between him and the listener. He does not step away or turn aside; his posture stays grounded, and his gaze holds steady through the delivery. After the line, the tension in his face eases and he gives a single small nod, brief and understated, not a bow or a shrug, as if confirming that the correction has been made and the exchange is complete. The room remains still, and the scene settles on his neutral expression and the quiet counter between them.  \u003cAudio 1\u003e applies in this shot as voice timbre and delivery. Its defined audible characteristics are referenced without copying the source signal. At 00:00.000, A compact, quiet shop interior with a plain wooden counter across the middle ground, muted shelves and walls behind it, and soft, even indoor light. At 00:00.000, \u003cSubject 1\u003e stands behind the counter in a work shirt, his posture relaxed and his attention initially lowered, then lifts his eyes toward the person across from him. At 00:00.000, A quiet indoor room tone sits beneath his voice. The camera pushes in with small amplitude at slow speed. The man at the counter, speaking with the target timbre and delivery guided by the supplied voice reference. \u003cSubject 1\u003e, using the voice timbre referenced from \u003cAudio 1\u003e (S1) says: \u003cd\u003e[English] We close at six, not half past.\u003c/d\u003e\n\noverall_soundscape:\nA quiet indoor room tone sits beneath his voice.\n\nnon_diegetic_music:\nN/A\n",
+    "manifest": {
+      "media": [
+        {
+          "preparation": {},
+          "source_metadata": {
+            "duration_ms": 3000,
+            "fps": {
+              "numerator": 0,
+              "denominator": 0
+            }
+          },
+          "label": "\u003cAudio 1\u003e",
+          "kind": "audio",
+          "source": {
+            "asset_id": "asset-1",
+            "track": "audio"
+          },
+          "socket": "ref_audio_1",
+          "target_uses": [
+            {
+              "reference_id": "reference-asset-1-1",
+              "roles": [
+                "voice"
+              ],
+              "retention": "reference",
+              "speaker_id": "speaker-1",
+              "shots": [
+                {
+                  "id": "shot-1",
+                  "index": 1,
+                  "interval": {
+                    "start_ms": 0,
+                    "end_ms": 8000
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "subjects": [
+        {
+          "id": "man-at-counter",
+          "label": "\u003cSubject 1\u003e"
+        }
+      ],
+      "references": [
+        {
+          "id": "reference-asset-1-1",
+          "label": "\u003cAudio 1\u003e"
+        }
+      ],
+      "speakers": [
+        {
+          "id": "speaker-1",
+          "label": "(S1)"
+        }
+      ]
+    },
+    "frames": 192,
+    "effective_duration_seconds": {
+      "numerator": 8,
+      "denominator": 1
+    },
+    "document_sha256": "8522b67b9420c66c4695db8e24ed7acc4d3fc8e7bbd9fd8c717003741cb2d11d",
+    "profile_sha256": "ce4364d3f1242f5aeb2216db44195fb3897f4828dd9e145c4c16c64315786ab6",
+    "prompt_sha256": "56ca3af0a856f287913078744fa16355e0dfefdbd4db307b9d62fa4be8ce1fa5",
+    "manifest_sha256": "59f63884a01509a147c674b72daba70cc79e9b7bb6901100cebfead10760d406",
+    "sha256": "f24806307cc94456a016a9bac5c59c72f040e8e7ca44aadaf22f9f97dbf1d7cd"
+  },
+  "evidence": [
+    {
+      "card": {
+        "asset_id": "asset-1",
+        "summary": "a spoken vocal reference supplying voice timbre and delivery, described by the caller as: a flat male voice, close mic (3.00s).",
+        "characterisation": "a flat male voice, close mic",
+        "composition": "unknown",
+        "transcript": "We close at six, not half past.",
+        "analyzer_version": "5",
+        "model": "none (typed metadata only)",
+        "coverage": {
+          "status": "partial",
+          "tracks": [
+            "audio"
+          ]
+        }
+      },
+      "asset_id": "asset-1",
+      "facts": [
+        {
+          "id": "card-asset-1-1",
+          "text": "a spoken vocal reference supplying voice timbre and delivery, described by the caller as: a flat male voice, close mic (3.00s).",
+          "source": {
+            "asset_id": "asset-1",
+            "track": "audio"
+          }
+        },
+        {
+          "id": "card-asset-1-2",
+          "text": "a flat male voice, close mic",
+          "source": {
+            "asset_id": "asset-1",
+            "track": "audio"
+          }
+        },
+        {
+          "id": "card-asset-1-3",
+          "text": "We close at six, not half past.",
+          "source": {
+            "asset_id": "asset-1",
+            "track": "audio"
+          }
+        }
+      ],
+      "model": "none (typed metadata only)",
+      "analyzer_version": "5",
+      "coverage": {
+        "status": "partial",
+        "tracks": [
+          "audio"
+        ]
+      }
+    }
+  ],
+  "decisions": [
+    {
+      "field": "target",
+      "source": "computed",
+      "value": {
+        "effective_seconds": 8,
+        "frame_count": 192,
+        "nominal_seconds": 8,
+        "policy": "snap_up"
+      },
+      "explanation": "Effective timing and nominal duration are recorded separately; generated cuts use effective timing."
+    },
+    {
+      "field": "canvas",
+      "source": "computed",
+      "value": [
+        1344,
+        768
+      ],
+      "explanation": "Native short-edge canvas is aligned to 32 pixels; explicit megapixels replaces the native area budget."
+    },
+    {
+      "field": "execution",
+      "source": "explicit_adapter_policy",
+      "value": {
+        "effort": "standard"
+      },
+      "explanation": "The injected adapters and explicit compiler repair configuration implement standard effort."
+    },
+    {
+      "field": "mode",
+      "source": "caller-override",
+      "value": {
+        "clarification_policy": "continue_with_recorded_choice",
+        "confidence_kind": "routing_policy",
+        "aspect_mismatch": false,
+        "needs_clarification": false,
+        "mode": "ref2va",
+        "confidence": 1,
+        "rule": "caller-override",
+        "signals": [
+          "Mode follows explicit structured choices and media socket requirements."
+        ]
+      },
+      "explanation": "Mode follows the production typed routing contract; publication capabilities are checked separately."
+    },
+    {
+      "field": "content_scope",
+      "source": "typed_request_interpretation",
+      "value": {
+        "transcript_uses": [
+          {
+            "asset_id": "asset-1",
+            "text": "We close at six, not half past.",
+            "language": "English",
+            "speaker_hint": "man at the counter",
+            "voiceover": false
+          }
+        ],
+        "conflict_policy": "supplied_content_wins",
+        "requested": {
+          "speech": true,
+          "music": false,
+          "onscreen_text": false,
+          "magnitude": ""
+        },
+        "forbidden": {
+          "speech": false,
+          "music": false,
+          "onscreen_text": false,
+          "magnitude": ""
+        },
+        "allowed": {
+          "speech": true,
+          "music": true,
+          "onscreen_text": false,
+          "magnitude": "measured"
+        },
+        "dialogue": [
+          {
+            "text": "We close at six, not half past.",
+            "language": "English",
+            "speaker_hint": "man at the counter",
+            "voiceover": false,
+            "kind": "",
+            "delivery": ""
+          }
+        ],
+        "onscreen_text": [],
+        "reasoning": "The caller explicitly asks the man at the counter to say the recorded line word for word, which requests speech. The exact recorded line is selected from asset-1 for performance rather than duplicated in dialogue. No music or visible lettering is requested, and no prohibitions are stated.",
+        "calls": [
+          {
+            "stage": "scope",
+            "attempt": 1,
+            "model": "deepseek-flash",
+            "usage": {
+              "input_tokens": 1386,
+              "output_tokens": 766
+            },
+            "valid": true
+          }
+        ]
+      },
+      "explanation": "Caller requests and prohibitions are interpreted before code applies the explicit creativity level."
+    },
+    {
+      "field": "reference_licence",
+      "source": "typed_attribute_precedence",
+      "value": {
+        "medium_decision": {
+          "rendering_permission": {
+            "kind": "no_reference",
+            "disposition": "no_reference",
+            "operation_quote": "",
+            "target": "",
+            "reasoning": "No supplied reference has authority over the rendering medium."
+          },
+          "disposition": "no_reference",
+          "operation_quote": "",
+          "target": "",
+          "requested_style": "",
+          "reference_medium": "",
+          "requested_medium": "",
+          "treatments": [],
+          "reasoning": "No visual reference or rendering-medium instruction is supplied. The request concerns repeating a spoken line from an audio reference, which does not specify a rendering family or style phrase.",
+          "calls": [
+            {
+              "stage": "medium",
+              "attempt": 1,
+              "model": "deepseek-flash",
+              "usage": {
+                "input_tokens": 1226,
+                "output_tokens": 144
+              },
+              "valid": true
+            }
+          ]
+        },
+        "identity": [],
+        "governs": {
+          "action": "request",
+          "framing": "request",
+          "lighting": "request",
+          "medium": "request",
+          "palette": "request",
+          "wardrobe": "request"
+        },
+        "reasons": {
+          "action": "The caller explicitly asks the man at the counter to again speak the recorded line verbatim; that requested vocal performance governs action regardless of the audio reference, which only supplies voice timbre and delivery.",
+          "framing": "No visual reference supplies a shot scale or composition, and merely being at a counter does not constitute a framing instruction; framing is request-governed.",
+          "lighting": "No visual reference establishes lighting and the caller gives no instruction about light, a source, or its direction/quality; 'man at the counter' is placement only, so lighting is request-governed.",
+          "medium": "No visual reference is supplied and the request gives no rendering-family or style instruction; the audio reference has no authority over rendering medium, so the request governs.",
+          "palette": "No visual reference or grade instruction is provided; no hue, tonal contrast, saturation or grading is requested, so palette remains request-governed.",
+          "wardrobe": "No visual reference depicts clothing and the request names no garment or accessory, so no observed or requested wardrobe overrides the default; wardrobe is request-governed."
+        },
+        "transform_phrase": null,
+        "transform_target": "",
+        "medium_transferred": false,
+        "style": {
+          "observed_phrase": "",
+          "phrase": "Live-action, cinematic",
+          "source": "default",
+          "reference_medium": "",
+          "requested_medium": "",
+          "discrepancy": false,
+          "note": ""
+        },
+        "calls": [
+          {
+            "stage": "medium",
+            "attempt": 1,
+            "model": "deepseek-flash",
+            "usage": {
+              "input_tokens": 1226,
+              "output_tokens": 144
+            },
+            "valid": true
+          },
+          {
+            "stage": "licence",
+            "attempt": 1,
+            "model": "deepseek-flash",
+            "usage": {
+              "input_tokens": 1638,
+              "output_tokens": 500
+            },
+            "valid": true
+          }
+        ]
+      },
+      "explanation": "Each attribute follows explicit request or observed reference; poses and reference-sheet presentation are not subject identity."
+    },
+    {
+      "field": "dialogue",
+      "source": "host_literal_slots",
+      "value": [
+        {
+          "placeholder": "{{D1}}",
+          "line_id": "line-1",
+          "shot_id": "shot-1",
+          "speaker_ids": [
+            "speaker-1"
+          ],
+          "speaker_hint": "man at the counter",
+          "language": "English",
+          "voiceover": false,
+          "words": 7
+        }
+      ],
+      "explanation": "The structure stage fixes placement; the host restores exact dialogue after prose. The writer does not author the supplied words."
+    },
+    {
+      "field": "shots.camera",
+      "source": "host_template",
+      "value": [
+        {
+          "subjects": [
+            "man at the counter"
+          ],
+          "sync_sound": [
+            "quiet indoor room tone beneath his voice"
+          ],
+          "start_ms": 0,
+          "purpose": "develop",
+          "framing": "medium",
+          "action": "At a plain wooden counter in a small, otherwise quiet shop, a man in a work shirt stands behind the counter, lifts his eyes, and speaks the supplied line with an even, flat delivery; his expression barely changes except for a slight tightening on the correction, then he gives a single small nod.",
+          "what_changes": "The shot begins on his neutral, waiting posture, then settles as he delivers the line and finishes with a small nod; the framing eases in slightly.",
+          "camera": {
+            "type": "Push In",
+            "amplitude": "small",
+            "speed": "slow"
+          }
+        }
+      ],
+      "explanation": "Canonical camera events are assembled from the typed structural plan after prose."
+    },
+    {
+      "field": "subjects.shot_ids",
+      "source": "typed_actual_use_projection",
+      "value": [
+        {
+          "kind": "person",
+          "attributes": [
+            "adult man",
+            "standing behind a counter"
+          ],
+          "origin": "user",
+          "id": "man-at-counter",
+          "description": "A man standing behind a plain shop counter, seen onscreen.",
+          "shot_ids": [
+            "shot-1"
+          ]
+        }
+      ],
+      "explanation": "High-level target appearances derive only from actual RichText and speaker-dialogue bindings. Removed figures carry their incoming replacement's transfer scope; unused source observations remain in Evidence."
+    },
+    {
+      "field": "creativity",
+      "source": "caller_or_default",
+      "value": {
+        "speech": true,
+        "music": true,
+        "onscreen_text": false,
+        "magnitude": "measured"
+      },
+      "explanation": "Scope reflects requested elements, explicit prohibitions, and the selected four-position creativity control."
+    }
+  ],
+  "calls": [
+    {
+      "stage": "scope",
+      "attempt": 1,
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 1386,
+        "output_tokens": 766
+      },
+      "valid": true
+    },
+    {
+      "stage": "medium",
+      "attempt": 1,
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 1226,
+        "output_tokens": 144
+      },
+      "valid": true
+    },
+    {
+      "stage": "licence",
+      "attempt": 1,
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 1638,
+        "output_tokens": 500
+      },
+      "valid": true
+    },
+    {
+      "stage": "structure",
+      "attempt": 1,
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 3726,
+        "output_tokens": 3455
+      },
+      "valid": true
+    },
+    {
+      "stage": "plan",
+      "attempt": 1,
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 9763,
+        "output_tokens": 13544
+      },
+      "valid": true
+    },
+    {
+      "stage": "semantic_review",
+      "attempt": 1,
+      "model": "deepseek-flash",
+      "usage": {
+        "input_tokens": 3365,
+        "output_tokens": 1460
+      },
+      "valid": true
+    }
+  ]
+}

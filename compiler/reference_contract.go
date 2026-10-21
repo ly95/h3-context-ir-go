@@ -16,6 +16,7 @@ import (
 type referenceContract struct {
 	References   []contextir.Reference `json:"references"`
 	Speakers     []contextir.Speaker   `json:"speakers,omitempty"`
+	AudioTargets []audioPropertyTarget `json:"audio_property_targets,omitempty"`
 	roles        map[string]Role
 	assets       []contextir.Asset
 	writerAssets []contextir.Asset
@@ -178,6 +179,10 @@ func canonicalReferenceContract(b Brief, st Structure, req contextir.Request, su
 			return out, invalid("voice_bindings", "Voice bindings must identify supplied voice_timbre attachments.")
 		}
 	}
+	out.AudioTargets, err = audioPropertyTargets(out.References, out.Speakers, req.Dialogue)
+	if err != nil {
+		return out, err
+	}
 	_ = subjects // Subject responsibilities remain owned by canonicalSubjects.
 	return out, nil
 }
@@ -212,7 +217,7 @@ func referenceRoleDescription(role Role) (string, string) {
 	case RoleReplacementSubject:
 		return "The incoming identity replacing the explicitly resolved source figure.", "Preserve the incoming identity; transfer only the removed figure's position, actions and timing, never its appearance."
 	case RoleVoiceTimbre:
-		return "Voice timbre and delivery property reference only.", "Only timbre and delivery are referenced; the source recording and its words are not copied."
+		return "Voice timbre and delivery property reference for the reciprocally bound target vocal speaker only; it does not supply mechanical sound, ambience, music or timing.", "Only that target speaker's vocal timbre and delivery are referenced; the source recording and its words are not copied. Without an authorized vocal performance the binding remains dormant, while independent newly generated ambience remains allowed."
 	case RoleBGM:
 		return "The supplied background-music recording to reuse beneath the new audio.", "The original recorded BGM signal is copied in part or mixed beneath new audio; it is not merely a style reference."
 	case RoleMusicStyle:
@@ -363,6 +368,9 @@ func (c referenceContract) verify(d contextir.Document) error {
 		if !found {
 			return failure(contextir.CodeModelOutput, "compose", "speakers", "Preserve the reciprocal host voice binding.", nil)
 		}
+	}
+	if _, err := actualAudioPropertyTargets(d); err != nil {
+		return err
 	}
 	return nil
 }
@@ -520,6 +528,9 @@ func (c referenceContract) projectWriterInput(input map[string]json.RawMessage) 
 	}
 	controls["canonical_references"], _ = json.Marshal(c.References)
 	controls["canonical_voice_bindings"], _ = json.Marshal(c.Speakers)
+	if len(c.AudioTargets) > 0 {
+		controls["audio_property_targets"], _ = json.Marshal(c.AudioTargets)
+	}
 	if raw := controls["reference_licence"]; len(raw) > 0 && string(raw) != "null" {
 		projected, err := compositionLicenceView(raw)
 		if err != nil {

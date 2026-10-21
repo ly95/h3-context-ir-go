@@ -40,7 +40,12 @@ type fixtureCase struct {
 	Changes       []string                     `json:"changes"`
 	Clarification compiler.ClarificationPolicy `json:"clarification_policy"`
 	AllowPartial  bool                         `json:"allow_partial_perception"`
-	Media         map[string]struct {
+	Profile       string                       `json:"profile"`
+	RetryLimits   *struct {
+		Structure *int `json:"structure"`
+		Planner   *int `json:"planner"`
+	} `json:"retry_limits"`
+	Media map[string]struct {
 		Path   string `json:"path"`
 		SHA256 string `json:"sha256"`
 	} `json:"media"`
@@ -85,17 +90,54 @@ type operation struct {
 }
 
 type recordedCase struct {
-	ID         string         `json:"case_id"`
-	Brief      compiler.Brief `json:"brief"`
-	Operations []operation    `json:"operations"`
+	ID         string          `json:"case_id"`
+	Brief      compiler.Brief  `json:"brief"`
+	Options    recordedOptions `json:"options"`
+	Operations []operation     `json:"operations"`
+}
+
+type recordedOptions struct {
+	Profile          h3.Profile                   `json:"profile"`
+	Frame            compiler.FramePolicy         `json:"frame_policy"`
+	Failure          compiler.FailurePolicy       `json:"failure_policy"`
+	StructureRetries *int                         `json:"max_structure_retries"`
+	PlannerRetries   *int                         `json:"planner_max_retries"`
+	Scope            compiler.ScopeConflictPolicy `json:"scope_conflict_policy"`
+	Clarification    compiler.ClarificationPolicy `json:"clarification_policy"`
+	Partial          *bool                        `json:"allow_partial_perception"`
+	ImageIncludeCard *bool                        `json:"image_include_card"`
+	ImageMaxRetries  *int                         `json:"image_max_retries"`
+}
+
+func actualCompilerOptions(input fixtureCase, options recordedOptions) (compiler.Options, deepseek.PerceptionOptions, error) {
+	if input.Clarification == "" {
+		input.Clarification = compiler.ClarificationRequire
+	}
+	profile := h3.OfficialProfile()
+	switch input.Profile {
+	case "", "official", h3.OfficialProfile().Name:
+	case "comfy", h3.ComfyUIProfile().Name:
+		profile = h3.ComfyUIProfile()
+	default:
+		return compiler.Options{}, deepseek.PerceptionOptions{}, errors.New("explicit fixture profile is unsupported")
+	}
+	if !equalValue(options.Profile, profile) || options.Frame != compiler.FramePolicySnapUp || options.Failure != compiler.FailurePolicyFail || options.Scope != compiler.ScopeConflictSuppliedWins || options.Clarification != input.Clarification || options.Partial == nil || *options.Partial != input.AllowPartial || options.StructureRetries == nil || options.PlannerRetries == nil || *options.StructureRetries < 0 || *options.StructureRetries > 3 || *options.PlannerRetries < 0 || *options.PlannerRetries > 3 || options.ImageIncludeCard == nil || !*options.ImageIncludeCard || options.ImageMaxRetries == nil || *options.ImageMaxRetries != 1 {
+		return compiler.Options{}, deepseek.PerceptionOptions{}, errors.New("recorded profile/options are missing, unsupported or disagree with explicit fixture")
+	}
+	if input.RetryLimits != nil && (input.RetryLimits.Structure == nil || input.RetryLimits.Planner == nil || *input.RetryLimits.Structure < 0 || *input.RetryLimits.Structure > 3 || *input.RetryLimits.Planner < 0 || *input.RetryLimits.Planner > 3 || *input.RetryLimits.Structure != *options.StructureRetries || *input.RetryLimits.Planner != *options.PlannerRetries) {
+		return compiler.Options{}, deepseek.PerceptionOptions{}, errors.New("explicit fixture retry override differs from actual recorded options")
+	}
+	return compiler.Options{Profile: options.Profile, FramePolicy: options.Frame, FailurePolicy: options.Failure, ScopeConflictPolicy: options.Scope, ClarificationPolicy: options.Clarification, MaxStructureRetries: *options.StructureRetries, Planner: planner.Options{MaxRetries: *options.PlannerRetries, AllowPartialPerception: *options.Partial}}, deepseek.PerceptionOptions{IncludeCard: *options.ImageIncludeCard, MaxRetries: *options.ImageMaxRetries}, nil
 }
 
 type liveReport struct {
-	Schema        string         `json:"schema"`
-	BinarySHA256  string         `json:"binary_sha256"`
-	FixtureFile   string         `json:"fixture_file"`
-	FixtureSHA256 string         `json:"fixture_sha256"`
-	Cases         []recordedCase `json:"cases"`
+	Schema           string         `json:"schema"`
+	BinarySHA256     string         `json:"binary_sha256"`
+	FixtureFile      string         `json:"fixture_file"`
+	FixtureSHA256    string         `json:"fixture_sha256"`
+	StructureRetries *int           `json:"max_structure_retries"`
+	PlannerRetries   *int           `json:"max_planner_retries"`
+	Cases            []recordedCase `json:"cases"`
 }
 
 type responseRecord struct {
@@ -381,8 +423,9 @@ func runCase(input fixtureCase, recorded recordedCase, root, fixtureRoot, output
 	if err != nil || !equalValue(brief, recorded.Brief) {
 		return nil, errors.New("recorded initial Brief differs from original fixture conversion")
 	}
-	if input.Clarification == "" {
-		input.Clarification = compiler.ClarificationRequire
+	compilerOptions, imageOptions, err := actualCompilerOptions(input, recorded.Options)
+	if err != nil {
+		return nil, err
 	}
 	model := &replay{Root: root, MediaHashes: map[string]bool{}}
 	for _, media := range input.Media {
@@ -394,15 +437,11 @@ func runCase(input fixtureCase, recorded recordedCase, root, fixtureRoot, output
 			return deepseek.Image{}, errors.New("no explicit local image fixture exists for asset")
 		}
 		return resolveFixtureImage(fixtureRoot, media.Path, media.SHA256)
-	}, deepseek.PerceptionOptions{IncludeCard: true, MaxRetries: 1})
+	}, imageOptions)
 	if err != nil {
 		return nil, err
 	}
-	engine, err := compiler.New(model, perceiver, compiler.Options{
-		Profile: h3.OfficialProfile(), FramePolicy: compiler.FramePolicySnapUp, FailurePolicy: compiler.FailurePolicyFail,
-		ScopeConflictPolicy: compiler.ScopeConflictSuppliedWins, ClarificationPolicy: input.Clarification,
-		MaxStructureRetries: 1, Planner: planner.Options{MaxRetries: 1, AllowPartialPerception: input.AllowPartial},
-	})
+	engine, err := compiler.New(model, perceiver, compilerOptions)
 	if err != nil {
 		return nil, err
 	}
@@ -517,6 +556,9 @@ func run() error {
 	if input.Schema != "contextir-live-eval/v1" || input.SourceCommit != compiler.UpstreamRevision || report.Schema != "contextir-live-eval-report/v1" || len(input.Cases) == 0 || len(input.Cases) != len(report.Cases) {
 		return errors.New("unsupported or incomplete live suite evidence")
 	}
+	if (report.StructureRetries == nil) != (report.PlannerRetries == nil) || report.StructureRetries != nil && (*report.StructureRetries < 0 || *report.StructureRetries > 3 || *report.PlannerRetries < 0 || *report.PlannerRetries > 3) {
+		return errors.New("recorded global retry configuration is incomplete or unsupported")
+	}
 	fixtureBytes, err := os.ReadFile(*fixturePath)
 	if err != nil || digest(fixtureBytes) != report.FixtureSHA256 {
 		return errors.New("fixture bytes differ from live run")
@@ -539,6 +581,9 @@ func run() error {
 			return errors.New("live suite case identity or ordering differs")
 		}
 		seen[inputCase.ID] = true
+		if inputCase.RetryLimits == nil && report.StructureRetries != nil && (report.Cases[index].Options.StructureRetries == nil || report.Cases[index].Options.PlannerRetries == nil || *report.Cases[index].Options.StructureRetries != *report.StructureRetries || *report.Cases[index].Options.PlannerRetries != *report.PlannerRetries) {
+			return errors.New("case changed global retry budgets without explicit fixture override")
+		}
 		result, err := runCase(inputCase, report.Cases[index], *runDirectory, filepath.Dir(*fixturePath), *output)
 		if err != nil {
 			return fmt.Errorf("case %d: %w", index+1, err)

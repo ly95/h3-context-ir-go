@@ -1,0 +1,23 @@
+{
+  "response": {
+    "json": {
+      "updates": [
+        {
+          "field": "asset_remove",
+          "asset_id": "asset-1",
+          "action": "remove",
+          "quote": "Remove audio asset-1 only.",
+          "value": null
+        }
+      ],
+      "reasoning": "The new instruction authorises exactly one change: removal of the existing audio asset asset-1 (\"Remove audio asset-1 only.\"). Every other field is expressly held fixed — the intent, the fixed sentence \"We close at six, not half past.\", the transcript_uses entry (source words, language, speaker hint, voiceover flag), the transcripts map, the observed evidence/cards, and the format constraints (8s, 16:9, ref2va, balanced) are all preserved verbatim. Note for the caller: the preserved transcript_uses entry and transcripts key still reference asset-1 as their source, because the instruction says \"Keep all selected source words and their source selection unchanged.\" That reference is now dangling with the asset removed; the brief will not fully resolve until the caller explicitly authorises either a replacement source or a change to the transcript_uses/transcripts selection, which this patch deliberately does not make."
+    },
+    "model": "deepseek-flash",
+    "usage": {
+      "input_tokens": 1249,
+      "output_tokens": 1083
+    }
+  },
+  "elapsed_ms": 6816,
+  "images": []
+}

@@ -83,16 +83,16 @@ func TestNativeOptionsAndFixtureValidation(t *testing.T) {
 	if err := validateFixture(f); err != nil {
 		t.Fatal(err)
 	}
-	options, stored, err := nativeOptions(item)
+	options, stored, err := nativeOptions(item, defaultRetries())
 	if err != nil || options.Profile.Name != h3.OfficialProfile().Name || options.FailurePolicy != compiler.FailurePolicyFail || options.MaxStructureRetries != 1 || options.Planner.MaxRetries != 1 || stored.Clarification != compiler.ClarificationRequire {
 		t.Fatal("runtime policy changed", stored, err)
 	}
 	item.Clarification = compiler.ClarificationContinue
-	_, stored, err = nativeOptions(item)
+	_, stored, err = nativeOptions(item, defaultRetries())
 	if err != nil || stored.Clarification != compiler.ClarificationContinue {
 		t.Fatal("explicit continuation was lost")
 	}
-	for _, bad := range []inputCase{{ID: "../bad", Brief: &b}, {ID: "same", Brief: &b, Original: &originalInput{}}, {ID: "wrong-profile", Brief: &b, Profile: "comfy"}, {ID: "missing-source", Brief: &b, Media: map[string]mediaSource{"x": {Path: "/absolute/secret", SHA256: strings.Repeat("0", 64)}}}} {
+	for _, bad := range []inputCase{{ID: "../bad", Brief: &b}, {ID: "same", Brief: &b, Original: &originalInput{}}, {ID: "wrong-profile", Brief: &b, Profile: "unknown"}, {ID: "missing-source", Brief: &b, Media: map[string]mediaSource{"x": {Path: "/absolute/secret", SHA256: strings.Repeat("0", 64)}}}} {
 		f.Cases = []inputCase{bad}
 		if validateFixture(f) == nil {
 			t.Fatal("accepted invalid fixture", bad.ID)
@@ -107,6 +107,125 @@ func TestNativeOptionsAndFixtureValidation(t *testing.T) {
 	f.Cases[0].ObservationScope = "Supplied structured observation only; no new image inspection."
 	if err := validateFixture(f); err != nil {
 		t.Fatal(err)
+	}
+}
+
+func TestExplicitCaseProfileAndRetryOverridePreservesOriginalOptions(t *testing.T) {
+	for _, profile := range []string{"comfy", h3.ComfyUIProfile().Name} {
+		one := 1
+		item := inputCase{Profile: profile, RetryLimits: &caseRetryLimits{Structure: &one, Planner: &one}, Clarification: compiler.ClarificationContinue, Partial: true}
+		options, record, err := nativeOptions(item, retryLimits{Structure: 3, Planner: 3})
+		if err != nil || options.Profile.Name != h3.ComfyUIProfile().Name || record.Profile.Name != h3.ComfyUIProfile().Name || options.MaxStructureRetries != 1 || options.Planner.MaxRetries != 1 || record.StructureRetries != 1 || record.PlannerRetries != 1 || !options.Planner.AllowPartialPerception || record.Clarification != compiler.ClarificationContinue {
+			t.Fatal("explicit original-case options were replaced by global options", options, record, err)
+		}
+	}
+	zero, three, four := 0, 3, 4
+	_, record, err := nativeOptions(inputCase{RetryLimits: &caseRetryLimits{Structure: &zero, Planner: &three}}, defaultRetries())
+	if err != nil || record.StructureRetries != 0 || record.PlannerRetries != 3 {
+		t.Fatal("explicit zero retry budget was treated as omitted", record, err)
+	}
+	for _, override := range []*caseRetryLimits{{}, {Structure: &zero}, {Planner: &zero}, {Structure: &four, Planner: &zero}} {
+		if _, _, err := nativeOptions(inputCase{RetryLimits: override}, defaultRetries()); err == nil {
+			t.Fatal("missing or unsupported explicit case budget accepted", override)
+		}
+	}
+}
+
+func TestOriginalWardrobeFixturePreservesInputAndExplicitOptions(t *testing.T) {
+	var inputs fixture
+	if err := readJSON("../../conformance/release_acceptance_inputs.json", &inputs); err != nil {
+		t.Fatal(err)
+	}
+	if err := validateFixture(inputs); err != nil {
+		t.Fatal("release input does not pass the actual CLI decoder/preflight", err)
+	}
+	wire, err := os.ReadFile("../../compiler/testdata/remaining_wardrobe/manifest.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	var source struct {
+		Cases []struct {
+			ID    string        `json:"case_id"`
+			Input originalInput `json:"input"`
+		} `json:"cases"`
+	}
+	if err = json.Unmarshal(wire, &source); err != nil {
+		t.Fatal(err)
+	}
+	var original *originalInput
+	for _, entry := range source.Cases {
+		if entry.ID == "licence-01108" {
+			copy := entry.Input
+			original = &copy
+		}
+	}
+	matched := 0
+	for _, item := range inputs.Cases {
+		options, _, err := nativeOptions(item, retryLimits{Structure: 3, Planner: 3})
+		if err != nil {
+			t.Fatal(err)
+		}
+		if item.ID != "original-wardrobe-request-authority" {
+			if options.Profile.Name != h3.OfficialProfile().Name || options.MaxStructureRetries != 3 || options.Planner.MaxRetries != 3 {
+				t.Fatal("adding the original case changed another case's options", item.ID, options)
+			}
+			continue
+		}
+		matched++
+		want, _ := json.Marshal(original)
+		got, _ := json.Marshal(item.Original)
+		if original == nil || string(got) != string(want) || options.Profile.Name != h3.ComfyUIProfile().Name || options.MaxStructureRetries != 1 || options.Planner.MaxRetries != 1 || !options.Planner.AllowPartialPerception || options.ClarificationPolicy != compiler.ClarificationContinue {
+			t.Fatal("original input or its recorded options changed", item, options)
+		}
+		brief, err := compiler.FromOriginal(item.Original.Brief, item.Original.Cards)
+		if err != nil || brief.Intent != "change the shirt on the man to a mossy grey-green" || len(brief.Assets) != 1 || len(brief.Cards) != 1 {
+			t.Fatal("original fixture cannot use the actual public Compile adapter", brief, err)
+		}
+	}
+	if matched != 1 {
+		t.Fatal("original wardrobe case must run exactly once", matched)
+	}
+}
+
+func TestExplicitRetryBudgetsConfigureCompilerAndRecordedOptions(t *testing.T) {
+	for _, limits := range []retryLimits{{Structure: 0, Planner: 3}, {Structure: 1, Planner: 1}, {Structure: 3, Planner: 0}} {
+		options, recorded, err := nativeOptions(inputCase{}, limits)
+		if err != nil || options.MaxStructureRetries != limits.Structure || options.Planner.MaxRetries != limits.Planner || recorded.StructureRetries != limits.Structure || recorded.PlannerRetries != limits.Planner {
+			t.Fatal("actual options or recording ignored explicit repair budget", limits, options, recorded, err)
+		}
+	}
+	for _, limits := range []retryLimits{{Structure: -1, Planner: 1}, {Structure: 4, Planner: 1}, {Structure: 1, Planner: -1}, {Structure: 1, Planner: 4}} {
+		if _, _, err := nativeOptions(inputCase{}, limits); err == nil {
+			t.Fatal("invalid budget accepted before model setup", limits)
+		}
+	}
+	if defaultRetries() != (retryLimits{Structure: 1, Planner: 1}) {
+		t.Fatal("runner defaults changed without explicit caller choice")
+	}
+}
+
+func TestExplicitRetryBudgetsBoundCallsAndKeepTransportFailuresImmediate(t *testing.T) {
+	for _, extra := range []int{0, 1, 3} {
+		b := compiler.Brief{Intent: "A red ball rolls across a white floor.", Mode: contextir.ModeText, Seconds: 8}
+		calls := 0
+		m := imageModelFunc(func(context.Context, contextir.ModelRequest, []deepseek.Image) (contextir.ModelResponse, error) {
+			calls++
+			return contextir.ModelResponse{JSON: json.RawMessage(`{}`), Model: "bounded-budget-test", Usage: contextir.Usage{InputTokens: 3, OutputTokens: 1}}, nil
+		})
+		caseResult, err := evaluateCase(context.Background(), inputCase{ID: "budget", Brief: &b}, []operationExpectation{{Status: "failed", ErrorCode: contextir.CodeModelOutput}}, t.TempDir(), t.TempDir(), m, retryLimits{Structure: extra, Planner: 3}, func(caseResult) error { return nil })
+		if err != nil || !caseResult.Passed || calls != extra+1 || len(caseResult.Operations[0].Calls) != extra+1 || caseResult.Options.StructureRetries != extra || caseResult.Options.PlannerRetries != 3 {
+			t.Fatal("explicit budget failed to bound or record every actual attempt", extra, calls, caseResult, err)
+		}
+	}
+	b := compiler.Brief{Intent: "A ball crosses a floor.", Mode: contextir.ModeText, Seconds: 8}
+	calls := 0
+	m := imageModelFunc(func(context.Context, contextir.ModelRequest, []deepseek.Image) (contextir.ModelResponse, error) {
+		calls++
+		return contextir.ModelResponse{Model: "transport-control", Usage: contextir.Usage{InputTokens: 2, OutputTokens: 0}}, &contextir.Error{Code: contextir.CodeModel, Stage: "transport"}
+	})
+	result, err := evaluateCase(context.Background(), inputCase{ID: "transport", Brief: &b}, []operationExpectation{{Status: "failed", ErrorCode: contextir.CodeModel}}, t.TempDir(), t.TempDir(), m, retryLimits{Structure: 3, Planner: 3}, func(caseResult) error { return nil })
+	if err != nil || !result.Passed || calls != 1 || len(result.Operations[0].Calls) != 1 {
+		t.Fatal("content-repair budget enabled a transport retry", calls, result, err)
 	}
 }
 
@@ -233,7 +352,7 @@ func TestIndependentAssertionsNeverReachModelAndFailureIsRetained(t *testing.T) 
 	expected := []operationExpectation{{Status: "failed", ErrorCode: contextir.CodeModelOutput, Checks: []check{{Kind: "prompt_excludes", Contains: canary}}}}
 	root := t.TempDir()
 	checkpoints := 0
-	cr, err := evaluateCase(context.Background(), inputCase{ID: "invalid-model", Brief: &b}, expected, root, t.TempDir(), m, func(caseResult) error { checkpoints++; return nil })
+	cr, err := evaluateCase(context.Background(), inputCase{ID: "invalid-model", Brief: &b}, expected, root, t.TempDir(), m, defaultRetries(), func(caseResult) error { checkpoints++; return nil })
 	if err != nil || !cr.Passed || invocations != 2 || len(cr.Operations) != 1 || len(cr.Operations[0].Calls) != 2 || checkpoints != 1 {
 		t.Fatal("bounded failed attempts or expected rejection lost", cr, invocations, err)
 	}
@@ -248,7 +367,7 @@ func TestChangesStopAfterUnpublishedCompile(t *testing.T) {
 	cr, err := evaluateCase(context.Background(), inputCase{ID: "bad-mode", Brief: &b, Changes: []string{"make it brighter"}}, []operationExpectation{{Status: "failed", ErrorCode: contextir.CodeInvalid}}, t.TempDir(), t.TempDir(), imageModelFunc(func(context.Context, contextir.ModelRequest, []deepseek.Image) (contextir.ModelResponse, error) {
 		t.Fatal("invalid intake must not call a model")
 		return contextir.ModelResponse{}, nil
-	}), func(caseResult) error { return nil })
+	}), defaultRetries(), func(caseResult) error { return nil })
 	if err != nil || len(cr.Operations) != 1 || cr.Remaining != 1 || cr.Passed {
 		t.Fatal("a failed/unpublished result was used for refinement", cr, err)
 	}
