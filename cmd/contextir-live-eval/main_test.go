@@ -142,6 +142,55 @@ func TestUncompiledAndUnmeteredResultsCannotPassByDefault(t *testing.T) {
 	}
 }
 
+func TestExpectedTypedErrorFamily(t *testing.T) {
+	expected := operationExpectation{Status: "failed", ErrorCodes: []contextir.Code{contextir.CodeModelOutput, contextir.CodeInvalid}}
+	for _, code := range []contextir.Code{contextir.CodeModelOutput, contextir.CodeInvalid, contextir.CodeModel, contextir.CodeCanceled, contextir.CodePerception} {
+		t.Run(string(code), func(t *testing.T) {
+			op := operationResult{Status: "failed", Error: &safeError{Code: code}}
+			want := code == contextir.CodeModelOutput || code == contextir.CodeInvalid
+			if got := acceptOperation(op, compiler.Result{}, expected); got != want {
+				t.Fatal("expected rejection family accepted an unrelated transport/perception error", code, got, want)
+			}
+		})
+	}
+	if acceptOperation(operationResult{Status: "failed"}, compiler.Result{}, expected) {
+		t.Fatal("a missing typed error matched the expected family")
+	}
+	if acceptOperation(operationResult{Status: "compiled", Error: &safeError{Code: contextir.CodeInvalid}}, compiler.Result{}, expected) {
+		t.Fatal("status was ignored while matching error family")
+	}
+	legacy := operationExpectation{Status: "failed", ErrorCode: contextir.CodeInvalid}
+	if !acceptOperation(operationResult{Status: "failed", Error: &safeError{Code: contextir.CodeInvalid}}, compiler.Result{}, legacy) {
+		t.Fatal("single error_code compatibility was lost")
+	}
+}
+
+func TestExpectedErrorFamilyConfigurationFailsBeforeCalls(t *testing.T) {
+	f := fixture{Cases: []inputCase{{ID: "case"}}}
+	for _, test := range []struct {
+		name   string
+		expect operationExpectation
+	}{
+		{"mutually_exclusive", operationExpectation{ErrorCode: contextir.CodeInvalid, ErrorCodes: []contextir.Code{contextir.CodeModelOutput}}},
+		{"empty_list", operationExpectation{ErrorCodes: []contextir.Code{}}},
+		{"duplicate", operationExpectation{ErrorCodes: []contextir.Code{contextir.CodeInvalid, contextir.CodeInvalid}}},
+		{"empty_code", operationExpectation{ErrorCodes: []contextir.Code{contextir.CodeInvalid, ""}}},
+		{"whitespace_code", operationExpectation{ErrorCodes: []contextir.Code{" "}}},
+	} {
+		t.Run(test.name, func(t *testing.T) {
+			a := assertions{Cases: map[string]struct {
+				Operations []operationExpectation `json:"operations"`
+			}{"case": {Operations: []operationExpectation{test.expect}}}}
+			if validateAssertions(f, a) == nil {
+				t.Fatal("invalid family passed the pre-model assertion configuration gate")
+			}
+			if acceptOperation(operationResult{Status: "compiled", Roundtrip: true}, compiler.Result{UsageComplete: true}, test.expect) {
+				t.Fatal("invalid family configuration accepted an outcome")
+			}
+		})
+	}
+}
+
 func TestDocumentAndCompleteArtifactPersistence(t *testing.T) {
 	c, err := compiler.New(nil, nil, compiler.Options{Profile: h3.OfficialProfile()})
 	if err != nil {

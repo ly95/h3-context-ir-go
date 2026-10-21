@@ -1143,10 +1143,10 @@
       "sha256": "482ea8702ca7c9f5cffd44939f67654f7380b5bd5587b3e06c3d33cb134f3ec0"
     },
     "conformance/release_acceptance_assertions.json": {
-      "sha256": "b14d374a66aabe54a57692207114f0e0b620fc1a2288434506467db99d314ec7"
+      "sha256": "c774cc64ded679caaa7040c16a41da58ffda3b07ec458654feda9fadbb0a3894"
     },
     "conformance/release_acceptance_check.py": {
-      "sha256": "02ee5ab428104ed16aedb2d608e0dea7c884bbd43700ca9f02a164b8d2347051"
+      "sha256": "3ab0b4886fa7d97e80c0b1166223e1deaf2c354aa9b9732555c6155c1c81ce8b"
     }
   },
   "executable_suite_summary": {
@@ -1162,5 +1162,35 @@
       "paired-first-last-style-transform"
     ],
     "note": "Earlier descriptive cases below are design rationale; the executable inputs/assertions are the frozen execution inventory. This manifest is not run evidence."
-  }
+  },
+  "pre_live_assertion_corrections": [
+    {
+      "case_id": "declared-role-voice_timbre",
+      "previous": "no_speaker=true",
+      "corrected": "No fixed/generated dialogue; voice Reference and dormant Speaker reciprocally bound; no SubjectID or onscreen=true on that dormant speaker; audio source is not a visual Subject source. Creative automotive subject from original intent is allowed.",
+      "reason": "Preserve the business invariant without requiring Go to copy Python speaker-list internals. Initial assertion was stronger than source intent and contradicted the existing public Go contract.",
+      "when": "Before the first paid invocation of this release acceptance suite."
+    },
+    {
+      "case_id": "original-ref2va_two_subjects",
+      "previous": "Exactly two source-bound Subject records total.",
+      "corrected": "Both requested source identities bind separate target identities. Additional observed identities/properties are allowed; unauthorized merging is rejected.",
+      "reason": "Subject record counts can reflect legitimate additional image observations; the business request is to preserve the two intended independent identities.",
+      "when": "Before the first paid invocation of this release acceptance suite."
+    },
+    {
+      "case_id": "cross-shot-exact-voiceover-sign/refine-duration",
+      "previous": "Full Document.Dialogue equality including generated IDs.",
+      "corrected": "Preserve kind/text/language/delivery/voiceover and caller-owned Brief.Dialogue. Independently validate all final graph references.",
+      "reason": "Generated addresses may change without changing the fixed performance.",
+      "when": "Before the first paid invocation of this release acceptance suite."
+    },
+    {
+      "case_id": "transcript-explicit-selection/refine-delete-selected-source",
+      "previous": "One specific invalid_model_output error code.",
+      "corrected": "Explicit failed result with invalid_model_output or invalid_document; no artifact. Cancellation, network and dependency failures do not satisfy the expected rejection.",
+      "reason": "Both typed boundaries can honestly reject the invalid dependency amendment; the protected behavior is explicit rejection with preserved source-choice requirements.",
+      "when": "Before the first paid invocation of this release acceptance suite."
+    }
+  ]
 }

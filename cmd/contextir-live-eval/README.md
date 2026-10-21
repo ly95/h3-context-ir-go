@@ -36,6 +36,10 @@ unpublished operation stops subsequent changes in that case. Other cases continu
 Only a compiled, fully metered, successfully persisted operation passes by default.
 A separate assertion may explicitly expect `needs_input` or an exact typed error;
 that records a tested rejection, not a successful publication.
+Assertions can use either `error_code` or a nonempty `error_codes` array of
+distinct codes. The actual status and typed error must match; unrelated network
+or perception failures never satisfy a family containing only input/model-output
+contract errors. Both assertion forms remain isolated from model inputs.
 
 Each operation keeps `result.json`, `operation.json`, its actual model requests,
 accepted JSON bytes, complete response metadata, rejected candidates, actual image

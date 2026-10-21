@@ -76,8 +76,11 @@
           "status": "compiled",
           "checks": [],
           "semantic": {
-            "source_subject_count": 2,
             "required_sources": [
+              "asset-1",
+              "asset-2"
+            ],
+            "distinct_source_subjects": [
               "asset-1",
               "asset-2"
             ]
@@ -128,7 +131,10 @@
           "semantic": {
             "no_artifact": true
           },
-          "error_code": "invalid_model_output"
+          "error_codes": [
+            "invalid_model_output",
+            "invalid_document"
+          ]
         }
       ]
     },
@@ -381,7 +387,15 @@
               ]
             },
             "exact_dialogue": [],
-            "no_speaker": true
+            "dormant_voice_bindings": [
+              "asset-1"
+            ],
+            "dormant_voice_binding_rationale": {
+              "correction": "The initial no_speaker assertion overconstrained representation. A dormant reciprocal speaker record is permitted; no new dialogue, visible speaking actor or audio-derived visual identity is permitted. The requested car scene remains valid.",
+              "upstream_intent": "tests/test_every_role_renders.py requires a declared role to render without validator errors; test_reference_audio_words.py forbids timbre-only reuse from importing source words. Neither business invariant forbids a dormant Go Speaker definition.",
+              "native_contract": "compiler/reference_contract_test.go::TestReferenceContractVoiceBindingsDoNotInventSpeakingActors explicitly requires a dormant Speaker with reciprocal VoiceReferenceID and no SubjectID.",
+              "timing": "Corrected before any paid invocation of this release suite, from source-contract review; not relaxed in response to observed model output."
+            }
           }
         }
       ]

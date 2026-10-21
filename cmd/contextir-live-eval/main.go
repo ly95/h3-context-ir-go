@@ -207,9 +207,10 @@ type check struct {
 	Count    *int            `json:"count,omitempty"`
 }
 type operationExpectation struct {
-	Status    string         `json:"status,omitempty"`
-	ErrorCode contextir.Code `json:"error_code,omitempty"`
-	Checks    []check        `json:"checks,omitempty"`
+	Status     string           `json:"status,omitempty"`
+	ErrorCode  contextir.Code   `json:"error_code,omitempty"`
+	ErrorCodes []contextir.Code `json:"error_codes,omitempty"`
+	Checks     []check          `json:"checks,omitempty"`
 	// Semantic belongs to the independent artifact checker, never a model input.
 	Semantic json.RawMessage `json:"semantic,omitempty"`
 }
@@ -447,6 +448,9 @@ func validateAssertions(f fixture, a assertions) error {
 			return errors.New("assertions must cover every requested operation")
 		}
 		for _, op := range entry.Operations {
+			if err := validateExpectation(op); err != nil {
+				return err
+			}
 			for _, c := range op.Checks {
 				switch c.Kind {
 				case "json_equals", "json_contains", "array_length", "prompt_contains", "prompt_excludes", "prompt_count":
@@ -455,6 +459,25 @@ func validateAssertions(f fixture, a assertions) error {
 				}
 			}
 		}
+	}
+	return nil
+}
+func validateExpectation(op operationExpectation) error {
+	if op.ErrorCodes == nil {
+		return nil
+	}
+	if op.ErrorCode != "" {
+		return errors.New("error_code and error_codes are mutually exclusive")
+	}
+	if len(op.ErrorCodes) == 0 {
+		return errors.New("error_codes requires at least one explicit error code")
+	}
+	seen := map[contextir.Code]bool{}
+	for _, code := range op.ErrorCodes {
+		if strings.TrimSpace(string(code)) == "" || seen[code] {
+			return errors.New("error_codes must contain distinct nonempty error codes")
+		}
+		seen[code] = true
 	}
 	return nil
 }
@@ -566,7 +589,7 @@ func evaluateCase(ctx context.Context, item inputCase, expected []operationExpec
 		if len(expected) > index {
 			expect = expected[index]
 		}
-		op.ExpectedOutcome = expect.ErrorCode != "" || expect.Status != "" && expect.Status != "compiled"
+		op.ExpectedOutcome = expect.ErrorCode != "" || len(expect.ErrorCodes) > 0 || expect.Status != "" && expect.Status != "compiled"
 		op.Passed = acceptOperation(op, result, expect)
 		for _, assertion := range expect.Checks {
 			checked := runCheck(result, assertion)
@@ -597,6 +620,9 @@ func evaluateCase(ctx context.Context, item inputCase, expected []operationExpec
 	return cr, nil
 }
 func acceptOperation(op operationResult, result compiler.Result, expected operationExpectation) bool {
+	if validateExpectation(expected) != nil {
+		return false
+	}
 	status := expected.Status
 	if status == "" {
 		status = "compiled"
@@ -606,6 +632,17 @@ func acceptOperation(op operationResult, result compiler.Result, expected operat
 	}
 	if expected.ErrorCode != "" {
 		return op.Error != nil && op.Error.Code == expected.ErrorCode
+	}
+	if len(expected.ErrorCodes) > 0 {
+		if op.Error == nil {
+			return false
+		}
+		for _, code := range expected.ErrorCodes {
+			if op.Error.Code == code {
+				return true
+			}
+		}
+		return false
 	}
 	if op.Error != nil {
 		return false

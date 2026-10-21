@@ -64,6 +64,21 @@ def literal_surface(document):
     return "\n".join(strings(result))
 
 
+def distinct_source_subjects(subjects, sources):
+    """Requested independent identities stay independent; extra facts are legal."""
+    requested = set(sources)
+    selected = [{a.get("source", {}).get("asset_id") for a in subject.get("sources", [])}
+                & requested for subject in subjects.values()]
+    return all({source} in selected for source in requested)
+
+
+def dialogue_semantics(document):
+    # Generated IDs are graph addresses, not additional caller-owned words.
+    return [(line.get("kind") or "speech", line.get("text"), line.get("language"),
+             line.get("delivery", ""), bool(line.get("voiceover")))
+            for line in document.get("dialogue", [])]
+
+
 def inspect(result, semantic, previous=None):
     problems = []
     def require(ok, message):
@@ -189,11 +204,26 @@ def inspect(result, semantic, previous=None):
         require(visible == semantic["visible_text"], "visible lettering changed, duplicated or was omitted")
         for word in semantic["visible_text"]:
             require(prompt.count(word) == 1, "exact visible text is not emitted once")
-    if semantic.get("no_speaker"):
-        require(not speakers, "dormant voice reference introduced a speaker")
+    for source in semantic.get("dormant_voice_bindings", []):
+        voice_references = [r for r in references.values()
+                            if r.get("source", {}).get("asset_id") == source
+                            and r.get("kind") == "audio" and "voice" in r.get("roles", [])]
+        require(bool(voice_references), "dormant voice source lacks its typed audio reference")
+        for reference in voice_references:
+            speaker = speakers.get(reference.get("speaker_id"), {})
+            require(bool(speaker) and speaker.get("voice_reference_id") == reference["id"],
+                    "dormant voice reference and speaker are not reciprocally bound")
+            require(not speaker.get("subject_id") and speaker.get("onscreen") is not True,
+                    "dormant voice property invented a visible speaking actor")
+        require(not any(a.get("source", {}).get("asset_id") == source
+                        for s in subjects.values() for a in s.get("sources", [])),
+                "audio voice source was attributed to a visual subject")
     if "source_subject_count" in semantic:
         require(sum(bool(x.get("sources")) for x in subjects.values()) == semantic["source_subject_count"],
                 "wrong number of source-bound target identities")
+    if "distinct_source_subjects" in semantic:
+        require(distinct_source_subjects(subjects, semantic["distinct_source_subjects"]),
+                "independent requested source identities were merged or lost")
     for source in semantic.get("required_sources", []):
         require(source in source_ids, "required source disappeared: " + source)
     for source in semantic.get("absent_sources", []):
@@ -221,7 +251,10 @@ def inspect(result, semantic, previous=None):
         require(bool(result.get("replacement_motion_obligations")), "incoming/replacement motion obligations absent")
     if "preserve_dialogue_from_op" in semantic and previous:
         base = previous[semantic["preserve_dialogue_from_op"]]
-        require(document.get("dialogue") == base.get("document", {}).get("dialogue"), "Refine altered unchanged fixed dialogue")
+        require(dialogue_semantics(document) == dialogue_semantics(base.get("document", {})),
+                "Refine altered unchanged fixed dialogue semantics")
+        require(result.get("brief", {}).get("dialogue", []) == base.get("brief", {}).get("dialogue", []),
+                "Refine altered unchanged caller-owned Brief.Dialogue")
     if "preserve_evidence_from_op" in semantic and previous:
         base = previous[semantic["preserve_evidence_from_op"]]
         removed = set(semantic.get("allow_removed_evidence", []))
@@ -292,8 +325,9 @@ def run(report_path, fixture_path, assertions_path):
             if operation.get("status") != status or result.get("status") != status:
                 errors.append("actual status differs from expected " + status)
             code = operation.get("error_code", operation.get("error", {}).get("code") if operation.get("error") else None)
-            if spec.get("error_code"):
-                if code != spec["error_code"]:
+            allowed_codes = spec.get("error_codes", [spec["error_code"]] if spec.get("error_code") else [])
+            if allowed_codes:
+                if code not in allowed_codes:
                     errors.append("typed failure code differs from independent expected error")
             elif operation.get("error"):
                 errors.append("unexpected operation error")
@@ -348,7 +382,20 @@ def self_test():
         wrong = copy.deepcopy(r)
         mutate(wrong)
         assert inspect(wrong, {"exact_dialogue": ["We close at six, not half past."]}), name + " drift escaped checker"
-    print(json.dumps({"self_test": "passed", "positive_publication": 1, "negative_mutations": 5}))
+    subjects = {"a": {"sources": [{"source": {"asset_id": "one"}}]},
+                "b": {"sources": [{"source": {"asset_id": "two"}}]},
+                "extra": {"sources": [{"source": {"asset_id": "one"}}]}}
+    assert distinct_source_subjects(subjects, ["one", "two"])
+    assert not distinct_source_subjects({"merged": {"sources": [
+        {"source": {"asset_id": "one"}}, {"source": {"asset_id": "two"}}]}}, ["one", "two"])
+    renamed = copy.deepcopy(r["document"])
+    renamed["dialogue"][0].update(id="another-line", speaker_ids=["another-speaker"])
+    assert dialogue_semantics(renamed) == dialogue_semantics(r["document"])
+    renamed["dialogue"][0]["text"] = "changed words"
+    assert dialogue_semantics(renamed) != dialogue_semantics(r["document"])
+    print(json.dumps({"self_test": "passed", "positive_publication": 1, "negative_mutations": 5,
+                      "independent_sources_positive_and_negative": True,
+                      "semantic_dialogue_id_change_and_word_drift": True}))
 
 
 if __name__ == "__main__":
