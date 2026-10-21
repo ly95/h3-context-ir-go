@@ -2,7 +2,7 @@
 
 The complete audit, including failed historical runs, model requests/responses,
 source snapshots and reproduction tools, is preserved at
-[`b8f24802ac310089eabf7918d5beeb5721d58d62`](https://github.com/ly95/contextir/tree/b8f24802ac310089eabf7918d5beeb5721d58d62)
+[`bda66cc6b666fc7500b1c989a07b6c6f55adc71a`](https://github.com/ly95/contextir/tree/bda66cc6b666fc7500b1c989a07b6c6f55adc71a)
 and the `codex/conformance-evidence` branch. The latest release proof is indexed
 in [release-index.json](https://github.com/ly95/contextir/blob/main/conformance/reports/release-index.json).
 

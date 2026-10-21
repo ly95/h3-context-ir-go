@@ -4,11 +4,11 @@
 
 验收依据是 [OpenH3-IR 固定提交 fd031e1](https://github.com/ruashots/open-h3-ir/tree/fd031e136ae3d89147324c0d1b2aa65e838c21f5) 的完整功能与原始测试。原测试输入、原断言、历次失败和真实 DeepSeek 输出分别保存在 [conformance](conformance/README.md)，未把早期三个自编 smoke cases 当作功能验收。具体通过范围和剩余差异见 [验收清单](docs/UPSTREAM_TESTS.md) 与 [当前状态](docs/READINESS.md)。
 
-验收按上游单测保护的业务行为重写，使用 Go 的接口、类型和显式依赖。原清单 **991 个条目全部通过验证，N/A 为 0**：672 项由未修改的原断言验证实际 Go 主输出，319 项由 Go API 测试验证原意及必要的接口/输入调整。见 [最终逐项报告](https://github.com/ly95/contextir/blob/b8f24802ac310089eabf7918d5beeb5721d58d62/conformance/reports/native-functionality-release-v2.json)。原样 Python 桥接诊断另存 **981 passed / 10 failed**；十项差异及对应 Go 正反例见 [说明](docs/UPSTREAM_TESTS.md#原样重跑保留的十项差异)。
+验收按上游单测保护的业务行为重写，使用 Go 的接口、类型和显式依赖。原清单 **991 个条目全部通过验证，N/A 为 0**：672 项由未修改的原断言验证实际 Go 主输出，319 项由 Go API 测试验证原意及必要的接口/输入调整。见 [最终逐项报告](https://github.com/ly95/contextir/blob/bda66cc6b666fc7500b1c989a07b6c6f55adc71a/conformance/reports/native-functionality-release-v2.json)。原样 Python 桥接诊断另存 **981 passed / 10 failed**；十项差异及对应 Go 正反例见 [说明](docs/UPSTREAM_TESTS.md#原样重跑保留的十项差异)。
 
-真实最低 Go 1.25.0 的全库测试与 vet 已通过；全库 race 也通过：**442 个主测试、7957 个子测试，0 失败、0 跳过**。见 [最低版本](https://github.com/ly95/contextir/blob/b8f24802ac310089eabf7918d5beeb5721d58d62/conformance/reports/go-minimum-release-v1.json) 与 [质量记录](https://github.com/ly95/contextir/blob/b8f24802ac310089eabf7918d5beeb5721d58d62/conformance/reports/local-quality-release-v1.json)。
+真实最低 Go 1.25.0 的全库测试与 vet 已通过；全库 race 也通过：**442 个主测试、7957 个子测试，0 失败、0 跳过**。见 [最低版本](https://github.com/ly95/contextir/blob/bda66cc6b666fc7500b1c989a07b6c6f55adc71a/conformance/reports/go-minimum-release-v1.json) 与 [质量记录](https://github.com/ly95/contextir/blob/bda66cc6b666fc7500b1c989a07b6c6f55adc71a/conformance/reports/local-quality-release-v1.json)。
 
-同一冻结实现完成真实 DeepSeek 的 **35 次 Compile + 5 次 Refine，40/40 符合预期**：36 次成功产出、4 次正确拒绝。277 次实际调用、全部失败候选、重试和用量均保留；独立检查与语义复核分别报告，见 [实测结果](https://github.com/ly95/contextir/blob/b8f24802ac310089eabf7918d5beeb5721d58d62/conformance/reports/release-live-round6/report.json)、[独立检查](https://github.com/ly95/contextir/blob/b8f24802ac310089eabf7918d5beeb5721d58d62/conformance/reports/release-live-round6-verification.json) 和 [当前状态](docs/READINESS.md)。
+同一冻结实现完成真实 DeepSeek 的 **35 次 Compile + 5 次 Refine，40/40 符合预期**：36 次成功产出、4 次正确拒绝。277 次实际调用、全部失败候选、重试和用量均保留；独立检查与语义复核分别报告，见 [实测结果](https://github.com/ly95/contextir/blob/bda66cc6b666fc7500b1c989a07b6c6f55adc71a/conformance/reports/release-live-round6/report.json)、[独立检查](https://github.com/ly95/contextir/blob/bda66cc6b666fc7500b1c989a07b6c6f55adc71a/conformance/reports/release-live-round6-verification.json) 和 [当前状态](docs/READINESS.md)。
 
 这是公开协议的独立实现，没有 MiniMax 托管 Context-IR 的内部代码、训练数据或生成质量等价证据。
 
@@ -20,7 +20,7 @@
 go get github.com/ly95/contextir@v0.2.0
 ```
 
-版本标识为 `v0.2.0`。候选提交已从私有远端安装，下载包全库测试与 40 项严格重放均通过；最终标签的实际提交、OriginHash 和安装后验收收据见 [发布索引](https://github.com/ly95/contextir/blob/main/conformance/reports/release-index.json)。旧标签和旧伪版本的证据作为历史保留。
+`v0.2.0` 已从全新外部缓存实际安装。下载包内 442 主测试、7957 子测试全部通过，完整 40 操作/277 尝试严格重放通过。实际 OriginHash、ZIP、独立测试收据和不可变审计提交见 [发布索引](https://github.com/ly95/contextir/blob/main/conformance/reports/release-index.json)。旧标签和旧伪版本的证据作为历史保留。
 
 完整模型录音、源码快照和历史失败保存在独立的 [审计分支](https://github.com/ly95/contextir/tree/codex/conformance-evidence)，具体不可变提交及最终安装证明见 [发布索引](https://github.com/ly95/contextir/blob/main/conformance/reports/release-index.json)。发行树只保留现有 CI 所需的原始基线和完整录音目录，报告数据从约 1.43 GiB 减为约 35.3 MiB，原断言和 CI 校验保持不变。Go module ZIP 排除这个嵌套审计 module，库及自包含测试不依赖完整审计资料。完整审计的复验请使用 [独立审计 checkout](conformance/reports/README.md)。
 
@@ -117,7 +117,7 @@ go test -race ./...
 go vet ./...
 ```
 
-全部适用原要求的复验入口是 `conformance/run_native_functionality.py --require-all --go-compatibility-report <最低版本报告>`。它同时核查独立 Go 测试和 fresh 原断言报告中的主 Go API 调用、实际 validator 调用、不可变 bridge/runtime/fixture/录音请求来源；命令和完整前置条件见 [复验说明](conformance/README.md)。普通 Go 测试不调用付费服务，最终本地质量检查见 [记录](https://github.com/ly95/contextir/blob/b8f24802ac310089eabf7918d5beeb5721d58d62/conformance/reports/local-quality-release-v1.json)。
+全部适用原要求的复验入口是 `conformance/run_native_functionality.py --require-all --go-compatibility-report <最低版本报告>`。它同时核查独立 Go 测试和 fresh 原断言报告中的主 Go API 调用、实际 validator 调用、不可变 bridge/runtime/fixture/录音请求来源；命令和完整前置条件见 [复验说明](conformance/README.md)。普通 Go 测试不调用付费服务，最终本地质量检查见 [记录](https://github.com/ly95/contextir/blob/bda66cc6b666fc7500b1c989a07b6c6f55adc71a/conformance/reports/local-quality-release-v1.json)。
 
 高层 `brief` / `draft` 及预算、token、原始 H3 校验命令的参数见 `go run ./cmd/contextir <command> -h`。付费模型验证是单独命令，不在普通单元测试中触发：
 
