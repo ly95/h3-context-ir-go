@@ -44,6 +44,21 @@ type briefFlags struct {
 	timeout                                                   time.Duration
 	insecure, imageInputs                                     bool
 }
+
+func registerProviderFlags(fs *flag.FlagSet, f *briefFlags) {
+	fs.StringVar(&f.provider, "provider", "", "Explicit model adapter: openai or chatcompat; omitted draft is offline")
+	fs.StringVar(&f.base, "base-url", "", "Explicit provider API root")
+	fs.StringVar(&f.model, "model", "", "Explicit provider model ID")
+	fs.StringVar(&f.keyEnv, "key-env", "", "Name of the one environment variable to read for the API key")
+	fs.StringVar(&f.reasoning, "reasoning-effort", "", "OpenAI-compatible reasoning effort (omitted means do not send); chatcompat none|thinking")
+	fs.StringVar(&f.api, "api", string(openai.Responses), "OpenAI-compatible API: responses or chat_completions")
+	fs.BoolVar(&f.imageInputs, "image-inputs", false, "Declare that the explicitly chosen model supports image inputs")
+	fs.StringVar(&f.structured, "structured-mode", chatcompat.PromptSchema, "Chat schema protocol: prompt or json_schema")
+	fs.IntVar(&f.tokens, "max-output-tokens", 8192, "Hard output-token ceiling for each provider call")
+	fs.DurationVar(&f.timeout, "timeout", 5*time.Minute, "Total compile timeout and maximum request duration")
+	fs.BoolVar(&f.insecure, "allow-insecure-http", false, "Authorize a non-loopback HTTP chatcompat endpoint")
+}
+
 type providers struct {
 	flags    briefFlags
 	key      string
@@ -117,17 +132,7 @@ func runBrief(command string, args []string, in io.Reader, out, errOut io.Writer
 	var loraRoots pathsFlag
 	fs.Var(&loraRoots, "lora-dir", "Explicit LoRA registry directory; may be repeated")
 	var f briefFlags
-	fs.StringVar(&f.provider, "provider", "", "Explicit model adapter: openai or chatcompat; omitted draft is offline")
-	fs.StringVar(&f.base, "base-url", "", "Explicit provider API root")
-	fs.StringVar(&f.model, "model", "", "Explicit provider model ID")
-	fs.StringVar(&f.keyEnv, "key-env", "", "Name of the one environment variable to read for the API key")
-	fs.StringVar(&f.reasoning, "reasoning-effort", "", "OpenAI-compatible reasoning effort (omitted means do not send); chatcompat none|thinking")
-	fs.StringVar(&f.api, "api", string(openai.Responses), "OpenAI-compatible API: responses or chat_completions")
-	fs.BoolVar(&f.imageInputs, "image-inputs", false, "Declare that the explicitly chosen model supports image inputs")
-	fs.StringVar(&f.structured, "structured-mode", chatcompat.PromptSchema, "Chat schema protocol: prompt or json_schema")
-	fs.IntVar(&f.tokens, "max-output-tokens", 8192, "Hard output-token ceiling for each provider call")
-	fs.DurationVar(&f.timeout, "timeout", 5*time.Minute, "Total compile timeout and maximum request duration")
-	fs.BoolVar(&f.insecure, "allow-insecure-http", false, "Authorize a non-loopback HTTP chatcompat endpoint")
+	registerProviderFlags(fs, &f)
 	if e := fs.Parse(args); e != nil || fs.NArg() != 0 {
 		return 2
 	}

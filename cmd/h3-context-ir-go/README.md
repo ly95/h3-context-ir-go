@@ -5,6 +5,30 @@ command makes its actual pipeline and deterministic helpers easy to reproduce.
 No command reads dotenv files, chooses a provider/model, downloads media or
 starts a server.
 
+Start with the demo:
+
+```sh
+h3-context-ir-go demo
+h3-context-ir-go demo -prompt "A baker places fresh bread on a sunlit counter." -seconds 8
+h3-context-ir-go demo -mode brief \
+  -base-url "$MODEL_BASE_URL" -model "$MODEL_ID" -key-env MODEL_API_KEY \
+  -prompt "A lighthouse keeper lights the lamp during a storm."
+```
+
+`demo` accepts a plain-text prompt and constructs the original structured Brief
+for the existing `draft` or `brief` pipeline. Its default `-mode draft` is an
+explicitly labelled offline demonstration with no model calls. `-mode brief`
+uses the official SDK adapter by default and requires an explicit endpoint and
+model. Select `-api chat_completions` for a Chat Completions endpoint; Responses
+is the default. Model flags in draft mode are rejected rather than ignored.
+
+The complete JSON result stays on stdout, including Document, H3 artifact,
+status, decisions and call usage. A `needs_input` result keeps its structured
+questions without publishing a prompt. Failures retain the existing CLI's safe
+diagnostics and call ledger on stderr and never fall back to a draft. The demo
+creates no files; redirect stdout when you want to keep a result. Use `demo -h`
+for the available flags. `make demo` runs the default offline example from source.
+
 Offline commands:
 
 ```sh

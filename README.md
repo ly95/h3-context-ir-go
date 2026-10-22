@@ -18,6 +18,30 @@ go get github.com/ly95/h3-context-ir-go@main
 
 新 module path 的首个版本发布前使用 `@main`。历史标签 `v0.1.0`、`v0.2.0` 仍声明旧 module path，保留原样。
 
+## 试运行 demo
+
+先运行一个无需模型或凭据的离线示例：
+
+```sh
+go run ./cmd/h3-context-ir-go demo
+```
+
+它演示文本需求 → `Document` → H3 prompt，输出包含完整 `result` 的 JSON。默认模式明确标记为 `draft`，不进行模型理解；也可用 `make demo` 运行同一个示例。
+
+配置兼容端点和模型后，用 `brief` 模式编译自己的需求：
+
+```sh
+go run ./cmd/h3-context-ir-go demo \
+  -mode brief \
+  -base-url "$MODEL_BASE_URL" \
+  -model "$MODEL_ID" \
+  -key-env MODEL_API_KEY \
+  -prompt "暖色晨光中，一位面包师推开木质百叶窗，把一盘面包放在柜台上。" \
+  -seconds 8
+```
+
+默认协议是 Responses；Chat Completions 端点显式添加 `-api chat_completions`。命令只读取 `-key-env` 指定的凭据变量，无认证端点可省略它。`brief` 失败不会改成草稿；`needs_input` 保留结构化澄清问题，所有已发生的调用保留在 `result.calls` 中。运行 `demo -h` 查看选项，完整参数和媒体接入见 [CLI 文档](cmd/h3-context-ir-go/README.md)。
+
 ## 从需求编译
 
 向 `compiler.New` 注入实现 `planner.Model` 的模型。素材观察可通过 `planner.Perceiver` 提供，也可使用调用方已取得的结构化 Evidence；纯文本请求的 perceiver 可以为 `nil`。
