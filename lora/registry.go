@@ -219,7 +219,6 @@ func ParseRecord(textValue, sourcePath string) (*Record, []h3check.Finding, erro
 	return rec, f, nil
 }
 
-// LoadRecord reads one explicitly named metadata file.
 func LoadRecord(path string) (*Record, []h3check.Finding, error) {
 	b, e := os.ReadFile(path)
 	if e != nil {
@@ -228,8 +227,6 @@ func LoadRecord(path string) (*Record, []h3check.Finding, error) {
 	return ParseRecord(string(b), path)
 }
 
-// LoadRegistry scans only explicitly supplied directories. Missing directories and
-// read errors are returned instead of silently constructing a partial registry.
 func LoadRegistry(roots []string) (*Registry, error) {
 	reg := &Registry{Records: map[string]Record{}, Findings: []h3check.Finding{}, OpenFile: func(p string) (io.ReadCloser, error) { return os.Open(p) }}
 	for _, root := range roots {

@@ -9,8 +9,6 @@ import (
 	"github.com/ly95/h3-context-ir-go/plan"
 )
 
-// This adapter deliberately uses production FromOriginal. It supplies the exact
-// captured cards, including absent cards, rather than synthesising test facts.
 func exactOriginalBrief(t *testing.T, id string) Brief {
 	t.Helper()
 	wire, err := os.ReadFile("../conformance/fixtures/compiler_calls.json")

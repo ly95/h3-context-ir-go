@@ -19,8 +19,6 @@ import (
 	"github.com/ly95/h3-context-ir-go/planner"
 )
 
-// These are the exact shipped bytes used by pinned test_file_facts.py, copied
-// into the module so neither /tmp nor a source checkout is a test dependency.
 func remainingMediaSource(t *testing.T, name string) string {
 	t.Helper()
 	data, e := os.ReadFile("testdata/remaining_media/manifest.json")
@@ -183,8 +181,6 @@ func TestRemainingMediaIntake(t *testing.T) {
 		if match.Document.Assets[0].Preparation == max.Document.Assets[0].Preparation || match.Artifact.Manifest.Media[0].Preparation != match.Document.Assets[0].Preparation {
 			t.Fatal("reported budget disagrees with actual artifact preparation")
 		}
-		// Native unknown geometry stays explicitly unknown, instead of reporting the
-		// old source bug's canvas-derived 1008 as measured reference rows.
 		b := remainingWiringPlate(contextir.ModeReference, RoleSubject, "the car pulls forward.")
 		b.Assets[0].Metadata = contextir.MediaMetadata{}
 		_, unknown := remainingPipelineDraft(t, b)

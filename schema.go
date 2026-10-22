@@ -15,16 +15,10 @@ type cachedWireSchema struct {
 var schemaCache cachedWireSchema
 var evidenceSchemaCache cachedWireSchema
 
-// DocumentSchema returns a fresh copy of the JSON Schema 2020-12 contract.
-// Providers must support it or return an explicit capability error. Structural
-// schema conformance is followed by Validate's cross-reference/timeline checks.
 func DocumentSchema() json.RawMessage {
 	return wireSchema(&schemaCache, reflect.TypeFor[Document](), "https://github.com/ly95/contextir/schema/contextir-v1.json")
 }
 
-// EvidenceSchema returns an independent JSON Schema 2020-12 perception-wire
-// contract. Callers own the returned copy; semantic provenance and coverage
-// validation still requires ValidateEvidence with the original asset list.
 func EvidenceSchema() json.RawMessage {
 	return wireSchema(&evidenceSchemaCache, reflect.TypeFor[Evidence](), "https://github.com/ly95/contextir/schema/evidence-v1.json")
 }

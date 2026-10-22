@@ -13,8 +13,6 @@ import (
 	"testing"
 )
 
-// Equivalent invariant to the source test_no_rule_id_carries_two_meanings,
-// applied to actual production Go string literals, not the Python source tree.
 func TestProductionRuleNumbersHaveSingleMeanings(t *testing.T) {
 	pattern := regexp.MustCompile(`^([A-Z]+[0-9]+[a-z]?)-([a-z0-9-]+)$`)
 	ids := map[string]map[string][]string{}

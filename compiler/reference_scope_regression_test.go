@@ -31,7 +31,6 @@ func TestIdentityAndEnvironmentCompositionViewsKeepOnlyLicensedContent(t *testin
 			} else if len(got.Subjects) != 1 || got.Environment != "" || got.Lighting != "" || len(got.Subjects[0].Pose) != 0 || !reflect.DeepEqual(got.Subjects[0].Attributes, card.Subjects[0].Attributes) {
 				t.Fatal(got)
 			}
-			// Both structure and writer use the same projection, without mutating evidence.
 			writer := roleScopedEvidence(b.Evidence, map[string]Role{"source": role})
 			if !sameJSON(writer[0].Card, projected.Evidence[0].Card) {
 				t.Fatal("writer and structure differ")
@@ -44,7 +43,6 @@ func TestIdentityAndEnvironmentCompositionViewsKeepOnlyLicensedContent(t *testin
 			if err != nil || !sameJSON(licence.Cards, b.Cards) || !sameJSON(licence.Evidence, b.Evidence) {
 				t.Fatal("licence lost original appearance needed to resolve permission", err)
 			}
-			// Actual frames/edit sources must keep full pixels, setting and pose.
 			for _, frameRole := range []Role{RoleFirstFrame, RoleLastFrame, RoleEditSource, RoleContinuationSource} {
 				if !sameJSON(roleScopedCard(card, frameRole), card) {
 					t.Fatal("full-content source lost data", frameRole)

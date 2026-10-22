@@ -14,9 +14,6 @@ import (
 )
 
 func (c *Model) generateResponses(ctx context.Context, request contextir.ModelRequest, images []Image) (contextir.ModelResponse, error) {
-	// The SDK's map encoder treats json.Number as a string. Preserve the supplied
-	// schema as raw JSON through its supported parameter override, so integer
-	// constraints and arbitrary definitions cannot be rounded or retyped.
 	formatBytes, err := json.Marshal(struct {
 		Type   string          `json:"type"`
 		Name   string          `json:"name"`
@@ -89,7 +86,6 @@ func (c *Model) parseResponses(data []byte, status int) (contextir.ModelResponse
 		}
 		switch item.Type {
 		case "reasoning":
-			// Reasoning is a separate Responses item, never the final JSON output.
 		case "message":
 			messages++
 			if item.Role != "assistant" || messages != 1 {
@@ -106,8 +102,6 @@ func (c *Model) parseResponses(data []byte, status int) (contextir.ModelResponse
 		}
 	}
 	text := output.String()
-	// Preserve the untrusted candidate for an explicitly recording caller even
-	// when strict JSON validation rejects it. Callers must still honor err.
 	if messages != 1 || strings.TrimSpace(text) == "" || !validJSON([]byte(text)) {
 		result.RejectedOutput = text
 		return result, failure(contextir.CodeModelOutput, "response", "output", "The output must contain exactly one complete JSON value.", nil)

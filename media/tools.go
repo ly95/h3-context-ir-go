@@ -1,5 +1,3 @@
-// Package media provides explicit caller-owned local media inspection. Model
-// inputs are real decoded frames; sampled coverage is never called complete.
 package media
 
 import (
@@ -169,8 +167,6 @@ func (t *Tools) Inspect(ctx context.Context, path string) (Info, error) {
 		out.Kind = contextir.MediaAudio
 	}
 	if !out.HasAudio && out.Metadata.Width > 0 {
-		// Container/codec facts identify still formats; user text and filename
-		// extensions never select modality or manufacture a successful decode.
 		still := wire.Format.Name == "image2" || wire.Format.Name == "png_pipe" || wire.Format.Name == "jpeg_pipe" || wire.Format.Name == "webp_pipe" || wire.Format.Name == "bmp_pipe" || wire.Format.Name == "tiff_pipe"
 		if still {
 			out.Kind = contextir.MediaImage
@@ -198,8 +194,6 @@ func secondsMS(s string) (contextir.Time, bool) {
 	return contextir.Time(math.Round(v * 1000)), true
 }
 
-// SampleVideo extracts the caller's exact source sampling policy. It performs no
-// cache lookup, so a changed policy can never reuse stale frames.
 func (t *Tools) SampleVideo(ctx context.Context, path string, fractions []float64) (Info, []Frame, error) {
 	info, err := t.Inspect(ctx, path)
 	if err != nil {

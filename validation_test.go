@@ -367,13 +367,11 @@ func TestValidateOnlyOneDistinctCompleteAudioTrack(t *testing.T) {
 		{ID: "complete-track-2", Kind: ir.ReferenceAudio, Source: ir.SourceRef{AssetID: "audio-2", Track: ir.TrackAudio}, Roles: []ir.Role{ir.RoleSoundtrack}, Description: "Another complete soundtrack.", Retention: ir.FullyCopy},
 	}
 	assertValidationInvalid(t, d, "references[1].retention")
-	// Two semantic references to the same exact source do not create two tracks.
 	d.Assets = d.Assets[:2]
 	d.References[1].Source = d.References[0].Source
 	if err := ir.Validate(d); err != nil {
 		t.Fatalf("same-source semantic references rejected: %v", err)
 	}
-	// Different interval values remain different signals even on one asset.
 	d.References[0].Source.Interval = &ir.Interval{Start: 0, End: 1000}
 	d.References[1].Source.Interval = &ir.Interval{Start: 0, End: 1000}
 	if err := ir.Validate(d); err != nil {
@@ -442,7 +440,6 @@ func TestValidateExplicitRequestBindings(t *testing.T) {
 			t.Fatalf("expected %s: %#v", tt.path, typed.Issues)
 		})
 	}
-	// Endpoint responsibilities are unique even when their source differs.
 	d := validationDocument(ir.ModeFirstLastFrame)
 	r := ir.Request{Instruction: "Use both endpoints.", Mode: d.Mode, Target: d.Target, Assets: d.Assets}
 	at := ir.Time(0)
@@ -618,7 +615,6 @@ func TestValidateCompleteAudioRejectsDifferentCopiedSignal(t *testing.T) {
 	}
 	d := newDoc()
 	assertValidationInvalid(t, d, "references[1].retention")
-	// The result is independent of declaration order.
 	d = newDoc()
 	d.References[0], d.References[1] = d.References[1], d.References[0]
 	assertValidationInvalid(t, d, "references[0].retention")

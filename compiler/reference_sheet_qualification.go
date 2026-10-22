@@ -10,8 +10,6 @@ import (
 	"github.com/ly95/h3-context-ir-go/plan"
 )
 
-// The sheet flag and actual-frame exclusion are host observations, never a
-// model's permission to remove an ordinary photograph's content.
 func sheetIdentity(subject plan.SubjectPlan, sheets map[string]bool) bool {
 	for _, source := range subject.Sources {
 		if sheets[source] {
@@ -34,10 +32,6 @@ type sheetIdentityQualification struct {
 	Attributes []sheetAttributeQualification `json:"attributes"`
 }
 
-// qualifyReferenceSheetIdentity has one responsibility: separate presentation
-// from stable identity. It cannot rewrite accepted caller claims, kind, source
-// bindings, or requested attributes. Non-sheet calls retain the old request
-// contract exactly and make no additional model call.
 func (c *Compiler) qualifyReferenceSheetIdentity(ctx context.Context, b Brief, subjects []plan.SubjectPlan, sheets map[string]bool, responsibilities map[string][]Role, identities []IdentityDecision) ([]IdentityDecision, []contextir.CallUsage, error) {
 	indices := []int{}
 	for i, subject := range subjects {
@@ -67,8 +61,6 @@ func (c *Compiler) qualifyReferenceSheetIdentity(ctx context.Context, b Brief, s
 		}
 		for _, attr := range subject.Attributes {
 			dispositions := []string{"retain", "presentation_only"}
-			// Retention/replacement authority is already settled. In particular,
-			// never reintroduce an old garment excluded by a caller change.
 			if !contains(identity.RetainedAttributes, attr) {
 				dispositions = []string{"caller_replaced"}
 				if contains(identity.ExcludedPresentation, attr) {
@@ -132,7 +124,6 @@ func applySheetQualifications(subjects []plan.SubjectPlan, indices []int, identi
 	if len(qualified) != len(indices) {
 		return nil, invalid("reference_sheet_qualification.identities", "Cover the exact sheet identity set.")
 	}
-	// JSON cloning prevents a failed candidate from mutating accepted slices.
 	raw, _ := json.Marshal(identities)
 	var out []IdentityDecision
 	_ = json.Unmarshal(raw, &out)
@@ -191,8 +182,6 @@ func applySheetQualifications(subjects []plan.SubjectPlan, indices []int, identi
 	return out, nil
 }
 
-// Final review compares actual source bindings and canonical fields. A model's
-// earlier declaration that it cleaned a sheet is not evidence of compliance.
 func sheetIdentityReviewContract(b Brief, d contextir.Document) []map[string]any {
 	out := []map[string]any{}
 	for _, subject := range d.Subjects {

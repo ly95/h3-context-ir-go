@@ -112,9 +112,6 @@ func (c *Compiler) Compile(ctx context.Context, brief Brief) (result Result, err
 	if err == nil || c == nil || c.options.FailurePolicy != FailurePolicyDraft || ctx.Err() != nil {
 		return r, err
 	}
-	// FALLBACK: an explicit caller-selected deterministic_draft policy permits a
-	// separate draft artifact. Status, diagnostics, original failure, and every
-	// model call remain observable; default policy returns the original error.
 	if !contextir.HasCode(err, contextir.CodeModel) && !contextir.HasCode(err, contextir.CodeModelOutput) {
 		return r, err
 	}
@@ -287,9 +284,6 @@ func (c *Compiler) prepare(ctx context.Context, brief Brief, requireEvidence boo
 	return r, nil
 }
 
-// Propose runs the production structural interpretation contract without publishing
-// an artifact. Missing perception remains explicitly unobserved and may support
-// readonly mode/role interpretation; Compile requires observed media evidence.
 func (c *Compiler) Propose(ctx context.Context, brief Brief) (result Result, err error) {
 	defer func() { completeAccounting(&result) }()
 	if c.needsExecution(brief) {
@@ -592,9 +586,6 @@ func requestFor(b Brief, target contextir.Target, st Structure, scope Scope) (co
 			role = contextir.RoleKeyframe
 		}
 		bound := contextir.AssetBinding{Source: contextir.SourceRef{AssetID: a.AssetID, Track: contextir.TrackVisual}, Role: role, Anchor: &at}
-		// An asset role and an explicit anchor can state the same responsibility.
-		// Emit that exact binding once; distinct roles/times remain visible to the
-		// root validator rather than being silently replaced or normalized.
 		alreadyBound := false
 		for _, existing := range req.Bindings {
 			alreadyBound = alreadyBound || sameJSON(existing, bound)
@@ -647,8 +638,6 @@ func requestFor(b Brief, target contextir.Target, st Structure, scope Scope) (co
 			req.Constraints = append(req.Constraints, contextir.Constraint{ID: "compiler-no-dialogue", Kind: contextir.ConstraintNoDialogue, Text: "Do not add spoken or sung lines."})
 		}
 	}
-	// Root-level controls are authoritative; the planner specializes its response
-	// schema and validates the same pins after generation.
 	req.OnscreenText = append([]string(nil), st.OnscreenText...)
 	req.AllowGeneratedVisibleText = (b.Creativity == CreativityBold || b.Creativity == CreativityExtreme) && !st.Forbidden.OnscreenText
 	req.AdditionScope = &contextir.AdditionScope{Dialogue: scope.Speech, Music: scope.Music, VisibleText: scope.OnscreenText}

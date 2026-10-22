@@ -1,6 +1,3 @@
-// Package evaluate measures final H3 text offline. Similarity and word counts
-// describe output; they never interpret requests, grant permissions or edit IR.
-// Metric definitions derive from open-h3-ir fd031e13, Apache-2.0; see NOTICE.
 package evaluate
 
 import (
@@ -27,8 +24,6 @@ type Provenance struct {
 	Timings   map[string]float64 `json:"timings,omitempty"`
 }
 
-// DocumentInput keeps shipped sections separate from planned bodies, so a
-// report cannot accidentally measure an unused draft instead of the final text.
 type DocumentInput struct {
 	Mode           string            `json:"mode"`
 	Sections       map[string]string `json:"sections"`
@@ -84,7 +79,6 @@ var framePattern = regexp.MustCompile(`\bcamera\b|\bshot\b`)
 
 func lower(s string) string { return strings.ToLower(strings.ReplaceAll(s, "İ", "i\u0307")) }
 
-// ContentWords returns a sorted set for a lexical overlap observation only.
 func ContentWords(text string) []string {
 	m := map[string]bool{}
 	for _, s := range contentPattern.FindAllString(lower(text), -1) {
@@ -165,8 +159,6 @@ func CountableWarnings(findings []h3check.Finding) []h3check.Finding {
 	return out
 }
 func WordCount(text string) int {
-	// Python's Unicode \w with word boundaries: punctuation is allowed inside
-	// a token but leading/trailing apostrophes and hyphens are not word edges.
 	word := func(r rune) bool { return unicode.IsLetter(r) || unicode.IsNumber(r) || r == '_' }
 	n := 0
 	seen := false
@@ -186,8 +178,6 @@ func WordCount(text string) int {
 	return n
 }
 func round3(x float64) float64 {
-	// Round the exact input float to decimal places, as Python round(x, 3)
-	// does. Scaling by1000 first can erase the binary tie direction.
 	v, _ := strconv.ParseFloat(strconv.FormatFloat(x, 'f', 3, 64), 64)
 	return v
 }

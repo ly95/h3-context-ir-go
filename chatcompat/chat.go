@@ -137,8 +137,6 @@ func (c *Client) Chat(ctx context.Context, messages []Message, o ChatOptions) (R
 		if ctx.Err() != nil {
 			return reply, ctx.Err()
 		}
-		// FALLBACK: an additional attempt is permitted only by the explicit retry
-		// policy; model identity never changes and token growth remains under its cap.
 	}
 	return last, lastErr
 }

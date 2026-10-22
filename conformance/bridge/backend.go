@@ -120,8 +120,6 @@ func backendOperation(name string, raw json.RawMessage) (any, error) {
 	case "judges_the_picture":
 		return backendEnvelope{Result: chatcompat.JudgesThePicture(a.Status)}, nil
 	}
-	// The production URL is preserved. This test-only dialer sends its HTTP bytes
-	// to the loopback server that invokes the original pytest MockTransport.
 	proxy, e := url.Parse(a.ProxyURL)
 	if e != nil || proxy.Hostname() != "127.0.0.1" {
 		return nil, errors.New("backend conformance proxy must be loopback")

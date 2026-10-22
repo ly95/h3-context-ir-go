@@ -1,5 +1,3 @@
-// Package uploads implements a bounded, caller-owned content-addressed store.
-// It never fetches a URL, serves stored bytes over HTTP, or reads environment.
 package uploads
 
 import (
@@ -369,8 +367,6 @@ func (r *Receiver) Abort() error {
 	return errors.Join(closeErr, removeErr)
 }
 
-// Put streams bytes without trusting Content-Length; the receiver enforces its
-// reserved allowance against every actual chunk and aborts on any read failure.
 func (s *Store) Put(claimed string, declared *int64, body io.Reader) (string, int64, error) {
 	r, e := s.Receiver(claimed, declared)
 	if e != nil {

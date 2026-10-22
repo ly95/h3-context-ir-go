@@ -1,6 +1,3 @@
-// Package lora implements the explicit H3 LoRA registry and trigger contract.
-// Ported from ruashots/open-h3-ir h3ir/lora.py at fd031e136ae3d89147324c0d1b2aa65e838c21f5.
-// Copyright 2026 Ruashots; Apache-2.0, see ../third_party/open-h3-ir.
 package lora
 
 import (
@@ -40,7 +37,6 @@ type Request struct {
 	Strength *float64 `json:"strength,omitempty"`
 }
 
-// Brief contains explicit request attributes. Intent prose is never inspected.
 type Brief struct {
 	Aspect  string  `json:"aspect"`
 	Seconds float64 `json:"seconds"`
@@ -61,8 +57,6 @@ type Choice struct {
 	Checkpoint        string    `json:"checkpoint,omitempty"`
 }
 
-// Registry uses an explicit file capability to verify weight bytes at resolution.
-// No global configuration, implicit environment reads or model selection occurs.
 type Registry struct {
 	Records  map[string]Record                   `json:"records"`
 	Findings []h3check.Finding                   `json:"findings"`

@@ -11,8 +11,6 @@ import (
 	"github.com/ly95/h3-context-ir-go/compiler"
 )
 
-// Native v3 and native regeneration command are actual public values. The source
-// v2/Python-command expectations remain in the original report, not forged here.
 func TestRemainingSurfaceGeneratedJS(t *testing.T) {
 	js := AsJS()
 	_, block, ok := strings.Cut(js, "export const CAMERA_MOVES = ")

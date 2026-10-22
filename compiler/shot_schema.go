@@ -2,9 +2,6 @@ package compiler
 
 import "encoding/json"
 
-// ShotSchema publishes the upstream shot-proposal wire contract for adapters
-// that run the structural stage independently. Compile's complete schema also
-// includes asset responsibility, permission, and exact-word contracts.
 func ShotSchema(maxShots int, exact *int) json.RawMessage {
 	if maxShots == 0 {
 		maxShots = 4

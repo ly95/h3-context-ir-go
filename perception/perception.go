@@ -1,5 +1,3 @@
-// Package perception implements provider-neutral image observation with explicit
-// model capabilities, media resolution, bounded repair, and per-call accounting.
 package perception
 
 import (
@@ -16,7 +14,6 @@ import (
 	contextir "github.com/ly95/h3-context-ir-go"
 )
 
-// Image is a caller-supplied image input passed to the injected model.
 type Image = contextir.ImageInput
 
 const ImagePerceptionPromptVersion = "contextir-image-perception/v1"
@@ -24,19 +21,12 @@ const ImagePerceptionPromptVersion = "contextir-image-perception/v1"
 //go:embed prompts/image-perception-v1.txt
 var imagePerceptionSystem string
 
-// ImageModel accepts actual image conditioning, rather than an asset's textual
-// description. Model adapters implement this interface; callers can inject their own.
 type ImageModel interface {
 	GenerateWithImages(context.Context, contextir.ModelRequest, []Image) (contextir.ModelResponse, error)
 }
 
-// ImageResolver is caller-owned media IO. The library passes the opaque asset to
-// this callback and never opens a file, fetches a locator, or decodes media itself.
-// Return the entire image, as a data URI or a provider-accessible image location.
 type ImageResolver func(context.Context, contextir.Asset) (Image, error)
 
-// PerceptionCall contains safe operational metadata only. It does not contain
-// image locations, descriptions, raw provider output, or observed image content.
 type PerceptionCall struct {
 	AssetID       string          `json:"asset_id"`
 	Stage         string          `json:"stage"`
@@ -48,22 +38,11 @@ type PerceptionCall struct {
 }
 
 type PerceptionOptions struct {
-	// MaxRetries explicitly enables bounded schema/observation repair. The
-	// default makes one call. Every actual attempt retains its usage and callback.
-	MaxRetries int
-	// IncludeCard requests a structured identity/pose/reference-sheet card in
-	// addition to facts, for the complete compiler's grounding stage.
+	MaxRetries  int
 	IncludeCard bool
-	// OnCall is invoked once after every actual model invocation, including model
-	// failures and rejected evidence. It is synchronous and may be used for billing.
-	// Like the model and resolver, its concurrency safety belongs to the caller.
-	OnCall func(PerceptionCall)
+	OnCall      func(PerceptionCall)
 }
 
-// PerceptionResult retains the complete model response and usage even if parsing
-// or evidence validation fails. Evidence is populated only after all checks pass.
-// Called distinguishes a failed model invocation from pre-call input rejection.
-// Response.JSON contains model-authored content and must not be logged unredacted.
 type PerceptionResult struct {
 	Evidence contextir.Evidence      `json:"evidence"`
 	Response contextir.ModelResponse `json:"response"`
@@ -92,15 +71,11 @@ func NewImagePerceiver(model ImageModel, resolve ImageResolver, options Percepti
 	return &ImagePerceiver{model: model, resolve: resolve, onCall: options.OnCall, includeCard: options.IncludeCard, maxRetries: options.MaxRetries}, nil
 }
 
-// Perceive satisfies planner.Perceiver. Use OnCall or PerceiveWithUsage to retain
-// accounting when this compatibility method is called by a planner.
 func (p *ImagePerceiver) Perceive(ctx context.Context, asset contextir.Asset) (contextir.Evidence, error) {
 	result, err := p.PerceiveWithUsage(ctx, asset)
 	return result.Evidence, err
 }
 
-// PerceiveWithCalls exposes the same actual attempts as OnCall, without another
-// perception invocation. It satisfies contextir.MeteredPerceiver.
 func (p *ImagePerceiver) PerceiveWithCalls(ctx context.Context, asset contextir.Asset) (contextir.Evidence, []contextir.CallUsage, error) {
 	r, err := p.PerceiveWithUsage(ctx, asset)
 	calls := make([]contextir.CallUsage, 0, len(r.Attempts))
@@ -120,8 +95,6 @@ func (p *ImagePerceiver) PerceiveWithUsage(ctx context.Context, asset contextir.
 		result, err = p.perceiveOnce(ctx, asset, diagnostics)
 		attempts = append(attempts, result.Attempts...)
 		result.Attempts = append([]PerceptionCall(nil), attempts...)
-		// Repair only rejected content with valid usage evidence. A usage-contract
-		// failure is not permission to issue another billable model request.
 		validUsage := !result.Response.UsageInvalid && result.Response.Usage.InputTokens >= 0 && result.Response.Usage.OutputTokens >= 0
 		if err == nil || !result.Called || !validUsage || !repairableObservation(err) || ctx.Err() != nil {
 			return result, err
@@ -190,7 +163,6 @@ func (p *ImagePerceiver) perceiveOnce(ctx context.Context, asset contextir.Asset
 		}
 	}()
 	response, modelErr := p.model.GenerateWithImages(ctx, request, []Image{image})
-	// Snapshot raw output because provider implementations may reuse buffers.
 	response.JSON = append(json.RawMessage(nil), response.JSON...)
 	result.Response = response
 	if modelErr != nil {
@@ -269,8 +241,6 @@ func perceptionModelName(value string) bool {
 	return true
 }
 
-// Retain the historical diagnostic stage so existing callers can continue to
-// recognize observation errors across the package migration.
 func perceptionFailure(code contextir.Code, path, message string, cause error) *contextir.Error {
 	return &contextir.Error{Code: code, Stage: "deepseek.image_perception", Issues: []contextir.Issue{{Code: code, Path: path, Message: message}}, Cause: cause}
 }

@@ -7,9 +7,6 @@ import (
 	"github.com/ly95/h3-context-ir-go/plan"
 )
 
-// explicitReplacementTargets translates graph identifiers, never descriptive
-// words. The subject-N identifiers are the stable pre-binding reading order
-// shared with canonicalSubjects; a symbolic target is an explicit empty value.
 func explicitReplacementTargets(b Brief, manifest []plan.ManifestEntry, subjects []plan.SubjectPlan) (map[string]string, error) {
 	if len(b.ReplacementTargets) == 0 {
 		return nil, nil
@@ -55,8 +52,6 @@ func explicitReplacementTargets(b Brief, manifest []plan.ManifestEntry, subjects
 		}
 		out[entry.Label] = target
 	}
-	// The shared relationship boundary verifies source ownership, compatible kind
-	// and unique occupancy. No model interprets or revises an explicit selector.
 	if _, _, err := plan.BindReplacements(append([]plan.SubjectPlan(nil), subjects...), manifest, out); err != nil {
 		return nil, failure(contextir.CodeInvalid, "replacement", "replacement_targets", "The explicit replacement graph must select distinct compatible figures from the edit source.", err)
 	}

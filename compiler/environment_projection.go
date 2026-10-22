@@ -2,10 +2,6 @@ package compiler
 
 import "github.com/ly95/h3-context-ir-go/plan"
 
-// Legacy Plan flattens every depicted object into the environment definition.
-// The native target keeps field ownership: a car's identity is not a material
-// property of the floor. Matching here is between exact formatter outputs with
-// known typed origins, never a vocabulary test of a user's words.
 func targetEnvironmentAttributes(b Brief, subject plan.SubjectPlan, manifest []plan.ManifestEntry, attributes []string) []string {
 	if subject.Kind != "environment" {
 		return append([]string(nil), attributes...)

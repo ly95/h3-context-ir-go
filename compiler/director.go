@@ -11,8 +11,6 @@ const MaxDirectorNotesChars = 5000
 //go:embed directors.json
 var directorData []byte
 
-// Directors returns independent copies of the seven upstream built-in profiles.
-// Names are retained for display and audit, and never enter model requests.
 func Directors() []Director {
 	var result []Director
 	if err := json.Unmarshal(directorData, &result); err != nil {
@@ -43,8 +41,6 @@ func resolveDirector(b Brief) (*Director, error) {
 	return selection.Director, nil
 }
 
-// DirectorInstruction contains only prose habits. The identity is audit data and
-// must never seed imitation, scene examples, or override caller/ref decisions.
 func DirectorInstruction(d *Director, scored bool) string {
 	if d == nil || strings.TrimSpace(d.Notes) == "" {
 		return ""

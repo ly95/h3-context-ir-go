@@ -118,8 +118,6 @@ func method(w http.ResponseWriter, r *http.Request, allowed ...string) bool {
 	return false
 }
 
-// ServeHTTP exposes no read route for uploaded assets. Public media URIs remain
-// input locators; this adapter never fetches them or serves their bytes.
 func (s *Service) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	p := strings.Split(strings.TrimPrefix(r.URL.Path, "/"), "/")
 	if r.URL.Path == "/health" {
@@ -242,9 +240,6 @@ func (s *Service) drainBudget() int64 {
 }
 func (s *Service) drainRefused(body io.Reader) {
 	if e := Drain(body, s.drainBudget()); e != nil {
-		// FALLBACK: the bounded drain is best effort after a specific refusal has
-		// already been established. A broken peer connection must not replace that
-		// refusal with an unrelated internal error; no uploaded bytes are published.
 		return
 	}
 }

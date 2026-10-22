@@ -11,9 +11,6 @@ import (
 var speakerToken = regexp.MustCompile(`(?i)\(S[0-9]+(?:,S[0-9]+)*\)`)
 var sectionToken = regexp.MustCompile(`(?mi)^(?:subject_definitions|summary|retention_analysis|detailed_description|integrated_multimodal_description|overall_soundscape|non_diegetic_music):`)
 
-// This is a format boundary check, not an intent classifier. Reserved protocol
-// markers must come from typed bindings and renderer code, never literal text.
-// H3 cannot escape those markers while retaining their original literal bytes.
 func checkTextProtocol(doc contextir.Document) error {
 	check := func(path, value string) error {
 		if sectionToken.MatchString(value) {
@@ -31,8 +28,6 @@ func checkTextProtocol(doc contextir.Document) error {
 		return nil
 	}
 	checkRich := func(path string, text contextir.RichText) error {
-		// Adjacent literals are one emitted run. Checking individual spans alone
-		// would let a caller split a reserved token across two spans.
 		var run strings.Builder
 		flush := func() error {
 			err := check(path, run.String())

@@ -144,7 +144,6 @@ func (c *checker) checkDialogue() {
 	phrase := "says in an off-screen voiceover"
 	for _, p := range rx(phrase).FindAllStringIndex(c.desc, -1) {
 		if c.ctx.DialogueContract != nil {
-			// Visibility and every actual emitted block are checked together above.
 			break
 		}
 		tail := headCharacters(c.desc[p[1]:], 400)
@@ -154,8 +153,6 @@ func (c *checker) checkDialogue() {
 	}
 }
 
-// checkTypedDialogue checks the rendered protocol against explicit IR bindings.
-// It never infers whether a character is visible from scene descriptions.
 func (c *checker) checkTypedDialogue(spans [][]int) {
 	contract := c.ctx.DialogueContract
 	lines := map[string]DialogueLineContract{}

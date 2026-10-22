@@ -23,8 +23,6 @@ func TestRenderingPermissionHasNoSourceLookAndTaxonomyCannotReauthorize(t *testi
 			}
 			out = map[string]any{"kind": "preserve", "operation_quote": "", "target": "", "reasoning": "A detached style fragment authorizes no departure."}
 		} else {
-			// A taxonomy-stage attempt to re-author permission is a protocol
-			// violation, not permission to replace the accepted source look.
 			out = MediumDecision{Disposition: "convert", OperationQuote: "Anime style.", Target: "Anime", RequestedStyle: "Anime", ReferenceMedium: "3d-animation", RequestedMedium: "2d-animation", Treatments: []string{}, Reasoning: "Unauthorized attempted override."}
 		}
 		raw, _ := json.Marshal(out)

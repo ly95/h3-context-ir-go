@@ -15,8 +15,6 @@ import (
 
 const defaultDemoPrompt = "A baker opens the wooden shutters of a small bakery in warm morning light. The camera slowly pushes in as the baker sets a tray of fresh bread on the counter."
 
-// runDemo supplies a small text-only request to the existing CLI pipeline.
-// Choosing the model path is explicit and never falls back to an offline draft.
 func runDemo(args []string, out, errOut io.Writer) int {
 	fs := flag.NewFlagSet("demo", flag.ContinueOnError)
 	fs.SetOutput(errOut)
@@ -77,8 +75,6 @@ func runDemo(args []string, out, errOut io.Writer) int {
 	if *mode == "brief" && !providerSelected {
 		providerArgs = append(providerArgs, "-provider=openai")
 	}
-	// This is the public service Brief input, decoded by PrepareRequest. With
-	// no attachments, typed media routing selects t2va without interpreting text.
 	payload, err := json.Marshal(struct {
 		Intent  string  `json:"intent"`
 		Seconds float64 `json:"seconds"`

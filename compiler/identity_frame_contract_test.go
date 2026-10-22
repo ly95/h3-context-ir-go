@@ -13,8 +13,6 @@ import (
 )
 
 func TestIdentityClaimsSupportNormalizedMeaningWithoutReplacingUserQuote(t *testing.T) {
-	// Original licence-01218 input and the two real protocol failures exposed
-	// that an exact quote is provenance, not a ban on normalized semantics.
 	b := Brief{Intent: "she leans against the wall"}
 	original := []plan.SubjectPlan{{Label: "<Subject 1>", Kind: "person", Descriptor: "the man", Attributes: []string{"dark hair", "a scar"}}}
 	d := IdentityDecision{Label: "<Subject 1>", Kind: "person", DescriptorSource: "request", Descriptor: "the woman", TargetMention: "she", RequestQuote: "she", Claims: []IdentityClaim{{Dimension: "gender", Value: "female", Quote: "she"}}, RequestedAttributes: []string{"female"}, RetainedAttributes: []string{"dark hair", "a scar"}}

@@ -235,7 +235,7 @@ func serviceOperation(name string, b json.RawMessage) (any, error) {
 	for key, values := range a.Headers {
 		req.Header[key] = values
 	}
-	if lengths := req.Header.Values("Content-Length"); len(lengths) > 0 { // httptest already owns the exact bytes supplied by the original request.
+	if lengths := req.Header.Values("Content-Length"); len(lengths) > 0 {
 		req.ContentLength = int64(len(a.Body))
 	}
 	recorder := httptest.NewRecorder()

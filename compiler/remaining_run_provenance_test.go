@@ -9,13 +9,7 @@ import (
 	"github.com/ly95/h3-context-ir-go/evaluate"
 )
 
-// Pinned source: tests/test_creativity.py::test_a_stored_run_carries_its_provenance.
-// Go's reusable module receives the host's pipeline revision in Run.Commit (the
-// score CLI exposes -commit). A downloaded Go module has no Git checkout, so Git
-// discovery is a host responsibility rather than a prerequisite for this test.
 func TestRemainingRunProvenance(t *testing.T) {
-	// Exercise the storage contract outside any package checkout and with Git
-	// unavailable. This is also the environment of a downloaded module ZIP.
 	directory := t.TempDir()
 	t.Chdir(directory)
 	t.Setenv("PATH", t.TempDir())

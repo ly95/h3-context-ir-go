@@ -15,8 +15,6 @@ func withoutSubjectShotIDs(subjects []contextir.Subject) []contextir.Subject {
 	return out
 }
 
-// These are structural uses, not a lexical guess that a name or pronoun in a
-// literal sentence refers to a particular subject definition.
 func structuralSubjectShots(d contextir.Document) map[string][]string {
 	out := map[string][]string{}
 	speakerSubjects := map[string]string{}
@@ -69,7 +67,7 @@ func canonicalAppearanceContract(d contextir.Document, canonical []contextir.Sub
 			}
 			if onlyEditSource {
 				continue
-			} // observed source actors need not all become target actors
+			}
 			bindingID := subject.ID
 			if subject.TakenOverBy != "" {
 				bindingID = subject.TakenOverBy

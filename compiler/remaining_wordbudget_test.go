@@ -9,8 +9,6 @@ import (
 	"github.com/ly95/h3-context-ir-go/evaluate"
 )
 
-// Exact _ask input from pinned test_score_and_length.py. Runtime fixture origin
-// is explicitly declared by remainingPipelineDraft; no real model is called.
 func remainingWordBrief(mode contextir.Mode, role Role, kind contextir.MediaKind) Brief {
 	return Brief{Intent: "Put this car on a wet dock road at night.", Mode: mode, Seconds: 8, Assets: []Asset{{Asset: contextir.Asset{ID: "plate", Kind: kind, Description: "the black car", Metadata: contextir.MediaMetadata{Width: 1024, Height: 576}}, Role: role}}, Cards: []AssetCard{{AssetID: "plate", Style: "Live-action, cinematic", Summary: "a black car", Subjects: []SubjectCard{{Kind: "object", Descriptor: "the black car", Attributes: []string{"carbon fibre body"}}}}}}
 }
@@ -48,9 +46,6 @@ func TestRemainingPipelineWordBudget(t *testing.T) {
 		if !strings.Contains(req.System, "normally uses 350-500 English words") {
 			t.Fatal("band is structured but not explained in actual writer request")
 		}
-		// Length guidance is observable without promoting the upstream warning into
-		// a hard floor. The real native writer/artifact gate accepts this short,
-		// structurally valid candidate and reports P2 instead of silently padding it.
 		c, _ := New(nil, nil, Options{})
 		_, findings, e := c.assess(r.Brief, r.Structure, r.Scope, r.Document)
 		if e != nil || !remainingRule(findings, "P2-too-short") {
@@ -77,8 +72,6 @@ func TestRemainingPipelineWordBudget(t *testing.T) {
 		if e != nil || sections[policy.Section] == "" {
 			t.Fatal("expanded writer body did not survive actual renderer", sections, e)
 		}
-		// Same typed sources with the word "edit" in caller prose cannot change the
-		// task policy through a keyword shortcut.
 		b.Intent = "edit the choreography of this car on the wet dock road"
 		_, otherReq, _ := remainingMustWrite(t, b)
 		other, _ := remainingWordControls(t, otherReq)

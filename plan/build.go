@@ -242,8 +242,6 @@ func Build(brief Brief, mode string, cards map[string]AssetCard, options BuildOp
 	return Plan{UnresolvedReplacements: unresolved, Mode: mode, Target: target, Manifest: manifest, Subjects: subjects, Speakers: speakers, Shots: shots, TaskTypes: TaskTypes(manifest, brief), StylePhrase: strings.TrimSpace(options.StylePhrase), AmbientSound: ambient, Music: music, LoRAs: loras, ModeDecision: options.ModeDecision, PlannerVersion: "1"}, nil
 }
 
-// AllocateProposal accepts already validated typed creative decisions. It does
-// not infer purpose, subjects, or a camera move from prose.
 func AllocateProposal(target budget.Target, proposal []ProposedShot, mode string, opts ProfileOptions) ([]ShotPlan, error) {
 	if len(proposal) == 0 {
 		return nil, fmt.Errorf("proposal has no shots")

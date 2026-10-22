@@ -103,8 +103,6 @@ func sourceBrief(call upstreamCall) Brief {
 			_ = json.Unmarshal(raw, &card)
 		}
 		card.AssetID = a.SHA
-		// The upstream analyzer explicitly samples frames and cannot hear. This
-		// legacy corpus is admitted as partial evidence, never relabeled complete.
 		track := contextir.TrackVisual
 		if a.Kind == contextir.MediaAudio {
 			track = contextir.TrackAudio
@@ -121,9 +119,6 @@ func sourceBrief(call upstreamCall) Brief {
 	return b
 }
 
-// The source ROLE_CASES table enumerates all 16 responsibilities and calls
-// deterministic_draft -> render -> validate. These tests replay those actual
-// captured Brief/cards, rather than inventing new role-shaped examples.
 func TestUpstreamEveryRoleDraft(t *testing.T) {
 	corpus := loadUpstream(t)
 	count := 0
@@ -202,8 +197,6 @@ func TestUpstreamEveryRoleDraft(t *testing.T) {
 			if result.Document.Target.Width != want.Target.Canvas[0] || result.Document.Target.Height != want.Target.Canvas[1] {
 				t.Fatal("canvas mismatch")
 			}
-			// Base checkpoints use actual native first_frame/last_frame sockets; the
-			// upstream legacy draft's ref_image sockets are a known wiring defect.
 			if want.Mode == contextir.ModeReference {
 				if len(result.Artifact.Manifest.Media) != len(want.Manifest) {
 					t.Fatalf("manifest count %d want %d", len(result.Artifact.Manifest.Media), len(want.Manifest))

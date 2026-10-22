@@ -1,6 +1,3 @@
-// Command h3-context-ir-go exposes deterministic IR tools and an explicitly configured
-// Brief compiler. Only brief, demo -mode brief, or media perception with a selected
-// provider makes model calls; no command downloads media or renders video.
 package main
 
 import (

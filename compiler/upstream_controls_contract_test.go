@@ -13,11 +13,6 @@ import (
 	"github.com/ly95/h3-context-ir-go/plan"
 )
 
-// Adapted from fd031e13 original nodeid:
-// tests/test_director.py::test_direction_cannot_move_a_shot_count_the_caller_pinned
-// The source helper constructed assetless ref2va. Go uses valid t2va for this
-// assetless scene, keeping the caller's two-shot pin and the conflicting original
-// director words. Original pytest assertions/results remain unchanged.
 func TestGoConformancePinnedShots(t *testing.T) {
 	ctx := context.Background()
 	shots := 2
@@ -81,8 +76,6 @@ func TestGoConformancePinnedShots(t *testing.T) {
 						candidate[i].Purpose = "establish"
 					}
 				}
-				// This is an adversarial provider response, not an acceptance oracle:
-				// native schema validation must decide whether it can proceed.
 				response := Structure{ReplacementTargets: map[string]string{}, Mode: contextir.ModeText, Assets: []StructuralAsset{}, Shots: candidate, Dialogue: []Dialogue{}, OnscreenText: []string{}, Requested: Scope{}, Forbidden: Scope{}}
 				return contextir.ModelResponse{JSON: upstreamControlJSON(t, response), Model: "local-contract-provider"}, nil
 			})
@@ -110,10 +103,6 @@ func TestGoConformancePinnedShots(t *testing.T) {
 		})
 	}
 
-	// The upstream test checks the ask as well as the artifact. In Go the ask is
-	// a typed request, so exercise the public Compile path and inspect what the
-	// actual prose writer receives. A correct structural response must not let
-	// the writer turn the director's conflicting prose into a third shot.
 	for _, writerCount := range []int{2, 3} {
 		name := "public_compile_preserves_pin_and_director_words"
 		if writerCount == 3 {
@@ -164,8 +153,6 @@ func TestGoConformancePinnedShots(t *testing.T) {
 						if err := json.Unmarshal(response.JSON, &d); err != nil {
 							t.Fatal(err)
 						}
-						// Keep the rest of the writer response unchanged. Only the
-						// director-driven split violates the host's two-shot pin.
 						second := d.Shots[1]
 						middle := second.Start + (second.End-second.Start)/2
 						d.Shots[1].End = middle
@@ -203,8 +190,6 @@ func TestGoConformancePinnedShots(t *testing.T) {
 		})
 	}
 
-	// A well-formed, renderable but wrong-count finished document must also be
-	// rejected by the real product assessor; schema prose alone is insufficient.
 	var wrong contextir.Document
 	if err := json.Unmarshal(upstreamControlJSON(t, floor.Document), &wrong); err != nil {
 		t.Fatal(err)
@@ -231,13 +216,6 @@ func TestGoConformancePinnedShots(t *testing.T) {
 	})
 }
 
-// Adapted from fd031e13 original nodeid:
-// tests/test_reference_licence.py::test_a_frame_anchor_is_exempt_from_a_transformation_marker
-// The original helper passed fl2va one image for every role. The single-plate
-// controls use subject/ref2va, first/i2va and last/l2va; the two-plate control below
-// also exercises a complete valid fl2va request with both endpoints together.
-// Intent/cards and actual recorded native transformation decisions are retained;
-// successful artifacts and a deliberately wrong retention marker are checked.
 func TestGoConformanceRetention(t *testing.T) {
 	cases := []struct {
 		id   string
@@ -263,8 +241,6 @@ func TestGoConformanceRetention(t *testing.T) {
 				t.Fatal(err)
 			}
 			brief.Mode = tc.mode
-			// Draft explicitly consumes this already-resolved typed style. No
-			// model, intent classifier or expected answer is substituted here.
 			brief.Style = licence.Style.Phrase
 			briefBefore := upstreamControlJSON(t, brief)
 			c, err := New(nil, nil, Options{Profile: h3.ComfyUIProfile(), FramePolicy: FramePolicySnapUp})
@@ -340,11 +316,6 @@ func TestGoConformanceRetention(t *testing.T) {
 		}
 		brief.Mode = contextir.ModeFirstLastFrame
 		brief.Style = licence.Style.Phrase
-		// FL2VA has two physical conditioning sockets in Go. This additional
-		// control supplies a second conditioning input and reuses the same
-		// supplied observation fixture under its distinct asset ID. It does
-		// not claim a second perception call or new observed image content.
-		// Neither socket becomes an attribute-transfer instruction.
 		closing := brief.Assets[0]
 		closing.ID = "i2"
 		closing.Role = RoleLastFrame

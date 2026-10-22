@@ -16,8 +16,6 @@ const (
 
 type MediaKind string
 
-// ImageInput is a resolved visual input for an injected model adapter. Core IR
-// validation never opens its URI; the caller chooses both the resolver and model.
 type ImageInput struct {
 	URI    string `json:"uri"`
 	Detail string `json:"detail,omitempty"`
@@ -36,7 +34,6 @@ const (
 	TrackAudio  Track = "audio"
 )
 
-// Time is an integer number of milliseconds on a source or target timeline.
 type Time int64
 
 type Rational struct {
@@ -45,10 +42,7 @@ type Rational struct {
 }
 
 type Target struct {
-	Duration Time `json:"duration_ms"`
-	// FrameCount, when set, explicitly fixes the runtime frame count. Duration
-	// must be its nearest-millisecond representation at FPS; adapters report the
-	// exact rational playback duration and never choose a new frame count.
+	Duration    Time     `json:"duration_ms"`
 	FrameCount  int64    `json:"frame_count,omitempty"`
 	AspectRatio string   `json:"aspect_ratio"`
 	FPS         Rational `json:"fps"`
@@ -63,9 +57,6 @@ type MediaMetadata struct {
 	FPS      Rational `json:"fps,omitempty"`
 }
 
-// MediaPreparation is an explicit conditioning-input preparation instruction,
-// separate from observed source metadata. It does not claim IO was performed.
-// A zero value leaves preparation unspecified for a caller-owned adapter.
 type MediaPreparation struct {
 	Sizing string `json:"sizing,omitempty"`
 	Width  int    `json:"width,omitempty"`
@@ -73,8 +64,6 @@ type MediaPreparation struct {
 	Frames int64  `json:"frames,omitempty"`
 }
 
-// Asset IDs are caller-owned and stable. URI is an opaque locator; the library
-// never reads it automatically. SHA256, when supplied, identifies source bytes.
 type Asset struct {
 	ID          string           `json:"id"`
 	Kind        MediaKind        `json:"kind"`
@@ -169,8 +158,6 @@ const (
 	ReferenceAudio   ReferenceKind = "audio"
 )
 
-// Reference describes a separately tracked frame, video structure, or audio
-// signal. A source video's audio is explicit: use its asset ID with TrackAudio.
 type Reference struct {
 	ID               string        `json:"id"`
 	Kind             ReferenceKind `json:"kind"`
@@ -182,12 +169,8 @@ type Reference struct {
 	ShotIDs          []string      `json:"shot_ids,omitempty"`
 	SpeakerID        string        `json:"speaker_id,omitempty"`
 	Anchor           *Time         `json:"anchor_ms,omitempty"`
-	// Replaces identifies the source figure replaced in an edit, in the caller's
-	// own words. It is valid only for replacement_subject, never inferred.
-	Replaces string `json:"replaces,omitempty"`
-	// PairedVideoID explicitly associates a separately supplied soundtrack with
-	// its video asset. The manifest preserves this relationship for the adapter.
-	PairedVideoID string `json:"paired_video_id,omitempty"`
+	Replaces         string        `json:"replaces,omitempty"`
+	PairedVideoID    string        `json:"paired_video_id,omitempty"`
 }
 
 type Speaker struct {
@@ -198,8 +181,6 @@ type Speaker struct {
 	VoiceReferenceID string `json:"voice_reference_id,omitempty"`
 }
 
-// Span is an explicit tagged union: exactly one field is set. Text is literal;
-// subject/reference spans are bound structurally, never guessed from prose.
 type Span struct {
 	Text        string `json:"text,omitempty"`
 	SubjectID   string `json:"subject_id,omitempty"`
@@ -229,11 +210,8 @@ const (
 	VocalSinging VocalKind = "singing"
 )
 
-// DialogueLine is the complete immutable utterance. Parts across events must
-// concatenate to Text byte-for-byte; language, punctuation, and spacing survive.
 type DialogueLine struct {
-	ID string `json:"id"`
-	// An omitted kind is speech in the original v1 contract. Singing is explicit.
+	ID         string    `json:"id"`
 	Kind       VocalKind `json:"kind,omitempty"`
 	SpeakerIDs []string  `json:"speaker_ids"`
 	Language   string    `json:"language"`
@@ -242,8 +220,6 @@ type DialogueLine struct {
 	Voiceover  bool      `json:"voiceover,omitempty"`
 }
 
-// AudioCue identifies a phrase in an existing audio signal. It does not create
-// an independent target speaker and must never receive a generated (Sx) label.
 type AudioCue struct {
 	ReferenceID string `json:"reference_id"`
 	Language    string `json:"language"`
@@ -264,8 +240,7 @@ type Event struct {
 	Description RichText      `json:"description,omitempty"`
 	Dialogue    *DialoguePart `json:"dialogue,omitempty"`
 	AudioCue    *AudioCue     `json:"audio_cue,omitempty"`
-	// VisibleText is emitted verbatim inside English double quotes.
-	VisibleText string `json:"visible_text,omitempty"`
+	VisibleText string        `json:"visible_text,omitempty"`
 }
 
 type Shot struct {
@@ -309,8 +284,6 @@ type Claim struct {
 	Sources []SourceRef `json:"sources,omitempty"`
 }
 
-// Document is the authoritative editable artifact. Renderer output is always
-// derived from this document, never a separate model-written final prompt.
 type Document struct {
 	LoRAs       []LoRAChoice   `json:"loras,omitempty"`
 	Version     string         `json:"version"`
@@ -332,17 +305,15 @@ type Document struct {
 }
 
 type Request struct {
-	LoRAs                  []LoRAChoice   `json:"loras,omitempty"`
-	Instruction            string         `json:"instruction"`
-	Mode                   Mode           `json:"mode"`
-	Target                 Target         `json:"target"`
-	Assets                 []Asset        `json:"assets,omitempty"`
-	Bindings               []AssetBinding `json:"bindings,omitempty"`
-	Dialogue               []DialogueLine `json:"dialogue,omitempty"`
-	Constraints            []Constraint   `json:"constraints,omitempty"`
-	AllowCreativeAdditions bool           `json:"allow_creative_additions"`
-	// Newly generated vocal lines require separate permission. Caller-supplied
-	// Dialogue remains authoritative regardless of this flag.
+	LoRAs                     []LoRAChoice   `json:"loras,omitempty"`
+	Instruction               string         `json:"instruction"`
+	Mode                      Mode           `json:"mode"`
+	Target                    Target         `json:"target"`
+	Assets                    []Asset        `json:"assets,omitempty"`
+	Bindings                  []AssetBinding `json:"bindings,omitempty"`
+	Dialogue                  []DialogueLine `json:"dialogue,omitempty"`
+	Constraints               []Constraint   `json:"constraints,omitempty"`
+	AllowCreativeAdditions    bool           `json:"allow_creative_additions"`
 	AllowGeneratedDialogue    bool           `json:"allow_generated_dialogue"`
 	PinnedShots               []ShotBoundary `json:"pinned_shots,omitempty"`
 	OnscreenText              []string       `json:"onscreen_text,omitempty"`
@@ -350,26 +321,18 @@ type Request struct {
 	AdditionScope             *AdditionScope `json:"addition_scope,omitempty"`
 }
 
-// ShotBoundary is a caller-owned edit decision. The model writes descriptions
-// inside these exact spans and cannot change IDs, count, order, or cut times.
 type ShotBoundary struct {
 	ID    string `json:"id"`
 	Start Time   `json:"start_ms"`
 	End   Time   `json:"end_ms"`
 }
 
-// AdditionScope is the complete resolved permission for these output classes,
-// including explicitly requested content. A nil scope preserves the legacy
-// low-level API; high-level compilers resolve it from a typed interpretation.
 type AdditionScope struct {
 	Dialogue    bool `json:"dialogue"`
 	Music       bool `json:"music"`
 	VisibleText bool `json:"visible_text"`
 }
 
-// AssetBinding locks an explicitly chosen source responsibility before model
-// interpretation. If bindings are supplied they form the complete allowed set
-// of source/role pairs, rather than suggestions to the planner.
 type AssetBinding struct {
 	Source        SourceRef `json:"source"`
 	Role          Role      `json:"role"`
@@ -395,8 +358,6 @@ type Evidence struct {
 	Coverage        *PerceptionCoverage `json:"coverage,omitempty"`
 }
 
-// LoRAChoice is a fully resolved, replayable inference decision. The core never
-// reads its opaque weights locator or discovers a registry implicitly.
 type LoRAChoice struct {
 	ID               string        `json:"id"`
 	Version          string        `json:"version,omitempty"`
@@ -413,8 +374,6 @@ type LoRATrigger struct {
 	Slot  string `json:"slot"`
 }
 
-// AssetCard separates reusable identity from transient pose and source context.
-// It is observed material, not an interpretation of Asset.Description.
 type AssetCard struct {
 	AssetID          string              `json:"asset_id"`
 	Summary          string              `json:"summary,omitempty"`
@@ -453,9 +412,6 @@ const (
 	CoveragePartial  CoverageStatus = "partial"
 )
 
-// PerceptionCoverage records the adapter's declared inspection, not proof of
-// semantic accuracy. SampleTimes are source milliseconds; AbsentTracks records
-// tracks that were probed and found absent, not tracks silently ignored.
 type PerceptionCoverage struct {
 	Status       CoverageStatus `json:"status"`
 	Tracks       []Track        `json:"tracks"`
@@ -464,9 +420,6 @@ type PerceptionCoverage struct {
 	Intervals    []Interval     `json:"intervals,omitempty"`
 }
 
-// ModelRequest is provider-neutral. ResponseSchema is a JSON Schema document,
-// not a provider-specific response_format. Actual models and credentials belong
-// to the caller's adapter.
 type ModelRequest struct {
 	Stage          string          `json:"stage"`
 	System         string          `json:"system"`
@@ -480,15 +433,9 @@ type Usage struct {
 }
 
 type ModelResponse struct {
-	JSON  json.RawMessage `json:"json"`
-	Model string          `json:"model"`
-	Usage Usage           `json:"usage"`
-	// UsageInvalid marks evidence the adapter knows is invalid, such as usage
-	// beyond an explicitly requested hard limit. Preserve the reported amounts
-	// for diagnostics, but callers must not charge from that evidence.
-	UsageInvalid bool `json:"usage_invalid,omitempty"`
-	// RejectedOutput retains a candidate that failed provider protocol checks.
-	// It is never an accepted JSON value, is omitted from ordinary serialization,
-	// and must not be logged without an explicit content-recording policy.
-	RejectedOutput string `json:"-"`
+	JSON           json.RawMessage `json:"json"`
+	Model          string          `json:"model"`
+	Usage          Usage           `json:"usage"`
+	UsageInvalid   bool            `json:"usage_invalid,omitempty"`
+	RejectedOutput string          `json:"-"`
 }

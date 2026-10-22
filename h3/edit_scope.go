@@ -6,8 +6,6 @@ import (
 	"github.com/ly95/h3-context-ir-go"
 )
 
-// editReferenceRelationships uses graph ownership, then explicit shot scope.
-// A role is never enough to attach every incoming picture to every edit clip.
 func editReferenceRelationships(doc contextir.Document) (map[string][]contextir.Reference, error) {
 	out := map[string][]contextir.Reference{}
 	var edits []contextir.Reference
@@ -61,8 +59,6 @@ func editReferenceRelationships(doc contextir.Document) (map[string][]contextir.
 			out[incoming.ID] = append(out[incoming.ID], edits[0])
 			continue
 		}
-		// Without transfer ownership, a placement/replacement must identify one
-		// source clip per target shot. An unscoped edit cannot break a tie.
 		if len(scope) == 0 {
 			return nil, profileIssue(contextir.CodeUnsupported, fmt.Sprintf("references[%d].shot_ids", i), "multiple edit sources require an explicit unambiguous subject-to-clip shot scope or replacement graph")
 		}

@@ -12,8 +12,6 @@ import (
 	"github.com/ly95/h3-context-ir-go/planner"
 )
 
-// The exact _plate input from pinned test_ask_states_the_wiring.py. Go uses
-// stable IDs and an explicit mode; supplied card readings retain source words.
 func remainingWiringPlate(mode contextir.Mode, role Role, intent string) Brief {
 	return Brief{Intent: intent, Mode: mode, Seconds: 5, Assets: []Asset{{Asset: contextir.Asset{ID: "plate", Kind: contextir.MediaImage, Description: "the black supercar", Metadata: contextir.MediaMetadata{Width: 1024, Height: 576}}, Role: role}}, Cards: []AssetCard{{AssetID: "plate", Style: "Live-action, cinematic", Summary: "a black supercar in a dark showroom", Subjects: []SubjectCard{{Kind: "object", Descriptor: "the black supercar", Attributes: []string{"carbon fibre body", "orange underglow"}}}}}}
 }
@@ -69,8 +67,6 @@ func TestRemainingPipelineWiring(t *testing.T) {
 	})
 	t.Run("last_frame_is_endpoint_not_initial", func(t *testing.T) {
 		b := remainingWiringPlate(contextir.ModeLastFrame, RoleLastFrame, "End on this photo of the car.")
-		// Two shots disambiguate shot ownership mechanically; the source's one-picture
-		// helper phrase cannot itself establish whether the video has one shot.
 		count := 2
 		b.Shots = &count
 		r, _, in := remainingMustWrite(t, b)
@@ -119,8 +115,6 @@ func TestRemainingPipelineWiring(t *testing.T) {
 		if !strings.Contains(r.Artifact.Prompt, "keyframe completion") {
 			t.Fatal("supported anchor task was silently downgraded")
 		}
-		// Original local runtime cannot perform this combined capability. Explicit
-		// backend failure preserves the caller choice instead of inventing a downgrade.
 		c, _ := New(nil, nil, Options{Profile: h3.ComfyUIProfile(), FramePolicy: FramePolicySnapUp, Planner: planner.Options{AllowPartialPerception: true}})
 		for i := range b.Cards {
 			b.Cards[i].AnalyzerVersion = "pinned-upstream-unit-fixture/fd031e13"

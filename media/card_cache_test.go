@@ -37,7 +37,6 @@ func TestCardCacheAudioNeverReadsPoisonAndKeepsEveryCaller(t *testing.T) {
 	if e != nil {
 		t.Fatal(e)
 	}
-	// A poisoned pre-existing entry is not even parsed for audio metadata.
 	if e = os.WriteFile(path, []byte("invalid stale audio card"), 0600); e != nil {
 		t.Fatal(e)
 	}

@@ -12,8 +12,6 @@ import (
 
 func TestProjectionReviewCarriesCallerDescriptorAuthorityAndOriginalSourceGraph(t *testing.T) {
 	b := prefixProjectionBrief()
-	// The caller explicitly selects black in the typed descriptor; its absence
-	// from free-text intent/source-attribute selections does not revoke it.
 	b.SubjectProjections[0].Descriptor = "the black sports car"
 	_, published := remainingPipelineDraft(t, b)
 	if strings.Contains(b.Intent, "black") {

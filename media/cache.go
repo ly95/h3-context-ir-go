@@ -16,10 +16,6 @@ import (
 	"github.com/ly95/h3-context-ir-go"
 )
 
-// FrameCache is an explicit caller-owned cache of decoded sample artifacts.
-// It never caches perception or a model answer. The content hash, exact sampling
-// fractions and analyzer/cache version are all in the key. Corrupt entries fail
-// explicitly; they are never treated as successful observations or ignored.
 type FrameCache struct {
 	tools *Tools
 	dir   string

@@ -57,8 +57,6 @@ func TestOriginalAnimationEmptyVisualTargetReexaminesPermissionWithinConfiguredB
 					t.Fatal("source rendering contaminated the permission re-examination")
 				}
 				if permissionCalls == 1 {
-					// Actual 08e0 failure: motion was accepted as a rendering
-					// operation, then the taxonomy found no visual target.
 					reply = map[string]any{"kind": "rendering_transformation", "operation_quote": "animate this photo", "target": "slow drifting motion", "reasoning": "Initial erroneous permission."}
 				} else {
 					var input struct {
@@ -96,8 +94,6 @@ func TestOriginalAnimationEmptyVisualTargetReexaminesPermissionWithinConfiguredB
 			t.Fatal("an action description replaced the source style", style)
 		}
 	}
-	// Enabling the new contradiction repair changes no initial request bytes.
-	// Existing non-triggering paid model tapes therefore retain their contract.
 	first, _ := json.Marshal(requests[0])
 	second, _ := json.Marshal(requests[1][:2])
 	if string(first) != string(second) {

@@ -6,8 +6,6 @@ import (
 	"strings"
 )
 
-// TextRepair is an explicit protocol edit, with every performed change reported.
-// It is never applied automatically to an authoritative Document or artifact.
 type TextRepair struct {
 	Text    string   `json:"text"`
 	Changes []string `json:"changes"`
@@ -16,10 +14,6 @@ type TextRepair struct {
 var summaryHeader = regexp.MustCompile(`(?m)^summary[ \t]*:[ \t]*`)
 var openingTaskTag = regexp.MustCompile(`^\[[^\]\n]*\]`)
 
-// RepairTaskPrefix aligns a generated H3 summary's opening task tag to an
-// already-computed relationship list. It never infers tasks from prose, edits
-// inner bracket groups, invents a section, or changes any other text.
-// Derived from h3ir/repair.py fd031e13 (Apache-2.0).
 func RepairTaskPrefix(text string, taskTypes []string) (TextRepair, error) {
 	r := TextRepair{Text: text, Changes: []string{}}
 	if len(taskTypes) == 0 {

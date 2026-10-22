@@ -84,8 +84,6 @@ func TestPreflightConsumptionMatchesActualPreparedFrames(t *testing.T) {
 	if r.Request.Assets[0].Preparation.Frames != 48 || r.Artifact.Manifest.Media[0].Preparation.Frames != 48 {
 		t.Fatal("the actual bound instruction differs from preflight", r.Request, r.Artifact.Manifest)
 	}
-	// Profile-independent typed conflict diagnostics cannot be manufactured from a
-	// stale free-text signal when the actual relationship says ordinary action.
 	d := ModeDecision{Rule: "explicit-role-reference", Interpretation: "declared_reference", InputRelationship: "ordinary_scene_action", Signals: []string{"anchor language in the request is overridden"}}
 	if len(modeInterpretationFindings(d)) != 0 {
 		t.Fatal("X18 inferred from free-text signal rather than typed audit")

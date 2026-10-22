@@ -2,9 +2,6 @@ package compiler
 
 import "github.com/ly95/h3-context-ir-go"
 
-// AudioPropertyRecipientKind is the typed recipient of a property relationship:
-// vocal_performance, new_score, cut_action_timing or new_sound_texture. It never
-// classifies caller words or source sound through lexical rules.
 type AudioPropertyRecipientKind string
 
 type audioRecipientKind = AudioPropertyRecipientKind
@@ -42,9 +39,6 @@ func audioPropertyRecipient(role contextir.Role) audioRecipientKind {
 	return ""
 }
 
-// audioPropertyTargets mechanically binds accepted reference roles to their
-// recipients. Source characterisation cannot promote voice timbre into SFX or
-// turn a beat relationship into an audible copied/generated musical track.
 func audioPropertyTargets(references []contextir.Reference, speakers []contextir.Speaker, lines []contextir.DialogueLine) ([]audioPropertyTarget, error) {
 	bySpeaker := map[string]contextir.Speaker{}
 	for _, speaker := range speakers {

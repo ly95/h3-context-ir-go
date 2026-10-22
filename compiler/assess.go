@@ -152,9 +152,6 @@ func (c *Compiler) assess(b Brief, st Structure, scope Scope, d contextir.Docume
 	return a, findings, nil
 }
 
-// assessmentDialogueContract binds the actual rendered parts to the accepted
-// structure's immutable caller words. A writer cannot change a Document line
-// and have that changed line become its own oracle during H3 linting.
 func assessmentDialogueContract(st Structure, d contextir.Document) *h3check.DialogueContract {
 	contract := &h3check.DialogueContract{}
 	fixed := map[string]h3check.DialogueLineContract{}
@@ -175,8 +172,6 @@ func assessmentDialogueContract(st Structure, d contextir.Document) *h3check.Dia
 		}
 	}
 	seen := map[string]bool{}
-	// Fixed contract lines retain caller order even when the candidate changes
-	// declaration ordering. Missing fixed lines are still checked for emission.
 	for i := range st.Dialogue {
 		id := fmt.Sprintf("line-%d", i+1)
 		line := fixed[id]
@@ -211,9 +206,6 @@ func assessmentDialogueContract(st Structure, d contextir.Document) *h3check.Dia
 	return contract
 }
 
-// ReferenceWardrobeTerms returns only the accepted model-identified garment
-// properties when the reference governs wardrobe. A caller-governed change must
-// never re-arm the source garment hold. It contains no garment-word classifier.
 func ReferenceWardrobeTerms(licence LicenceDecision) []string {
 	if licence.Governs["wardrobe"] != "reference" {
 		return nil
@@ -234,9 +226,6 @@ func ReferenceWardrobeTerms(licence LicenceDecision) []string {
 	return out
 }
 
-// An unknown classification cannot establish a cross-medium change. The
-// transformation itself remains authorized even when this specific guard is not
-// armed; identity and exact requested rendering are still checked separately.
 func transformedFrom(licence LicenceDecision) string {
 	style := licence.Style
 	if licence.MediumTransferred && style.ReferenceMedium != "" && style.RequestedMedium != "" && style.ReferenceMedium != style.RequestedMedium {
@@ -249,7 +238,6 @@ func derivedTasks(d contextir.Document) []string {
 	return h3.TaskTypes(d)
 }
 
-// FindingsError formats safe validation diagnostics without provider content.
 func FindingsError(findings []h3check.Finding) error {
 	var ids []string
 	for _, f := range findings {

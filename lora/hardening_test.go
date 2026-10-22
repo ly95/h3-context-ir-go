@@ -20,7 +20,6 @@ func hasRule(f []h3check.Finding, id string) bool {
 	return false
 }
 
-// These supplement, rather than replace, the captured upstream inputs.
 func TestRegistryEnforcesDeclaredResourcesAndContracts(t *testing.T) {
 	base, e := LoadRegistry([]string{"testdata"})
 	if e != nil {

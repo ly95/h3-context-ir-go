@@ -27,13 +27,10 @@ func renderDefinitions(doc contextir.Document, state bindingState) (string, stri
 		}
 		definitions = append(definitions, definition)
 		if len(subject.Sources) == 0 {
-			continue // Original subjects have no source retention relationship to claim.
+			continue
 		}
 		shots := subjectShots(doc, subject)
 		if subject.TakenOverBy != "" && len(shots) == 0 {
-			// A removed identity is a transfer relationship, not a separately
-			// visible actor. Its implicit scope follows the incoming figure.
-			// Caller-supplied explicit scope remains authoritative above.
 			for _, incoming := range doc.Subjects {
 				if incoming.ID == subject.TakenOverBy {
 					shots = subjectShots(doc, incoming)
@@ -52,8 +49,6 @@ func renderDefinitions(doc contextir.Document, state bindingState) (string, stri
 			retentions[len(retentions)-1] += " This scope describes transferred behavior, not the removed figure appearing as a separate actor. Its position in frame, actions and timing are transferred to " + state.subjects[subject.TakenOverBy] + "; its source appearance is not retained."
 		}
 	}
-	// Several semantic references may point to the same conditioning input.
-	// H3 defines that physical label once; all explicit roles and details survive.
 	seen := map[string]bool{}
 	for i, ref := range doc.References {
 		label := state.refs[ref.ID]
@@ -179,8 +174,6 @@ func renderDefinitions(doc contextir.Document, state bindingState) (string, stri
 		}
 		reason := strings.Join(reasons, " ")
 		if ref.Kind == contextir.ReferenceAudio {
-			// Keep the published audio marker directly after its label. Scope
-			// remains explicit in the same retention line and in the manifest.
 			if context != "" {
 				reason += " Applicable scope:" + context + "."
 			}
@@ -312,9 +305,6 @@ func usesSubject(text contextir.RichText, id string) bool {
 	return false
 }
 
-// audioShots resolves explicit semantic scope without reading or guessing prose.
-// Explicit ShotIDs and structural appearances are additive, as for visual uses.
-// A reference with no target scope is a whole-video relationship.
 func audioShots(doc contextir.Document, ref contextir.Reference) []string {
 	shots := orderedShots(doc, ref.ShotIDs, func(shot contextir.Shot) bool {
 		for _, span := range shot.Description {

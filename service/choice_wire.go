@@ -7,7 +7,6 @@ import (
 	"strings"
 )
 
-// These are explicit structural choices, never an interpretation of request prose.
 func validateWireChoices(obj map[string]json.RawMessage, b BriefIn) error {
 	check := func(raw json.RawMessage, path string, model any, requiredFields []string) (map[string]json.RawMessage, error) {
 		fields, e := knownKeys(raw, fieldNames(model), path)

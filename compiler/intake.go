@@ -14,9 +14,6 @@ type Intake struct {
 	Decisions []Decision       `json:"decisions"`
 }
 
-// ValidateIntake is the same structural admission path used by Compile, before
-// perception or model calls. It does not read a locator or claim a media format:
-// validate uploaded bytes with the explicitly configured media adapter first.
 func (c *Compiler) ValidateIntake(ctx context.Context, brief Brief) (Intake, error) {
 	var out Intake
 	if c == nil {
@@ -67,9 +64,6 @@ func (c *Compiler) ValidateIntake(ctx context.Context, brief Brief) (Intake, err
 	return out, err
 }
 
-// CheckCapacity reports every overfull conditioning socket family together. It
-// uses the explicitly selected runtime's limits; zero means unbounded, as in the
-// published-format profile. Source minimum length is independently enforced.
 func (c *Compiler) CheckCapacity(b Brief) error {
 	if c == nil {
 		return invalid("compiler", "Initialize the compiler with New.")
@@ -121,9 +115,6 @@ func (c *Compiler) CheckCapacity(b Brief) error {
 	return nil
 }
 
-// CheckRequest validates the meaningful request fields without capacity,
-// perception, model availability or file access. Explicit zero/empty original
-// values remain distinct from the Go Brief's omitted defaults.
 func (c *Compiler) CheckRequest(brief Brief) error { _, err := c.requestIntake(brief); return err }
 
 func (c *Compiler) requestIntake(brief Brief) (Intake, error) {

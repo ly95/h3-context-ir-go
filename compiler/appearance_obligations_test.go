@@ -159,8 +159,6 @@ func TestRealProjectionCandidatesRemainRejectedWithExactMissingIdentity(t *testi
 			if !errors.As(err, &typed) || typed.Code != contextir.CodeModelOutput || len(typed.Issues) != 1 || typed.Issues[0].Path != "subjects[subject-1].shot_ids" || !strings.Contains(typed.Issues[0].Message, "unrelated") {
 				t.Fatal("real zero-appearance candidate escaped or lost an actionable source/target diagnostic", err)
 			}
-			// A summary mention is not an actual appearance and cannot authorize
-			// silently dropping the canonical reference either.
 			d := candidate.Document
 			d.Summary = append(d.Summary, contextir.Span{SubjectID: "subject-1"})
 			if _, err := projectSubjectAppearances(d, f.Canonical); err == nil {
@@ -187,7 +185,7 @@ func TestIndependentBollardAppearanceKeepsTheCarProjectionAndPublishes(t *testin
 	if err != nil || len(projected.Subjects) != 2 || !reflect.DeepEqual(projected.Subjects[0].ShotIDs, []string{"shot-1"}) || !reflect.DeepEqual(projected.Subjects[1].ShotIDs, []string{"shot-1", "shot-2", "shot-3"}) || !reflect.DeepEqual(projected.Subjects[1].Attributes, f.Canonical[1].Attributes) || !reflect.DeepEqual(projected.Subjects[1].Sources, f.Canonical[1].Sources) {
 		t.Fatal("appearance repair altered the target/source property projection", projected.Subjects, err)
 	}
-	projected.Style = f.Licence.Style.Phrase // Same separate host-owned style assembly.
+	projected.Style = f.Licence.Style.Phrase
 	if artifact, err := h3.Compile(projected, h3.OfficialProfile()); err != nil || artifact.Prompt == "" {
 		t.Fatal("valid independent target graph did not publish through H3", artifact, err)
 	}
@@ -234,7 +232,7 @@ func TestProjectionAppearanceWriterAddsNoFieldWithoutIndependentTarget(t *testin
 		structure := f.Structure
 		identities := f.Canonical
 		if merge {
-			identities = identities[1:] // Every source was consumed into this target.
+			identities = identities[1:]
 		} else {
 			structure.SubjectProjections = nil
 		}

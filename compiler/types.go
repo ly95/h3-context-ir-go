@@ -1,6 +1,3 @@
-// Package compiler implements Brief -> observed evidence -> typed structural plan
-// -> locked Document -> H3 artifact. Its interface follows open-h3-ir's Brief
-// workflow while preserving ContextIR's explicit failure and provenance rules.
 package compiler
 
 import (
@@ -52,13 +49,10 @@ const (
 )
 
 type Asset struct {
-	// PreparationInput preserves only the caller's original hard preparation
-	// choices. Preparation contains the computed instruction for this target.
 	PreparationInput    *contextir.MediaPreparation `json:"preparation_input,omitempty"`
 	PreparationComputed bool                        `json:"preparation_computed,omitempty"`
 	IntendedRole        Role                        `json:"intended_role,omitempty"`
 	contextir.Asset
-	// Role, when omitted, is decided by the typed structure stage.
 	Role           Role                `json:"role,omitempty"`
 	Replaces       string              `json:"replaces,omitempty"`
 	PairedVideoID  string              `json:"paired_video_id,omitempty"`
@@ -91,12 +85,8 @@ type FrameAnchor struct {
 }
 
 type Brief struct {
-	TranscriptUses     []TranscriptUse     `json:"transcript_uses,omitempty"`
-	SubjectProjections []SubjectProjection `json:"subject_projections,omitempty"`
-	// ReplacementTargets chooses target graph identities explicitly. Keys are
-	// incoming attachment IDs; values are subject-N IDs in the unbound source
-	// reading, or empty for a caller-described unobserved figure. When supplied,
-	// the map must cover every replacement attachment.
+	TranscriptUses     []TranscriptUse                `json:"transcript_uses,omitempty"`
+	SubjectProjections []SubjectProjection            `json:"subject_projections,omitempty"`
 	ReplacementTargets map[string]string              `json:"replacement_targets,omitempty"`
 	AudioCopyModes     map[string]contextir.Retention `json:"audio_copy_modes,omitempty"`
 	VoiceBindings      map[string]string              `json:"voice_bindings,omitempty"`
@@ -120,16 +110,14 @@ type Brief struct {
 	Cuts               []contextir.Time               `json:"cuts_ms,omitempty"`
 	Mode               contextir.Mode                 `json:"mode,omitempty"`
 	Constraints        []string                       `json:"constraints,omitempty"`
-	// Silent matches the upstream Brief: prohibit added score. SilenceAll also
-	// prohibits ambience and speech, and never silently deletes supplied dialogue.
-	Silent          bool                 `json:"silent,omitempty"`
-	SilenceAll      bool                 `json:"silence_all,omitempty"`
-	Creativity      Creativity           `json:"creativity,omitempty"`
-	Director        string               `json:"director,omitempty"`
-	DirectorProfile *Director            `json:"director_profile,omitempty"`
-	FrameAnchors    []FrameAnchor        `json:"frame_anchors,omitempty"`
-	Evidence        []contextir.Evidence `json:"evidence,omitempty"`
-	Cards           []AssetCard          `json:"cards,omitempty"`
+	Silent             bool                           `json:"silent,omitempty"`
+	SilenceAll         bool                           `json:"silence_all,omitempty"`
+	Creativity         Creativity                     `json:"creativity,omitempty"`
+	Director           string                         `json:"director,omitempty"`
+	DirectorProfile    *Director                      `json:"director_profile,omitempty"`
+	FrameAnchors       []FrameAnchor                  `json:"frame_anchors,omitempty"`
+	Evidence           []contextir.Evidence           `json:"evidence,omitempty"`
+	Cards              []AssetCard                    `json:"cards,omitempty"`
 }
 
 type FramePolicy string
@@ -236,19 +224,18 @@ type Result struct {
 	Findings                     []h3check.Finding             `json:"findings,omitempty"`
 	Status                       string                        `json:"status"`
 	Diagnostics                  []contextir.Issue             `json:"diagnostics,omitempty"`
-	// ModelError preserves the original failure for explicitly requested draft policies.
-	ModelError error                `json:"-"`
-	Version    string               `json:"version"`
-	Brief      Brief                `json:"brief"`
-	Request    contextir.Request    `json:"request"`
-	Structure  Structure            `json:"structure"`
-	Scope      Scope                `json:"scope"`
-	Director   *Director            `json:"director,omitempty"`
-	Document   contextir.Document   `json:"document"`
-	Artifact   h3.Artifact          `json:"artifact"`
-	Evidence   []contextir.Evidence `json:"evidence,omitempty"`
-	Decisions  []Decision           `json:"decisions"`
-	Calls      []planner.CallUsage  `json:"calls,omitempty"`
+	ModelError                   error                         `json:"-"`
+	Version                      string                        `json:"version"`
+	Brief                        Brief                         `json:"brief"`
+	Request                      contextir.Request             `json:"request"`
+	Structure                    Structure                     `json:"structure"`
+	Scope                        Scope                         `json:"scope"`
+	Director                     *Director                     `json:"director,omitempty"`
+	Document                     contextir.Document            `json:"document"`
+	Artifact                     h3.Artifact                   `json:"artifact"`
+	Evidence                     []contextir.Evidence          `json:"evidence,omitempty"`
+	Decisions                    []Decision                    `json:"decisions"`
+	Calls                        []planner.CallUsage           `json:"calls,omitempty"`
 }
 
 type Compiler struct {
@@ -260,24 +247,17 @@ type Compiler struct {
 	options             Options
 }
 
-// Model and Perceiver are aliases so callers need only one injected adapter.
 type Model = planner.Model
 type Perceiver = planner.Perceiver
 
-// Compilable is the public compile capability, useful at application boundaries.
 type Compilable interface {
 	Compile(context.Context, Brief) (Result, error)
 }
 
-// AssetCard is a caller-supplied, structured perception record. It preserves the
-// upstream card distinction between identity, transient pose, and presentation.
-// It is never inferred from Asset.Description, which remains caller commentary.
-// Coverage is mandatory unless legacy coverage is explicitly admitted.
 type AssetCard = contextir.AssetCard
 
 type SubjectCard = contextir.SubjectCard
 
-// DialoguePlacement is a structural exact-word segment, chosen before prose.
 type DialoguePlacement struct {
 	LineIndex int    `json:"line_index"`
 	ShotIndex int    `json:"shot_index"`

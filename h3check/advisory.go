@@ -1,4 +1,3 @@
-// Advisory classification of output prose only; never user intent or authorization.
 package h3check
 
 import (

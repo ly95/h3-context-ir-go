@@ -8,9 +8,6 @@ import (
 	"testing"
 )
 
-// Source test_endpoint_portability.py::test_the_vision_check_failure_is_a_backend_error_callers_already_catch.
-// Python exception inheritance maps to Go errors.As on the same native backend
-// error type, including after the caller wraps the actual VisionCheck failure.
 func TestRemainingSurfaceVisionRefusalIsBackendError(t *testing.T) {
 	c := fixtureClient(t, func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusUnsupportedMediaType)

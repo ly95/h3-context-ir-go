@@ -18,8 +18,6 @@ func (f modelFunc) Generate(ctx context.Context, r contextir.ModelRequest) (cont
 	return f(ctx, r)
 }
 
-// The original test_director.py input and assertions are replayed through the
-// public Brief API, including profile notes, original shot pin, and name secrecy.
 func TestUpstreamDirectorControlsReachActualCompile(t *testing.T) {
 	b := Brief{Intent: "a man walks a corridor", Seconds: 8, DirectorProfile: &Director{Name: "Ridley Scott", Notes: "Sodium light on wet asphalt."}, Creativity: CreativityRestrained}
 	pin := 1
@@ -62,7 +60,7 @@ func TestUpstreamDirectorControlsReachActualCompile(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
-			d.Style = "" // The writer omits the host-owned style field.
+			d.Style = ""
 			out = d
 		}
 		if m.Stage == "structure" {

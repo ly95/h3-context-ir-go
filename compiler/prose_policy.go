@@ -2,9 +2,6 @@ package compiler
 
 import "github.com/ly95/h3-context-ir-go"
 
-// Prose length is a mode/task-specific writing guide, not a content validity
-// floor. In particular the published reference example is shorter than 350
-// words, and an edit's complexity is independent of a generation word band.
 type proseLengthPolicy struct {
 	Section       string         `json:"section"`
 	Task          string         `json:"task"`

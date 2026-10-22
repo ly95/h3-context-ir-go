@@ -1,5 +1,3 @@
-// Command h3-context-ir-go-score scores archived final output and compares stored
-// runs offline. It has no provider configuration, credential lookup or HTTP IO.
 package main
 
 import (

@@ -218,7 +218,6 @@ var audioReferenceRoles = []string{"voice_timbre", "sfx", "music_style", "beat_r
 var visualMarkers = []string{"fully_preserved", "partially_preserved", "attribute_transfer", "weak_reference"}
 var audioMarkers = []string{"fully_copy", "partially_copy", "reference", "weak_reference"}
 
-// headCharacters follows the upstream character-count bounds, never splitting UTF-8.
 func headCharacters(s string, n int) string {
 	r := []rune(s)
 	if len(r) > n {

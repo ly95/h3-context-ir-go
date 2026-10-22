@@ -13,9 +13,6 @@ import (
 	"github.com/ly95/h3-context-ir-go"
 )
 
-// Validate the provider-independent schema locally as well as sending it to the
-// provider. Diagnostics use trusted schema paths, never model-authored keys or
-// rejected values, and explain the particular contract that needs repair.
 func validateWire(data, schema json.RawMessage) error {
 	decode := func(b []byte) (any, error) {
 		d := json.NewDecoder(bytes.NewReader(b))
@@ -57,9 +54,6 @@ func repairDiagnostics(err error, path, message string) []contextir.Issue {
 	return []contextir.Issue{{Code: contextir.CodeModelOutput, Path: path, Message: message}}
 }
 
-// Protocol errors represent received but rejected model content. Only those
-// errors, with valid usage, enter the caller-configured repair budget. Network,
-// HTTP, credentials and all other call failures remain immediate failures.
 func repairableModelOutput(err error) bool {
 	var typed *contextir.Error
 	return errors.As(err, &typed) && typed.Code == contextir.CodeModelOutput
@@ -92,8 +86,6 @@ func schemaIssue(value any, spec map[string]any, path string) *contextir.Issue {
 			}
 		}
 		if !found {
-			// Enum values in arbitrary fields may contain caller-owned identifiers. Only
-			// vocabulary fields have safe values suitable for operational diagnostics.
 			switch path {
 			case "requested.magnitude", "forbidden.magnitude":
 				return fail("Use the empty JSON string \"\" exactly.")

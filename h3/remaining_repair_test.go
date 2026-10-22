@@ -135,8 +135,6 @@ func TestRemainingRepairFrameAnchors(t *testing.T) {
 				t.Fatal("FL2VA notation not explicitly repaired")
 			}
 			noProtocolErrors(t, out.Text, "fl2va", 2, 124.0/24)
-			// The same explicit anchors produce actual manifest bindings; the text helper
-			// is not used as a substitute for Document->Artifact's binding contract.
 			d := base(contextir.ModeFirstLastFrame)
 			d.Target.Duration = 5167
 			d.Target.FrameCount = 124
@@ -206,7 +204,6 @@ func TestRemainingRepairInstructionLine(t *testing.T) {
 	}
 }
 
-// Original tests/test_swap_roles.py::test_the_wiring_that_shipped_two_prefixes_now_derives_and_writes_one.
 func TestRemainingRepairSwapTaskTypes(t *testing.T) {
 	d := mixed()
 	d.Assets = d.Assets[:2]

@@ -1,5 +1,3 @@
-// Command h3-context-ir-go-upstream-eval evaluates the original public upstream inputs
-// through the production Go compiler. It never reads expected outputs or dotenv.
 package main
 
 import (
@@ -276,9 +274,6 @@ func run() error {
 						if *kind != "suite" {
 							observer = nil
 						}
-						// These explicit compatibility policies match the original compile
-						// helper's handling of supplied content and recorded suggestions.
-						// Production callers retain the stricter compiler defaults.
 						c, e := compiler.New(record, observer, compiler.Options{Profile: h3.ComfyUIProfile(), FramePolicy: compiler.FramePolicySnapUp, FailurePolicy: compiler.FailurePolicyFail, ScopeConflictPolicy: compiler.ScopeConflictSuppliedWins, ClarificationPolicy: compiler.ClarificationContinue, MaxStructureRetries: 1, Planner: planner.Options{MaxRetries: 1, AllowPartialPerception: true}})
 						if e != nil {
 							err = e
@@ -381,8 +376,6 @@ func write(path string, value any) error {
 	return os.WriteFile(path, append(b, '\n'), 0600)
 }
 
-// Some original resolver calls inspect supplied readings without attaching those
-// files to a film. Preserve that distinct production API; never invent assets.
 func independentReadings(brief plan.Brief, cards map[string]plan.AssetCard) []compiler.LicenceReference {
 	attached := map[string]bool{}
 	for _, asset := range brief.Assets {

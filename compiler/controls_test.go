@@ -56,7 +56,7 @@ func TestRefinePreservesUnchangedOriginalConstraints(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
-			d.Style = "" // The writer omits the host-owned style field.
+			d.Style = ""
 			out = d
 		case "semantic_review":
 			reviewCalls++
@@ -105,7 +105,6 @@ func TestRefinePreservesUnchangedOriginalConstraints(t *testing.T) {
 }
 
 func TestOriginalReferencePoseAndTargetAttributePermissions(t *testing.T) {
-	// Original IDENTITY/POSE and corridor walk from test_reference_licence.py.
 	identity := []string{"black hair shaved at the sides", "a thin pale scar through the left eyebrow", "charcoal technical jacket", "worn black boots"}
 	pose := []string{"fists clenched in a fighting stance", "looking toward the camera"}
 	b := Brief{Intent: "the man walks forward down the stone corridor", Seconds: 8, Mode: contextir.ModeReference, Assets: []Asset{{Asset: contextir.Asset{ID: "char", Kind: contextir.MediaImage}, Role: RoleSubject}}, Cards: []AssetCard{{AssetID: "char", Style: "Anime", Subjects: []SubjectCard{{Kind: "person", Descriptor: "the man", Attributes: identity, Pose: pose}}}}}

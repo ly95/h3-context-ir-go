@@ -6,9 +6,6 @@ import (
 	"github.com/ly95/h3-context-ir-go"
 )
 
-// prepareAssets records required conditioning transforms; it performs no IO and
-// never rewrites observed metadata. The resulting Request assets are locked by
-// the planner and carried into the authoritative H3 manifest and hashes.
 func prepareAssets(b Brief, target contextir.Target) (Brief, []Decision, error) {
 	var decisions []Decision
 	for i := range b.Assets {

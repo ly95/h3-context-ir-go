@@ -1,10 +1,5 @@
 package compiler
 
-// Formatting and permission algebra derived from h3ir/creativity.py at
-// fd031e136ae3d89147324c0d1b2aa65e838c21f5 (Apache-2.0).
-// See third_party/open-h3-ir/NOTICE. Request interpretation is deliberately
-// separate: these methods consume explicit, already interpreted permissions.
-
 import (
 	"sort"
 	"strings"
@@ -20,9 +15,6 @@ const (
 
 var scopeElements = [...]ScopeElement{ScopeSpeech, ScopeMusic, ScopeOnscreenText}
 
-// ScopePolicy is an immutable rendering of a caller's four-position creativity
-// choice and an already interpreted request. Construction rejects unknown
-// settings and elements; no prose or user-authored intent is inspected.
 type ScopePolicy struct {
 	level     Creativity
 	requested map[ScopeElement]bool
@@ -53,9 +45,6 @@ func NewScopePolicy(level Creativity, requested, forbidden []ScopeElement) (Scop
 	return p, nil
 }
 
-// ScopePolicyFromDecision formats the same typed decisions used by Compile.
-// In particular, a supplied class which is also forbidden remains forbidden;
-// conflict resolution is the separate, explicit compiler policy's decision.
 func ScopePolicyFromDecision(level Creativity, decision ScopeDecision) (ScopePolicy, error) {
 	return NewScopePolicy(level, scopeElementList(decision.Requested), scopeElementList(decision.Forbidden))
 }
@@ -79,8 +68,6 @@ func (p ScopePolicy) Magnitude() string {
 	return map[Creativity]string{CreativityRestrained: "plain", CreativityBalanced: "measured", CreativityBold: "assertive", CreativityExtreme: "maximal"}[p.level]
 }
 
-// Licensed lists possible additions in the source protocol's canonical order.
-// A licence permits an addition; it never obliges the writer to spend it.
 func (p ScopePolicy) Licensed() []ScopeElement {
 	out := []ScopeElement{}
 	for _, e := range scopeElements {
@@ -146,9 +133,6 @@ func (p ScopePolicy) Note() string {
 	return strings.Join(append(bits, "may add: "+addable), "; ")
 }
 
-// BriefInstruction is the exact upstream formatter. The three addable content
-// classes come from Licensed, so an explicit prohibition can never be followed
-// by contradictory permission to add that same class.
 func (p ScopePolicy) BriefInstruction() string {
 	phrases := map[ScopeElement]string{ScopeSpeech: "a spoken line", ScopeMusic: "music for the audience", ScopeOnscreenText: "text visible in the frame"}
 	addable := []string{}

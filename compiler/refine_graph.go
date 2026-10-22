@@ -9,8 +9,6 @@ import (
 	"github.com/ly95/h3-context-ir-go/plan"
 )
 
-// freezePublishedChoices promotes already published structured choices into the
-// next refinement's immutable baseline. It does not infer new choices from prose.
 func freezePublishedChoices(previous Result) (Brief, error) {
 	b := previous.Brief
 	st := previous.Structure
@@ -37,9 +35,6 @@ func freezePublishedChoices(previous Result) (Brief, error) {
 				return b, invalid("previous.dialogue", "The published dialogue conflicts with its fixed original performance.")
 			}
 		} else {
-			// Selected transcript performances are appended by the production
-			// structure contract. Keep the other already published exact lines as
-			// direct dialogue, without appending the selected performance twice.
 			n := len(st.Dialogue) - len(selected)
 			if n < 0 || len(selected) > 0 && !sameJSON(st.Dialogue[n:], selected) {
 				return b, invalid("previous.dialogue", "The published source selections do not match their fixed dialogue slots.")
@@ -81,9 +76,6 @@ func freezePublishedChoices(previous Result) (Brief, error) {
 	return b, nil
 }
 
-// graphOrigins names pre-projection identities by stable observed source and
-// within-source position, never by caller prose or whichever subject remains.
-// The fixed allocation below affects neither manifest order nor subject IDs.
 func graphOrigins(b Brief) (map[string]string, error) {
 	pb, cards := compatibilityInputs(b, Structure{})
 	manifest, err := plan.BuildManifest(pb, budget.Target{Frames: 192, FPS: 24, Canvas: [2]int{1344, 768}})

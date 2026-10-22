@@ -2,9 +2,6 @@ package compiler
 
 import "github.com/ly95/h3-context-ir-go"
 
-// This is a host-owned participation requirement, not a model decision about
-// whether an attached source should be ignored. IDs come from the accepted
-// canonical graph and the already validated source projection.
 type requiredSubjectAppearance struct {
 	TargetSubjectID    string   `json:"target_subject_id"`
 	SourceSubjectIDs   []string `json:"source_subject_ids"`

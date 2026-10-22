@@ -12,8 +12,6 @@ import (
 	"github.com/ly95/h3-context-ir-go/plan"
 )
 
-// The original sixteen role cases provide inputs and the independent expected
-// relationships. No model adapter or synthetic replacement acceptance is used.
 func TestReferenceContractOriginalRoleCorpus(t *testing.T) {
 	var calls struct {
 		Source string `json:"source_commit"`

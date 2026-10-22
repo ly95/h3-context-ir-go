@@ -146,8 +146,6 @@ func contains(a []string, s string) bool {
 	return false
 }
 
-// PlanTriggers validates exact trigger bytes and supported placement. It never
-// asks a model to invent or rewrite the activation string.
 func PlanTriggers(choices []Choice) ([]Trigger, error) {
 	out := []Trigger{}
 	for _, c := range choices {

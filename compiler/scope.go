@@ -38,9 +38,6 @@ type ScopeDecision struct {
 	Calls           []planner.CallUsage      `json:"calls,omitempty"`
 }
 
-// DecideScope interprets only requested and forbidden content classes. Creativity
-// is applied afterwards in code. The model cannot increase a shot quota or turn
-// a prohibition into permission by recognizing its noun as a request.
 type ScopeInput struct {
 	ConflictPolicy  ScopeConflictPolicy `json:"conflict_policy,omitempty"`
 	Intent          string              `json:"intent"`
@@ -70,10 +67,6 @@ func (c *Compiler) DecideScope(ctx context.Context, brief Brief) (ScopeDecision,
 	return c.interpretScope(ctx, b, nil)
 }
 
-// DecideScopeInput analyzes permissions independently of a complete film Brief.
-// Presence flags license externally held content without inventing missing words.
-// Contradictory supplied content/prohibitions remain visible. Their resolution
-// requires the explicitly selected policy; the default permits no publication.
 func (c *Compiler) DecideScopeInput(ctx context.Context, input ScopeInput) (ScopeDecision, error) {
 	if c == nil {
 		return ScopeDecision{}, invalid("compiler", "Initialize the compiler with New.")
@@ -290,14 +283,10 @@ A supplied concrete line plus an explicit no-dialogue instruction is a conflicti
 	return out, failure(contextir.CodeModelOutput, "scope", "scope", "Scope interpretation did not satisfy the typed contract.", err)
 }
 
-// CreativeScope computes additions from an already interpreted request. It does
-// not interpret text; it is also useful for independent validators and editors.
 func CreativeScope(b Brief, requested, forbidden Scope) Scope {
 	return scopeFor(b, Structure{Requested: requested, Forbidden: forbidden})
 }
 
-// Exact quotation/provenance only; semantic class assignment remains the typed
-// model's responsibility. Constraints are caller text just like the intent.
 func scopeTextContains(b Brief, text string, presence *ScopeInput) bool {
 	if strings.Contains(b.Intent, text) {
 		return true

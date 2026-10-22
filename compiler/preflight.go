@@ -32,9 +32,6 @@ func (c *Compiler) preflight(b Brief, st Structure, request contextir.Request) (
 			return found, failure(contextir.CodeUnsupported, "compiler", "bindings.anchor_ms", message, nil)
 		}
 	}
-	// These findings describe actual intake/wiring, so Draft and written Compile
-	// append the same facts before prose assessment. A transcript supplies words,
-	// not timbre or tempo; it must not masquerade as sonic characterization.
 	if b.DirectorProfile != nil && DirectorIsEmpty(b.DirectorProfile) {
 		found = append(found, h3check.Finding{Rule: "N1-director-empty", Severity: "WARN", Msg: "The supplied director profile has no direction notes; no director instruction is applied."})
 	}
@@ -89,8 +86,6 @@ func (c *Compiler) preflight(b Brief, st Structure, request contextir.Request) (
 		} else if frames == 0 && asset.Metadata.Duration > 0 {
 			frames = int64(asset.Metadata.Duration) * 24 / 1000
 		}
-		// Read the same required preparation carried by the Request and artifact,
-		// rather than substituting the target length for caller-selected trimming.
 		prepared := asset.Preparation.Frames
 		for _, canonical := range request.Assets {
 			if canonical.ID == asset.ID {
@@ -125,7 +120,7 @@ func validateExplicitReplacementInputs(b Brief) error {
 			continue
 		}
 		if _, selected := b.ReplacementTargets[incoming.ID]; selected {
-			continue // explicit selectors receive full graph validation after reading
+			continue
 		}
 		card, observed := cardByID(b.Cards, incoming.ID)
 		if !observed || len(card.Subjects) == 0 {
@@ -153,8 +148,6 @@ func validateExplicitReplacementInputs(b Brief) error {
 	return nil
 }
 
-// A readonly Draft has no semantic audit and therefore cannot manufacture X18.
-// Only the production role-free typed interpretation can establish this conflict.
 func modeInterpretationFindings(d ModeDecision) []h3check.Finding {
 	if d.Mode != contextir.ModeReference || d.Rule != "explicit-role-reference" || d.Interpretation != "declared_reference" || d.InputRelationship != "image_as_moving_frame" || d.AnchorQuote == "" {
 		return nil

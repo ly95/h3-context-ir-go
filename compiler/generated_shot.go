@@ -9,38 +9,24 @@ import (
 	"github.com/ly95/h3-context-ir-go"
 )
 
-// GeneratedShotInput explicitly selects a compatibility operation for generated
-// template prose. It is never applied to Brief.Intent, literal Document text,
-// dialogue words or visible lettering by Compile/Draft. Structured camera and
-// dialogue events remain authoritative; no intent, role or permission is inferred.
 type GeneratedShotInput struct {
-	Shot           contextir.Shot
-	Body           string
-	Camera         Camera
-	DialogueEvents map[string]contextir.Event // exact template tokens, e.g. {{D1}}
-	// DialogueOrder supplies the complete explicit order when placeholders were
-	// omitted. Present placeholders must agree with it. With no order, their
-	// actual body occurrence is preserved; two missing tokens are ambiguous.
-	DialogueOrder []string
-	// Only these exact caller-authorized generated spans may be removed. Text
-	// merely starting with "The camera" or a lowercase word remains literal.
+	Shot                     contextir.Shot
+	Body                     string
+	Camera                   Camera
+	DialogueEvents           map[string]contextir.Event
+	DialogueOrder            []string
 	CameraContinuation       string
 	RedundantCameraSentences []string
-	SubjectTokens            map[string]string // exact protocol labels -> stable subject IDs
+	SubjectTokens            map[string]string
 	RequiredSubjects         []string
 	WordLimit                int
-	// TrimSentences explicitly permits removing whole generated sentences above
-	// WordLimit. Without this choice overflow is an error, never silent truncation.
-	TrimSentences bool
+	TrimSentences            bool
 }
 type GeneratedShotResult struct {
 	Shot  contextir.Shot
 	Notes []string
 }
 
-// PrepareGeneratedShot converts explicitly supplied legacy model placeholders to
-// native typed events/spans, with a note for every repair. Exact optional removal
-// spans are caller-owned; this helper never infers a sentence's semantic role.
 func PrepareGeneratedShot(in GeneratedShotInput) (GeneratedShotResult, error) {
 	out := GeneratedShotResult{Shot: in.Shot, Notes: []string{}}
 	if in.Shot.ID == "" || in.Shot.End <= in.Shot.Start {
@@ -184,8 +170,6 @@ func PrepareGeneratedShot(in GeneratedShotInput) (GeneratedShotResult, error) {
 		body = body[:end]
 		out.Notes = append(out.Notes, fmt.Sprintf("trimmed generated prose at a complete sentence to %d words", words))
 	}
-	// Parse only explicitly supplied protocol tokens. Never guess an unlabelled
-	// subject from prose; the caller must supply RequiredSubjects for that choice.
 	tokens := make([]string, 0, len(in.SubjectTokens))
 	for token, id := range in.SubjectTokens {
 		if token == "" || id == "" {

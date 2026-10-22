@@ -8,9 +8,6 @@ import (
 	"unicode/utf8"
 )
 
-// ParseFrontMatter reads the documented small YAML subset: scalars, inline
-// lists/maps, list-of-maps triggers, and one mapping nesting level. Unsupported
-// shapes return an error instead of being silently ignored.
 func ParseFrontMatter(text string) (map[string]any, string, error) {
 	if !utf8.ValidString(text) {
 		return nil, "", fmt.Errorf("front matter document must be valid UTF-8")
@@ -174,7 +171,6 @@ func parseValue(s string) (any, error) {
 	return scalar(s)
 }
 
-// splitInline preserves commas inside quoted trigger bytes and nested literals.
 func splitInline(s string) ([]string, error) {
 	var out []string
 	start, depth := 0, 0

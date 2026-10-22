@@ -25,11 +25,6 @@ type ReplacementDecision struct {
 	Calls    []planner.CallUsage  `json:"calls,omitempty"`
 }
 
-// ResolveReplacements is the production semantic identity boundary. The model
-// must enumerate compatibility across the whole source reading, independently
-// of previous selections. Code only accepts a unique, observed support claim;
-// unobserved qualifiers or multiple compatible people produce a user-symbolic
-// removed figure instead of borrowing whichever observed person remains.
 func (c *Compiler) ResolveReplacements(ctx context.Context, b Brief, mode contextir.Mode) (ReplacementDecision, error) {
 	out := ReplacementDecision{Targets: map[string]string{}}
 	if c == nil {

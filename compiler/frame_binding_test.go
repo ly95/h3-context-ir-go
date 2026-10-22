@@ -34,7 +34,6 @@ func TestEndpointFrameDeclarationsEmitOneModeCorrectBinding(t *testing.T) {
 		t.Run(string(mode), func(t *testing.T) {
 			b, st, target := endpointBindingBrief(mode)
 			before, _ := json.Marshal(b)
-			// A repeated identical explicit declaration still names one responsibility.
 			b.FrameAnchors = append(b.FrameAnchors, b.FrameAnchors[0])
 			req, err := requestFor(b, target, st, Scope{})
 			if err != nil || len(req.Bindings) != len(b.Assets) {
@@ -79,8 +78,6 @@ func TestEndpointFrameConflictsRemainRejected(t *testing.T) {
 			}
 		})
 	}
-	// Reference-mode keyframes may name distinct explicit target times. The
-	// host must preserve a second responsibility rather than deduplicate by ID.
 	b, st, target := endpointBindingBrief(contextir.ModeFirstFrame)
 	b.Mode = contextir.ModeReference
 	st.Mode = contextir.ModeReference

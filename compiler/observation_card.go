@@ -29,10 +29,6 @@ type ObservationCardDecision struct {
 	Calls                 []contextir.CallUsage `json:"calls,omitempty"`
 }
 
-// ExtractObservationCard structures existing observations; it never inspects
-// media or treats caller commentary as an observation. Textual card values must
-// quote supporting facts exactly. Rendering/subject classifications retain their
-// fact quotes as typed interpretation provenance, rather than new observed facts.
 func (c *Compiler) ExtractObservationCard(ctx context.Context, asset contextir.Asset, evidence contextir.Evidence) (ObservationCardDecision, error) {
 	out := ObservationCardDecision{AssetID: asset.ID, SourceAnalyzerVersion: evidence.AnalyzerVersion, SourceModel: evidence.Model}
 	if c == nil {
@@ -69,7 +65,6 @@ Only visual facts may support subjects, scene, palette, style, visible text, mot
 		if ctx.Err() != nil {
 			return out, failure(contextir.CodeCanceled, "observation_card", "context", "Observation-card structuring was canceled.", ctx.Err())
 		}
-		// Asset.Description and locator are deliberately absent at this boundary.
 		input, _ := json.Marshal(map[string]any{"asset_id": asset.ID, "source_kind": asset.Kind, "source_metadata": asset.Metadata, "observed_evidence": evidence, "diagnostics": diagnostics})
 		response, callErr := c.model.Generate(ctx, contextir.ModelRequest{Stage: "observation_card", System: system, Input: input, ResponseSchema: append(json.RawMessage(nil), schema...)})
 		valid := !response.UsageInvalid && response.Usage.InputTokens >= 0 && response.Usage.OutputTokens >= 0

@@ -11,9 +11,6 @@ import (
 	"github.com/ly95/h3-context-ir-go/plan"
 )
 
-// Every original licence packet reaches the real schema builder. This tests the
-// provider contract, not model semantic accuracy; the independent live replay
-// remains necessary for the original licence and style assertions.
 func TestAllOriginalLicencePacketsProduceValidSchemaCollections(t *testing.T) {
 	raw, err := os.ReadFile("../conformance/fixtures/licence_inputs.json")
 	if err != nil {

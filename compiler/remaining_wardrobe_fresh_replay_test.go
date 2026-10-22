@@ -18,10 +18,6 @@ import (
 	"github.com/ly95/h3-context-ir-go/planner"
 )
 
-// Pin a complete, independently reviewed frozen live run. Publication-only
-// receipt redaction never changes recorded requests or responses. The prior
-// DecideLicence recording stays preserved in its original directory.
-// Publication-only receipt redaction is described in testdata/PUBLICATION.md.
 const remainingWardrobeFreshManifestSHA256 = "da9808fb5340fa4b659d9052d6682e42a56e618c01de1f433f6ff088685a379d"
 
 func remainingCompleteRecordingInventory(t *testing.T, tape remainingSemanticTape) {
@@ -59,11 +55,6 @@ func remainingCompleteRecordingInventory(t *testing.T, tape remainingSemanticTap
 	}
 }
 
-// The upstream authority assertion originally called DecideLicence. Its fresh
-// Go adaptation drives the complete public Compile API from the exact original
-// FromOriginal input, then returns that actual Licence to the unchanged native
-// wardrobe guard and contrary-authority control. No old subset is relabelled as
-// a complete new run, and no expected result is supplied to the model adapter.
 func remainingWardrobeFreshCompile(t *testing.T) (Brief, LicenceDecision) {
 	t.Helper()
 	const directory = "remaining_wardrobe_fresh"

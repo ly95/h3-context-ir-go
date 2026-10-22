@@ -43,9 +43,6 @@ type ModeDecision struct {
 	Calls               []planner.CallUsage `json:"calls,omitempty"`
 }
 
-// DecideMode is the production routing boundary. It preserves explicit choices
-// even when a later publication check must refuse them. Unstated image roles are
-// interpreted through this typed model contract, never keyword matching.
 func (c *Compiler) DecideMode(ctx context.Context, brief Brief) (ModeDecision, error) {
 	if c.needsExecution(brief) {
 		next, err := c.executionFor(ctx, brief)
@@ -103,9 +100,6 @@ Return interpretation anchor_instruction for a clear instruction to make an inpu
 When the schema pins declared_reference and mode, do NOT reroute: the caller's declared responsibilities govern. Only audit whether the prose conflicts by asking for an actual frame. Report anchor_instruction_present and its exact quote; never report a conflict just because an image is attached. A reference role with normal appearance-in-scene wording has no override. Caller roles/provenance outrank ambiguous prose. confidence is your own interpretation confidence; the host records it separately from the deterministic compatibility routing policy. Never invent observations about unread media. Return JSON only.`
 	var diagnostics []contextir.Issue
 	for attempt := 1; attempt <= c.options.MaxStructureRetries+1; attempt++ {
-		// Mechanical declarations/provenance were resolved above. This stage asks
-		// what the caller's words request, without allowing observed sheet layout,
-		// default asset roles or a director to rewrite that instruction.
 		input, _ := json.Marshal(map[string]any{"version": Version, "intent": b.Intent, "constraints": b.Constraints, "image_count": len(b.Assets), "diagnostics": diagnostics})
 		response, callErr := c.model.Generate(ctx, contextir.ModelRequest{Stage: stage, System: system, Input: input, ResponseSchema: append(json.RawMessage(nil), schema...)})
 		valid := !response.UsageInvalid && response.Usage.InputTokens >= 0 && response.Usage.OutputTokens >= 0
@@ -216,9 +210,6 @@ func (c *Compiler) finishMode(out ModeDecision, b Brief) ModeDecision {
 	return out
 }
 
-// Alternatives describe mechanisms compatible with the attached media count and
-// selected backend, assuming the caller explicitly chooses the corresponding
-// responsibility. They never imply that code has changed the declared role.
 func (c *Compiler) availableAlternatives(b Brief, selected contextir.Mode) []contextir.Mode {
 	images, other := 0, false
 	for _, asset := range b.Assets {

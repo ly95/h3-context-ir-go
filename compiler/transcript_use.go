@@ -8,10 +8,6 @@ import (
 	"github.com/ly95/h3-context-ir-go"
 )
 
-// TranscriptUse explicitly selects words to be newly performed. Transcript
-// presence alone establishes neither a request for speech nor acoustic facts.
-// Text is an exact contiguous excerpt; Language preserves the original language.
-// AssetID is the stable attachment ID (asset-N after FromOriginal), never a label.
 type TranscriptUse struct {
 	AssetID     string `json:"asset_id"`
 	Text        string `json:"text"`
@@ -73,7 +69,6 @@ func transcriptUseSchema(sources map[string]string, explicit []TranscriptUse) ma
 	for id := range sources {
 		ids = append(ids, id)
 	}
-	// Stable schema bytes matter for request recording/replay.
 	sort.Strings(ids)
 	str := map[string]any{"type": "string"}
 	return map[string]any{"type": "array", "items": map[string]any{"type": "object", "additionalProperties": false,
@@ -85,8 +80,6 @@ const transcriptUseInstruction = `Supplied audio transcripts establish exact wor
 
 const transcriptWriterInstruction = `Caller transcripts are words-only source evidence, not a finding about voice or music. Only fixed dialogue slots derived from explicit transcript_uses or caller dialogue may carry a selected reperformance; the host inserts them in <d> in their original language. Put each selected utterance in exactly ONE place: never echo its words into visual prose, quoted visible lettering or sound descriptions, where they would be burned into the frame. A timbre-only reference does not carry its transcript words into the target. Do not create source utterances that were not selected. Copy responsibilities remain independent and never follow from transcript presence.`
 
-// Literal containment enforces an already selected byte sequence's output
-// channel. It is not a detector for intent, speech authorization or lettering.
 func verifyTranscriptLiteralPlacement(d contextir.Document, uses []TranscriptUse, onscreen []string) error {
 	check := func(text string) bool {
 		for _, use := range uses {
@@ -97,8 +90,6 @@ func verifyTranscriptLiteralPlacement(d contextir.Document, uses []TranscriptUse
 		return false
 	}
 	rich := func(text contextir.RichText) bool {
-		// H3 concatenates adjacent literal spans. Validate emitted literal runs,
-		// not individual chunks, so splitting a line cannot evade channel rules.
 		var run strings.Builder
 		for _, span := range text {
 			if span.Text != "" {

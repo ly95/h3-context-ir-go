@@ -8,8 +8,6 @@ import (
 	"github.com/ly95/h3-context-ir-go"
 )
 
-// Original test_creativity.py:167 supplies external dialogue plus a stale
-// prohibition. Both production policies remain explicit and independently usable.
 func TestSuppliedContentConflictPoliciesAndHardSilence(t *testing.T) {
 	model := modelFunc(func(_ context.Context, request contextir.ModelRequest) (contextir.ModelResponse, error) {
 		if request.Stage != "scope" {

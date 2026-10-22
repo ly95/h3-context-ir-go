@@ -10,9 +10,6 @@ import (
 	"github.com/ly95/h3-context-ir-go"
 )
 
-// referenceContract is assembled from already resolved responsibilities. Prose
-// never gets authority to turn property reference into signal copying or to
-// promote a camera/storyboard source into a depicted actor or setting.
 type referenceContract struct {
 	References   []contextir.Reference `json:"references"`
 	Speakers     []contextir.Speaker   `json:"speakers,omitempty"`
@@ -94,8 +91,6 @@ func canonicalReferenceContract(b Brief, st Structure, req contextir.Request, su
 		if !roleAccepts(role, a.Kind) || binding.Source.Track != sourceFor(a, role).Track {
 			return out, invalid("bindings.source", "The reference must preserve its declared media kind and source track.")
 		}
-		// Identity and environment belong to the canonical Subject source reading;
-		// creating another independent Reference would duplicate its relationship.
 		if binding.Role == contextir.RoleIdentity || binding.Role == contextir.RoleScene {
 			continue
 		}
@@ -147,15 +142,12 @@ func canonicalReferenceContract(b Brief, st Structure, req contextir.Request, su
 		}
 		if r.Kind == contextir.ReferenceAudio {
 			if description := strings.TrimSpace(a.Description); description != "" {
-				// Caller metadata specifies desired reference properties. It is
-				// not evidence that an analyzer heard those properties or words.
 				r.Description += " Caller-provided reference metadata: " + description + ". This description does not establish an auditory observation, authorize additional speech, or change the declared copy/property relationship."
 			}
 		}
 		if binding.Role == contextir.RoleVoice {
 			target := bindings[binding.Source.AssetID]
 			if target == "" && len(fixedSpeakers) == 0 {
-				// A dormant property binding neither invents an utterance nor an actor.
 				target = "voice-" + binding.Source.AssetID
 			} else if target == "" && voiceCount == 1 && len(fixedSpeakers) == 1 {
 				for id := range fixedSpeakers {
@@ -183,11 +175,10 @@ func canonicalReferenceContract(b Brief, st Structure, req contextir.Request, su
 	if err != nil {
 		return out, err
 	}
-	_ = subjects // Subject responsibilities remain owned by canonicalSubjects.
+	_ = subjects
 	return out, nil
 }
 
-// This validates protocol identifiers only; it does not interpret caller prose.
 func referenceBindingID(value string) bool {
 	if value == "" || !utf8.ValidString(value) {
 		return false
@@ -375,16 +366,10 @@ func (c referenceContract) verify(d contextir.Document) error {
 	return nil
 }
 
-// roleScopedCompositionBrief projects only information a resolved role licenses
-// for composition. It is a deep copy: authoritative observations remain intact.
 func roleScopedCompositionBrief(b Brief) (Brief, error) {
 	return roleScopedBrief(b, true)
 }
 
-// Licence decisions need source appearance to decide whether explicit caller
-// instructions preserve or change it. Only later composition receives the
-// resolved identity/scene projection. Property-only references remain restricted
-// at both boundaries.
 func roleScopedLicenceBrief(b Brief) (Brief, error) {
 	return roleScopedBrief(b, false)
 }
@@ -447,8 +432,6 @@ func roleHasScopedCompositionView(role Role) bool {
 func roleScopedCard(card AssetCard, role Role) AssetCard {
 	switch role {
 	case RoleSubject, RolePlacedSubject, RoleReplacementSubject:
-		// Stable identity is reusable; its source setting and transient pose are
-		// not. The accepted target identity is supplied separately by the licence.
 		subjects := append([]SubjectCard(nil), card.Subjects...)
 		for i := range subjects {
 			subjects[i].Attributes = append([]string(nil), subjects[i].Attributes...)
@@ -542,9 +525,6 @@ func (c referenceContract) projectWriterInput(input map[string]json.RawMessage) 
 	return nil
 }
 
-// Composition receives resolved permissions and canonical target identities,
-// never raw source identity summaries or explanatory prose from licence calls.
-// The complete decision remains authoritative in the compiler Result.
 func compositionLicenceView(raw json.RawMessage) (json.RawMessage, error) {
 	var fields map[string]json.RawMessage
 	if err := json.Unmarshal(raw, &fields); err != nil {

@@ -19,11 +19,6 @@ import (
 	"time"
 )
 
-// These replace the two pinned Python grammar guards in
-// tests/test_supported_python_versions.py. Parsing with today's parser is only
-// the cheap syntax check. The declared-language guard additionally uses Go's
-// compiler/type checking and official stdversion analyzer, without executing
-// another go test, downloading a toolchain, or requiring a Git checkout.
 func TestGoCompatibilityEverySourceParses(t *testing.T) {
 	t.Run("all_runtime_and_test_sources", func(t *testing.T) {
 		root := compatibilityModuleRoot(t)
@@ -66,8 +61,6 @@ func TestGoCompatibilityEverySourceParses(t *testing.T) {
 		compatibilityWrite(t, filepath.Join(root, "go.mod"), "module compatibility.invalid/inventory\ngo 1.25\n")
 		compatibilityWrite(t, filepath.Join(root, "runtime.go"), "package inventory\n")
 		compatibilityWrite(t, filepath.Join(root, "runtime_test.go"), "package inventory\n")
-		// The nested module is deliberate: the distributed Go ZIP omits this
-		// reports tree entirely. Neither .git nor reports may be prerequisites.
 		compatibilityWrite(t, filepath.Join(root, "conformance", "reports", "go.mod"), "module compatibility.invalid/reports\n")
 		compatibilityWrite(t, filepath.Join(root, "conformance", "reports", "unrelated.go"), "not Go source")
 		files, excluded, err := compatibilitySourceFiles(root)
@@ -84,10 +77,6 @@ func TestGoCompatibilityDeclaredLanguageVersion(t *testing.T) {
 		t.Fatal(err)
 	}
 	t.Run("official_compiler_and_stdversion_guard", func(t *testing.T) {
-		// go vet loads the current target's production and test variants. The
-		// compiler enforces their language version; stdversion separately checks
-		// standard-library references against each file's effective Go version.
-		// Config.GoVersion alone does not check when a stdlib API was added.
 		out, err := compatibilityVet(root)
 		if err != nil {
 			t.Fatalf("module declaring %s failed local offline go vet -stdversion:\n%s\n%v", declared, out, err)
@@ -95,9 +84,6 @@ func TestGoCompatibilityDeclaredLanguageVersion(t *testing.T) {
 		t.Logf("declared language %s checked by local compiler and stdversion; a real minimum-toolchain suite remains a separate, stronger check", declared)
 	})
 	t.Run("current_parser_is_not_a_minimum_language_proof", func(t *testing.T) {
-		// Today's parser accepts this construct, but range-over-integers needs
-		// Go 1.22. This is the same class as an old-version-incompatible f-string
-		// accepted by a newer Python parser in the original regression.
 		const source = "package control\nfunc f() { for range 3 {} }\n"
 		fset := token.NewFileSet()
 		file, err := parser.ParseFile(fset, "language_control.go", source, parser.AllErrors)
@@ -223,12 +209,8 @@ func compatibilityVet(root string) (string, error) {
 	if runtime.GOOS == "windows" {
 		goName += ".exe"
 	}
-	// Use the toolchain that built this test, including an actual minimum-version
-	// run. Looking up "go" on PATH could silently select a newer installation.
 	cmd := exec.CommandContext(ctx, filepath.Join(runtime.GOROOT(), "bin", goName), "vet", "-stdversion", "./...")
 	cmd.Dir = root
-	// Keep only OS/tool/cache locations. No provider, Git authentication,
-	// workspace, overlay, toolchain-download, or parent Go-env override leaks in.
 	for _, name := range []string{"PATH", "HOME", "USERPROFILE", "SYSTEMROOT", "WINDIR", "TMPDIR", "TMP", "TEMP", "GOCACHE", "GOMODCACHE", "GOPATH"} {
 		if value, ok := os.LookupEnv(name); ok {
 			cmd.Env = append(cmd.Env, name+"="+value)

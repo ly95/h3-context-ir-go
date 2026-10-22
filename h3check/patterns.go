@@ -1,4 +1,3 @@
-// Protocol/prose lint constants ported from upstream validate.py (Apache-2.0).
 package h3check
 
 var posePatterns = []string{

@@ -19,9 +19,6 @@ import (
 	"github.com/ly95/h3-context-ir-go/planner"
 )
 
-// These recordings use the original raw phrases, with expected classifications
-// held only here. Current production must send the identical semantic request
-// before a recorded response can be replayed; no local prose classifier exists.
 func TestRemainingSemanticClassification(t *testing.T) {
 	want := []string{"2d-animation", "3d-animation", "archival", "stop-motion", "painted", "live-action", ""}
 	for i, bucket := range want {
@@ -247,8 +244,6 @@ func remainingSemanticFile(t *testing.T, tape remainingSemanticTape, name string
 	return b
 }
 
-// Source fixture hashes use Python's compact numeric spelling (8.0 differs
-// from 8). Preserve that provenance independently of JSON-value request checks.
 func remainingOriginalJSONHash(t *testing.T, wire []byte) string {
 	t.Helper()
 	dec := json.NewDecoder(bytes.NewReader(wire))

@@ -37,7 +37,6 @@ type Error struct {
 	Code       string
 }
 
-// RequestError retains the cause without including private locators in Error().
 type RequestError struct {
 	Operation string
 	Cause     error
@@ -73,7 +72,7 @@ func New(c Config) (*Client, error) {
 			return nil, errors.New("explicit HTTP client is required when the default transport is customized")
 		}
 		owned = transport.Clone()
-		owned.Proxy = nil // Proxy policy is an explicit injected-transport choice, never an environment lookup.
+		owned.Proxy = nil
 		h.Transport = owned
 	}
 	h.Timeout = c.Timeout
@@ -171,8 +170,6 @@ func (c *Client) HasH3Nodes(ctx context.Context) (map[string]bool, error) {
 	return m, nil
 }
 
-// UploadImage sends caller-supplied bytes over HTTP; filename must be a basename.
-// It does not read a ComfyUI path or assume a shared filesystem.
 func (c *Client) UploadImage(ctx context.Context, filename string, data io.Reader, subfolder string, overwrite bool) (string, error) {
 	if filename == "" || filepath.Base(filename) != filename || strings.ContainsAny(filename, "/\\") {
 		return "", errors.New("upload filename must be an explicit basename")

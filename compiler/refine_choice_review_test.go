@@ -84,7 +84,6 @@ func TestRefinementRemapsIdentityByStableSourceNotOldPosition(t *testing.T) {
 	if changed, e := applyBriefUpdates(b, "remove a and clear the merge", []BriefUpdate{removal("a", "remove a"), clear}); e != nil || len(changed.SubjectProjections) != 0 {
 		t.Fatal("same-patch explicit resolution unavailable", changed, e)
 	}
-	// Audio has no visual subject identity, so deleting it changes no source choice.
 	b.Assets = append([]Asset{{Asset: contextir.Asset{ID: "audio", Kind: contextir.MediaAudio}, Role: RoleSFX}}, b.Assets...)
 	if changed, e := applyBriefUpdates(b, "remove audio", []BriefUpdate{removal("audio", "remove audio")}); e != nil || !sameJSON(changed.SubjectProjections, b.SubjectProjections) {
 		t.Fatal("unrelated audio deletion changes identity selection", changed, e)
@@ -100,8 +99,6 @@ func TestRefinementKeepsSelectedWordsUntilExplicitlyResolved(t *testing.T) {
 	if e != nil || len(changed.TranscriptUses) != 0 || len(changed.Dialogue) != 1 || changed.Dialogue[0].Text != remainingRecordedWords {
 		t.Fatal("caller cannot explicitly preserve an utterance while releasing its source", changed, e)
 	}
-	// A new exact source selection is directly addressable by Refine, independent
-	// of ordinary dialogue. Its original selected words remain immutable otherwise.
 	use := remainingTranscriptSelection()
 	use.Text = "We close at six"
 	raw, _ := json.Marshal([]TranscriptUse{use})
@@ -132,8 +129,6 @@ func TestPublicRefinePublishesSameProjectedSourcesAndOrderedLedger(t *testing.T)
 	b := prefixProjectionBrief()
 	selected := b.SubjectProjections
 	b.SubjectProjections = nil
-	// The first real Compile selects the projection in its typed model boundary;
-	// it is absent from the caller Brief. Refine must retain the published choice.
 	previous, _, _ := remainingWriterCompile(t, b, func(req contextir.ModelRequest, response contextir.ModelResponse) contextir.ModelResponse {
 		if req.Stage == "structure" {
 			var st Structure
@@ -259,8 +254,6 @@ func TestRefinementFreezesPublishedReplacementIdentity(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	// Compile freezes this production resolver's exact label graph in Structure.
-	// Verify the reverse projection independently of a model's descriptive words.
 	published.Structure.ReplacementTargets = resolved.Targets
 	published.Brief.ReplacementTargets = nil
 	frozen, err := freezePublishedChoices(published)

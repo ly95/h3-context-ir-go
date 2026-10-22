@@ -1,4 +1,3 @@
-// Package strictjson checks JSON syntax without changing user-authored content.
 package strictjson
 
 import (
@@ -18,10 +17,6 @@ var (
 	errTrailing  = errors.New("expected exactly one JSON value")
 )
 
-// Check rejects invalid UTF-8, unpaired Unicode surrogate escapes, duplicate
-// object keys, and trailing values. The root value has depth zero; each object
-// member or array element adds one. It accepts any JSON value, leaving shape and
-// business validation to the caller. Diagnostics never include input content.
 func Check(data []byte, maxDepth int) error {
 	if maxDepth < 0 {
 		return errDepth
@@ -93,8 +88,6 @@ func scan(decoder *json.Decoder, depth, maxDepth int) error {
 	return nil
 }
 
-// encoding/json replaces lone UTF-16 surrogates with U+FFFD. Reject them before
-// decoding so exact dialogue and visible text cannot be silently changed.
 func validEscapes(data []byte) bool {
 	inString := false
 	for i := 0; i < len(data); i++ {

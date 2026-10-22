@@ -17,22 +17,6 @@ import (
 	"github.com/ly95/h3-context-ir-go/plan"
 )
 
-// These are principle-preserving Go counterparts to the pinned source nodes:
-// test_an_explicit_transformation_DOES_govern[...1990s cel animation...],
-// test_the_rule_is_NOT_armed_when_the_requested_medium_is_unclassifiable,
-// test_R23_does_not_fire_on_a_real_live_transformation_compile,
-// test_the_rule_IS_armed_when_the_transformation_crosses_a_known_bucket, and
-// test_R23_stays_silent_on_a_real_ARMED_cross_bucket_transformation.
-//
-// The source's requested_medium is None assertion encoded an omission of its
-// keyword classifier, not a requirement to forget what cel animation means.
-// We keep the exact original Brief/cards and recorded production interpretation:
-// 1990s cel animation is 2d-animation, while its complete requested rendition is
-// still mandatory. Unknown classifications are tested separately as absent typed
-// evidence; absence neither arms R23 nor proves that the rendition was followed.
-// No API/network model is used. Recorded model bytes go through DecideLicence's
-// current schema/semantic validation, native style projection, Draft rendering
-// and the same assessment/control gates used by Compile.
 func TestGoConformanceMediumCelAnimationKeepsExplicitRendition(t *testing.T) {
 	for _, id := range []string{"licence-01031", "licence-01429"} {
 		t.Run(id, func(t *testing.T) {
@@ -63,9 +47,6 @@ func TestGoConformanceMediumCelAnimationKeepsExplicitRendition(t *testing.T) {
 		})
 	}
 
-	// Original live output is also passed through the actual native arming path,
-	// not a hand-written transformed_from context. Other artifact findings are
-	// outside this test's migrated R23 assertion.
 	_, licence := replayGoMediumLicence(t, "licence-01429")
 	goMediumCheckGolden(t, "live_transformation_ref2va.txt", licence)
 }
@@ -74,9 +55,6 @@ func TestGoConformanceMediumUnknownClassificationDoesNotProveRendition(t *testin
 	b, original := replayGoMediumLicence(t, "licence-01429")
 	for _, missing := range []string{"target_classification", "source_classification"} {
 		t.Run(missing, func(t *testing.T) {
-			// This is an explicit typed-boundary control, not a claim that the
-			// actual cel-animation recording was unknown. Neither user wording
-			// nor cards, the complete target phrase, or its authorization change.
 			licence := original
 			if missing == "target_classification" {
 				licence.Style.RequestedMedium = ""
@@ -93,8 +71,6 @@ func TestGoConformanceMediumUnknownClassificationDoesNotProveRendition(t *testin
 			if err != nil || goMediumHasRule(findings, "R23-transformation-not-in-style-opening") {
 				t.Fatal("absence of classification incorrectly armed a bucket comparison", findings, err)
 			}
-			// A silent advisory rule cannot certify output correctness. The real
-			// exact-style gate still rejects a regression to the source look.
 			if err := checkDocumentControls(r.Brief, r.Structure, r.Scope, regression); !contextir.HasCode(err, contextir.CodeModelOutput) {
 				t.Fatal("unknown classification was treated as successful rendition", err)
 			}
@@ -200,9 +176,6 @@ func replayGoMediumLicence(t *testing.T, id string) (Brief, LicenceDecision) {
 			if err := json.Unmarshal(requestBytes, &recorded); err != nil {
 				t.Fatal(err)
 			}
-			// A recording is applicable only to its real prompt contract. Hash
-			// verification alone is insufficient if production sends a different
-			// system message, semantic input or schema to that same stage name.
 			if req.Stage != actual.Stage || req.Stage != recorded.Stage || req.System != recorded.System || goMediumJSONHash(t, req.Input) != goMediumJSONHash(t, recorded.Input) || goMediumJSONHash(t, req.ResponseSchema) != goMediumJSONHash(t, recorded.ResponseSchema) {
 				t.Fatalf("recording is incompatible with the current Stage/System/Input/Schema: %s", req.Stage)
 			}
@@ -258,9 +231,6 @@ func goMediumJSONHash(t *testing.T, wire []byte) string {
 
 func renderGoMediumDraft(t *testing.T, b Brief, licence LicenceDecision) (*Compiler, Result) {
 	t.Helper()
-	// Original _art/Context uses REF2VA without an inference backend. The Go
-	// counterpart explicitly chooses that format and feeds the accepted native
-	// style projection to the deterministic compositor, not a new caller phrase.
 	b.Mode, b.Style = contextir.ModeReference, licence.Style.Phrase
 	c, err := New(nil, nil, Options{Profile: h3.OfficialProfile()})
 	if err != nil {

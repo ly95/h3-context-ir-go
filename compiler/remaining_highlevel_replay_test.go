@@ -20,11 +20,6 @@ import (
 	"github.com/ly95/h3-context-ir-go/planner"
 )
 
-// Independently pin the complete file inventory/provenance, rather than trusting
-// response files and their editable checksums alone. Refresh recordings only
-// from a new actual frozen-binary run; publication-only receipt redaction is
-// separately documented and never changes recorded requests or responses.
-// Publication-only receipt redaction is described in testdata/PUBLICATION.md.
 const remainingHighlevelManifestSHA256 = "e7a32c787ebd6c07e06ca6cac03a3feafddecbeea0692d0b1877744aac4db6a9"
 
 type remainingHighlevelContext struct {
@@ -48,10 +43,6 @@ type remainingHighlevelContext struct {
 	} `json:"cases"`
 }
 
-// These are complete real DeepSeek Compile recordings, not semantic doubles.
-// Every stage/system/input/schema must match before its original response is
-// returned. Expected results are used only after the native compilation ends.
-// The fixture lives in compiler/testdata and never reads conformance/reports.
 func TestRemainingHighlevelRecordedCompile(t *testing.T) {
 	var tape remainingSemanticTape
 	manifest, err := os.ReadFile(filepath.Join("testdata", "remaining_highlevel", "manifest.json"))
@@ -177,8 +168,6 @@ func TestRemainingHighlevelRecordedCompile(t *testing.T) {
 				t.Fatal("actual native full Compile rejected or left a recording unused", index, len(entry.Calls), err)
 			}
 			var resultFile string
-			// The result path is fixed by the case ID; its bytes are integrity
-			// checked in the same independent manifest as all model recordings.
 			resultFile = entry.ID + "/result.json"
 			var expected struct {
 				Result Result `json:"result"`
@@ -211,10 +200,6 @@ func TestRemainingHighlevelRecordedCompile(t *testing.T) {
 	}
 }
 
-// This checks the original request's property/source graph, not the provider's
-// wording of its target descriptor. "wheels" and the older source-qualified
-// attribute express the same selected property only when the typed projection,
-// physical media binding, final attributes and caller provenance all agree.
 func remainingHighlevelMergeIntent(r Result, intent string) error {
 	if r.Licence == nil || len(r.Licence.Subjects) != 2 || len(r.Document.Subjects) != 1 || len(r.Structure.SubjectProjections) != 1 {
 		return fmt.Errorf("one target must have one explicit two-source projection")
@@ -354,8 +339,6 @@ func TestRemainingHighlevelMergeIntentRejectsMissingOrWrongSourceProperties(t *t
 			case "missing_final_attribute":
 				r.Document.Subjects[0].Attributes = r.Document.Subjects[0].Attributes[:1]
 			case "second_source_carbon_instead_of_wheels":
-				// This reproduces the real rejected first-round contribution:
-				// source two's available carbon body cannot stand in for wheels.
 				r.Structure.SubjectProjections[0].Sources[wheelIndex].Attributes = []string{"carbon fibre body"}
 			case "wrong_physical_source":
 				r.Licence.Subjects[1].Sources = r.Licence.Subjects[0].Sources

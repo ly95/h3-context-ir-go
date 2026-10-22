@@ -75,9 +75,6 @@ func New(c Config) (*Client, error) {
 	root := strings.TrimSuffix(base, "/v1")
 	origin := *u
 	origin.Path, origin.RawPath = "/", ""
-	// Construct the SDK with explicit options instead of NewClient, whose defaults
-	// read credentials, headers and endpoint configuration from the environment.
-	// Retry accounting remains owned by Chat/JSONCall and their caller.
 	sdk := openaisdk.Client{Options: []option.RequestOption{
 		option.WithBaseURL(origin.String()),
 		option.WithAPIKey(key),
@@ -86,8 +83,6 @@ func New(c Config) (*Client, error) {
 		option.WithMiddleware(func(req *http.Request, next option.MiddlewareNext) (*http.Response, error) {
 			res, err := next(req)
 			if res != nil && res.Body != nil {
-				// The SDK reads error responses itself. Apply the same byte bound
-				// before that read as for a successful raw response.
 				res.Body = &boundedResponseBody{ReadCloser: res.Body, remaining: c.MaxResponseBytes}
 			}
 			return res, err
@@ -127,8 +122,6 @@ func (c *Client) request(ctx context.Context, method, target string, body any) (
 		data = b
 	}
 	var r *http.Response
-	// SDK paths are relative references. Retain the adapter's complete configured
-	// path, including root-level health/version routes, under the explicit origin.
 	u, e := url.Parse(target)
 	if e != nil {
 		return nil, 0, e
@@ -147,8 +140,6 @@ func (c *Client) request(ctx context.Context, method, target string, body any) (
 	if e != nil && r.StatusCode < 400 {
 		return nil, r.StatusCode, &Error{Code: "read", Message: "cannot read model response"}
 	}
-	// For an HTTP refusal the SDK has restored the bounded response body. Keep
-	// the adapter's status/error contract rather than exposing SDK request dumps.
 	b, e := io.ReadAll(io.LimitReader(r.Body, c.maxResponse+1))
 	if e != nil {
 		if errors.Is(e, errResponseTooLarge) {

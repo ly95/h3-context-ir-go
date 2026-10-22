@@ -1,4 +1,3 @@
-// A complete manual IR → H3 compilation. Run: go run ./examples/manual
 package main
 
 import (

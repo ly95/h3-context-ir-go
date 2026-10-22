@@ -17,10 +17,6 @@ import (
 	"github.com/ly95/h3-context-ir-go"
 )
 
-// CardCacheKey identifies an observation contract, never an interpretation of a
-// caller's note. ModelIdentity must include the caller's non-secret provider,
-// model/revision and decoding-policy identity. ContractSHA256 covers the exact
-// prompt, schema and structured observation input (including sampling policy).
 type CardCacheKey struct {
 	SourceSHA256    string              `json:"source_sha256"`
 	Kind            contextir.MediaKind `json:"kind"`
@@ -50,9 +46,6 @@ type CardCacheEvent struct {
 	Reason        string
 }
 
-// AssetCardCache is an explicitly configured local observation cache. It has no
-// implicit default directory. Audio metadata is request-owned and is never read
-// or written, even through the direct cache API. Corruption is an explicit error.
 type AssetCardCache struct {
 	directory string
 	max       int64
@@ -91,9 +84,6 @@ func (k CardCacheKey) Digest() (string, error) {
 	return k.IdentityDigest(), nil
 }
 
-// IdentityDigest fingerprints the complete declared identity without asserting
-// the source bytes have been verified. It is useful for invalidation planning.
-// Get/Put independently require valid full content/contract digests via Digest.
 func (k CardCacheKey) IdentityDigest() string {
 	b, _ := json.Marshal(struct {
 		Version string
@@ -161,8 +151,6 @@ func (c *AssetCardCache) Get(ctx context.Context, key CardCacheKey) (CardCacheRe
 	defer c.mu.Unlock()
 	info, err := os.Lstat(path)
 	if errors.Is(err, os.ErrNotExist) {
-		// FALLBACK: an absent observation is an explicit cache miss; Analyze must
-		// obtain a new observation and never substitutes an empty successful card.
 		return CardCacheResult{}, nil
 	}
 	if err != nil {
@@ -261,8 +249,6 @@ func (c *AssetCardCache) Put(ctx context.Context, key CardCacheKey, value Cached
 	return CardCacheResult{Observation: value}, nil
 }
 
-// Analyze owns modality selection. A caller-supplied audio note/transcript is
-// regenerated on every request; the visual callback is never called for audio.
 func (c *AssetCardCache) Analyze(ctx context.Context, key CardCacheKey, audio *AudioMetadataRequest, observe func(context.Context) (CachedObservation, error)) (CardCacheResult, error) {
 	if c == nil {
 		return CardCacheResult{}, mediaError(contextir.CodeInvalid, "card_cache", "Initialize an explicit observation cache first.", nil)

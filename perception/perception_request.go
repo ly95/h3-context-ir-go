@@ -6,15 +6,10 @@ import (
 	"github.com/ly95/h3-context-ir-go"
 )
 
-// ImagePerceptionRequest exposes the exact production prompt/schema/input contract
-// for explicit observation-cache identity. It performs no model or media IO and
-// never includes caller notes, opaque locators or credentials.
 func ImagePerceptionRequest(asset contextir.Asset, diagnostics []contextir.Issue, includeCard bool) (contextir.ModelRequest, error) {
 	if asset.ID == "" || asset.Kind != contextir.MediaImage {
 		return contextir.ModelRequest{}, perceptionFailure(contextir.CodeInvalid, "asset", "A named still image is required.", nil)
 	}
-	// Deliberately omit URI, Description and all user-authored asset notes. The
-	// actual pixels travel exclusively through the model's image input channel.
 	input, _ := json.Marshal(struct {
 		AssetID     string                  `json:"asset_id"`
 		Metadata    contextir.MediaMetadata `json:"metadata"`
@@ -34,8 +29,6 @@ func ImagePerceptionRequest(asset contextir.Asset, diagnostics []contextir.Issue
 		definition["required"] = append(definition["required"].([]any), "card")
 		props := definition["properties"].(map[string]any)
 		props["asset_id"] = map[string]any{"type": "string", "const": asset.ID}
-		// A still has no optional audio track or temporal sampling. Constrain the
-		// actual model contract, then check the decoded response locally as well.
 		props["coverage"] = map[string]any{"type": "object", "additionalProperties": false, "required": []string{"status", "tracks"}, "properties": map[string]any{"status": map[string]any{"type": "string", "enum": []string{"complete", "partial"}}, "tracks": map[string]any{"const": []string{"visual"}}}}
 		request.ResponseSchema, _ = json.Marshal(schema)
 	}

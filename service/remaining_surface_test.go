@@ -58,22 +58,18 @@ func remainingContractFields(t *testing.T, section string, model any) {
 	}
 }
 
-// Source test_contract.py::test_the_contract_names_exactly_the_fields_the_wire_models_take[asset_fields-AssetIn].
 func TestRemainingSurfaceContractAssetFields(t *testing.T) {
 	remainingContractFields(t, "asset_fields", AssetIn{})
 }
 
-// Source test_contract.py::test_the_contract_names_exactly_the_fields_the_wire_models_take[brief_fields-BriefIn].
 func TestRemainingSurfaceContractBriefFields(t *testing.T) {
 	remainingContractFields(t, "brief_fields", BriefIn{})
 }
 
-// Source test_contract.py::test_the_contract_names_exactly_the_fields_the_wire_models_take[dialogue_fields-DialogueIn].
 func TestRemainingSurfaceContractDialogueFields(t *testing.T) {
 	remainingContractFields(t, "dialogue_fields", DialogueIn{})
 }
 
-// Source test_contract.py::test_every_role_belongs_to_at_least_one_kind.
 func TestRemainingSurfaceEveryRoleHasKind(t *testing.T) {
 	placed := map[string]bool{}
 	for _, roles := range RolesByKind() {
@@ -91,7 +87,6 @@ func TestRemainingSurfaceEveryRoleHasKind(t *testing.T) {
 	}
 }
 
-// Source test_contract.py::test_no_kind_claims_a_role_that_is_not_a_role.
 func TestRemainingSurfaceKindsOnlyClaimKnownRoles(t *testing.T) {
 	known := map[string]bool{}
 	for _, r := range compiler.Roles {
@@ -108,10 +103,6 @@ func TestRemainingSurfaceKindsOnlyClaimKnownRoles(t *testing.T) {
 	}
 }
 
-// Source test_contract.py::test_the_contract_lists_every_refusal_the_service_can_raise.
-// Go AST scans actual production constructors (not this contract table). Source
-// compiler refusal codes also remain legal on the explicitly injected Compile
-// port, and every published code is exercised through its real JSON writer.
 func TestRemainingSurfacePublishedRefusalsCoverNativeEmitters(t *testing.T) {
 	found := map[string]bool{}
 	set := token.NewFileSet()
@@ -127,8 +118,6 @@ func TestRemainingSurfacePublishedRefusalsCoverNativeEmitters(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		// publicError's native typed-error mapping carries codes through
-		// variables/map values rather than direct constructor string arguments.
 		for _, declaration := range file.Decls {
 			fn, ok := declaration.(*ast.FuncDecl)
 			if !ok || fn.Name.Name != "publicError" {
@@ -196,7 +185,6 @@ func TestRemainingSurfacePublishedRefusalsCoverNativeEmitters(t *testing.T) {
 			t.Fatal("published typed adapter refusal cannot cross the real boundary", code, w.Code)
 		}
 	}
-	// Native extensions have actual routes, not merely entries in a new table.
 	s := testService(t, func(context.Context, plan.Brief) (compiler.Result, error) {
 		return compiler.Result{}, errors.New("private cause")
 	}, nil)
@@ -218,7 +206,6 @@ func TestRemainingSurfacePublishedRefusalsCoverNativeEmitters(t *testing.T) {
 	}
 }
 
-// Source test_contract.py::test_every_published_refusal_states_a_status_and_a_route.
 func TestRemainingSurfacePublishedRefusalStatusAndRoute(t *testing.T) {
 	for code, spec := range errorSpecs {
 		status, ok := spec["status"].(int)
@@ -237,9 +224,6 @@ func TestRemainingSurfacePublishedRefusalStatusAndRoute(t *testing.T) {
 	}
 }
 
-// Source test_every_role_renders.py::test_every_role_in_the_enum_has_a_case_here.
-// This independent table is extracted from the original ROLE_CASES, not built
-// from the current enum that it checks.
 func TestRemainingSurfaceOriginalRoleCaseCompleteness(t *testing.T) {
 	var fixture struct {
 		Source string `json:"source_commit"`
@@ -281,9 +265,6 @@ func TestRemainingSurfaceOriginalRoleCaseCompleteness(t *testing.T) {
 	}
 }
 
-// Native version3 deliberately adds the BGM-copy field and two refusal routes.
-// Covers test_contract.py::test_the_service_publishes_one_statement_of_the_lists_it_shares_with_the_contract
-// and ::test_the_version_moves_when_any_part_of_the_contract_moves.
 func TestRemainingSurfaceContractVersionAndCapabilities(t *testing.T) {
 	s := testService(t, nil, nil)
 	_, caps := call(t, s, "GET", "/v1/capabilities", nil)
@@ -322,8 +303,6 @@ func TestRemainingSurfaceAudioCopyModeWireRoundTrip(t *testing.T) {
 			t.Fatal("refinement storage dropped explicit copy choice", stored.AudioCopyModes, err)
 		}
 	}
-	// The source-compatible DTO has positional IDs. Removing the first
-	// attachment must not leave the retained BGM's choice on old asset-2.
 	original := plan.Brief{Intent: "x", Seconds: 5, Aspect: "16:9", Assets: []plan.AssetRef{
 		{Kind: "image", Role: "subject", Path: &path}, {Kind: "audio", Role: "bgm", Path: &path},
 	}, AudioCopyModes: map[string]string{"asset-2": "fully_copy"}}

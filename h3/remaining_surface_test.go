@@ -11,8 +11,6 @@ import (
 	"github.com/ly95/h3-context-ir-go/h3"
 )
 
-// Source test_deterministic.py::test_continuation_case_lowercases_safely_only.
-// Explicit formatter API: authoritative Document text is not implicitly edited.
 func TestRemainingSurfaceContinuationCase(t *testing.T) {
 	for _, tc := range [][2]string{{"A wide shot opens", "a wide shot opens"}, {"Sarah steps forward", "Sarah steps forward"}, {"Smoke drifts as smoke thickens", "smoke drifts as smoke thickens"}} {
 		if got := h3.ContinueCase(tc[0]); got != tc[1] {
@@ -21,7 +19,6 @@ func TestRemainingSurfaceContinuationCase(t *testing.T) {
 	}
 }
 
-// Source test_deterministic.py::test_hazard_characters_are_replaced_but_the_em_dash_survives.
 func TestRemainingSurfaceHazardCharacters(t *testing.T) {
 	for _, tc := range [][2]string{{"the dragon’s wing", "the dragon's wing"}, {"“quoted”", `"quoted"`}, {"align — with", "align — with"}, {"a\u00a0b", "a b"}} {
 		got := h3.NormalizeGeneratedProse(tc[0])
@@ -29,7 +26,6 @@ func TestRemainingSurfaceHazardCharacters(t *testing.T) {
 			t.Errorf("normalization=%+v want %q", got, tc[1])
 		}
 	}
-	// The opt-in formatter cannot silently change authoritative caller literals.
 	d := base(contextir.ModeText)
 	d.Shots[0].Description = contextir.Text("The dragon’s wing passes the “window”.")
 	a := requireCompile(t, d, h3.OfficialProfile())
@@ -38,7 +34,6 @@ func TestRemainingSurfaceHazardCharacters(t *testing.T) {
 	}
 }
 
-// Source test_deterministic.py::test_sound_events_render_as_prose.
 func TestRemainingSurfaceSoundEventsRenderAsProse(t *testing.T) {
 	got := h3.GeneratedSoundSentences([]string{"low wind", "distant fire"})
 	if got != "Low wind. Distant fire." {
@@ -52,8 +47,6 @@ func TestRemainingSurfaceSoundEventsRenderAsProse(t *testing.T) {
 	}
 }
 
-// Source test_frame_anchors.py::test_the_published_fl2va_example_is_the_spec_text_byte_for_byte.
-// Both original files are vendored unmodified; hashes bind them to fixed source.
 func TestRemainingSurfacePublishedFL2VASpecBytes(t *testing.T) {
 	read := func(path, expected string) []byte {
 		t.Helper()

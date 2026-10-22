@@ -311,8 +311,6 @@ func TestUnknownProviderMetadataRemainsCompatible(t *testing.T) {
 }
 
 func TestLaterCaseAliasesCannotHideRejectedMetadata(t *testing.T) {
-	// Keep literal field order: the former struct decoder let the later alias
-	// replace the canonical counter, status, or selected model with a safe value.
 	const message = `"output":[{"type":"message","role":"assistant","status":"completed","content":[{"type":"output_text","text":"{}"}]}]`
 	for name, body := range map[string]string{
 		"hard_limit":      `{"status":"completed","model":"fixture-vision-model",` + message + `,"usage":{"input_tokens":31,"output_tokens":99999,"OUTPUT_TOKENS":1}}`,
@@ -410,8 +408,6 @@ func TestCancellationAndTimeoutPropagate(t *testing.T) {
 }
 
 func TestSetupAndInputsFailBeforeHTTP(t *testing.T) {
-	// Endpoint, credential and timeout validation belongs to the caller's SDK
-	// setup. NewModel validates the generation contract before making any call.
 	for name, mutate := range map[string]func(*chatcompat.ModelOptions){
 		"missing API":             func(o *chatcompat.ModelOptions) { o.API = "" },
 		"unsupported API":         func(o *chatcompat.ModelOptions) { o.API = "other" },
