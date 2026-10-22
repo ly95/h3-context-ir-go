@@ -8,11 +8,11 @@ H3 Context-IR Go 的持久化资产是 `Document`，不是一段经过润色的�
 2. `compiler`：高层 Brief 编译与修订，类型化解释模式、职责、替换、内容权限、参考属性优先级；固定对白、镜头、摄影机、身份和输入准备要求由宿主管理。
 3. `planner`：通过 Perceiver 收集或复用 Evidence；通过 Model 生成 Document；保护原始请求；检查观测出处；仅在明确配置时重新请求完整结构。
 4. `h3`：唯一 Document 渲染路径、素材 manifest、标签分配、公开 H3 格式、运行时 Profile、内容哈希。`h3check` 负责写作规则；`budget`、`tokens`、`plan`、`lora` 提供可独立调用的确定性能力。
-5. `deepseek` / `chatcompat`：显式配置的模型适配器与真实像素请求；`media`：显式本地解析、文件头、ffprobe/ffmpeg、抽帧、可选缓存和可注入 ASR。核心与内置包均仅依赖 Go 标准库。
+5. `openai` / `chatcompat`：使用官方 OpenAI Go SDK 的可选模型适配器。`openai` 按显式配置调用 Responses 或 Chat Completions 兼容协议，不绑定服务商或模型；`chatcompat` 保留本地聊天服务的发现与输出选项。`perception` 提供服务商无关的真实像素输入与观察合同；`media` 负责显式本地解析、文件头、ffprobe/ffmpeg、抽帧、可选缓存和可注入 ASR。核心、感知合同与媒体准备保持 Go 标准库依赖，SDK 仅出现在模型适配层。
 6. `service` / `uploads`：可选 HTTP handler、编译记录与内容寻址上传；`comfy`：远端 ComfyUI HTTP 与图操作。库不自动监听或启动任务。
 7. `cmd/h3-context-ir-go`：离线操作及显式模型编译 CLI；`cmd/h3-context-ir-go-score`：离线评分与基线比较；`cmd/h3-context-ir-go-live-eval`、`cmd/h3-context-ir-go-upstream-eval`：显式输入的真实模型录制；`cmd/h3-context-ir-go-eval`：内置合成场景的 smoke 验证。
 
-模型与感知适配器由宿主注入。核心验证与渲染不做 IO；`media` 只对显式 resolver 返回的本地文件执行配置好的媒体工具，`comfy` 只访问配置的端点。模型包不读取环境变量或自动下载素材。CLI 仅读取指定名称的凭据变量，不搜索 dotenv。应用的鉴权、资产读取、计费与任务生命周期由宿主负责。
+模型与感知适配器由宿主注入。核心验证与渲染不做 IO；`media` 只对显式 resolver 返回的本地文件执行配置好的媒体工具，`comfy` 只访问配置的端点。模型包不读取环境变量或自动下载素材；SDK 的隐式凭据、端点和重试默认行为被显式配置覆盖。调用方声明图片能力并选择协议，适配器不按模型名称猜测能力，也不在协议之间重试。CLI 仅读取指定名称的凭据变量，不搜索 dotenv。应用的鉴权、资产读取、计费与任务生命周期由宿主负责。
 
 ## 来源与不可变输入
 

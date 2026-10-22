@@ -62,6 +62,13 @@ caller-provided media remain subject to their own applicable terms.
 
 ## External tools and services
 
+The optional `openai` and `chatcompat` adapters depend on the official
+[OpenAI Go SDK v3.73.0](https://github.com/openai/openai-go/tree/v3.73.0),
+distributed under [Apache-2.0](https://github.com/openai/openai-go/blob/v3.73.0/LICENSE).
+Its source is resolved through Go modules, with versions and integrity checksums
+recorded in `go.mod` and `go.sum`; it is not vendored into this repository.
+The SDK and its transitive dependencies retain their own licenses and notices.
+
 ffmpeg, ffprobe, ComfyUI and model services are optional, separately installed or
 configured integrations. Their executables, runtime implementations and model
 weights are not distributed by this Go module. Their own licenses and service

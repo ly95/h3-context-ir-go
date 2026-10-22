@@ -30,7 +30,7 @@ perceiver, err := media.NewPerceiver(media.PerceiverOptions{
 The observation key includes the actual file SHA-256, asset identity and modality,
 analyzer version, declared model policy, and a hash of the complete production
 prompt/schema/structured input. Image perception constructs its request through
-the same `deepseek.ImagePerceptionRequest` used for cache identity. Video sampling
+the same `perception.ImagePerceptionRequest` used for cache identity. Video sampling
 timestamps and measured metadata are part of the request. A supplied asset digest
 that disagrees with the bytes is rejected. Source changes during an observation,
 corrupt entries and oversized entries are explicit errors. Writes are atomic;

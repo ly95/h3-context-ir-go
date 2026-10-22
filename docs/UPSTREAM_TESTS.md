@@ -17,7 +17,7 @@ make check
 ```sh
 go test ./compiler ./planner ./h3 ./h3check
 go test ./plan ./budget ./tokens ./evaluate
-go test ./chatcompat ./deepseek ./media ./service ./uploads ./comfy ./lora
+go test ./openai ./chatcompat ./perception ./media ./service ./uploads ./comfy ./lora
 go test ./cmd/... ./conformance/bridge
 ```
 

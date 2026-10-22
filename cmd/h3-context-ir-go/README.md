@@ -32,18 +32,27 @@ Model compilation requires all provider choices to be explicit:
 
 ```sh
 h3-context-ir-go brief -input brief.json \
-  -provider deepseek -base-url "$DEEPSEEK_BASE_URL" \
-  -model deepseek-flash -key-env DEEPSEEK_API_KEY -reasoning-effort none \
+  -provider openai -base-url "$MODEL_BASE_URL" -api responses \
+  -model "$MODEL_ID" -key-env MODEL_API_KEY \
   -profile comfyui -frame-policy snap_up -max-retries 1 > result.json
 ```
 
-The shell supplies the API root as a flag; the command itself reads only the one
-key variable named by `-key-env`. A local Chat Completions service uses
+The `openai` adapter uses the official OpenAI Go SDK with the explicitly supplied
+API root and model. Choose `-api responses` (default) or `-api chat_completions`
+to match the endpoint. It does not switch protocols or infer model capabilities.
+`-reasoning-effort` is optional; omitting it sends no reasoning parameter. Values
+must be supported by the selected model and endpoint. The command reads only the
+one key variable named by `-key-env`; omit the flag for an unauthenticated endpoint.
+A local Chat Completions service with discovery/schema options uses
 `-provider chatcompat -base-url http://127.0.0.1:PORT/v1 -model MODEL
 -reasoning-effort none`. An unauthenticated local endpoint needs no key flag.
-Remote plaintext HTTP requires `-allow-insecure-http`. Chat structured mode is
-explicitly available as `-structured-mode prompt|json_schema`; thinking requires
-prompt mode. DeepSeek supports its adapter's `none|low|high|max` reasoning values.
+For `chatcompat`, remote plaintext HTTP requires `-allow-insecure-http`.
+`-api` applies only to the `openai` adapter. `-structured-mode` and
+`-allow-insecure-http` apply only to `chatcompat`; explicitly supplying them for
+`openai` returns a configuration error, including when their default values are
+spelled out. Chat structured mode is available as
+`-structured-mode prompt|json_schema`; thinking requires prompt mode, and
+`-reasoning-effort none|thinking` is required for `chatcompat`.
 
 The command runs `PrepareRequest -> FromOriginal -> Compiler.Compile`, including
 actual media evidence and the H3 writing checker. Output contains `result`; `result.calls` is the authoritative ledger for every
@@ -62,12 +71,15 @@ effective timing remain distinct in results. Omitted seed stays unspecified;
 this CLI refuses a requested model seed because it has no declared provider
 capability to enforce it. The low-level chat package can accept an explicit seed
 when an application supplies that capability. Brief effort `fast` explicitly maps
-to no reasoning; `max` maps to DeepSeek max or chat thinking. Standard effort uses
+to the explicit value `none`; `max` maps to OpenAI-compatible `max` or chat thinking. Standard effort uses
 the configured reasoning value and the explicit retry limit.
 
 Local media paths require `-allow-paths`. Uploaded SHA references require
 `-upload-store-dir /absolute/store`; no implicit store is searched. Images are
-measured from their bytes before routing. Videos/audio require both
+measured from their bytes before routing. Model image observation requires
+`-image-inputs`, an explicit declaration that the selected model and endpoint
+support images; no model-name allowlist is used. Supplied Evidence can avoid
+model image observation. Videos/audio require both
 `-ffprobe /absolute/ffprobe -ffmpeg /absolute/ffmpeg`. Video sampling defaults are
 the visible `-frame-fractions 0.15,0.5,0.85` policy; change it explicitly when
 needed. Sampled visual coverage and metadata-only audio require

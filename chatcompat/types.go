@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/ly95/h3-context-ir-go"
+	openaisdk "github.com/openai/openai-go/v3"
 	"net/http"
 	"sync"
 	"time"
@@ -39,6 +40,7 @@ type Client struct {
 	maxTokens                                               int
 	maxResponse                                             int64
 	http                                                    *http.Client
+	sdk                                                     openaisdk.Client
 	thinking                                                bool
 	jsonRetries                                             int
 	grow                                                    bool

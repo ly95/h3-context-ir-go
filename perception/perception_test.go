@@ -1,4 +1,4 @@
-package deepseek_test
+package perception_test
 
 import (
 	"bytes"
@@ -17,16 +17,17 @@ import (
 	"testing"
 
 	contextir "github.com/ly95/h3-context-ir-go"
-	"github.com/ly95/h3-context-ir-go/deepseek"
+	"github.com/ly95/h3-context-ir-go/openai"
+	"github.com/ly95/h3-context-ir-go/perception"
 	"github.com/ly95/h3-context-ir-go/planner"
 )
 
-var _ planner.Perceiver = (*deepseek.ImagePerceiver)(nil)
-var _ deepseek.ImageModel = (*deepseek.Client)(nil)
+var _ planner.Perceiver = (*perception.ImagePerceiver)(nil)
+var _ perception.ImageModel = (*openai.Client)(nil)
 
-type perceptionModelFunc func(context.Context, contextir.ModelRequest, []deepseek.Image) (contextir.ModelResponse, error)
+type perceptionModelFunc func(context.Context, contextir.ModelRequest, []perception.Image) (contextir.ModelResponse, error)
 
-func (f perceptionModelFunc) GenerateWithImages(ctx context.Context, r contextir.ModelRequest, images []deepseek.Image) (contextir.ModelResponse, error) {
+func (f perceptionModelFunc) GenerateWithImages(ctx context.Context, r contextir.ModelRequest, images []perception.Image) (contextir.ModelResponse, error) {
 	return f(ctx, r, images)
 }
 
@@ -42,7 +43,7 @@ func perceptionResponse(t *testing.T, e contextir.Evidence) contextir.ModelRespo
 	if err != nil {
 		t.Fatal(err)
 	}
-	return contextir.ModelResponse{JSON: b, Model: "deepseek-flash", Usage: contextir.Usage{InputTokens: 101, OutputTokens: 31}}
+	return contextir.ModelResponse{JSON: b, Model: "fixture-vision-model", Usage: contextir.Usage{InputTokens: 101, OutputTokens: 31}}
 }
 func perceptionImageURI(t *testing.T) string {
 	t.Helper()
@@ -54,9 +55,9 @@ func perceptionImageURI(t *testing.T) string {
 	}
 	return "data:image/png;base64," + base64.StdEncoding.EncodeToString(b.Bytes())
 }
-func perceptionResolver(uri string) deepseek.ImageResolver {
-	return func(context.Context, contextir.Asset) (deepseek.Image, error) {
-		return deepseek.Image{URI: uri, Detail: "original"}, nil
+func perceptionResolver(uri string) perception.ImageResolver {
+	return func(context.Context, contextir.Asset) (perception.Image, error) {
+		return perception.Image{URI: uri, Detail: "original"}, nil
 	}
 }
 
@@ -64,8 +65,8 @@ func TestImagePerceiverUsesActualImageAndExcludesUnobservedDescription(t *testin
 	asset := perceptionAsset()
 	uri := perceptionImageURI(t)
 	calls := 0
-	callbacks := []deepseek.PerceptionCall{}
-	model := perceptionModelFunc(func(_ context.Context, r contextir.ModelRequest, images []deepseek.Image) (contextir.ModelResponse, error) {
+	callbacks := []perception.PerceptionCall{}
+	model := perceptionModelFunc(func(_ context.Context, r contextir.ModelRequest, images []perception.Image) (contextir.ModelResponse, error) {
 		calls++
 		if len(images) != 1 || images[0].URI != uri {
 			t.Fatal("actual image conditioning was not passed to the model")
@@ -77,17 +78,17 @@ func TestImagePerceiverUsesActualImageAndExcludesUnobservedDescription(t *testin
 		if len(input) != 2 || input["asset_id"] == nil || input["metadata"] == nil || strings.Contains(string(r.Input), asset.Description) || strings.Contains(string(r.Input), asset.URI) {
 			t.Fatalf("unobserved caller text entered perception input: %s", r.Input)
 		}
-		if !bytes.Equal(r.ResponseSchema, contextir.EvidenceSchema()) || r.Stage != "image_perception" || !strings.Contains(r.System, deepseek.ImagePerceptionPromptVersion) {
+		if !bytes.Equal(r.ResponseSchema, contextir.EvidenceSchema()) || r.Stage != "image_perception" || !strings.Contains(r.System, perception.ImagePerceptionPromptVersion) {
 			t.Fatal("perception prompt/schema contract was not used")
 		}
 		return perceptionResponse(t, perceptionEvidence()), nil
 	})
-	p, err := deepseek.NewImagePerceiver(model, func(_ context.Context, got contextir.Asset) (deepseek.Image, error) {
+	p, err := perception.NewImagePerceiver(model, func(_ context.Context, got contextir.Asset) (perception.Image, error) {
 		if got != asset {
 			t.Fatal("caller resolver did not receive its opaque asset")
 		}
-		return deepseek.Image{URI: uri, Detail: "original"}, nil
-	}, deepseek.PerceptionOptions{OnCall: func(c deepseek.PerceptionCall) { callbacks = append(callbacks, c) }})
+		return perception.Image{URI: uri, Detail: "original"}, nil
+	}, perception.PerceptionOptions{OnCall: func(c perception.PerceptionCall) { callbacks = append(callbacks, c) }})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -98,7 +99,7 @@ func TestImagePerceiverUsesActualImageAndExcludesUnobservedDescription(t *testin
 	if calls != 1 || !result.Called || len(callbacks) != 1 || callbacks[0].Usage != result.Response.Usage || !callbacks[0].UsageValid || callbacks[0].ErrorCode != "" {
 		t.Fatalf("model usage/accounting lost: %+v %+v", result, callbacks)
 	}
-	if result.Evidence.Model != "deepseek-flash" || result.Evidence.AnalyzerVersion != deepseek.ImagePerceptionPromptVersion+"/deepseek-flash" {
+	if result.Evidence.Model != "fixture-vision-model" || result.Evidence.AnalyzerVersion != perception.ImagePerceptionPromptVersion+"/fixture-vision-model" {
 		t.Fatal("adapter trusted fabricated analyzer provenance")
 	}
 	if result.Evidence.Facts[0].Text != perceptionEvidence().Facts[0].Text || strings.Contains(result.Evidence.Facts[0].Text, "dragon") {
@@ -106,7 +107,7 @@ func TestImagePerceiverUsesActualImageAndExcludesUnobservedDescription(t *testin
 	}
 }
 
-func TestImagePerceiverSendsImageThroughRealDeepSeekClient(t *testing.T) {
+func TestImagePerceiverSendsImageThroughOpenAIResponsesSDK(t *testing.T) {
 	uri := perceptionImageURI(t)
 	requests := 0
 	asset := perceptionAsset()
@@ -133,7 +134,7 @@ func TestImagePerceiverSendsImageThroughRealDeepSeekClient(t *testing.T) {
 			return
 		}
 		if len(body.Input) != 1 || len(body.Input[0].Content) != 2 || body.Input[0].Content[1].Type != "input_image" || body.Input[0].Content[1].ImageURL != uri {
-			t.Error("actual image was absent from DeepSeek HTTP input")
+			t.Error("actual image was absent from Responses HTTP input")
 		}
 		if strings.Contains(body.Input[0].Content[0].Text, asset.Description) || strings.Contains(body.Input[0].Content[0].Text, asset.URI) {
 			t.Error("description/opaque locator became observation text")
@@ -143,14 +144,14 @@ func TestImagePerceiverSendsImageThroughRealDeepSeekClient(t *testing.T) {
 			t.Error("perception did not use the Evidence JSON schema")
 		}
 		w.Header().Set("Content-Type", "application/json")
-		_ = json.NewEncoder(w).Encode(map[string]any{"status": "completed", "model": "deepseek-flash", "output": []any{map[string]any{"type": "message", "role": "assistant", "status": "completed", "content": []any{map[string]any{"type": "output_text", "text": string(evidence.JSON)}}}}, "usage": map[string]int{"input_tokens": 101, "output_tokens": 31}})
+		_ = json.NewEncoder(w).Encode(map[string]any{"status": "completed", "model": "fixture-vision-model", "output": []any{map[string]any{"type": "message", "role": "assistant", "status": "completed", "content": []any{map[string]any{"type": "output_text", "text": string(evidence.JSON)}}}}, "usage": map[string]int{"input_tokens": 101, "output_tokens": 31}})
 	}))
 	defer server.Close()
-	client, err := deepseek.New(deepseek.Config{BaseURL: server.URL, APIKey: "test-key", Model: "deepseek-flash", MaxOutputTokens: 4096, ReasoningEffort: "none"})
+	client, err := openai.New(openai.Config{API: openai.Responses, SupportsImages: true, BaseURL: server.URL, APIKey: "test-key", Model: "fixture-vision-model", MaxOutputTokens: 4096, ReasoningEffort: "none"})
 	if err != nil {
 		t.Fatal(err)
 	}
-	p, err := deepseek.NewImagePerceiver(client, perceptionResolver(uri), deepseek.PerceptionOptions{})
+	p, err := perception.NewImagePerceiver(client, perceptionResolver(uri), perception.PerceptionOptions{})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -190,11 +191,11 @@ func TestImagePerceiverRejectsCrossAssetAndIncompleteEvidence(t *testing.T) {
 			evidence := perceptionEvidence()
 			tc.mutate(&evidence)
 			calls := 0
-			callback := deepseek.PerceptionCall{}
-			p, err := deepseek.NewImagePerceiver(perceptionModelFunc(func(context.Context, contextir.ModelRequest, []deepseek.Image) (contextir.ModelResponse, error) {
+			callback := perception.PerceptionCall{}
+			p, err := perception.NewImagePerceiver(perceptionModelFunc(func(context.Context, contextir.ModelRequest, []perception.Image) (contextir.ModelResponse, error) {
 				calls++
 				return perceptionResponse(t, evidence), nil
-			}), perceptionResolver(perceptionImageURI(t)), deepseek.PerceptionOptions{OnCall: func(c deepseek.PerceptionCall) { callback = c }})
+			}), perceptionResolver(perceptionImageURI(t)), perception.PerceptionOptions{OnCall: func(c perception.PerceptionCall) { callback = c }})
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -214,22 +215,22 @@ func TestImagePerceiverFailureRetainsUsageAndSafeErrors(t *testing.T) {
 		modelErr error
 		code     contextir.Code
 	}{
-		{"transport", contextir.ModelResponse{Model: "deepseek-flash", Usage: contextir.Usage{InputTokens: 77, OutputTokens: 9}}, transport, contextir.CodePerception},
-		{"malformed output", contextir.ModelResponse{Model: "deepseek-flash", JSON: []byte(`{"private://secret":true}`), Usage: contextir.Usage{InputTokens: 77, OutputTokens: 9}}, nil, contextir.CodeModelOutput},
-		{"duplicate JSON fields", contextir.ModelResponse{Model: "deepseek-flash", JSON: []byte(`{"asset_id":"image-1","asset_id":"image-2","facts":[],"analyzer_version":"x"}`), Usage: contextir.Usage{InputTokens: 77, OutputTokens: 9}}, nil, contextir.CodeModelOutput},
-		{"invalid usage", contextir.ModelResponse{Model: "deepseek-flash", Usage: contextir.Usage{InputTokens: 77, OutputTokens: -1}}, nil, contextir.CodeModelOutput},
-		{"positive invalid usage", contextir.ModelResponse{Model: "deepseek-flash", Usage: contextir.Usage{InputTokens: 77, OutputTokens: 9000}, UsageInvalid: true}, nil, contextir.CodeModelOutput},
+		{"transport", contextir.ModelResponse{Model: "fixture-vision-model", Usage: contextir.Usage{InputTokens: 77, OutputTokens: 9}}, transport, contextir.CodePerception},
+		{"malformed output", contextir.ModelResponse{Model: "fixture-vision-model", JSON: []byte(`{"private://secret":true}`), Usage: contextir.Usage{InputTokens: 77, OutputTokens: 9}}, nil, contextir.CodeModelOutput},
+		{"duplicate JSON fields", contextir.ModelResponse{Model: "fixture-vision-model", JSON: []byte(`{"asset_id":"image-1","asset_id":"image-2","facts":[],"analyzer_version":"x"}`), Usage: contextir.Usage{InputTokens: 77, OutputTokens: 9}}, nil, contextir.CodeModelOutput},
+		{"invalid usage", contextir.ModelResponse{Model: "fixture-vision-model", Usage: contextir.Usage{InputTokens: 77, OutputTokens: -1}}, nil, contextir.CodeModelOutput},
+		{"positive invalid usage", contextir.ModelResponse{Model: "fixture-vision-model", Usage: contextir.Usage{InputTokens: 77, OutputTokens: 9000}, UsageInvalid: true}, nil, contextir.CodeModelOutput},
 		{"missing response model", contextir.ModelResponse{Usage: contextir.Usage{InputTokens: 77, OutputTokens: 9}}, nil, contextir.CodeModelOutput},
-		{"cancellation", contextir.ModelResponse{Model: "deepseek-flash", Usage: contextir.Usage{InputTokens: 77, OutputTokens: 9}}, context.Canceled, contextir.CodeCanceled},
+		{"cancellation", contextir.ModelResponse{Model: "fixture-vision-model", Usage: contextir.Usage{InputTokens: 77, OutputTokens: 9}}, context.Canceled, contextir.CodeCanceled},
 	}
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
 			calls := 0
-			callbacks := []deepseek.PerceptionCall{}
-			p, err := deepseek.NewImagePerceiver(perceptionModelFunc(func(context.Context, contextir.ModelRequest, []deepseek.Image) (contextir.ModelResponse, error) {
+			callbacks := []perception.PerceptionCall{}
+			p, err := perception.NewImagePerceiver(perceptionModelFunc(func(context.Context, contextir.ModelRequest, []perception.Image) (contextir.ModelResponse, error) {
 				calls++
 				return tc.response, tc.modelErr
-			}), perceptionResolver(perceptionImageURI(t)), deepseek.PerceptionOptions{OnCall: func(c deepseek.PerceptionCall) { callbacks = append(callbacks, c) }})
+			}), perceptionResolver(perceptionImageURI(t)), perception.PerceptionOptions{OnCall: func(c perception.PerceptionCall) { callbacks = append(callbacks, c) }})
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -252,13 +253,13 @@ func TestImagePerceiverFailureRetainsUsageAndSafeErrors(t *testing.T) {
 
 func TestImagePerceiverRejectsUnsupportedMediaBeforeAnyIO(t *testing.T) {
 	calls, resolves := 0, 0
-	p, err := deepseek.NewImagePerceiver(perceptionModelFunc(func(context.Context, contextir.ModelRequest, []deepseek.Image) (contextir.ModelResponse, error) {
+	p, err := perception.NewImagePerceiver(perceptionModelFunc(func(context.Context, contextir.ModelRequest, []perception.Image) (contextir.ModelResponse, error) {
 		calls++
 		return contextir.ModelResponse{}, nil
-	}), func(context.Context, contextir.Asset) (deepseek.Image, error) {
+	}), func(context.Context, contextir.Asset) (perception.Image, error) {
 		resolves++
-		return deepseek.Image{}, nil
-	}, deepseek.PerceptionOptions{})
+		return perception.Image{}, nil
+	}, perception.PerceptionOptions{})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -284,10 +285,12 @@ func TestImagePerceiverRejectsUnsupportedMediaBeforeAnyIO(t *testing.T) {
 func TestImagePerceiverResolverFailureDoesNotInventModelUsage(t *testing.T) {
 	for _, resolveErr := range []error{errors.New("private://resolver-secret"), context.DeadlineExceeded} {
 		calls, callbacks := 0, 0
-		p, err := deepseek.NewImagePerceiver(perceptionModelFunc(func(context.Context, contextir.ModelRequest, []deepseek.Image) (contextir.ModelResponse, error) {
+		p, err := perception.NewImagePerceiver(perceptionModelFunc(func(context.Context, contextir.ModelRequest, []perception.Image) (contextir.ModelResponse, error) {
 			calls++
 			return contextir.ModelResponse{}, nil
-		}), func(context.Context, contextir.Asset) (deepseek.Image, error) { return deepseek.Image{}, resolveErr }, deepseek.PerceptionOptions{OnCall: func(deepseek.PerceptionCall) { callbacks++ }})
+		}), func(context.Context, contextir.Asset) (perception.Image, error) {
+			return perception.Image{}, resolveErr
+		}, perception.PerceptionOptions{OnCall: func(perception.PerceptionCall) { callbacks++ }})
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -300,9 +303,9 @@ func TestImagePerceiverResolverFailureDoesNotInventModelUsage(t *testing.T) {
 
 func TestImagePerceiverPerceiveCompatibilityRecordsAccounting(t *testing.T) {
 	callbacks := 0
-	p, err := deepseek.NewImagePerceiver(perceptionModelFunc(func(context.Context, contextir.ModelRequest, []deepseek.Image) (contextir.ModelResponse, error) {
+	p, err := perception.NewImagePerceiver(perceptionModelFunc(func(context.Context, contextir.ModelRequest, []perception.Image) (contextir.ModelResponse, error) {
 		return perceptionResponse(t, perceptionEvidence()), nil
-	}), perceptionResolver(perceptionImageURI(t)), deepseek.PerceptionOptions{OnCall: func(c deepseek.PerceptionCall) {
+	}), perceptionResolver(perceptionImageURI(t)), perception.PerceptionOptions{OnCall: func(c perception.PerceptionCall) {
 		callbacks++
 		if c.Usage.InputTokens != 101 {
 			t.Fatal("usage missing")
@@ -318,19 +321,19 @@ func TestImagePerceiverPerceiveCompatibilityRecordsAccounting(t *testing.T) {
 }
 
 func TestImagePerceiverConstructorRejectsTypedNilModel(t *testing.T) {
-	var client *deepseek.Client
+	var client *perceptionModelFunc
 	var modelFunction perceptionModelFunc
-	for _, model := range []deepseek.ImageModel{nil, client, modelFunction} {
-		if p, err := deepseek.NewImagePerceiver(model, perceptionResolver("opaque"), deepseek.PerceptionOptions{}); !contextir.HasCode(err, contextir.CodeInvalid) || p != nil {
+	for _, model := range []perception.ImageModel{nil, client, modelFunction} {
+		if p, err := perception.NewImagePerceiver(model, perceptionResolver("opaque"), perception.PerceptionOptions{}); !contextir.HasCode(err, contextir.CodeInvalid) || p != nil {
 			t.Fatal("typed nil image model was accepted")
 		}
 	}
-	if p, err := deepseek.NewImagePerceiver(perceptionModelFunc(func(context.Context, contextir.ModelRequest, []deepseek.Image) (contextir.ModelResponse, error) {
+	if p, err := perception.NewImagePerceiver(perceptionModelFunc(func(context.Context, contextir.ModelRequest, []perception.Image) (contextir.ModelResponse, error) {
 		return contextir.ModelResponse{}, nil
-	}), nil, deepseek.PerceptionOptions{}); !contextir.HasCode(err, contextir.CodeInvalid) || p != nil {
+	}), nil, perception.PerceptionOptions{}); !contextir.HasCode(err, contextir.CodeInvalid) || p != nil {
 		t.Fatal("nil resolver was accepted")
 	}
-	var p *deepseek.ImagePerceiver
+	var p *perception.ImagePerceiver
 	if _, err := p.PerceiveWithUsage(context.Background(), perceptionAsset()); !contextir.HasCode(err, contextir.CodeInvalid) {
 		t.Fatal("nil perceiver was not rejected")
 	}
@@ -338,10 +341,10 @@ func TestImagePerceiverConstructorRejectsTypedNilModel(t *testing.T) {
 
 func TestImagePerceiverPreservesExplicitModelCapabilityError(t *testing.T) {
 	calls := 0
-	p, err := deepseek.NewImagePerceiver(perceptionModelFunc(func(context.Context, contextir.ModelRequest, []deepseek.Image) (contextir.ModelResponse, error) {
+	p, err := perception.NewImagePerceiver(perceptionModelFunc(func(context.Context, contextir.ModelRequest, []perception.Image) (contextir.ModelResponse, error) {
 		calls++
 		return contextir.ModelResponse{Usage: contextir.Usage{InputTokens: -1, OutputTokens: -1}}, &contextir.Error{Code: contextir.CodeUnsupported, Stage: "provider.images"}
-	}), perceptionResolver(perceptionImageURI(t)), deepseek.PerceptionOptions{})
+	}), perceptionResolver(perceptionImageURI(t)), perception.PerceptionOptions{})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -358,11 +361,11 @@ func TestImagePerceiverTypedNilModelErrorFailsWithUsage(t *testing.T) {
 		err  error
 	}{{"direct interface", providerError}, {"wrapped interface", fmt.Errorf("provider wrapper: %w", providerError)}} {
 		t.Run(tc.name, func(t *testing.T) {
-			callbacks := []deepseek.PerceptionCall{}
+			callbacks := []perception.PerceptionCall{}
 			response := perceptionResponse(t, perceptionEvidence())
-			p, err := deepseek.NewImagePerceiver(perceptionModelFunc(func(context.Context, contextir.ModelRequest, []deepseek.Image) (contextir.ModelResponse, error) {
+			p, err := perception.NewImagePerceiver(perceptionModelFunc(func(context.Context, contextir.ModelRequest, []perception.Image) (contextir.ModelResponse, error) {
 				return response, tc.err
-			}), perceptionResolver(perceptionImageURI(t)), deepseek.PerceptionOptions{OnCall: func(call deepseek.PerceptionCall) { callbacks = append(callbacks, call) }})
+			}), perceptionResolver(perceptionImageURI(t)), perception.PerceptionOptions{OnCall: func(call perception.PerceptionCall) { callbacks = append(callbacks, call) }})
 			if err != nil {
 				t.Fatal(err)
 			}

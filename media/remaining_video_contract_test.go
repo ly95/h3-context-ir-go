@@ -16,8 +16,8 @@ import (
 	"testing"
 
 	"github.com/ly95/h3-context-ir-go"
-	"github.com/ly95/h3-context-ir-go/deepseek"
 	"github.com/ly95/h3-context-ir-go/media"
+	"github.com/ly95/h3-context-ir-go/perception"
 )
 
 // Same moving-pattern fixture specification as pinned test_video_reference.py.
@@ -56,7 +56,7 @@ func TestRemainingMediaVideo(t *testing.T) {
 	tools, path := remainingSixSecondClip(t)
 	t.Run("sampled_frames_are_one_clip", func(t *testing.T) {
 		calls := 0
-		p := remainingVideoObserver(t, tools, path, 0, vision(func(_ context.Context, r contextir.ModelRequest, images []deepseek.Image) (contextir.ModelResponse, error) {
+		p := remainingVideoObserver(t, tools, path, 0, vision(func(_ context.Context, r contextir.ModelRequest, images []perception.Image) (contextir.ModelResponse, error) {
 			calls++
 			if r.Stage != "video_perception" || !strings.Contains(r.System, "SAME clip") || !strings.Contains(r.System, "not separate") || !strings.Contains(r.System, "each recurring subject once") {
 				t.Fatal("multi-frame ask models separate source entities", r.Stage, r.System)
@@ -94,7 +94,7 @@ func TestRemainingMediaVideo(t *testing.T) {
 					}
 				}
 				attempts := 0
-				p := remainingVideoObserver(t, tools, source, 5, vision(func(_ context.Context, r contextir.ModelRequest, _ []deepseek.Image) (contextir.ModelResponse, error) {
+				p := remainingVideoObserver(t, tools, source, 5, vision(func(_ context.Context, r contextir.ModelRequest, _ []perception.Image) (contextir.ModelResponse, error) {
 					attempts++
 					if attempts <= 5 {
 						return contextir.ModelResponse{JSON: json.RawMessage(`{}`), Model: "explicit-vision-contract-double", Usage: contextir.Usage{InputTokens: int64(attempts), OutputTokens: 2}}, nil
@@ -124,7 +124,7 @@ func TestRemainingMediaVideo(t *testing.T) {
 					retries = 0
 				}
 				stop := errors.New("private://transport-secret")
-				p := remainingVideoObserver(t, tools, path, retries, vision(func(context.Context, contextir.ModelRequest, []deepseek.Image) (contextir.ModelResponse, error) {
+				p := remainingVideoObserver(t, tools, path, retries, vision(func(context.Context, contextir.ModelRequest, []perception.Image) (contextir.ModelResponse, error) {
 					attempts++
 					r := contextir.ModelResponse{JSON: json.RawMessage(`{}`), Model: "explicit-vision-contract-double", Usage: contextir.Usage{InputTokens: 8, OutputTokens: 3}}
 					if failure == "transport" {
@@ -159,7 +159,7 @@ func TestRemainingMediaVideo(t *testing.T) {
 		}
 		sourceHash := sha256.Sum256(source)
 		calls := 0
-		p := remainingVideoObserver(t, tools, path, 0, vision(func(_ context.Context, _ contextir.ModelRequest, images []deepseek.Image) (contextir.ModelResponse, error) {
+		p := remainingVideoObserver(t, tools, path, 0, vision(func(_ context.Context, _ contextir.ModelRequest, images []perception.Image) (contextir.ModelResponse, error) {
 			calls++
 			digests := map[[32]byte]bool{}
 			if len(images) != 3 {

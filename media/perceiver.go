@@ -12,7 +12,7 @@ import (
 	"strings"
 
 	"github.com/ly95/h3-context-ir-go"
-	"github.com/ly95/h3-context-ir-go/deepseek"
+	"github.com/ly95/h3-context-ir-go/perception"
 )
 
 type Resolver func(context.Context, contextir.Asset) (string, error)
@@ -33,12 +33,12 @@ type PerceiverOptions struct {
 	CardCache          *AssetCardCache
 	CacheModelIdentity string
 	OnCache            func(CardCacheEvent)
-	Model              deepseek.ImageModel
+	Model              perception.ImageModel
 	Resolve            Resolver
 	FrameFractions     []float64
 	Audio              AudioAnalyzer
 	MeteredAudio       MeteredAudioAnalyzer
-	OnCall             func(deepseek.PerceptionCall)
+	OnCall             func(perception.PerceptionCall)
 	OnAudioCall        func(contextir.CallUsage)
 	// MaxImageRetries is the explicit content-repair budget for both still-image
 	// and sampled-video observation. Zero performs exactly one attempt.
@@ -55,7 +55,7 @@ func (p *Perceiver) PerceiveWithCalls(ctx context.Context, asset contextir.Asset
 	copy := *p
 	calls := []contextir.CallUsage{}
 	observer := p.options.OnCall
-	copy.options.OnCall = func(c deepseek.PerceptionCall) {
+	copy.options.OnCall = func(c perception.PerceptionCall) {
 		calls = append(calls, contextir.CallUsage{AssetID: c.AssetID, Stage: c.Stage, Attempt: len(calls) + 1, Model: c.Model, Usage: c.Usage, Valid: c.UsageValid})
 		if observer != nil {
 			observer(c)
@@ -109,26 +109,26 @@ func (p *Perceiver) Perceive(ctx context.Context, asset contextir.Asset) (_ cont
 	}
 	if asset.Kind == contextir.MediaImage {
 
-		observer, err := deepseek.NewImagePerceiver(p.options.Model, func(context.Context, contextir.Asset) (deepseek.Image, error) {
+		observer, err := perception.NewImagePerceiver(p.options.Model, func(context.Context, contextir.Asset) (perception.Image, error) {
 			header, err := ReadHeader(path)
 			if err != nil {
-				return deepseek.Image{}, err
+				return perception.Image{}, err
 			}
 			if header.Kind != contextir.MediaImage || header.MIME == "" {
-				return deepseek.Image{}, mediaError(contextir.CodeUnsupported, "image", "The source bytes do not identify a supported image container.", nil)
+				return perception.Image{}, mediaError(contextir.CodeUnsupported, "image", "The source bytes do not identify a supported image container.", nil)
 			}
 			data, err := readImage(path, 32<<20)
 			if err != nil {
-				return deepseek.Image{}, err
+				return perception.Image{}, err
 			}
-			return deepseek.Image{URI: "data:" + header.MIME + ";base64," + base64.StdEncoding.EncodeToString(data), Detail: "original"}, nil
-		}, deepseek.PerceptionOptions{IncludeCard: true, OnCall: p.options.OnCall, MaxRetries: p.options.MaxImageRetries})
+			return perception.Image{URI: "data:" + header.MIME + ";base64," + base64.StdEncoding.EncodeToString(data), Detail: "original"}, nil
+		}, perception.PerceptionOptions{IncludeCard: true, OnCall: p.options.OnCall, MaxRetries: p.options.MaxImageRetries})
 		if err != nil {
 			return contextir.Evidence{}, err
 		}
 		var key CardCacheKey
 		if p.options.CardCache != nil {
-			request, requestErr := deepseek.ImagePerceptionRequest(asset, nil, true)
+			request, requestErr := perception.ImagePerceptionRequest(asset, nil, true)
 			if requestErr != nil {
 				return contextir.Evidence{}, requestErr
 			}
@@ -203,10 +203,10 @@ func (p *Perceiver) Perceive(ctx context.Context, asset contextir.Asset) (_ cont
 				return e, err
 			}
 		}
-		images := make([]deepseek.Image, len(frames))
+		images := make([]perception.Image, len(frames))
 		times := make([]contextir.Time, len(frames))
 		for i, f := range frames {
-			images[i] = deepseek.Image{URI: "data:image/png;base64," + base64.StdEncoding.EncodeToString(f.PNG), Detail: "original"}
+			images[i] = perception.Image{URI: "data:image/png;base64," + base64.StdEncoding.EncodeToString(f.PNG), Detail: "original"}
 			times[i] = f.Time
 		}
 		payload, _ := json.Marshal(struct {

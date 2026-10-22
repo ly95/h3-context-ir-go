@@ -11,17 +11,22 @@ the API key in the variable read by the command:
 
 ```sh
 go run ./cmd/h3-context-ir-go-eval \
-  -base-url https://api.deepseek.com \
-  -model deepseek-flash \
-  -reasoning-effort low \
+  -base-url "$MODEL_BASE_URL" -api responses \
+  -model "$IMAGE_MODEL_ID" -api-key-env MODEL_API_KEY \
   -max-retries 1 \
   -out /tmp/h3-context-ir-go-eval-new-run
 ```
 
+Choose `-api responses` (default) or `-api chat_completions` to match the
+endpoint. The corpus sends image inputs, so the caller must select a model and
+endpoint that support them; the recorder explicitly declares image capability
+and does not infer it from model names. `-reasoning-effort` is optional and is
+omitted from API requests unless supplied.
+
 The output directory must not exist. The command reads only the explicitly named
-credential variable (`DEEPSEEK_API_KEY` by default); it does not search dotenv or
-other projects. Model calls consume provider quota. Each attempt, failure and
-reported usage is retained; a valid adapter response is distinct from a final
+credential variable selected by `-api-key-env`; omit that flag for an
+unauthenticated endpoint. It does not search dotenv or other projects. Model
+calls consume provider quota. Each attempt, failure and reported usage is retained; a valid adapter response is distinct from a final
 case passing the IR and H3 contracts.
 
 The recording contains the synthetic inputs, requests, model JSON, observations,

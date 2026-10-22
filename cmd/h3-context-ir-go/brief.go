@@ -18,9 +18,10 @@ import (
 	contextir "github.com/ly95/h3-context-ir-go"
 	"github.com/ly95/h3-context-ir-go/chatcompat"
 	"github.com/ly95/h3-context-ir-go/compiler"
-	"github.com/ly95/h3-context-ir-go/deepseek"
 	"github.com/ly95/h3-context-ir-go/lora"
 	"github.com/ly95/h3-context-ir-go/media"
+	"github.com/ly95/h3-context-ir-go/openai"
+	"github.com/ly95/h3-context-ir-go/perception"
 	"github.com/ly95/h3-context-ir-go/planner"
 	"github.com/ly95/h3-context-ir-go/service"
 	"github.com/ly95/h3-context-ir-go/uploads"
@@ -38,10 +39,10 @@ func (p *pathsFlag) Set(s string) error {
 }
 
 type briefFlags struct {
-	provider, base, model, keyEnv, reasoning, structured string
-	tokens                                               int
-	timeout                                              time.Duration
-	insecure                                             bool
+	provider, base, model, keyEnv, reasoning, structured, api string
+	tokens                                                    int
+	timeout                                                   time.Duration
+	insecure, imageInputs                                     bool
 }
 type providers struct {
 	flags    briefFlags
@@ -50,21 +51,27 @@ type providers struct {
 	cleanups []func()
 }
 
-func (p *providers) make(effort string) (compiler.Model, deepseek.ImageModel, error) {
+func (p *providers) make(effort string) (compiler.Model, perception.ImageModel, error) {
 	reason := p.flags.reasoning
 	if effort == "fast" {
 		reason = "none"
 	}
 	if effort == "max" {
-		if p.flags.provider == "deepseek" {
+		if p.flags.provider == "openai" {
 			reason = "max"
 		} else {
 			reason = "thinking"
 		}
 	}
 	switch p.flags.provider {
-	case "deepseek":
-		c, e := deepseek.New(deepseek.Config{BaseURL: p.flags.base, APIKey: p.key, Model: p.flags.model, MaxOutputTokens: p.flags.tokens, ReasoningEffort: reason, Timeout: p.flags.timeout, MaxResponseBytes: 8 << 20, HTTPClient: p.http})
+	case "openai":
+		c, e := openai.New(openai.Config{API: openai.API(p.flags.api), SupportsImages: p.flags.imageInputs, BaseURL: p.flags.base, APIKey: p.key, Model: p.flags.model, MaxOutputTokens: p.flags.tokens, ReasoningEffort: reason, Timeout: p.flags.timeout, MaxResponseBytes: 8 << 20, HTTPClient: p.http})
+		if e == nil {
+			p.cleanups = append(p.cleanups, c.Close)
+		}
+		if !p.flags.imageInputs {
+			return c, nil, e
+		}
 		return c, c, e
 	case "chatcompat":
 		if reason != "none" && reason != "thinking" {
@@ -77,9 +84,12 @@ func (p *providers) make(effort string) (compiler.Model, deepseek.ImageModel, er
 		if e == nil {
 			p.cleanups = append(p.cleanups, c.Close)
 		}
+		if !p.flags.imageInputs {
+			return c, nil, e
+		}
 		return c, c, e
 	}
-	return nil, nil, errors.New("choose an explicit provider: deepseek or chatcompat")
+	return nil, nil, errors.New("choose an explicit provider: openai or chatcompat")
 }
 func (p *providers) close() {
 	for _, f := range p.cleanups {
@@ -107,11 +117,13 @@ func runBrief(command string, args []string, in io.Reader, out, errOut io.Writer
 	var loraRoots pathsFlag
 	fs.Var(&loraRoots, "lora-dir", "Explicit LoRA registry directory; may be repeated")
 	var f briefFlags
-	fs.StringVar(&f.provider, "provider", "", "Explicit model provider: deepseek or chatcompat; omitted draft is offline")
+	fs.StringVar(&f.provider, "provider", "", "Explicit model adapter: openai or chatcompat; omitted draft is offline")
 	fs.StringVar(&f.base, "base-url", "", "Explicit provider API root")
 	fs.StringVar(&f.model, "model", "", "Explicit provider model ID")
 	fs.StringVar(&f.keyEnv, "key-env", "", "Name of the one environment variable to read for the API key")
-	fs.StringVar(&f.reasoning, "reasoning-effort", "", "DeepSeek none|low|high|max; chatcompat none|thinking")
+	fs.StringVar(&f.reasoning, "reasoning-effort", "", "OpenAI-compatible reasoning effort (omitted means do not send); chatcompat none|thinking")
+	fs.StringVar(&f.api, "api", string(openai.Responses), "OpenAI-compatible API: responses or chat_completions")
+	fs.BoolVar(&f.imageInputs, "image-inputs", false, "Declare that the explicitly chosen model supports image inputs")
 	fs.StringVar(&f.structured, "structured-mode", chatcompat.PromptSchema, "Chat schema protocol: prompt or json_schema")
 	fs.IntVar(&f.tokens, "max-output-tokens", 8192, "Hard output-token ceiling for each provider call")
 	fs.DurationVar(&f.timeout, "timeout", 5*time.Minute, "Total compile timeout and maximum request duration")
@@ -119,6 +131,17 @@ func runBrief(command string, args []string, in io.Reader, out, errOut io.Writer
 	if e := fs.Parse(args); e != nil || fs.NArg() != 0 {
 		return 2
 	}
+	apiSelected, structuredSelected, insecureSelected := false, false, false
+	fs.Visit(func(f *flag.Flag) {
+		switch f.Name {
+		case "api":
+			apiSelected = true
+		case "structured-mode":
+			structuredSelected = true
+		case "allow-insecure-http":
+			insecureSelected = true
+		}
+	})
 	if *maxRetries < 0 || *maxRetries > 3 || f.tokens <= 0 || f.timeout <= 0 {
 		return messageError(errOut, "invalid-configuration", "Retries must be 0..3 and token/time limits must be positive")
 	}
@@ -132,17 +155,26 @@ func runBrief(command string, args []string, in io.Reader, out, errOut io.Writer
 	if *clarification != "require" && *clarification != "continue_with_recorded_choice" {
 		return messageError(errOut, "invalid-clarification-policy", "Choose require or continue_with_recorded_choice")
 	}
-	if f.provider == "" && (command == "brief" || f.base != "" || f.model != "" || f.keyEnv != "" || f.reasoning != "") {
-		return messageError(errOut, "provider-required", "Choose -provider deepseek or chatcompat explicitly; draft without provider is offline")
+	if f.provider == "" && (command == "brief" || f.base != "" || f.model != "" || f.keyEnv != "" || f.reasoning != "" || f.imageInputs || apiSelected || structuredSelected || insecureSelected) {
+		return messageError(errOut, "provider-required", "Choose -provider openai or chatcompat explicitly; draft without provider is offline")
 	}
-	if f.provider != "" && (f.base == "" || f.model == "" || f.reasoning == "") {
-		return messageError(errOut, "invalid-configuration", "A selected provider requires -base-url, -model and -reasoning-effort")
+	if f.provider != "" && (f.base == "" || f.model == "") {
+		return messageError(errOut, "invalid-configuration", "A selected provider requires -base-url and -model")
 	}
-	if f.provider != "" && f.provider != "deepseek" && f.provider != "chatcompat" {
-		return messageError(errOut, "invalid-provider", "Choose deepseek or chatcompat")
+	if f.provider != "" && f.provider != "openai" && f.provider != "chatcompat" {
+		return messageError(errOut, "invalid-provider", "Choose openai or chatcompat")
 	}
-	if f.provider == "deepseek" && f.keyEnv == "" {
-		return messageError(errOut, "key-env-required", "DeepSeek requires an explicitly named -key-env; keys are never read from dotenv")
+	if f.provider == "chatcompat" && apiSelected {
+		return messageError(errOut, "invalid-api", "-api configures the openai adapter; chatcompat uses Chat Completions")
+	}
+	if f.provider == "openai" && structuredSelected {
+		return messageError(errOut, "invalid-configuration", "-structured-mode configures only the chatcompat adapter")
+	}
+	if f.provider == "openai" && insecureSelected {
+		return messageError(errOut, "invalid-configuration", "-allow-insecure-http configures only the chatcompat adapter; openai requires HTTPS or loopback HTTP")
+	}
+	if f.api != string(openai.Responses) && f.api != string(openai.ChatCompletions) {
+		return messageError(errOut, "invalid-api", "Choose responses or chat_completions")
 	}
 	payload, e := readInput(*input, in, maxCLIInputBytes)
 	if e != nil {
@@ -247,7 +279,7 @@ func runBrief(command string, args []string, in io.Reader, out, errOut io.Writer
 			return report(errOut, e)
 		}
 	}
-	makePerceiver := func(imageModel deepseek.ImageModel) (compiler.Perceiver, error) {
+	makePerceiver := func(imageModel perception.ImageModel) (compiler.Perceiver, error) {
 		if len(native.Assets) == 0 {
 			return nil, nil
 		}
@@ -291,7 +323,7 @@ func runBrief(command string, args []string, in io.Reader, out, errOut io.Writer
 		transport := &http.Transport{ForceAttemptHTTP2: true, TLSHandshakeTimeout: 10 * time.Second, IdleConnTimeout: 90 * time.Second}
 		provider = &providers{flags: f, key: key, http: &http.Client{Transport: transport, Timeout: f.timeout}}
 		defer provider.close()
-		var imageModel deepseek.ImageModel
+		var imageModel perception.ImageModel
 		model, imageModel, e = provider.make("standard")
 		if e != nil {
 			return reportBoundary(errOut, e)

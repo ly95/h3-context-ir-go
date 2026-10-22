@@ -1,0 +1,121 @@
+package openai
+
+import (
+	"context"
+	"encoding/json"
+	"reflect"
+	"strings"
+
+	"github.com/ly95/h3-context-ir-go"
+	sdk "github.com/openai/openai-go/v3"
+	"github.com/openai/openai-go/v3/option"
+	"github.com/openai/openai-go/v3/packages/param"
+	"github.com/openai/openai-go/v3/responses"
+	"github.com/openai/openai-go/v3/shared"
+)
+
+func (c *Client) generateResponses(ctx context.Context, request contextir.ModelRequest, images []Image) (contextir.ModelResponse, error) {
+	// The SDK's map encoder treats json.Number as a string. Preserve the supplied
+	// schema as raw JSON through its supported parameter override, so integer
+	// constraints and arbitrary definitions cannot be rounded or retyped.
+	formatBytes, err := json.Marshal(struct {
+		Type   string          `json:"type"`
+		Name   string          `json:"name"`
+		Schema json.RawMessage `json:"schema"`
+		Strict bool            `json:"strict"`
+	}{Type: "json_schema", Name: "contextir_document", Schema: request.ResponseSchema, Strict: c.strictSchema})
+	if err != nil {
+		return emptyResponse(), failure(contextir.CodeInvalid, "request", "schema", "The complete response schema could not be encoded.", nil)
+	}
+	format := param.Override[responses.ResponseFormatTextJSONSchemaConfigParam](json.RawMessage(formatBytes))
+	params := responses.ResponseNewParams{
+		Model:           shared.ResponsesModel(c.model),
+		Instructions:    sdk.String(request.System),
+		Input:           responses.ResponseNewParamsInputUnion{OfString: sdk.String(string(request.Input))},
+		MaxOutputTokens: sdk.Int(int64(c.maxOutputTokens)),
+		Store:           sdk.Bool(false),
+		Text: responses.ResponseTextConfigParam{Format: responses.ResponseFormatTextConfigUnionParam{
+			OfJSONSchema: &format,
+		}},
+	}
+	if c.reasoningEffort != "" {
+		params.Reasoning = shared.ReasoningParam{Effort: shared.ReasoningEffort(c.reasoningEffort)}
+	}
+	if len(images) != 0 {
+		content := responses.ResponseInputMessageContentListParam{
+			{OfInputText: &responses.ResponseInputTextParam{Text: string(request.Input)}},
+		}
+		for _, image := range images {
+			content = append(content, responses.ResponseInputContentUnionParam{
+				OfInputImage: &responses.ResponseInputImageParam{ImageURL: sdk.String(image.URI), Detail: responses.ResponseInputImageDetail(image.Detail)},
+			})
+		}
+		params.Input = responses.ResponseNewParamsInputUnion{OfInputItemList: responses.ResponseInputParam{
+			{OfMessage: &responses.EasyInputMessageParam{Type: "message", Role: "user", Content: responses.EasyInputMessageContentUnionParam{OfInputItemContentList: content}}},
+		}}
+	}
+	data, status, err := c.execute(ctx, params, func(opts ...option.RequestOption) error {
+		_, err := c.responses.New(ctx, params, opts...)
+		return err
+	})
+	if err != nil {
+		return c.responseMetadata(data), err
+	}
+	return c.parseResponses(data, status)
+}
+
+func (c *Client) parseResponses(data []byte, status int) (contextir.ModelResponse, error) {
+	wire, result := c.responseEnvelopeMetadata(data)
+	if status < 200 || status >= 300 {
+		return result, failure(contextir.CodeModel, "http", "status", "The model endpoint returned an unsuccessful HTTP status.", &HTTPError{StatusCode: status})
+	}
+	if wire.Status != "completed" || present(wire.Error) || present(wire.IncompleteDetails) {
+		return result, failure(contextir.CodeModelOutput, "response", "status", "The model response did not complete successfully.", nil)
+	}
+	if !c.models[result.Model] {
+		return result, failure(contextir.CodeModelOutput, "response", "model", "The response model must match the explicitly selected model.", nil)
+	}
+	if result.Usage.InputTokens < 0 || result.Usage.OutputTokens < 0 {
+		return result, failure(contextir.CodeModelOutput, "response", "usage", "Both nonnegative input and output token counts are required.", nil)
+	}
+	if result.Usage.OutputTokens > int64(c.maxOutputTokens) {
+		return result, failure(contextir.CodeModelOutput, "response", "usage", "Reported output tokens exceed the requested hard limit.", nil)
+	}
+	var items []outputItem
+	if !exactResponseKeys(wire.Output, reflect.TypeFor[[]outputItem]()) || json.Unmarshal(wire.Output, &items) != nil {
+		return result, failure(contextir.CodeModelOutput, "response", "output", "The response output has malformed or ambiguous content.", nil)
+	}
+	var output strings.Builder
+	messages := 0
+	for _, item := range items {
+		if item.Status != "" && item.Status != "completed" {
+			return result, failure(contextir.CodeModelOutput, "response", "output", "An output item did not complete successfully.", nil)
+		}
+		switch item.Type {
+		case "reasoning":
+			// Reasoning is a separate Responses item, never the final JSON output.
+		case "message":
+			messages++
+			if item.Role != "assistant" || messages != 1 {
+				return result, failure(contextir.CodeModelOutput, "response", "output", "Exactly one assistant output message is required.", nil)
+			}
+			for _, part := range item.Content {
+				if part.Type != "output_text" || present(part.Refusal) || part.Text == nil {
+					return result, failure(contextir.CodeModelOutput, "response", "output", "The response contains a refusal or unsupported output content.", nil)
+				}
+				output.WriteString(*part.Text)
+			}
+		default:
+			return result, failure(contextir.CodeModelOutput, "response", "output", "The response contains an unsupported output item.", nil)
+		}
+	}
+	text := output.String()
+	// Preserve the untrusted candidate for an explicitly recording caller even
+	// when strict JSON validation rejects it. Callers must still honor err.
+	if messages != 1 || strings.TrimSpace(text) == "" || !validJSON([]byte(text)) {
+		result.RejectedOutput = text
+		return result, failure(contextir.CodeModelOutput, "response", "output", "The output must contain exactly one complete JSON value.", nil)
+	}
+	result.JSON = json.RawMessage(text)
+	return result, nil
+}

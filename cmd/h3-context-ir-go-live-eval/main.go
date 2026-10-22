@@ -25,8 +25,9 @@ import (
 
 	"github.com/ly95/h3-context-ir-go"
 	"github.com/ly95/h3-context-ir-go/compiler"
-	"github.com/ly95/h3-context-ir-go/deepseek"
 	"github.com/ly95/h3-context-ir-go/h3"
+	"github.com/ly95/h3-context-ir-go/openai"
+	"github.com/ly95/h3-context-ir-go/perception"
 	"github.com/ly95/h3-context-ir-go/plan"
 	"github.com/ly95/h3-context-ir-go/planner"
 )
@@ -110,7 +111,7 @@ type callRecord struct {
 	Images         []imageRecord   `json:"images"`
 }
 type recordedModel struct {
-	Inner           deepseek.ImageModel
+	Inner           perception.ImageModel
 	Root, Directory string
 	Calls           []callRecord
 	ImageSources    map[string]string
@@ -122,7 +123,7 @@ type recordedModel struct {
 func (r *recordedModel) Generate(ctx context.Context, req contextir.ModelRequest) (contextir.ModelResponse, error) {
 	return r.GenerateWithImages(ctx, req, nil)
 }
-func (r *recordedModel) GenerateWithImages(ctx context.Context, req contextir.ModelRequest, images []deepseek.Image) (contextir.ModelResponse, error) {
+func (r *recordedModel) GenerateWithImages(ctx context.Context, req contextir.ModelRequest, images []perception.Image) (contextir.ModelResponse, error) {
 	if r.PersistError != nil {
 		return contextir.ModelResponse{UsageInvalid: true}, r.PersistError
 	}
@@ -136,7 +137,7 @@ func (r *recordedModel) GenerateWithImages(ctx context.Context, req contextir.Mo
 	if len(images) > 0 {
 		call.ImagesFile = prefix + "-images.json"
 		if err := writeJSON(filepath.Join(r.Root, call.ImagesFile), struct {
-			Images []deepseek.Image `json:"images"`
+			Images []perception.Image `json:"images"`
 		}{images}); err != nil {
 			r.PersistError = err
 			return contextir.ModelResponse{UsageInvalid: true}, err
@@ -305,6 +306,7 @@ type report struct {
 	BinarySHA256        string       `json:"binary_sha256"`
 	GoVersion           string       `json:"go_version"`
 	Model               string       `json:"model"`
+	API                 string       `json:"api"`
 	Reasoning           string       `json:"reasoning_effort"`
 	MaxOutputTokens     int          `json:"max_output_tokens"`
 	MaxStructureRetries int          `json:"max_structure_retries"`
@@ -323,12 +325,13 @@ func main() {
 func run() error {
 	input := flag.String("input", "", "Explicit native fixture file")
 	output := flag.String("out", "", "New recording directory")
-	base := flag.String("base-url", "", "Explicit DeepSeek API root")
-	model := flag.String("model", "", "Explicit model name")
-	keyEnv := flag.String("api-key-env", "", "Explicit credential environment variable name")
+	base := flag.String("base-url", "", "Explicit OpenAI-compatible API root")
+	model := flag.String("model", "", "Explicit image-capable model; image fixtures send image inputs")
+	keyEnv := flag.String("api-key-env", "", "Explicit credential environment variable name; omit for an unauthenticated endpoint")
 	parallel := flag.Int("parallel", 1, "Concurrent cases, 1 to 3")
 	profile := flag.String("profile", "", "Explicit default profile: official; cases may explicitly select comfy")
-	effort := flag.String("reasoning-effort", "", "Explicit DeepSeek reasoning effort")
+	api := flag.String("api", string(openai.Responses), "OpenAI-compatible API: responses or chat_completions")
+	effort := flag.String("reasoning-effort", "", "Optional reasoning effort; omitted means do not send")
 	limit := flag.Int("max-output-tokens", 0, "Explicit output-token hard limit per call")
 	assertPath := flag.String("assertions", "", "Independent assertions file; never passed to the model")
 	structureRetries := flag.Int("max-structure-retries", 1, "Extra structural interpretation calls per invalid output, 0 to 3")
@@ -338,13 +341,22 @@ func run() error {
 	if err := retries.validate(); err != nil {
 		return err
 	}
-	if flag.NArg() != 0 || *input == "" || *output == "" || *base == "" || *model == "" || *keyEnv == "" || *effort == "" || *limit <= 0 || *parallel < 1 || *parallel > 3 || (*profile != "official" && *profile != h3.OfficialProfile().Name) {
-		return errors.New("explicit valid -input, -out, -base-url, -model, -api-key-env, -parallel (1..3), -profile official, -reasoning-effort and -max-output-tokens required")
+	if flag.NArg() != 0 || *input == "" || *output == "" || *base == "" || *model == "" || *limit <= 0 || *parallel < 1 || *parallel > 3 || (*profile != "official" && *profile != h3.OfficialProfile().Name) {
+		return errors.New("explicit valid -input, -out, -base-url, -model, -parallel (1..3), -profile official and -max-output-tokens required")
 	}
-	client, err := deepseek.New(deepseek.Config{BaseURL: *base, APIKey: os.Getenv(*keyEnv), Model: *model, MaxOutputTokens: *limit, ReasoningEffort: *effort, Timeout: 2 * time.Minute})
+	key := ""
+	if *keyEnv != "" {
+		var exists bool
+		key, exists = os.LookupEnv(*keyEnv)
+		if !exists || key == "" {
+			return errors.New("the explicitly named key environment variable is unset or empty")
+		}
+	}
+	client, err := openai.New(openai.Config{API: openai.API(*api), SupportsImages: true, BaseURL: *base, APIKey: key, Model: *model, MaxOutputTokens: *limit, ReasoningEffort: *effort, Timeout: 2 * time.Minute})
 	if err != nil {
 		return err
 	}
+	defer client.Close()
 	inputBytes, err := os.ReadFile(*input)
 	if err != nil {
 		return errors.New("cannot read explicit fixture")
@@ -384,7 +396,7 @@ func run() error {
 	if err != nil {
 		return err
 	}
-	r := report{Schema: "contextir-live-eval-report/v1", Source: data.Source, Started: time.Now().UTC().Format(time.RFC3339Nano), FixtureFile: "input.json", FixtureSHA256: digest(inputBytes), BinarySHA256: digest(binary), GoVersion: runtime.Version(), Model: *model, Reasoning: *effort, MaxOutputTokens: *limit, MaxStructureRetries: retries.Structure, MaxPlannerRetries: retries.Planner, EndpointSHA256: digest([]byte(*base)), AssertionsApplied: *assertPath != "", Cases: make([]caseResult, len(data.Cases))}
+	r := report{API: *api, Schema: "contextir-live-eval-report/v1", Source: data.Source, Started: time.Now().UTC().Format(time.RFC3339Nano), FixtureFile: "input.json", FixtureSHA256: digest(inputBytes), BinarySHA256: digest(binary), GoVersion: runtime.Version(), Model: *model, Reasoning: *effort, MaxOutputTokens: *limit, MaxStructureRetries: retries.Structure, MaxPlannerRetries: retries.Planner, EndpointSHA256: digest([]byte(*base)), AssertionsApplied: *assertPath != "", Cases: make([]caseResult, len(data.Cases))}
 	if len(assertionBytes) > 0 {
 		r.AssertionsFile = "assertions.json"
 		r.AssertionsSHA256 = digest(assertionBytes)
@@ -527,7 +539,7 @@ func validateExpectation(op operationExpectation) error {
 	return nil
 }
 
-func evaluateCase(ctx context.Context, item inputCase, expected []operationExpectation, root, inputDirectory string, model deepseek.ImageModel, retries retryLimits, checkpoint func(caseResult) error) (caseResult, error) {
+func evaluateCase(ctx context.Context, item inputCase, expected []operationExpectation, root, inputDirectory string, model perception.ImageModel, retries retryLimits, checkpoint func(caseResult) error) (caseResult, error) {
 	wire, _ := json.Marshal(item)
 	cr := caseResult{ID: item.ID, InputSHA256: digest(wire), ObservationScope: item.ObservationScope, Operations: []operationResult{}, Remaining: len(item.Changes)}
 	options, stored, err := nativeOptions(item, retries)
@@ -546,22 +558,22 @@ func evaluateCase(ctx context.Context, item inputCase, expected []operationExpec
 		return cr, e
 	}
 	recorder := &recordedModel{Inner: model, Root: root, ImageSources: map[string]string{}}
-	observer, e := deepseek.NewImagePerceiver(recorder, func(_ context.Context, asset contextir.Asset) (deepseek.Image, error) {
+	observer, e := perception.NewImagePerceiver(recorder, func(_ context.Context, asset contextir.Asset) (perception.Image, error) {
 		source, ok := item.Media[asset.ID]
 		if !ok {
-			return deepseek.Image{}, errors.New("explicit image fixture unavailable")
+			return perception.Image{}, errors.New("explicit image fixture unavailable")
 		}
 		pixels, e := os.ReadFile(filepath.Join(inputDirectory, source.Path))
 		if e != nil {
-			return deepseek.Image{}, errors.New("cannot read explicit image fixture")
+			return perception.Image{}, errors.New("cannot read explicit image fixture")
 		}
 		if len(pixels) > 32<<20 || digest(pixels) != source.SHA256 {
-			return deepseek.Image{}, errors.New("image fixture bytes differ from the pinned digest or exceed the size limit")
+			return perception.Image{}, errors.New("image fixture bytes differ from the pinned digest or exceed the size limit")
 		}
-		image := deepseek.Image{URI: "data:" + http.DetectContentType(pixels) + ";base64," + base64.StdEncoding.EncodeToString(pixels), Detail: "original"}
+		image := perception.Image{URI: "data:" + http.DetectContentType(pixels) + ";base64," + base64.StdEncoding.EncodeToString(pixels), Detail: "original"}
 		recorder.ImageSources[image.URI] = source.SHA256
 		return image, nil
-	}, deepseek.PerceptionOptions{IncludeCard: true, MaxRetries: 1})
+	}, perception.PerceptionOptions{IncludeCard: true, MaxRetries: 1})
 	if e != nil {
 		return cr, e
 	}

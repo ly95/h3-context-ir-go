@@ -1,6 +1,6 @@
 # Chat-compatible model adapter
 
-This optional stdlib adapter implements `planner.Model` and the image model interface used by `deepseek.ImagePerceiver`. Inject it into the compiler. Configuration supplies the endpoint, model policy, structured-output mode, transport, timeout, maximum response size and output-token ceiling. No environment variables are read and no model is silently substituted.
+This optional adapter uses the official `github.com/openai/openai-go/v3` SDK and implements `planner.Model` and the image model interface used by `perception.ImagePerceiver`. Inject it into the compiler. Configuration supplies the endpoint, model policy, structured-output mode, transport, timeout, maximum response size and output-token ceiling. SDK retries and environment-derived settings are disabled; no model is silently substituted. This adapter retains the pinned upstream probe and thinking controls; use the `openai` adapter for general OpenAI-compatible generation.
 
 Use `Discovery: ExplicitModel` with a named model in production, or explicitly choose `SingleModel` to resolve `/models` when it describes one set of weights. `ServerDefault` is an explicit low-level `Chat` option; `Generate` requires an identified model for provenance. `StructuredMode` must be `PromptSchema` or `GuidedSchema`. Each production generation requires provider usage and model evidence. Reported usage outside the hard request limit is retained and marked invalid.
 

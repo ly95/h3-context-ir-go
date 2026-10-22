@@ -1,4 +1,4 @@
-// h3-context-ir-go-eval is an opt-in, paid DeepSeek smoke test using only synthetic
+// h3-context-ir-go-eval is an opt-in, paid model smoke test using only synthetic
 // inputs. It never runs as part of go test and never reads a dotenv file.
 package main
 
@@ -18,8 +18,9 @@ import (
 	"time"
 
 	"github.com/ly95/h3-context-ir-go"
-	"github.com/ly95/h3-context-ir-go/deepseek"
 	"github.com/ly95/h3-context-ir-go/h3"
+	"github.com/ly95/h3-context-ir-go/openai"
+	"github.com/ly95/h3-context-ir-go/perception"
 	"github.com/ly95/h3-context-ir-go/planner"
 )
 
@@ -44,6 +45,7 @@ type caseResult struct {
 
 type report struct {
 	StartedAt              string       `json:"started_at"`
+	API                    string       `json:"api"`
 	RequestedModel         string       `json:"requested_model"`
 	ReasoningEffort        string       `json:"reasoning_effort"`
 	MaxOutputTokens        int          `json:"max_output_tokens"`
@@ -54,7 +56,7 @@ type report struct {
 }
 
 type recordedModel struct {
-	client  *deepseek.Client
+	client  *openai.Client
 	calls   *[]callRecord
 	dir     string
 	attempt int
@@ -78,7 +80,7 @@ func (m *recordedModel) Generate(ctx context.Context, req contextir.ModelRequest
 }
 
 type recordedPerceiver struct {
-	inner *deepseek.ImagePerceiver
+	inner *perception.ImagePerceiver
 	calls *[]callRecord
 }
 
@@ -98,26 +100,33 @@ func main() {
 }
 
 func run() error {
-	baseURL := flag.String("base-url", "", "Explicit DeepSeek endpoint, for example https://api.deepseek.com")
-	model := flag.String("model", "", "Explicit DeepSeek model; image cases require deepseek-flash")
+	baseURL := flag.String("base-url", "", "Explicit OpenAI-compatible API root")
+	model := flag.String("model", "", "Explicit image-capable model; the evaluation sends image inputs")
 	output := flag.String("out", "", "New output directory for synthetic requests, documents, prompts, and report")
-	keyEnv := flag.String("api-key-env", "DEEPSEEK_API_KEY", "Environment variable containing the API key")
+	keyEnv := flag.String("api-key-env", "", "Explicit environment variable containing the API key; omit for an unauthenticated endpoint")
 	maxRetries := flag.Int("max-retries", 0, "Explicit extra planner calls per case on invalid model output, from 0 to 3")
-	reasoning := flag.String("reasoning-effort", "none", "Explicit DeepSeek reasoning effort: none, low, high, or max")
+	api := flag.String("api", string(openai.Responses), "OpenAI-compatible API: responses or chat_completions")
+	reasoning := flag.String("reasoning-effort", "", "Optional reasoning effort; omitted means do not send")
 	flag.Parse()
-	if flag.NArg() != 0 || *baseURL == "" || *model == "" || *output == "" || *keyEnv == "" {
+	if flag.NArg() != 0 || *baseURL == "" || *model == "" || *output == "" {
 		return errors.New("explicit -base-url, -model, and -out are required")
 	}
 	if *maxRetries < 0 || *maxRetries > 3 {
 		return errors.New("-max-retries must be between 0 and 3")
 	}
-	if *model != "deepseek-flash" {
-		return errors.New("the complete evaluation corpus requires the explicit image-capable model deepseek-flash")
+	key := ""
+	if *keyEnv != "" {
+		var exists bool
+		key, exists = os.LookupEnv(*keyEnv)
+		if !exists || key == "" {
+			return errors.New("the explicitly named key environment variable is unset or empty")
+		}
 	}
-	client, err := deepseek.New(deepseek.Config{BaseURL: *baseURL, APIKey: os.Getenv(*keyEnv), Model: *model, MaxOutputTokens: 8192, ReasoningEffort: *reasoning, Timeout: 90 * time.Second})
+	client, err := openai.New(openai.Config{API: openai.API(*api), SupportsImages: true, BaseURL: *baseURL, APIKey: key, Model: *model, MaxOutputTokens: 8192, ReasoningEffort: *reasoning, Timeout: 90 * time.Second})
 	if err != nil {
 		return err
 	}
+	defer client.Close()
 	if err := os.Mkdir(*output, 0700); err != nil {
 		return errors.New("create a new evaluation output directory: destination must not already exist")
 	}
@@ -129,16 +138,16 @@ func run() error {
 		return err
 	}
 	imageURI := "data:image/png;base64," + base64.StdEncoding.EncodeToString(imageBytes)
-	perceiver, err := deepseek.NewImagePerceiver(client, func(_ context.Context, asset contextir.Asset) (deepseek.Image, error) {
+	perceiver, err := perception.NewImagePerceiver(client, func(_ context.Context, asset contextir.Asset) (perception.Image, error) {
 		if asset.ID != "synthetic-red-circle" {
-			return deepseek.Image{}, errors.New("unknown synthetic asset")
+			return perception.Image{}, errors.New("unknown synthetic asset")
 		}
-		return deepseek.Image{URI: imageURI, Detail: "original"}, nil
-	}, deepseek.PerceptionOptions{})
+		return perception.Image{URI: imageURI, Detail: "original"}, nil
+	}, perception.PerceptionOptions{})
 	if err != nil {
 		return err
 	}
-	r := report{StartedAt: time.Now().UTC().Format(time.RFC3339), RequestedModel: *model, ReasoningEffort: *reasoning, MaxOutputTokens: 8192, PlannerVersion: planner.PromptVersion, MaxRetries: *maxRetries, RequiresSemanticReview: true}
+	r := report{API: *api, StartedAt: time.Now().UTC().Format(time.RFC3339), RequestedModel: *model, ReasoningEffort: *reasoning, MaxOutputTokens: 8192, PlannerVersion: planner.PromptVersion, MaxRetries: *maxRetries, RequiresSemanticReview: true}
 	for _, item := range corpus() {
 		started := time.Now()
 		cr := caseResult{ID: item.id, Stage: "plan", Calls: []callRecord{}}

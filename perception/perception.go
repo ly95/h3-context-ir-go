@@ -1,4 +1,6 @@
-package deepseek
+// Package perception implements provider-neutral image observation with explicit
+// model capabilities, media resolution, bounded repair, and per-call accounting.
+package perception
 
 import (
 	"bytes"
@@ -14,13 +16,16 @@ import (
 	contextir "github.com/ly95/h3-context-ir-go"
 )
 
+// Image is a caller-supplied image input passed to the injected model.
+type Image = contextir.ImageInput
+
 const ImagePerceptionPromptVersion = "contextir-image-perception/v1"
 
 //go:embed prompts/image-perception-v1.txt
 var imagePerceptionSystem string
 
 // ImageModel accepts actual image conditioning, rather than an asset's textual
-// description. Client implements this interface; tests can inject a fake model.
+// description. Model adapters implement this interface; callers can inject their own.
 type ImageModel interface {
 	GenerateWithImages(context.Context, contextir.ModelRequest, []Image) (contextir.ModelResponse, error)
 }
@@ -264,6 +269,8 @@ func perceptionModelName(value string) bool {
 	return true
 }
 
+// Retain the historical diagnostic stage so existing callers can continue to
+// recognize observation errors across the package migration.
 func perceptionFailure(code contextir.Code, path, message string, cause error) *contextir.Error {
 	return &contextir.Error{Code: code, Stage: "deepseek.image_perception", Issues: []contextir.Issue{{Code: code, Path: path, Message: message}}, Cause: cause}
 }

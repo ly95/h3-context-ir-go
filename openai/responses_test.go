@@ -1,4 +1,4 @@
-package deepseek_test
+package openai_test
 
 import (
 	"context"
@@ -14,14 +14,14 @@ import (
 	"time"
 
 	"github.com/ly95/h3-context-ir-go"
-	"github.com/ly95/h3-context-ir-go/deepseek"
+	"github.com/ly95/h3-context-ir-go/openai"
 	"github.com/ly95/h3-context-ir-go/planner"
 )
 
-var _ planner.Model = (*deepseek.Client)(nil)
+var _ planner.Model = (*openai.Client)(nil)
 
-func wireConfig(baseURL string) deepseek.Config {
-	return deepseek.Config{BaseURL: baseURL, APIKey: "test-key", Model: "deepseek-flash", MaxOutputTokens: 8192, ReasoningEffort: "none"}
+func wireConfig(baseURL string) openai.Config {
+	return openai.Config{API: openai.Responses, SupportsImages: true, BaseURL: baseURL, APIKey: "test-key", Model: "fixture-vision-model", MaxOutputTokens: 8192, ReasoningEffort: "none"}
 }
 
 func wireRequest() contextir.ModelRequest {
@@ -31,15 +31,15 @@ func wireRequest() contextir.ModelRequest {
 func wireResponse(text string) map[string]any {
 	return map[string]any{
 		"id": "response-test", "object": "response", "created_at": 1,
-		"status": "completed", "model": "deepseek-flash",
+		"status": "completed", "model": "fixture-vision-model",
 		"output": []any{map[string]any{"type": "message", "role": "assistant", "status": "completed", "content": []any{map[string]any{"type": "output_text", "text": text}}}},
 		"usage":  map[string]any{"input_tokens": 31, "output_tokens": 17, "total_tokens": 48},
 	}
 }
 
-func mustWireClient(t *testing.T, config deepseek.Config) *deepseek.Client {
+func mustWireClient(t *testing.T, config openai.Config) *openai.Client {
 	t.Helper()
-	client, err := deepseek.New(config)
+	client, err := openai.New(config)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -74,7 +74,7 @@ func TestGenerateSendsCompleteResponsesContract(t *testing.T) {
 		if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
 			t.Error(err)
 		}
-		if body.Model != "deepseek-flash" || body.Input != string(wanted.Input) || body.Instructions != wanted.System || body.Reasoning.Effort != "none" || body.MaxOutputTokens != 8192 || body.Stream {
+		if body.Model != "fixture-vision-model" || body.Input != string(wanted.Input) || body.Instructions != wanted.System || body.Reasoning.Effort != "none" || body.MaxOutputTokens != 8192 || body.Stream {
 			t.Error("model selection, content, and limits must be preserved exactly")
 		}
 		if body.Text.Format.Type != "json_schema" || body.Text.Format.Name != "contextir_document" {
@@ -90,13 +90,13 @@ func TestGenerateSendsCompleteResponsesContract(t *testing.T) {
 	}))
 	defer server.Close()
 	result, err := mustWireClient(t, wireConfig(server.URL+"/v1/")).Generate(context.Background(), wanted)
-	if err != nil || string(result.JSON) != `{"exact":"你好，  世界！"}` || result.Model != "deepseek-flash" || result.Usage != (contextir.Usage{InputTokens: 31, OutputTokens: 17}) || result.UsageInvalid || seen.Load() != 1 {
+	if err != nil || string(result.JSON) != `{"exact":"你好，  世界！"}` || result.Model != "fixture-vision-model" || result.Usage != (contextir.Usage{InputTokens: 31, OutputTokens: 17}) || result.UsageInvalid || seen.Load() != 1 {
 		t.Fatalf("unexpected result: %v, %#v", err, result)
 	}
 }
 
 func TestGenerateWithImagesUsesUserInputImageParts(t *testing.T) {
-	images := []deepseek.Image{{URI: "data:image/png;base64,AQID", Detail: "original"}, {URI: "https://example.com/image.png?signature=private", Detail: "high"}}
+	images := []openai.Image{{URI: "data:image/png;base64,AQID", Detail: "original"}, {URI: "https://example.com/image.png?signature=private", Detail: "high"}}
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		var body struct {
 			Input []struct {
@@ -159,7 +159,7 @@ func TestFailuresRetainUsageAndNeverRetry(t *testing.T) {
 			out["output"] = []any{map[string]any{"type": "function_call", "name": "unexpected"}}
 		}, 200, contextir.CodeModelOutput, 31, 17},
 		{"empty_output", func(out map[string]any) { out["output"] = []any{} }, 200, contextir.CodeModelOutput, 31, 17},
-		{"different_model", func(out map[string]any) { out["model"] = "deepseek-v4-pro" }, 200, contextir.CodeModelOutput, 31, 17},
+		{"different_model", func(out map[string]any) { out["model"] = "different-fixture-model" }, 200, contextir.CodeModelOutput, 31, 17},
 		{"missing_usage", func(out map[string]any) { delete(out, "usage") }, 200, contextir.CodeModelOutput, -1, -1},
 		{"missing_output_usage", func(out map[string]any) { out["usage"] = map[string]any{"input_tokens": 31} }, 200, contextir.CodeModelOutput, 31, -1},
 		{"negative_usage", func(out map[string]any) { out["usage"] = map[string]any{"input_tokens": 31, "output_tokens": -2} }, 200, contextir.CodeModelOutput, 31, -2},
@@ -189,7 +189,7 @@ func TestFailuresRetainUsageAndNeverRetry(t *testing.T) {
 				t.Fatal("error exposes private data")
 			}
 			if tc.status != 200 {
-				var status *deepseek.HTTPError
+				var status *openai.HTTPError
 				if !errors.As(err, &status) || status.StatusCode != tc.status {
 					t.Fatal("HTTP status must remain inspectable")
 				}
@@ -229,7 +229,7 @@ func TestCaseAliasesCannotOverrideAuthoritativeResponseFields(t *testing.T) {
 			out["usage"] = map[string]any{"input_tokens": -7, "INPUT_TOKENS": 31, "output_tokens": 17}
 		}},
 		{"status", func(out map[string]any) { out["status"] = "failed"; out["STATUS"] = "completed" }},
-		{"model", func(out map[string]any) { out["model"] = "unauthorized-model"; out["MODEL"] = "deepseek-flash" }},
+		{"model", func(out map[string]any) { out["model"] = "unauthorized-model"; out["MODEL"] = "fixture-vision-model" }},
 		{"output_status", func(out map[string]any) {
 			item := out["output"].([]any)[0].(map[string]any)
 			item["status"], item["STATUS"] = "incomplete", "completed"
@@ -252,13 +252,42 @@ func TestCaseAliasesCannotOverrideAuthoritativeResponseFields(t *testing.T) {
 			}))
 			defer server.Close()
 			got, err := mustWireClient(t, wireConfig(server.URL)).Generate(context.Background(), wireRequest())
-			if !contextir.HasCode(err, contextir.CodeModelOutput) || !got.UsageInvalid || len(got.JSON) != 0 || got.Model != "" || got.Usage != (contextir.Usage{InputTokens: -1, OutputTokens: -1}) {
-				t.Fatalf("ambiguous known keys must fail without retaining overwritten metadata: %v, %#v", err, got)
+			wantUsage := contextir.Usage{InputTokens: -1, OutputTokens: -1}
+			wantModel := ""
+			wantInvalid := true
+			if tc.name == "output_status" || tc.name == "content_type" || tc.name == "content_text" {
+				wantUsage = contextir.Usage{InputTokens: 31, OutputTokens: 17}
+				wantModel, wantInvalid = "fixture-vision-model", false
+			}
+			if !contextir.HasCode(err, contextir.CodeModelOutput) || got.UsageInvalid != wantInvalid || len(got.JSON) != 0 || got.Model != wantModel || got.Usage != wantUsage {
+				t.Fatalf("ambiguous output must fail while retaining only independent metadata: %v, %#v", err, got)
 			}
 			if strings.Contains(err.Error(), "OUTPUT_TOKENS") || strings.Contains(err.Error(), "99999") || strings.Contains(err.Error(), "unauthorized-model") || strings.Contains(err.Error(), "forged") {
 				t.Fatal("alias errors must not expose raw response keys or values")
 			}
 		})
+	}
+}
+
+func TestMalformedResponsesOutputPreservesConfirmedUsage(t *testing.T) {
+	for _, output := range []any{
+		"bad output type",
+		[]any{"bad item type"},
+		[]any{map[string]any{"type": "message", "role": "assistant", "content": "bad content type"}},
+		[]any{map[string]any{"type": "message", "role": "assistant", "content": []any{map[string]any{"type": "output_text", "text": 123}}}},
+	} {
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			reply := wireResponse(`{"ok":true}`)
+			reply["output"] = output
+			_ = json.NewEncoder(w).Encode(reply)
+		}))
+		client := mustWireClient(t, wireConfig(server.URL))
+		got, err := client.Generate(context.Background(), wireRequest())
+		client.Close()
+		server.Close()
+		if !contextir.HasCode(err, contextir.CodeModelOutput) || len(got.JSON) != 0 || got.UsageInvalid || got.Model != "fixture-vision-model" || got.Usage != (contextir.Usage{InputTokens: 31, OutputTokens: 17}) {
+			t.Fatalf("malformed output discarded independent accounting: %v, %#v", err, got)
+		}
 	}
 }
 
@@ -284,9 +313,9 @@ func TestLaterCaseAliasesCannotHideRejectedMetadata(t *testing.T) {
 	// replace the canonical counter, status, or selected model with a safe value.
 	const message = `"output":[{"type":"message","role":"assistant","status":"completed","content":[{"type":"output_text","text":"{}"}]}]`
 	for name, body := range map[string]string{
-		"hard_limit":      `{"status":"completed","model":"deepseek-flash",` + message + `,"usage":{"input_tokens":31,"output_tokens":99999,"OUTPUT_TOKENS":1}}`,
-		"failed_status":   `{"status":"failed","STATUS":"completed","model":"deepseek-flash",` + message + `,"usage":{"input_tokens":31,"output_tokens":17}}`,
-		"different_model": `{"status":"completed","model":"unauthorized-model","MODEL":"deepseek-flash",` + message + `,"usage":{"input_tokens":31,"output_tokens":17}}`,
+		"hard_limit":      `{"status":"completed","model":"fixture-vision-model",` + message + `,"usage":{"input_tokens":31,"output_tokens":99999,"OUTPUT_TOKENS":1}}`,
+		"failed_status":   `{"status":"failed","STATUS":"completed","model":"fixture-vision-model",` + message + `,"usage":{"input_tokens":31,"output_tokens":17}}`,
+		"different_model": `{"status":"completed","model":"unauthorized-model","MODEL":"fixture-vision-model",` + message + `,"usage":{"input_tokens":31,"output_tokens":17}}`,
 	} {
 		t.Run(name, func(t *testing.T) {
 			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) { _, _ = io.WriteString(w, body) }))
@@ -327,7 +356,7 @@ func TestRedirectsDoNotForwardAuthorization(t *testing.T) {
 	config := wireConfig(origin.URL)
 	config.HTTPClient = callerClient
 	_, err := mustWireClient(t, config).Generate(context.Background(), wireRequest())
-	var status *deepseek.HTTPError
+	var status *openai.HTTPError
 	if !errors.As(err, &status) || status.StatusCode != 307 || redirected.Load() != 0 {
 		t.Fatalf("redirect must fail without credential forwarding: %v", err)
 	}
@@ -375,20 +404,18 @@ func TestCancellationAndTimeoutPropagate(t *testing.T) {
 }
 
 func TestSetupAndInputsFailBeforeHTTP(t *testing.T) {
-	for _, mutate := range []func(*deepseek.Config){
-		func(c *deepseek.Config) { c.BaseURL = "http://example.com" },
-		func(c *deepseek.Config) { c.BaseURL = "https://user:secret@example.com" },
-		func(c *deepseek.Config) { c.BaseURL = "https://example.com?api_key=private" },
-		func(c *deepseek.Config) { c.APIKey = "" },
-		func(c *deepseek.Config) { c.APIKey = "bad\nkey" },
-		func(c *deepseek.Config) { c.Model = "" },
-		func(c *deepseek.Config) { c.ReasoningEffort = "" },
-		func(c *deepseek.Config) { c.MaxOutputTokens = 0 },
-		func(c *deepseek.Config) { c.Timeout = -1 },
+	for _, mutate := range []func(*openai.Config){
+		func(c *openai.Config) { c.BaseURL = "http://example.com" },
+		func(c *openai.Config) { c.BaseURL = "https://user:secret@example.com" },
+		func(c *openai.Config) { c.BaseURL = "https://example.com?api_key=private" },
+		func(c *openai.Config) { c.APIKey = "bad\nkey" },
+		func(c *openai.Config) { c.Model = "" },
+		func(c *openai.Config) { c.MaxOutputTokens = 0 },
+		func(c *openai.Config) { c.Timeout = -1 },
 	} {
-		config := wireConfig("https://api.deepseek.com")
+		config := wireConfig("https://api.openai.com")
 		mutate(&config)
-		if _, err := deepseek.New(config); err == nil {
+		if _, err := openai.New(config); err == nil {
 			t.Fatal("invalid explicit config must fail")
 		}
 	}
@@ -396,8 +423,8 @@ func TestSetupAndInputsFailBeforeHTTP(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) { calls.Add(1) }))
 	defer server.Close()
 	client := mustWireClient(t, wireConfig(server.URL))
-	for _, image := range []deepseek.Image{{URI: ""}, {URI: "file:///private/image.png"}, {URI: "http://example.com/image.png"}, {URI: "data:image/png;base64,!!!"}, {URI: "data:image/svg+xml;base64,AQID"}, {URI: "https://example.com/image.png", Detail: "unsupported"}} {
-		if _, err := client.GenerateWithImages(context.Background(), wireRequest(), []deepseek.Image{image}); err == nil {
+	for _, image := range []openai.Image{{URI: ""}, {URI: "file:///private/image.png"}, {URI: "http://example.com/image.png"}, {URI: "data:image/png;base64,!!!"}, {URI: "data:image/svg+xml;base64,AQID"}, {URI: "https://example.com/image.png", Detail: "unsupported"}} {
+		if _, err := client.GenerateWithImages(context.Background(), wireRequest(), []openai.Image{image}); err == nil {
 			t.Fatal("invalid image must fail")
 		}
 	}
@@ -412,8 +439,8 @@ func TestSetupAndInputsFailBeforeHTTP(t *testing.T) {
 		t.Fatal("input must be exactly one JSON value")
 	}
 	config := wireConfig(server.URL)
-	config.Model = "deepseek-v4-pro"
-	if _, err := mustWireClient(t, config).GenerateWithImages(context.Background(), wireRequest(), []deepseek.Image{{URI: "https://example.com/image.png"}}); !contextir.HasCode(err, contextir.CodeUnsupported) {
+	config.SupportsImages = false
+	if _, err := mustWireClient(t, config).GenerateWithImages(context.Background(), wireRequest(), []openai.Image{{URI: "https://example.com/image.png"}}); !contextir.HasCode(err, contextir.CodeUnsupported) {
 		t.Fatal("unsupported image model must fail")
 	}
 	if calls.Load() != 0 {

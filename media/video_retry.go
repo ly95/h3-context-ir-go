@@ -7,7 +7,7 @@ import (
 	"errors"
 
 	"github.com/ly95/h3-context-ir-go"
-	"github.com/ly95/h3-context-ir-go/deepseek"
+	"github.com/ly95/h3-context-ir-go/perception"
 )
 
 func validateVideoObservation(observed contextir.Evidence, asset contextir.Asset) error {
@@ -36,7 +36,7 @@ func validateVideoObservation(observed contextir.Evidence, asset contextir.Asset
 	return nil
 }
 
-func (p *Perceiver) observeVideoFrames(ctx context.Context, asset contextir.Asset, request contextir.ModelRequest, images []deepseek.Image) (contextir.Evidence, contextir.ModelResponse, error) {
+func (p *Perceiver) observeVideoFrames(ctx context.Context, asset contextir.Asset, request contextir.ModelRequest, images []perception.Image) (contextir.Evidence, contextir.ModelResponse, error) {
 	var last error
 	var response contextir.ModelResponse
 	var observed contextir.Evidence
@@ -77,7 +77,7 @@ func (p *Perceiver) observeVideoFrames(ctx context.Context, asset contextir.Asse
 					code = typed.Code
 				}
 			}
-			p.options.OnCall(deepseek.PerceptionCall{AssetID: asset.ID, Stage: request.Stage, PromptVersion: AnalyzerVersion + "/video-v2", Model: response.Model, Usage: response.Usage, UsageValid: valid, ErrorCode: code})
+			p.options.OnCall(perception.PerceptionCall{AssetID: asset.ID, Stage: request.Stage, PromptVersion: AnalyzerVersion + "/video-v2", Model: response.Model, Usage: response.Usage, UsageValid: valid, ErrorCode: code})
 		}
 		if last == nil {
 			return observed, response, nil

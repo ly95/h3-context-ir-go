@@ -14,6 +14,9 @@ import (
 	"strings"
 	"time"
 	"unicode/utf8"
+
+	openaisdk "github.com/openai/openai-go/v3"
+	"github.com/openai/openai-go/v3/option"
 )
 
 func New(c Config) (*Client, error) {
@@ -70,7 +73,27 @@ func New(c Config) (*Client, error) {
 	h.CheckRedirect = func(*http.Request, []*http.Request) error { return http.ErrUseLastResponse }
 	base := strings.TrimRight(c.BaseURL, "/")
 	root := strings.TrimSuffix(base, "/v1")
-	return &Client{defaultTokens: c.DefaultOutputTokens, closeOwned: c.HTTPClient == nil || c.HTTPClient.Transport == nil, base: base, root: root, key: key, configuredModel: c.Model, discovery: c.Discovery, structured: c.StructuredMode, maxTokens: c.MaxOutputTokens, maxResponse: c.MaxResponseBytes, http: &h, thinking: c.Thinking, jsonRetries: c.JSONRetries, grow: c.GrowOnTruncation}, nil
+	origin := *u
+	origin.Path, origin.RawPath = "/", ""
+	// Construct the SDK with explicit options instead of NewClient, whose defaults
+	// read credentials, headers and endpoint configuration from the environment.
+	// Retry accounting remains owned by Chat/JSONCall and their caller.
+	sdk := openaisdk.Client{Options: []option.RequestOption{
+		option.WithBaseURL(origin.String()),
+		option.WithAPIKey(key),
+		option.WithHTTPClient(&h),
+		option.WithMaxRetries(0),
+		option.WithMiddleware(func(req *http.Request, next option.MiddlewareNext) (*http.Response, error) {
+			res, err := next(req)
+			if res != nil && res.Body != nil {
+				// The SDK reads error responses itself. Apply the same byte bound
+				// before that read as for a successful raw response.
+				res.Body = &boundedResponseBody{ReadCloser: res.Body, remaining: c.MaxResponseBytes}
+			}
+			return res, err
+		}),
+	}}
+	return &Client{defaultTokens: c.DefaultOutputTokens, closeOwned: c.HTTPClient == nil || c.HTTPClient.Transport == nil, base: base, root: root, key: key, configuredModel: c.Model, discovery: c.Discovery, structured: c.StructuredMode, maxTokens: c.MaxOutputTokens, maxResponse: c.MaxResponseBytes, http: &h, sdk: sdk, thinking: c.Thinking, jsonRetries: c.JSONRetries, grow: c.GrowOnTruncation}, nil
 }
 func (c *Client) BaseURL() string { return c.base }
 func (c *Client) RootURL() string { return c.root }
@@ -95,35 +118,75 @@ func (c *Client) Close() {
 	}
 }
 func (c *Client) request(ctx context.Context, method, target string, body any) ([]byte, int, error) {
-	var data io.Reader
+	var data any
 	if body != nil {
 		b, e := json.Marshal(body)
 		if e != nil {
 			return nil, 0, e
 		}
-		data = bytes.NewReader(b)
+		data = b
 	}
-	req, e := http.NewRequestWithContext(ctx, method, target, data)
+	var r *http.Response
+	// SDK paths are relative references. Retain the adapter's complete configured
+	// path, including root-level health/version routes, under the explicit origin.
+	u, e := url.Parse(target)
 	if e != nil {
 		return nil, 0, e
 	}
-	req.Header = c.Headers()
-	if body != nil {
-		req.Header.Set("Content-Type", "application/json")
-	}
-	r, e := c.http.Do(req)
-	if e != nil {
+	e = c.sdk.Execute(ctx, method, strings.TrimPrefix(u.EscapedPath(), "/"), data, &r)
+	if r == nil {
 		return nil, 0, &Error{Code: "network", Message: "model endpoint request failed", Cause: e}
 	}
 	defer r.Body.Close()
+	if errors.Is(e, errResponseTooLarge) {
+		return nil, r.StatusCode, &Error{Code: "response_too_large", Message: "model response exceeds the configured byte limit"}
+	}
+	if limited, ok := r.Body.(*boundedResponseBody); e != nil && ok && limited.readErr != nil {
+		return nil, r.StatusCode, &Error{Code: "read", Message: "cannot read model response", Cause: limited.readErr}
+	}
+	if e != nil && r.StatusCode < 400 {
+		return nil, r.StatusCode, &Error{Code: "read", Message: "cannot read model response"}
+	}
+	// For an HTTP refusal the SDK has restored the bounded response body. Keep
+	// the adapter's status/error contract rather than exposing SDK request dumps.
 	b, e := io.ReadAll(io.LimitReader(r.Body, c.maxResponse+1))
 	if e != nil {
+		if errors.Is(e, errResponseTooLarge) {
+			return nil, r.StatusCode, &Error{Code: "response_too_large", Message: "model response exceeds the configured byte limit"}
+		}
 		return nil, r.StatusCode, &Error{Code: "read", Message: "cannot read model response", Cause: e}
 	}
 	if int64(len(b)) > c.maxResponse {
 		return nil, r.StatusCode, &Error{Code: "response_too_large", Message: "model response exceeds the configured byte limit"}
 	}
 	return b, r.StatusCode, nil
+}
+
+var errResponseTooLarge = errors.New("response exceeds configured byte limit")
+
+type boundedResponseBody struct {
+	io.ReadCloser
+	remaining int64
+	readErr   error
+}
+
+func (b *boundedResponseBody) Read(p []byte) (int, error) {
+	if b.remaining < 0 {
+		return 0, errResponseTooLarge
+	}
+	if int64(len(p)) > b.remaining+1 {
+		p = p[:b.remaining+1]
+	}
+	n, err := b.ReadCloser.Read(p)
+	b.remaining -= int64(n)
+	if b.remaining < 0 {
+		b.readErr = errResponseTooLarge
+		return n, errResponseTooLarge
+	}
+	if err != nil && err != io.EOF {
+		b.readErr = err
+	}
+	return n, err
 }
 func object(b []byte) (map[string]any, error) {
 	if !utf8.Valid(b) {

@@ -14,8 +14,8 @@ import (
 	"testing"
 
 	contextir "github.com/ly95/h3-context-ir-go"
-	"github.com/ly95/h3-context-ir-go/deepseek"
 	"github.com/ly95/h3-context-ir-go/media"
+	"github.com/ly95/h3-context-ir-go/perception"
 )
 
 func remainingSurfaceManifest(t *testing.T) struct {
@@ -115,7 +115,7 @@ func TestRemainingSurfaceEveryDeclaredGeometryMatchesBytes(t *testing.T) {
 // Source test_video_reference.py::test_a_video_with_no_path_raises_instead_of_returning_an_empty_card.
 func TestRemainingSurfaceVideoWithoutPathFailsBeforeObservation(t *testing.T) {
 	calls := 0
-	p, err := media.NewPerceiver(media.PerceiverOptions{Resolve: func(context.Context, contextir.Asset) (string, error) { return "", nil }, Model: vision(func(context.Context, contextir.ModelRequest, []deepseek.Image) (contextir.ModelResponse, error) {
+	p, err := media.NewPerceiver(media.PerceiverOptions{Resolve: func(context.Context, contextir.Asset) (string, error) { return "", nil }, Model: vision(func(context.Context, contextir.ModelRequest, []perception.Image) (contextir.ModelResponse, error) {
 		calls++
 		t.Error("missing video reached vision model")
 		return contextir.ModelResponse{}, nil

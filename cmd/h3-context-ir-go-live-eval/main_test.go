@@ -11,21 +11,21 @@ import (
 
 	"github.com/ly95/h3-context-ir-go"
 	"github.com/ly95/h3-context-ir-go/compiler"
-	"github.com/ly95/h3-context-ir-go/deepseek"
 	"github.com/ly95/h3-context-ir-go/h3"
+	"github.com/ly95/h3-context-ir-go/perception"
 )
 
-type imageModelFunc func(context.Context, contextir.ModelRequest, []deepseek.Image) (contextir.ModelResponse, error)
+type imageModelFunc func(context.Context, contextir.ModelRequest, []perception.Image) (contextir.ModelResponse, error)
 
-func (f imageModelFunc) GenerateWithImages(ctx context.Context, r contextir.ModelRequest, i []deepseek.Image) (contextir.ModelResponse, error) {
+func (f imageModelFunc) GenerateWithImages(ctx context.Context, r contextir.ModelRequest, i []perception.Image) (contextir.ModelResponse, error) {
 	return f(ctx, r, i)
 }
 
 func TestRecordingRetainsEveryRejectedAttemptAndImages(t *testing.T) {
 	root := t.TempDir()
 	calls := 0
-	image := deepseek.Image{URI: "data:image/png;base64,cHVibGlj", Detail: "original"}
-	r := recordedModel{Root: root, Inner: imageModelFunc(func(context.Context, contextir.ModelRequest, []deepseek.Image) (contextir.ModelResponse, error) {
+	image := perception.Image{URI: "data:image/png;base64,cHVibGlj", Detail: "original"}
+	r := recordedModel{Root: root, Inner: imageModelFunc(func(context.Context, contextir.ModelRequest, []perception.Image) (contextir.ModelResponse, error) {
 		calls++
 		if calls == 1 {
 			return contextir.ModelResponse{Model: "test-model", Usage: contextir.Usage{InputTokens: 3, OutputTokens: 2}, RejectedOutput: "first invalid candidate"}, &contextir.Error{Code: contextir.CodeModelOutput, Stage: "response", Issues: []contextir.Issue{{Code: contextir.CodeModelOutput, Path: "output", Message: "Invalid JSON."}}}
@@ -33,10 +33,10 @@ func TestRecordingRetainsEveryRejectedAttemptAndImages(t *testing.T) {
 		return contextir.ModelResponse{JSON: json.RawMessage(`{"ok":true}`), Model: "test-model", Usage: contextir.Usage{InputTokens: 5, OutputTokens: 4}}, nil
 	}), ImageSources: map[string]string{image.URI: digest([]byte("public"))}}
 	req := contextir.ModelRequest{Stage: "perception", System: "test instructions", Input: json.RawMessage(`{"asset_id":"image"}`), ResponseSchema: json.RawMessage(`{"type":"object"}`)}
-	if _, err := r.GenerateWithImages(context.Background(), req, []deepseek.Image{image}); err == nil {
+	if _, err := r.GenerateWithImages(context.Background(), req, []perception.Image{image}); err == nil {
 		t.Fatal("first attempt must stay rejected")
 	}
-	if _, err := r.GenerateWithImages(context.Background(), req, []deepseek.Image{image}); err != nil {
+	if _, err := r.GenerateWithImages(context.Background(), req, []perception.Image{image}); err != nil {
 		t.Fatal(err)
 	}
 	if calls != 2 || len(r.Calls) != 2 || r.Calls[0].Error == nil || r.Calls[1].Error != nil || r.Calls[0].Usage.InputTokens != 3 || r.Calls[1].Usage.InputTokens != 5 {
@@ -53,7 +53,7 @@ func TestRecordingRetainsEveryRejectedAttemptAndImages(t *testing.T) {
 		t.Fatal("invalid candidate was published as accepted JSON")
 	}
 	var images struct {
-		Images []deepseek.Image `json:"images"`
+		Images []perception.Image `json:"images"`
 	}
 	if err := readJSON(filepath.Join(root, r.Calls[1].ImagesFile), &images); err != nil || len(images.Images) != 1 || images.Images[0] != image {
 		t.Fatal("actual image inputs were not persisted", err)
@@ -62,7 +62,7 @@ func TestRecordingRetainsEveryRejectedAttemptAndImages(t *testing.T) {
 
 func TestNoCallWhenRecordingCannotPersistRequest(t *testing.T) {
 	calls := 0
-	r := recordedModel{Root: t.TempDir(), Directory: "absent", Inner: imageModelFunc(func(context.Context, contextir.ModelRequest, []deepseek.Image) (contextir.ModelResponse, error) {
+	r := recordedModel{Root: t.TempDir(), Directory: "absent", Inner: imageModelFunc(func(context.Context, contextir.ModelRequest, []perception.Image) (contextir.ModelResponse, error) {
 		calls++
 		return contextir.ModelResponse{}, nil
 	})}
@@ -208,7 +208,7 @@ func TestExplicitRetryBudgetsBoundCallsAndKeepTransportFailuresImmediate(t *test
 	for _, extra := range []int{0, 1, 3} {
 		b := compiler.Brief{Intent: "A red ball rolls across a white floor.", Mode: contextir.ModeText, Seconds: 8}
 		calls := 0
-		m := imageModelFunc(func(context.Context, contextir.ModelRequest, []deepseek.Image) (contextir.ModelResponse, error) {
+		m := imageModelFunc(func(context.Context, contextir.ModelRequest, []perception.Image) (contextir.ModelResponse, error) {
 			calls++
 			return contextir.ModelResponse{JSON: json.RawMessage(`{}`), Model: "bounded-budget-test", Usage: contextir.Usage{InputTokens: 3, OutputTokens: 1}}, nil
 		})
@@ -219,7 +219,7 @@ func TestExplicitRetryBudgetsBoundCallsAndKeepTransportFailuresImmediate(t *test
 	}
 	b := compiler.Brief{Intent: "A ball crosses a floor.", Mode: contextir.ModeText, Seconds: 8}
 	calls := 0
-	m := imageModelFunc(func(context.Context, contextir.ModelRequest, []deepseek.Image) (contextir.ModelResponse, error) {
+	m := imageModelFunc(func(context.Context, contextir.ModelRequest, []perception.Image) (contextir.ModelResponse, error) {
 		calls++
 		return contextir.ModelResponse{Model: "transport-control", Usage: contextir.Usage{InputTokens: 2, OutputTokens: 0}}, &contextir.Error{Code: contextir.CodeModel, Stage: "transport"}
 	})
@@ -341,7 +341,7 @@ func TestIndependentAssertionsNeverReachModelAndFailureIsRetained(t *testing.T) 
 	b := compiler.Brief{Intent: "A red ball crosses a white floor.", Mode: contextir.ModeText, Seconds: 8}
 	const canary = "INDEPENDENT_ASSERTION_NOT_A_MODEL_HINT"
 	invocations := 0
-	m := imageModelFunc(func(_ context.Context, req contextir.ModelRequest, _ []deepseek.Image) (contextir.ModelResponse, error) {
+	m := imageModelFunc(func(_ context.Context, req contextir.ModelRequest, _ []perception.Image) (contextir.ModelResponse, error) {
 		invocations++
 		wire, _ := json.Marshal(req)
 		if strings.Contains(string(wire), canary) {
@@ -364,7 +364,7 @@ func TestIndependentAssertionsNeverReachModelAndFailureIsRetained(t *testing.T) 
 
 func TestChangesStopAfterUnpublishedCompile(t *testing.T) {
 	b := compiler.Brief{Intent: "Synthetic invalid mode.", Mode: contextir.Mode("unsupported"), Seconds: 8}
-	cr, err := evaluateCase(context.Background(), inputCase{ID: "bad-mode", Brief: &b, Changes: []string{"make it brighter"}}, []operationExpectation{{Status: "failed", ErrorCode: contextir.CodeInvalid}}, t.TempDir(), t.TempDir(), imageModelFunc(func(context.Context, contextir.ModelRequest, []deepseek.Image) (contextir.ModelResponse, error) {
+	cr, err := evaluateCase(context.Background(), inputCase{ID: "bad-mode", Brief: &b, Changes: []string{"make it brighter"}}, []operationExpectation{{Status: "failed", ErrorCode: contextir.CodeInvalid}}, t.TempDir(), t.TempDir(), imageModelFunc(func(context.Context, contextir.ModelRequest, []perception.Image) (contextir.ModelResponse, error) {
 		t.Fatal("invalid intake must not call a model")
 		return contextir.ModelResponse{}, nil
 	}), defaultRetries(), func(caseResult) error { return nil })

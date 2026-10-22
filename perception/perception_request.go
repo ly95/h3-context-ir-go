@@ -1,4 +1,4 @@
-package deepseek
+package perception
 
 import (
 	"bytes"

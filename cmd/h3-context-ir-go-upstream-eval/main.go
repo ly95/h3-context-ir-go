@@ -22,8 +22,9 @@ import (
 
 	"github.com/ly95/h3-context-ir-go"
 	"github.com/ly95/h3-context-ir-go/compiler"
-	"github.com/ly95/h3-context-ir-go/deepseek"
 	"github.com/ly95/h3-context-ir-go/h3"
+	"github.com/ly95/h3-context-ir-go/openai"
+	"github.com/ly95/h3-context-ir-go/perception"
 	"github.com/ly95/h3-context-ir-go/plan"
 	"github.com/ly95/h3-context-ir-go/planner"
 )
@@ -65,7 +66,7 @@ type outcome struct {
 	Scope      *compiler.ScopeDecision   `json:"scope_decision,omitempty"`
 }
 type recorder struct {
-	client *deepseek.Client
+	client *openai.Client
 	dir    string
 	calls  []call
 }
@@ -73,10 +74,10 @@ type recorder struct {
 func (r *recorder) Generate(ctx context.Context, req contextir.ModelRequest) (contextir.ModelResponse, error) {
 	return r.generate(ctx, req, nil)
 }
-func (r *recorder) GenerateWithImages(ctx context.Context, req contextir.ModelRequest, images []deepseek.Image) (contextir.ModelResponse, error) {
+func (r *recorder) GenerateWithImages(ctx context.Context, req contextir.ModelRequest, images []perception.Image) (contextir.ModelResponse, error) {
 	return r.generate(ctx, req, images)
 }
-func (r *recorder) generate(ctx context.Context, req contextir.ModelRequest, images []deepseek.Image) (contextir.ModelResponse, error) {
+func (r *recorder) generate(ctx context.Context, req contextir.ModelRequest, images []perception.Image) (contextir.ModelResponse, error) {
 	index := len(r.calls) + 1
 	if err := write(filepath.Join(r.dir, fmt.Sprintf("call-%02d-request.json", index)), req); err != nil {
 		return contextir.ModelResponse{UsageInvalid: true}, err
@@ -90,7 +91,7 @@ func (r *recorder) generate(ctx context.Context, req contextir.ModelRequest, ima
 				record.Diagnostics = append(record.Diagnostics, typed.Issues...)
 			}
 		}
-		var status *deepseek.HTTPError
+		var status *openai.HTTPError
 		if errors.As(err, &status) {
 			record.HTTPStatus = status.StatusCode
 		}
@@ -118,19 +119,30 @@ func run() error {
 	kind := flag.String("kind", "", "semantic, licence, scope, roles or suite")
 	input := flag.String("input", "", "Original exported fixture file")
 	output := flag.String("out", "", "New output directory")
-	base := flag.String("base-url", "", "Explicit DeepSeek endpoint")
-	model := flag.String("model", "", "Explicit model")
-	effort := flag.String("reasoning-effort", "low", "Explicit reasoning effort")
+	base := flag.String("base-url", "", "Explicit OpenAI-compatible API root")
+	model := flag.String("model", "", "Explicit image-capable model; image fixtures send image inputs")
+	api := flag.String("api", string(openai.Responses), "OpenAI-compatible API: responses or chat_completions")
+	keyEnv := flag.String("api-key-env", "", "Explicit credential environment variable name; omit for an unauthenticated endpoint")
+	effort := flag.String("reasoning-effort", "", "Optional reasoning effort; omitted means do not send")
 	parallel := flag.Int("parallel", 2, "Maximum simultaneous cases, 1 to 4")
 	onlyKind := flag.String("only-kind", "", "Optional original semantic kind: mode or replacement")
 	flag.Parse()
 	if (*kind != "semantic" && *kind != "suite" && *kind != "licence" && *kind != "scope" && *kind != "roles") || *input == "" || *output == "" || *base == "" || *model == "" || *parallel < 1 || *parallel > 4 {
 		return errors.New("explicit valid -kind, -input, -out, -base-url and -model required")
 	}
-	client, err := deepseek.New(deepseek.Config{BaseURL: *base, Model: *model, APIKey: os.Getenv("DEEPSEEK_API_KEY"), ReasoningEffort: *effort, MaxOutputTokens: 12288, Timeout: 2 * time.Minute})
+	key := ""
+	if *keyEnv != "" {
+		var exists bool
+		key, exists = os.LookupEnv(*keyEnv)
+		if !exists || key == "" {
+			return errors.New("the explicitly named key environment variable is unset or empty")
+		}
+	}
+	client, err := openai.New(openai.Config{API: openai.API(*api), SupportsImages: true, BaseURL: *base, Model: *model, APIKey: key, ReasoningEffort: *effort, MaxOutputTokens: 12288, Timeout: 2 * time.Minute})
 	if err != nil {
 		return err
 	}
+	defer client.Close()
 	data, err := os.ReadFile(*input)
 	if err != nil {
 		return err
@@ -228,21 +240,21 @@ func run() error {
 				}
 				if err == nil {
 					record := &recorder{client: client, dir: dir, calls: []call{}}
-					perceiver, pErr := deepseek.NewImagePerceiver(record, func(_ context.Context, a contextir.Asset) (deepseek.Image, error) {
+					perceiver, pErr := perception.NewImagePerceiver(record, func(_ context.Context, a contextir.Asset) (perception.Image, error) {
 						path := a.URI
 						if !filepath.IsAbs(path) {
 							path, _ = filepath.Abs(path)
 						}
 						info, e := os.Stat(path)
 						if e != nil || !info.Mode().IsRegular() || info.Size() > 32<<20 {
-							return deepseek.Image{}, errors.New("public fixture image unavailable or oversized")
+							return perception.Image{}, errors.New("public fixture image unavailable or oversized")
 						}
 						pixels, e := os.ReadFile(path)
 						if e != nil {
-							return deepseek.Image{}, e
+							return perception.Image{}, e
 						}
-						return deepseek.Image{URI: "data:" + http.DetectContentType(pixels) + ";base64," + base64.StdEncoding.EncodeToString(pixels), Detail: "original"}, nil
-					}, deepseek.PerceptionOptions{IncludeCard: true, MaxRetries: 1})
+						return perception.Image{URI: "data:" + http.DetectContentType(pixels) + ";base64," + base64.StdEncoding.EncodeToString(pixels), Detail: "original"}, nil
+					}, perception.PerceptionOptions{IncludeCard: true, MaxRetries: 1})
 					if pErr != nil {
 						err = pErr
 					} else {
@@ -332,10 +344,11 @@ func run() error {
 	}
 	report := struct {
 		Source, Kind, Model, Reasoning string
+		API                            string    `json:"api"`
 		ExecutableSHA256               string    `json:"executable_sha256"`
 		GoVersion                      string    `json:"go_version"`
 		Results                        []outcome `json:"results"`
-	}{fixture.Source, *kind, *model, *effort, hex.EncodeToString(executableSum[:]), runtime.Version(), results}
+	}{fixture.Source, *kind, *model, *effort, *api, hex.EncodeToString(executableSum[:]), runtime.Version(), results}
 	if err = write(filepath.Join(*output, "report.json"), report); err != nil {
 		return err
 	}

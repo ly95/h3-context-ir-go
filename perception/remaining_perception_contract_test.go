@@ -1,11 +1,11 @@
-package deepseek_test
+package perception_test
 
 import (
 	"context"
 	"testing"
 
 	"github.com/ly95/h3-context-ir-go"
-	"github.com/ly95/h3-context-ir-go/deepseek"
+	"github.com/ly95/h3-context-ir-go/perception"
 )
 
 // Multi-frame and still-image observation use the explicit repair budget, but
@@ -16,7 +16,7 @@ func TestRemainingMediaImageInvalidUsageStopsBeforeContentRetry(t *testing.T) {
 	for _, name := range []string{"unavailable", "negative_input", "negative_output"} {
 		t.Run(name, func(t *testing.T) {
 			calls := 0
-			p, e := deepseek.NewImagePerceiver(perceptionModelFunc(func(context.Context, contextir.ModelRequest, []deepseek.Image) (contextir.ModelResponse, error) {
+			p, e := perception.NewImagePerceiver(perceptionModelFunc(func(context.Context, contextir.ModelRequest, []perception.Image) (contextir.ModelResponse, error) {
 				calls++
 				r := perceptionResponse(t, perceptionEvidence())
 				switch name {
@@ -28,7 +28,7 @@ func TestRemainingMediaImageInvalidUsageStopsBeforeContentRetry(t *testing.T) {
 					r.Usage.OutputTokens = -1
 				}
 				return r, nil
-			}), perceptionResolver(perceptionImageURI(t)), deepseek.PerceptionOptions{MaxRetries: 5})
+			}), perceptionResolver(perceptionImageURI(t)), perception.PerceptionOptions{MaxRetries: 5})
 			if e != nil {
 				t.Fatal(e)
 			}

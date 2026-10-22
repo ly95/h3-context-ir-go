@@ -14,8 +14,8 @@ import (
 	"testing"
 
 	"github.com/ly95/h3-context-ir-go"
-	"github.com/ly95/h3-context-ir-go/deepseek"
 	"github.com/ly95/h3-context-ir-go/media"
+	"github.com/ly95/h3-context-ir-go/perception"
 )
 
 func cacheHash(text string) string { h := sha256.Sum256([]byte(text)); return hex.EncodeToString(h[:]) }
@@ -112,12 +112,12 @@ func TestPerceiverImageCacheUsesValidatedEvidenceAndDoesNotReplayBilling(t *test
 	}
 	c := newCardCache(t)
 	calls, billed := 0, 0
-	model := vision(func(_ context.Context, request contextir.ModelRequest, _ []deepseek.Image) (contextir.ModelResponse, error) {
+	model := vision(func(_ context.Context, request contextir.ModelRequest, _ []perception.Image) (contextir.ModelResponse, error) {
 		calls++
 		data, _ := json.Marshal(contextir.Evidence{AssetID: "source", AnalyzerVersion: "adapter-assigned", Facts: []contextir.Fact{{ID: "source.fact1", Text: "A transparent square is visible.", Source: contextir.SourceRef{AssetID: "source", Track: contextir.TrackVisual}}}, Card: &contextir.AssetCard{AssetID: "source", AnalyzerVersion: "adapter-assigned", Summary: "A transparent square."}, Coverage: &contextir.PerceptionCoverage{Status: contextir.CoverageComplete, Tracks: []contextir.Track{contextir.TrackVisual}}})
 		return contextir.ModelResponse{JSON: data, Model: "injected-vision", Usage: contextir.Usage{InputTokens: 7, OutputTokens: 3}}, nil
 	})
-	observer, e := media.NewPerceiver(media.PerceiverOptions{Model: model, Resolve: func(context.Context, contextir.Asset) (string, error) { return path, nil }, CardCache: c, CacheModelIdentity: "injected/vision/revision-1", OnCall: func(deepseek.PerceptionCall) { billed++ }})
+	observer, e := media.NewPerceiver(media.PerceiverOptions{Model: model, Resolve: func(context.Context, contextir.Asset) (string, error) { return path, nil }, CardCache: c, CacheModelIdentity: "injected/vision/revision-1", OnCall: func(perception.PerceptionCall) { billed++ }})
 	if e != nil {
 		t.Fatal(e)
 	}
@@ -150,7 +150,7 @@ func TestVideoObservationCacheNeverCachesPerRequestASR(t *testing.T) {
 	}
 	c := newCardCache(t)
 	visualCalls, audioCalls := 0, 0
-	model := vision(func(context.Context, contextir.ModelRequest, []deepseek.Image) (contextir.ModelResponse, error) {
+	model := vision(func(context.Context, contextir.ModelRequest, []perception.Image) (contextir.ModelResponse, error) {
 		visualCalls++
 		raw, _ := json.Marshal(contextir.Evidence{AssetID: "source", AnalyzerVersion: "assigned", Facts: []contextir.Fact{{ID: "source.visual", Text: "The sampled test pattern changes.", Source: contextir.SourceRef{AssetID: "source", Track: contextir.TrackVisual}}}, Card: &contextir.AssetCard{AssetID: "source", AnalyzerVersion: "assigned", Summary: "Sampled test pattern."}})
 		return contextir.ModelResponse{JSON: raw, Model: "injected-vision", Usage: contextir.Usage{InputTokens: 7, OutputTokens: 3}}, nil

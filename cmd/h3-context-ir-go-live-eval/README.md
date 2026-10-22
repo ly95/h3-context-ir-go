@@ -1,8 +1,8 @@
 # Native live acceptance recorder
 
 This command exercises the public `compiler.Brief` workflow with an explicitly
-configured DeepSeek Responses model. It does not read dotenv, expected model
-outputs, or historical recordings. Input media must be public or synthetic and
+configured OpenAI-compatible model through the official OpenAI Go SDK. It does
+not read dotenv, expected model outputs, or historical recordings. Input media must be public or synthetic and
 must be identified by a fixture-relative path and its full SHA256 digest.
 Recording user-owned/private content requires a separate approved policy.
 
@@ -12,13 +12,19 @@ go build -o /tmp/h3-context-ir-go-live-eval ./cmd/h3-context-ir-go-live-eval
   -input conformance/release_acceptance_inputs.json \
   -assertions conformance/release_acceptance_assertions.json \
   -out /tmp/h3-context-ir-go-live-new-run \
-  -base-url https://api.deepseek.com \
-  -model deepseek-flash \
-  -api-key-env DEEPSEEK_API_KEY \
+  -base-url "$MODEL_BASE_URL" -api responses \
+  -model "$IMAGE_MODEL_ID" \
+  -api-key-env MODEL_API_KEY \
   -parallel 2 -profile official \
-  -reasoning-effort low -max-output-tokens 12288 \
+  -max-output-tokens 12288 \
   -max-structure-retries 1 -max-planner-retries 1
 ```
+
+Choose `-api responses` (default) or `-api chat_completions` to match the
+endpoint. The corpus sends image inputs, so the caller must select a model and
+endpoint that support them; the recorder explicitly declares image capability
+and does not infer it from model names. `-reasoning-effort` is optional and is
+omitted from API requests unless supplied.
 
 The output directory must not exist. Assertions are a separate file and never
 enter model inputs. Every case executes independently without input deduplication.

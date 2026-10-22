@@ -7,8 +7,8 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"github.com/ly95/h3-context-ir-go"
-	"github.com/ly95/h3-context-ir-go/deepseek"
 	"github.com/ly95/h3-context-ir-go/media"
+	"github.com/ly95/h3-context-ir-go/perception"
 	"image"
 	"image/png"
 	"os/exec"
@@ -17,9 +17,9 @@ import (
 	"testing"
 )
 
-type vision func(context.Context, contextir.ModelRequest, []deepseek.Image) (contextir.ModelResponse, error)
+type vision func(context.Context, contextir.ModelRequest, []perception.Image) (contextir.ModelResponse, error)
 
-func (f vision) GenerateWithImages(ctx context.Context, r contextir.ModelRequest, images []deepseek.Image) (contextir.ModelResponse, error) {
+func (f vision) GenerateWithImages(ctx context.Context, r contextir.ModelRequest, images []perception.Image) (contextir.ModelResponse, error) {
 	return f(ctx, r, images)
 }
 func realTools(t *testing.T) (*media.Tools, string) {
@@ -50,9 +50,9 @@ func video(t *testing.T) (*media.Tools, string) {
 }
 func TestVideoPerceptionGetsDistinctDecodedFramesAndPartialCoverage(t *testing.T) {
 	tools, p := video(t)
-	var calls []deepseek.PerceptionCall
+	var calls []perception.PerceptionCall
 	seen := false
-	model := vision(func(_ context.Context, r contextir.ModelRequest, images []deepseek.Image) (contextir.ModelResponse, error) {
+	model := vision(func(_ context.Context, r contextir.ModelRequest, images []perception.Image) (contextir.ModelResponse, error) {
 		seen = true
 		if r.Stage != "video_perception" || len(images) != 3 {
 			t.Fatal("video model did not receive three frames")
@@ -80,7 +80,7 @@ func TestVideoPerceptionGetsDistinctDecodedFramesAndPartialCoverage(t *testing.T
 		b, _ := json.Marshal(evidence)
 		return contextir.ModelResponse{JSON: b, Model: "injected-vision", Usage: contextir.Usage{InputTokens: 100, OutputTokens: 30}}, nil
 	})
-	observer, e := media.NewPerceiver(media.PerceiverOptions{Tools: tools, Model: model, Resolve: func(context.Context, contextir.Asset) (string, error) { return p, nil }, FrameFractions: []float64{0.2, 0.5, 0.8}, OnCall: func(c deepseek.PerceptionCall) { calls = append(calls, c) }})
+	observer, e := media.NewPerceiver(media.PerceiverOptions{Tools: tools, Model: model, Resolve: func(context.Context, contextir.Asset) (string, error) { return p, nil }, FrameFractions: []float64{0.2, 0.5, 0.8}, OnCall: func(c perception.PerceptionCall) { calls = append(calls, c) }})
 	if e != nil {
 		t.Fatal(e)
 	}
@@ -94,10 +94,10 @@ func TestVideoPerceptionGetsDistinctDecodedFramesAndPartialCoverage(t *testing.T
 }
 func TestVideoInvalidEvidenceReportsRejectedCallAndUsage(t *testing.T) {
 	tools, p := video(t)
-	var recorded deepseek.PerceptionCall
-	observer, e := media.NewPerceiver(media.PerceiverOptions{Tools: tools, Resolve: func(context.Context, contextir.Asset) (string, error) { return p, nil }, FrameFractions: []float64{0.5}, Model: vision(func(context.Context, contextir.ModelRequest, []deepseek.Image) (contextir.ModelResponse, error) {
+	var recorded perception.PerceptionCall
+	observer, e := media.NewPerceiver(media.PerceiverOptions{Tools: tools, Resolve: func(context.Context, contextir.Asset) (string, error) { return p, nil }, FrameFractions: []float64{0.5}, Model: vision(func(context.Context, contextir.ModelRequest, []perception.Image) (contextir.ModelResponse, error) {
 		return contextir.ModelResponse{JSON: json.RawMessage(`{}`), Model: "injected", Usage: contextir.Usage{InputTokens: 7, OutputTokens: 2}}, nil
-	}), OnCall: func(c deepseek.PerceptionCall) { recorded = c }})
+	}), OnCall: func(c perception.PerceptionCall) { recorded = c }})
 	if e != nil {
 		t.Fatal(e)
 	}

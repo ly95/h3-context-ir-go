@@ -114,28 +114,84 @@ func TestOfflineDraftAndPublishedToolsCLI(t *testing.T) {
 }
 
 func TestBriefUsesSelectedProviderAndRetainsFailureAccounting(t *testing.T) {
+	t.Setenv("OPENAI_API_KEY", "implicit-sdk-credential-must-not-be-used")
+	for _, tc := range []struct {
+		name  string
+		flags []string
+		path  string
+	}{
+		{"chatcompat", []string{"-provider", "chatcompat", "-reasoning-effort", "none", "-structured-mode", "prompt", "-allow-insecure-http"}, "/v1/chat/completions"},
+		{"responses", []string{"-provider", "openai"}, "/v1/responses"},
+		{"chat-completions", []string{"-provider", "openai", "-api", "chat_completions"}, "/v1/chat/completions"},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			var calls atomic.Int32
+			s := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				calls.Add(1)
+				if r.URL.Path != tc.path {
+					t.Error(r.URL.Path)
+				}
+				if r.Header.Get("Authorization") != "" {
+					t.Error("CLI sent an API key without an explicit key-env selection")
+				}
+				var request map[string]json.RawMessage
+				if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
+					t.Error(err)
+				}
+				if string(request["model"]) != `"explicit-local-model"` {
+					t.Error("CLI changed the explicitly selected model")
+				}
+				if tc.name != "chatcompat" && (len(request["reasoning"]) != 0 || len(request["reasoning_effort"]) != 0) {
+					t.Error("CLI sent reasoning effort without an explicit choice")
+				}
+				w.WriteHeader(503)
+				_, _ = w.Write([]byte(`{"error":"private-provider-body-do-not-log"}`))
+			}))
+			defer s.Close()
+			args := append([]string{"brief"}, tc.flags...)
+			args = append(args, "-base-url", s.URL+"/v1", "-model", "explicit-local-model", "-max-retries", "0")
+			var out, errOut bytes.Buffer
+			code := run(args, strings.NewReader(`{"intent":"Rain runs down a shop window.","seconds":8}`), &out, &errOut)
+			if code == 0 || out.Len() != 0 || calls.Load() != 1 {
+				t.Fatal("provider error was hidden, retried or published as success", code, calls.Load(), out.String(), errOut.String())
+			}
+			if !strings.Contains(errOut.String(), `"calls"`) || strings.Contains(errOut.String(), "private-provider-body-do-not-log") {
+				t.Fatal("failure accounting missing or provider body logged", errOut.String())
+			}
+		})
+	}
+}
+
+func TestBriefRejectsChatcompatFlagsForOpenAI(t *testing.T) {
 	var calls atomic.Int32
 	s := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		calls.Add(1)
-		if r.URL.Path != "/v1/chat/completions" {
-			t.Error(r.URL.Path)
-		}
-		w.WriteHeader(503)
-		_, _ = w.Write([]byte(`{"error":"private-provider-body-do-not-log"}`))
+		w.WriteHeader(http.StatusInternalServerError)
 	}))
 	defer s.Close()
-	var out, errOut bytes.Buffer
-	code := run([]string{"brief", "-provider", "chatcompat", "-base-url", s.URL + "/v1", "-model", "explicit-local-model", "-reasoning-effort", "none", "-max-retries", "0"}, strings.NewReader(`{"intent":"Rain runs down a shop window.","seconds":8}`), &out, &errOut)
-	if code == 0 || out.Len() != 0 || calls.Load() != 1 {
-		t.Fatal("provider error was hidden, retried or published as success", code, calls.Load(), out.String(), errOut.String())
-	}
-	if !strings.Contains(errOut.String(), `"calls"`) || strings.Contains(errOut.String(), "private-provider-body-do-not-log") {
-		t.Fatal("failure accounting missing or provider body logged", errOut.String())
+	for _, flags := range [][]string{
+		{"-structured-mode", "prompt"},
+		{"-structured-mode", "json_schema"},
+		{"-allow-insecure-http"},
+		{"-allow-insecure-http=false"},
+	} {
+		t.Run(strings.Join(flags, " "), func(t *testing.T) {
+			args := []string{"brief", "-provider", "openai", "-base-url", s.URL + "/v1", "-model", "explicit-local-model"}
+			args = append(args, flags...)
+			var out, errOut bytes.Buffer
+			code := run(args, strings.NewReader(`{"intent":"Rain runs down a shop window.","seconds":8}`), &out, &errOut)
+			if code == 0 || out.Len() != 0 || calls.Load() != 0 {
+				t.Fatal("unsupported adapter configuration reached the model", code, calls.Load(), out.String(), errOut.String())
+			}
+			if !strings.Contains(errOut.String(), `"code":"invalid-configuration"`) || !strings.Contains(errOut.String(), "only the chatcompat adapter") {
+				t.Fatal("adapter-specific choice was not explained", errOut.String())
+			}
+		})
 	}
 }
 
 func TestBriefHasNoImplicitProviderOrSeed(t *testing.T) {
-	for _, args := range [][]string{{"brief"}, {"draft", "-model", "unused"}, {"brief", "-provider", "other"}, {"draft"}} {
+	for _, args := range [][]string{{"brief"}, {"draft", "-model", "unused"}, {"draft", "-api", "responses"}, {"draft", "-image-inputs"}, {"draft", "-structured-mode", "prompt"}, {"draft", "-allow-insecure-http=false"}, {"brief", "-provider", "other"}, {"draft"}} {
 		payload := `{"intent":"x","seconds":8}`
 		if len(args) == 1 && args[0] == "draft" {
 			payload = `{"intent":"x","seconds":8,"seed":7}`
