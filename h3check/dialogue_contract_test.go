@@ -8,10 +8,10 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/ly95/contextir"
-	"github.com/ly95/contextir/compiler"
-	"github.com/ly95/contextir/h3"
-	"github.com/ly95/contextir/h3check"
+	"github.com/ly95/h3-context-ir-go"
+	"github.com/ly95/h3-context-ir-go/compiler"
+	"github.com/ly95/h3-context-ir-go/h3"
+	"github.com/ly95/h3-context-ir-go/h3check"
 )
 
 func dialogueRules(text string, ctx h3check.Context) map[string]bool {

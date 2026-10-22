@@ -1,9 +1,9 @@
 package compiler
 
 import (
-	"github.com/ly95/contextir"
-	"github.com/ly95/contextir/h3check"
-	"github.com/ly95/contextir/lora"
+	"github.com/ly95/h3-context-ir-go"
+	"github.com/ly95/h3-context-ir-go/h3check"
+	"github.com/ly95/h3-context-ir-go/lora"
 	"strconv"
 )
 

@@ -1,6 +1,6 @@
-# ContextIR
+# H3 Context-IR Go
 
-ContextIR 是独立的 Go 视频提示词编译库。它把自然语言需求与素材观察编译为可编辑、可持久化的 IR，再从同一份 `Document` 生成 H3 prompt、素材绑定、预算和内容哈希。
+H3 Context-IR Go 是面向 MiniMax H3 的非官方 Context-IR Go 实现。它是独立的 Go 库，把自然语言需求与素材观察编译为可编辑、可持久化的 IR，再从同一份 `Document` 生成 H3 prompt、素材绑定、预算和内容哈希。
 
 库与测试使用 Go 标准库，不需要 Python。模型、感知、存储和 HTTP 执行能力由调用方显式配置；核心验证与渲染可以完全离线运行。
 
@@ -11,8 +11,12 @@ ContextIR 是独立的 Go 视频提示词编译库。它把自然语言需求与
 需要 Go 1.25 或更新版本。
 
 ```sh
-go get github.com/ly95/contextir@latest
+go get github.com/ly95/h3-context-ir-go@main
 ```
+
+项目从 `github.com/ly95/contextir` 迁移至上述 module path，根 Go 包名仍为 `contextir`。现有 `Document` 版本与 Schema ID 保留原标识，以兼容已保存的文档和模型回放。
+
+新 module path 的首个版本发布前使用 `@main`。历史标签 `v0.1.0`、`v0.2.0` 仍声明旧 module path，保留原样。
 
 ## 从需求编译
 
@@ -24,9 +28,9 @@ package video
 import (
     "context"
 
-    "github.com/ly95/contextir/compiler"
-    "github.com/ly95/contextir/h3"
-    "github.com/ly95/contextir/planner"
+    "github.com/ly95/h3-context-ir-go/compiler"
+    "github.com/ly95/h3-context-ir-go/h3"
+    "github.com/ly95/h3-context-ir-go/planner"
 )
 
 func Compile(ctx context.Context, model planner.Model) (compiler.Result, error) {
@@ -81,17 +85,17 @@ func Compile(ctx context.Context, model planner.Model) (compiler.Result, error) 
 已有 `Document` 时，调用 `h3.Compile(document, profile)` 即可生成产物，不调用模型。`OfficialProfile` 检查公开格式；`ComfyUIProfile` 额外检查执行后端的帧网格、画布、socket 与输入限制。IR 使用整数毫秒和有理数 FPS，不隐式调整时长。需要 `17k+5` 对齐时，调用方显式选择 `FramePolicySnapUp`，结果同时报告请求时长与有效时长。
 
 ```sh
-go run ./cmd/contextir schema
-go run ./cmd/contextir contract
-go run ./cmd/contextir validate < document.json
-go run ./cmd/contextir compile -profile comfyui < document.json
+go run ./cmd/h3-context-ir-go schema
+go run ./cmd/h3-context-ir-go contract
+go run ./cmd/h3-context-ir-go validate < document.json
+go run ./cmd/h3-context-ir-go compile -profile comfyui < document.json
 
 make check
 ```
 
 `make check` 执行格式检查、vet、全部原生测试、race 和解码 fuzz；需要 ffmpeg、ffprobe，以及 race detector 所需的 C 编译器。缺少媒体工具时，完整检查会先报错。也可分别运行 `go test ./...`、`go test -race ./...` 与 `go vet ./...`，但直接运行 Go 测试可能在缺少媒体工具时跳过对应集成用例。
 
-普通 Go 测试不调用付费模型。命令行参数见 [CLI 文档](cmd/contextir/README.md)；真实模型录制单独使用 [live-eval](cmd/contextir-live-eval/README.md)，会访问显式配置的服务并消耗额度。
+普通 Go 测试不调用付费模型。命令行参数见 [CLI 文档](cmd/h3-context-ir-go/README.md)；真实模型录制单独使用 [live-eval](cmd/h3-context-ir-go-live-eval/README.md)，会访问显式配置的服务并消耗额度。
 
 上游来源、逐项测试映射和 Go 适配原则见 [测试说明](docs/UPSTREAM_TESTS.md) 与 [conformance](conformance/README.md)。
 
@@ -103,4 +107,4 @@ make check
 
 ## 许可证与来源
 
-ContextIR 使用 [Apache License 2.0](LICENSE)。OpenH3-IR、Qwen2.5 词表及测试素材的原有声明保留在 [第三方说明](THIRD_PARTY_NOTICES.md) 与 `third_party/`。模型权重、托管服务和调用方媒体的许可独立于本库。来源版本见 [UPSTREAM.md](docs/UPSTREAM.md)，贡献方式见 [CONTRIBUTING.md](CONTRIBUTING.md)。
+H3 Context-IR Go 使用 [Apache License 2.0](LICENSE)。OpenH3-IR、Qwen2.5 词表及测试素材的原有声明保留在 [第三方说明](THIRD_PARTY_NOTICES.md) 与 `third_party/`。模型权重、托管服务和调用方媒体的许可独立于本库。来源版本见 [UPSTREAM.md](docs/UPSTREAM.md)，贡献方式见 [CONTRIBUTING.md](CONTRIBUTING.md)。

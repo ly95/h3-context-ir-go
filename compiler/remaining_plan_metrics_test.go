@@ -5,10 +5,10 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/ly95/contextir/budget"
-	"github.com/ly95/contextir/evaluate"
-	"github.com/ly95/contextir/h3check"
-	"github.com/ly95/contextir/plan"
+	"github.com/ly95/h3-context-ir-go/budget"
+	"github.com/ly95/h3-context-ir-go/evaluate"
+	"github.com/ly95/h3-context-ir-go/h3check"
+	"github.com/ly95/h3-context-ir-go/plan"
 )
 
 func TestRemainingPlanMetrics(t *testing.T) {

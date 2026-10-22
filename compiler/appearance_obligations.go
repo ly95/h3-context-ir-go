@@ -1,6 +1,6 @@
 package compiler
 
-import "github.com/ly95/contextir"
+import "github.com/ly95/h3-context-ir-go"
 
 // This is a host-owned participation requirement, not a model decision about
 // whether an attached source should be ignored. IDs come from the accepted

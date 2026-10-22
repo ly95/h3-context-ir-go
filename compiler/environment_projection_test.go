@@ -4,9 +4,9 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/ly95/contextir"
-	"github.com/ly95/contextir/budget"
-	"github.com/ly95/contextir/plan"
+	"github.com/ly95/h3-context-ir-go"
+	"github.com/ly95/h3-context-ir-go/budget"
+	"github.com/ly95/h3-context-ir-go/plan"
 )
 
 func TestEnvironmentProjectionUsesTypedFieldOwnershipRatherThanObjectWords(t *testing.T) {

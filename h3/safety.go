@@ -5,7 +5,7 @@ import (
 	"regexp"
 	"strings"
 
-	contextir "github.com/ly95/contextir"
+	contextir "github.com/ly95/h3-context-ir-go"
 )
 
 var speakerToken = regexp.MustCompile(`(?i)\(S[0-9]+(?:,S[0-9]+)*\)`)

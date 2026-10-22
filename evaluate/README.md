@@ -43,10 +43,10 @@ model, commit, notes, optional supported seed, binary/prompt hashes and timings.
 Pure offline CLI:
 
 ```sh
-go run ./cmd/contextir-score score -kind case -in path/to/result.json \
+go run ./cmd/h3-context-ir-go-score score -kind case -in path/to/result.json \
   -as-run -commit reviewed-revision -out new-run.json
-go run ./cmd/contextir-score baseline -in new-run.json -out baseline.json
-go run ./cmd/contextir-score compare -baseline baseline.json \
+go run ./cmd/h3-context-ir-go-score baseline -in new-run.json -out baseline.json
+go run ./cmd/h3-context-ir-go-score compare -baseline baseline.json \
   -candidate next-run.json -out comparison.json
 ```
 
@@ -57,7 +57,7 @@ does not invent repair history. Comparison exits 1 for a failed gate, 2 for inva
 input. Output files and baselines cannot overwrite history. The CLI never reads
 provider configuration or environment secrets.
 
-Run `go test ./evaluate ./cmd/contextir-score`. Verification is separated:
+Run `go test ./evaluate ./cmd/h3-context-ir-go-score`. Verification is separated:
 
 - `fixtures/evaluate_calls.json`: **14 actual source calls across 8 original
   tests**, preserving their captured inputs and expected outputs.

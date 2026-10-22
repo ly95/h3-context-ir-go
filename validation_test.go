@@ -8,7 +8,7 @@ import (
 	"strings"
 	"testing"
 
-	ir "github.com/ly95/contextir"
+	ir "github.com/ly95/h3-context-ir-go"
 )
 
 func validationDocument(mode ir.Mode) ir.Document {

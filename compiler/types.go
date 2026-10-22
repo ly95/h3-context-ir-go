@@ -7,11 +7,11 @@ import (
 	"context"
 	"encoding/json"
 
-	"github.com/ly95/contextir"
-	"github.com/ly95/contextir/h3"
-	"github.com/ly95/contextir/h3check"
-	"github.com/ly95/contextir/lora"
-	"github.com/ly95/contextir/planner"
+	"github.com/ly95/h3-context-ir-go"
+	"github.com/ly95/h3-context-ir-go/h3"
+	"github.com/ly95/h3-context-ir-go/h3check"
+	"github.com/ly95/h3-context-ir-go/lora"
+	"github.com/ly95/h3-context-ir-go/planner"
 )
 
 const Version = "contextir/compiler/v1"

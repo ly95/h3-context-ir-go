@@ -13,9 +13,9 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/ly95/contextir"
-	"github.com/ly95/contextir/deepseek"
-	"github.com/ly95/contextir/media"
+	"github.com/ly95/h3-context-ir-go"
+	"github.com/ly95/h3-context-ir-go/deepseek"
+	"github.com/ly95/h3-context-ir-go/media"
 )
 
 func cacheHash(text string) string { h := sha256.Sum256([]byte(text)); return hex.EncodeToString(h[:]) }

@@ -6,10 +6,10 @@ import (
 	"reflect"
 	"strings"
 
-	contextir "github.com/ly95/contextir"
-	"github.com/ly95/contextir/compiler"
-	"github.com/ly95/contextir/plan"
-	"github.com/ly95/contextir/tokens"
+	contextir "github.com/ly95/h3-context-ir-go"
+	"github.com/ly95/h3-context-ir-go/compiler"
+	"github.com/ly95/h3-context-ir-go/plan"
+	"github.com/ly95/h3-context-ir-go/tokens"
 )
 
 func plain(text contextir.RichText, doc contextir.Document) string {

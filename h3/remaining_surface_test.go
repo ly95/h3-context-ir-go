@@ -7,8 +7,8 @@ import (
 	"os"
 	"testing"
 
-	contextir "github.com/ly95/contextir"
-	"github.com/ly95/contextir/h3"
+	contextir "github.com/ly95/h3-context-ir-go"
+	"github.com/ly95/h3-context-ir-go/h3"
 )
 
 // Source test_deterministic.py::test_continuation_case_lowercases_safely_only.

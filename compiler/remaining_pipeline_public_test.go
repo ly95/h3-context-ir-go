@@ -13,10 +13,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/ly95/contextir"
-	"github.com/ly95/contextir/chatcompat"
-	"github.com/ly95/contextir/compiler"
-	"github.com/ly95/contextir/service"
+	"github.com/ly95/h3-context-ir-go"
+	"github.com/ly95/h3-context-ir-go/chatcompat"
+	"github.com/ly95/h3-context-ir-go/compiler"
+	"github.com/ly95/h3-context-ir-go/service"
 )
 
 // These are real adapter/HTTP-decode boundaries, rather than the original

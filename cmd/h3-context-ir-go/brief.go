@@ -15,15 +15,15 @@ import (
 	"strings"
 	"time"
 
-	contextir "github.com/ly95/contextir"
-	"github.com/ly95/contextir/chatcompat"
-	"github.com/ly95/contextir/compiler"
-	"github.com/ly95/contextir/deepseek"
-	"github.com/ly95/contextir/lora"
-	"github.com/ly95/contextir/media"
-	"github.com/ly95/contextir/planner"
-	"github.com/ly95/contextir/service"
-	"github.com/ly95/contextir/uploads"
+	contextir "github.com/ly95/h3-context-ir-go"
+	"github.com/ly95/h3-context-ir-go/chatcompat"
+	"github.com/ly95/h3-context-ir-go/compiler"
+	"github.com/ly95/h3-context-ir-go/deepseek"
+	"github.com/ly95/h3-context-ir-go/lora"
+	"github.com/ly95/h3-context-ir-go/media"
+	"github.com/ly95/h3-context-ir-go/planner"
+	"github.com/ly95/h3-context-ir-go/service"
+	"github.com/ly95/h3-context-ir-go/uploads"
 )
 
 type pathsFlag []string

@@ -13,9 +13,9 @@ import (
 	"strings"
 	"testing"
 
-	contextir "github.com/ly95/contextir"
-	"github.com/ly95/contextir/deepseek"
-	"github.com/ly95/contextir/media"
+	contextir "github.com/ly95/h3-context-ir-go"
+	"github.com/ly95/h3-context-ir-go/deepseek"
+	"github.com/ly95/h3-context-ir-go/media"
 )
 
 func remainingSurfaceManifest(t *testing.T) struct {

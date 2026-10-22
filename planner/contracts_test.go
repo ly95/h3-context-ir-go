@@ -7,8 +7,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/ly95/contextir"
-	"github.com/ly95/contextir/planner"
+	"github.com/ly95/h3-context-ir-go"
+	"github.com/ly95/h3-context-ir-go/planner"
 )
 
 func bindingsFor(d contextir.Document) []contextir.AssetBinding {

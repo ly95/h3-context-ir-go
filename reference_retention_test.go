@@ -3,8 +3,8 @@ package contextir_test
 import (
 	"testing"
 
-	ir "github.com/ly95/contextir"
-	"github.com/ly95/contextir/h3"
+	ir "github.com/ly95/h3-context-ir-go"
+	"github.com/ly95/h3-context-ir-go/h3"
 )
 
 // The upstream R6/R7 preservation rules concern the IR relationship itself,

@@ -16,10 +16,10 @@ import (
 	"strconv"
 	"strings"
 
-	contextir "github.com/ly95/contextir"
-	"github.com/ly95/contextir/compiler"
-	"github.com/ly95/contextir/h3"
-	"github.com/ly95/contextir/uploads"
+	contextir "github.com/ly95/h3-context-ir-go"
+	"github.com/ly95/h3-context-ir-go/compiler"
+	"github.com/ly95/h3-context-ir-go/h3"
+	"github.com/ly95/h3-context-ir-go/uploads"
 )
 
 func round(v float64, places int) float64 { p := math.Pow10(places); return math.RoundToEven(v*p) / p }

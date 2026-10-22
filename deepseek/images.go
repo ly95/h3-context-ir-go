@@ -7,7 +7,7 @@ import (
 	"strings"
 	"unicode/utf8"
 
-	"github.com/ly95/contextir"
+	"github.com/ly95/h3-context-ir-go"
 )
 
 func validateImage(image Image) error {

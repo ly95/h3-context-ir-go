@@ -11,8 +11,8 @@ import (
 	"os"
 	"strings"
 
-	"github.com/ly95/contextir"
-	"github.com/ly95/contextir/deepseek"
+	"github.com/ly95/h3-context-ir-go"
+	"github.com/ly95/h3-context-ir-go/deepseek"
 )
 
 type Resolver func(context.Context, contextir.Asset) (string, error)

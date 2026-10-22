@@ -6,7 +6,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/ly95/contextir/budget"
+	"github.com/ly95/h3-context-ir-go/budget"
 )
 
 func BuildManifest(brief Brief, target budget.Target) ([]ManifestEntry, error) {

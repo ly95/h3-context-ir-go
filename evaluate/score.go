@@ -11,7 +11,7 @@ import (
 	"strings"
 	"unicode"
 
-	"github.com/ly95/contextir/h3check"
+	"github.com/ly95/h3-context-ir-go/h3check"
 )
 
 type Shot struct {

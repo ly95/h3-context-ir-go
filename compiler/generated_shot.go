@@ -6,7 +6,7 @@ import (
 	"strings"
 	"unicode"
 
-	"github.com/ly95/contextir"
+	"github.com/ly95/h3-context-ir-go"
 )
 
 // GeneratedShotInput explicitly selects a compatibility operation for generated

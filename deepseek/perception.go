@@ -11,7 +11,7 @@ import (
 	"unicode"
 	"unicode/utf8"
 
-	contextir "github.com/ly95/contextir"
+	contextir "github.com/ly95/h3-context-ir-go"
 )
 
 const ImagePerceptionPromptVersion = "contextir-image-perception/v1"

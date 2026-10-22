@@ -7,9 +7,9 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/ly95/contextir/compiler"
-	"github.com/ly95/contextir/plan"
-	"github.com/ly95/contextir/uploads"
+	"github.com/ly95/h3-context-ir-go/compiler"
+	"github.com/ly95/h3-context-ir-go/plan"
+	"github.com/ly95/h3-context-ir-go/uploads"
 )
 
 func missingDependencies(digests []string) *Error {

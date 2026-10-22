@@ -3,7 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/ly95/contextir/evaluate"
+	"github.com/ly95/h3-context-ir-go/evaluate"
 )
 
 func evaluateOperation(name string, b json.RawMessage) (any, error) {

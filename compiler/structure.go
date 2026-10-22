@@ -11,10 +11,10 @@ import (
 	"strings"
 	"unicode/utf8"
 
-	"github.com/ly95/contextir"
-	"github.com/ly95/contextir/budget"
-	"github.com/ly95/contextir/plan"
-	"github.com/ly95/contextir/planner"
+	"github.com/ly95/h3-context-ir-go"
+	"github.com/ly95/h3-context-ir-go/budget"
+	"github.com/ly95/h3-context-ir-go/plan"
+	"github.com/ly95/h3-context-ir-go/planner"
 )
 
 const structurePrompt = `You are the structural stage of a MiniMax H3 Context-IR compiler. Return only the JSON matching the supplied schema. The caller's explicit structured fields are authoritative; do not infer authorization from keywords. Interpret the complete user's intent semantically.

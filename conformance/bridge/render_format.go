@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/ly95/contextir/h3"
-	"github.com/ly95/contextir/plan"
+	"github.com/ly95/h3-context-ir-go/h3"
+	"github.com/ly95/h3-context-ir-go/plan"
 )
 
 func renderFormatOperation(name string, raw json.RawMessage) (any, error) {

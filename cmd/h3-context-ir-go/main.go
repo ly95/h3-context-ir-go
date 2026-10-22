@@ -1,4 +1,4 @@
-// Command contextir exposes deterministic IR tools and an explicitly configured
+// Command h3-context-ir-go exposes deterministic IR tools and an explicitly configured
 // Brief compiler. Only brief or media perception with a selected provider makes
 // model calls; no command downloads media or renders video.
 package main
@@ -11,15 +11,15 @@ import (
 	"io"
 	"os"
 
-	"github.com/ly95/contextir"
-	"github.com/ly95/contextir/h3"
+	"github.com/ly95/h3-context-ir-go"
+	"github.com/ly95/h3-context-ir-go/h3"
 )
 
 func main() { os.Exit(run(os.Args[1:], os.Stdin, os.Stdout, os.Stderr)) }
 
 func run(args []string, in io.Reader, out, errOut io.Writer) int {
 	if len(args) == 0 {
-		fmt.Fprintln(errOut, "usage: contextir schema | validate | compile | contract [-js] | directors | budget | tokens | check-h3 | draft | brief (use command -h for flags)")
+		fmt.Fprintln(errOut, "usage: h3-context-ir-go schema | validate | compile | contract [-js] | directors | budget | tokens | check-h3 | draft | brief (use command -h for flags)")
 		return 2
 	}
 	command := args[0]
@@ -105,7 +105,7 @@ func report(out io.Writer, err error) int {
 			Issues []contextir.Issue `json:"issues,omitempty"`
 		}{typed.Code, typed.Stage, typed.Issues})
 	} else {
-		fmt.Fprintln(out, "contextir operation failed")
+		fmt.Fprintln(out, "h3-context-ir-go operation failed")
 	}
 	return 1
 }

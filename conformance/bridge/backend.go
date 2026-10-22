@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/ly95/contextir/chatcompat"
+	"github.com/ly95/h3-context-ir-go/chatcompat"
 	"net"
 	"net/http"
 	"net/url"

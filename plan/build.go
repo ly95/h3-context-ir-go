@@ -6,7 +6,7 @@ import (
 	"math"
 	"strings"
 
-	"github.com/ly95/contextir/budget"
+	"github.com/ly95/h3-context-ir-go/budget"
 )
 
 var wordTargets = map[string]int{"ref2va": 400, "t2va": 330, "i2va": 460, "fl2va": 380, "l2va": 380}

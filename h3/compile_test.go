@@ -6,8 +6,8 @@ import (
 	"strings"
 	"testing"
 
-	contextir "github.com/ly95/contextir"
-	"github.com/ly95/contextir/h3"
+	contextir "github.com/ly95/h3-context-ir-go"
+	"github.com/ly95/h3-context-ir-go/h3"
 )
 
 func at(ms contextir.Time) *contextir.Time { return &ms }

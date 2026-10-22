@@ -13,10 +13,10 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/ly95/contextir"
-	"github.com/ly95/contextir/h3"
-	"github.com/ly95/contextir/media"
-	"github.com/ly95/contextir/planner"
+	"github.com/ly95/h3-context-ir-go"
+	"github.com/ly95/h3-context-ir-go/h3"
+	"github.com/ly95/h3-context-ir-go/media"
+	"github.com/ly95/h3-context-ir-go/planner"
 )
 
 // These are the exact shipped bytes used by pinned test_file_facts.py, copied

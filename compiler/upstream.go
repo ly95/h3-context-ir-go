@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"math"
 
-	"github.com/ly95/contextir"
-	"github.com/ly95/contextir/lora"
-	"github.com/ly95/contextir/plan"
+	"github.com/ly95/h3-context-ir-go"
+	"github.com/ly95/h3-context-ir-go/lora"
+	"github.com/ly95/h3-context-ir-go/plan"
 )
 
 // FromOriginal adapts an original open-h3-ir Brief and perception cards into the

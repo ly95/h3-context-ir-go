@@ -1,6 +1,6 @@
-# ContextIR CLI
+# H3 Context-IR Go CLI
 
-Build with `go build ./cmd/contextir`. The library remains the main API; this
+Build with `go build ./cmd/h3-context-ir-go`. The library remains the main API; this
 command makes its actual pipeline and deterministic helpers easy to reproduce.
 No command reads dotenv files, chooses a provider/model, downloads media or
 starts a server.
@@ -8,16 +8,16 @@ starts a server.
 Offline commands:
 
 ```sh
-contextir contract > contract.json
-contextir contract -js > contract.js
-contextir directors
-contextir budget -seconds 5 -frame-policy snap_up
-contextir tokens -input prompt.txt -ids
-contextir check-h3 -input prompt.txt -context checker-context.json -profile comfyui
-contextir draft -input brief.json -profile comfyui -frame-policy snap_up > draft.json
-contextir validate < document.json
-contextir compile -profile comfyui < document.json
-contextir schema -type document
+h3-context-ir-go contract > contract.json
+h3-context-ir-go contract -js > contract.js
+h3-context-ir-go directors
+h3-context-ir-go budget -seconds 5 -frame-policy snap_up
+h3-context-ir-go tokens -input prompt.txt -ids
+h3-context-ir-go check-h3 -input prompt.txt -context checker-context.json -profile comfyui
+h3-context-ir-go draft -input brief.json -profile comfyui -frame-policy snap_up > draft.json
+h3-context-ir-go validate < document.json
+h3-context-ir-go compile -profile comfyui < document.json
+h3-context-ir-go schema -type document
 ```
 
 `brief.json` uses the original HTTP request schema, for example
@@ -31,7 +31,7 @@ unattached deterministic draft. JSON/text inputs are bounded at 16 MiB.
 Model compilation requires all provider choices to be explicit:
 
 ```sh
-contextir brief -input brief.json \
+h3-context-ir-go brief -input brief.json \
   -provider deepseek -base-url "$DEEPSEEK_BASE_URL" \
   -model deepseek-flash -key-env DEEPSEEK_API_KEY -reasoning-effort none \
   -profile comfyui -frame-policy snap_up -max-retries 1 > result.json

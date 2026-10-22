@@ -5,7 +5,7 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"errors"
-	"github.com/ly95/contextir/uploads"
+	"github.com/ly95/h3-context-ir-go/uploads"
 	"os"
 	"path/filepath"
 	"sync"

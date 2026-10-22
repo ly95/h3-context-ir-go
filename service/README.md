@@ -58,7 +58,7 @@ refine failure carries the same fields beside its structured error; a failed
 attempt's reported usage is never replaced with zero or counted a second time.
 
 The request contract, all eight section digests, and the JSON/JS exports share
-one native versioned definition. Run `go test ./service ./cmd/contextir` to verify
+one native versioned definition. Run `go test ./service ./cmd/h3-context-ir-go` to verify
 request/HTTP/refusal behavior, a full create/read/refine lifecycle, publication
 integrity, concurrent record versions and actual CLI exports. Native contract v3
 includes additional fields and refusal codes, with explicit version/digest
@@ -68,5 +68,5 @@ checks; it does not reuse upstream Python v2's digest. Source mappings are in
 One deliberate request-default difference: omitted `seed` remains unspecified;
 it is not silently replaced with the source implementation's default 7. An
 explicit seed, including 7, is preserved and requires actual provider support.
-The response IR uses ContextIR's native version and structural manifest rather
+The response IR uses H3 Context-IR Go's native version and structural manifest rather
 than pretending its Go document is the original Python dataclass.

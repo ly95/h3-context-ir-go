@@ -14,8 +14,8 @@ import (
 	"strings"
 	"unicode/utf8"
 
-	"github.com/ly95/contextir/plan"
-	"github.com/ly95/contextir/uploads"
+	"github.com/ly95/h3-context-ir-go/plan"
+	"github.com/ly95/h3-context-ir-go/uploads"
 )
 
 type PrepareConfig struct {

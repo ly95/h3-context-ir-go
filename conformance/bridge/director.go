@@ -3,7 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/ly95/contextir/compiler"
+	"github.com/ly95/h3-context-ir-go/compiler"
 )
 
 func directorOperation(name string, b json.RawMessage) (any, error) {

@@ -4,10 +4,10 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/ly95/contextir"
-	"github.com/ly95/contextir/compiler"
-	"github.com/ly95/contextir/media"
-	"github.com/ly95/contextir/plan"
+	"github.com/ly95/h3-context-ir-go"
+	"github.com/ly95/h3-context-ir-go/compiler"
+	"github.com/ly95/h3-context-ir-go/media"
+	"github.com/ly95/h3-context-ir-go/plan"
 	"math"
 )
 

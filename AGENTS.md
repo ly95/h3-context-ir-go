@@ -1,6 +1,6 @@
-# ContextIR engineering rules
+# H3 Context-IR Go engineering rules
 
-ContextIR is an independent Go library. It must not depend on CLW Studio, a database, a job queue, an agent framework, or a specific model provider.
+H3 Context-IR Go is an independent Go library. It must not depend on CLW Studio, a database, a job queue, an agent framework, or a specific model provider.
 
 - The versioned Document is authoritative. Rendered prompts, reference manifests, hashes, and diagnostics must derive from that same document.
 - Interpret user intent through explicit structured input or a model's typed contract. Never use keywords or regular expressions to infer intent, roles, modes, or authorization.

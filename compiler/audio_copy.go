@@ -1,6 +1,6 @@
 package compiler
 
-import "github.com/ly95/contextir"
+import "github.com/ly95/h3-context-ir-go"
 
 func validateAudioCopyModes(b Brief) error {
 	full := 0

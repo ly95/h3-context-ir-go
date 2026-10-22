@@ -1,6 +1,6 @@
 # Contributing
 
-ContextIR is an independent Go library. Read [AGENTS.md](AGENTS.md) and the
+H3 Context-IR Go is an independent Go library. Read [AGENTS.md](AGENTS.md) and the
 [architecture](docs/ARCHITECTURE.md) before changing its contracts.
 
 ## Local checks
@@ -50,7 +50,7 @@ recorder is an explicit, separately configured operation that may incur charges.
 
 ## Licensing
 
-Contributions to ContextIR are distributed under [Apache-2.0](LICENSE). Preserve
+Contributions to H3 Context-IR Go are distributed under [Apache-2.0](LICENSE). Preserve
 third-party notices and document new dependencies or copied assets in
 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). Model weights and third-party
 services retain their own licenses and terms.

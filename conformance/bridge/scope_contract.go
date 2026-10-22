@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/ly95/contextir/compiler"
+	"github.com/ly95/h3-context-ir-go/compiler"
 )
 
 func scopeContractOperation(name string, raw json.RawMessage) (any, error) {

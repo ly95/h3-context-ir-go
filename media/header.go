@@ -9,7 +9,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/ly95/contextir"
+	"github.com/ly95/h3-context-ir-go"
 )
 
 // Header contains facts encoded in a file's header. Reading it does not prove

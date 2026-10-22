@@ -7,8 +7,8 @@ import (
 	"os"
 	"testing"
 
-	"github.com/ly95/contextir"
-	"github.com/ly95/contextir/plan"
+	"github.com/ly95/h3-context-ir-go"
+	"github.com/ly95/h3-context-ir-go/plan"
 )
 
 // Every original licence packet reaches the real schema builder. This tests the

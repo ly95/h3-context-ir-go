@@ -1,8 +1,8 @@
 package compiler
 
 import (
-	"github.com/ly95/contextir/budget"
-	"github.com/ly95/contextir/plan"
+	"github.com/ly95/h3-context-ir-go/budget"
+	"github.com/ly95/h3-context-ir-go/plan"
 )
 
 // ReplacementInspection is a readonly report of the observed graph. Candidates

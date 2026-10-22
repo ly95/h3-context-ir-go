@@ -10,7 +10,7 @@ import (
 	"sort"
 	"strconv"
 
-	"github.com/ly95/contextir"
+	"github.com/ly95/h3-context-ir-go"
 )
 
 // Validate the provider-independent schema locally as well as sending it to the

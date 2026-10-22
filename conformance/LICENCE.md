@@ -59,4 +59,4 @@ Original source expectations and native representation adjustments remain
 separate. A model response being valid JSON, or a permission decision matching a
 map, is not a complete Compile success or a video-quality assessment. See
 [upstream tests](../docs/UPSTREAM_TESTS.md) for adaptation policy and
-[live-eval](../cmd/contextir-live-eval/README.md) for explicit model recording.
+[live-eval](../cmd/h3-context-ir-go-live-eval/README.md) for explicit model recording.

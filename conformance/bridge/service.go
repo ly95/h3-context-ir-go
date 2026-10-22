@@ -11,13 +11,13 @@ import (
 	"strings"
 	"time"
 
-	"github.com/ly95/contextir"
-	"github.com/ly95/contextir/compiler"
-	"github.com/ly95/contextir/h3"
-	"github.com/ly95/contextir/media"
-	"github.com/ly95/contextir/plan"
-	"github.com/ly95/contextir/service"
-	"github.com/ly95/contextir/uploads"
+	"github.com/ly95/h3-context-ir-go"
+	"github.com/ly95/h3-context-ir-go/compiler"
+	"github.com/ly95/h3-context-ir-go/h3"
+	"github.com/ly95/h3-context-ir-go/media"
+	"github.com/ly95/h3-context-ir-go/plan"
+	"github.com/ly95/h3-context-ir-go/service"
+	"github.com/ly95/h3-context-ir-go/uploads"
 )
 
 var serviceRecords = map[string]service.RecordStore{}

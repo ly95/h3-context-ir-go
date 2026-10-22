@@ -6,9 +6,9 @@ import (
 	"strings"
 	"testing"
 
-	contextir "github.com/ly95/contextir"
-	"github.com/ly95/contextir/h3"
-	"github.com/ly95/contextir/plan"
+	contextir "github.com/ly95/h3-context-ir-go"
+	"github.com/ly95/h3-context-ir-go/h3"
+	"github.com/ly95/h3-context-ir-go/plan"
 )
 
 func TestUpstreamRenderFormattingCalls(t *testing.T) {

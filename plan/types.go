@@ -10,7 +10,7 @@ import (
 	"encoding/json"
 	"errors"
 
-	"github.com/ly95/contextir/budget"
+	"github.com/ly95/h3-context-ir-go/budget"
 )
 
 const MinShotMS = 1500

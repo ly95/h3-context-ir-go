@@ -5,8 +5,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/ly95/contextir"
-	"github.com/ly95/contextir/evaluate"
+	"github.com/ly95/h3-context-ir-go"
+	"github.com/ly95/h3-context-ir-go/evaluate"
 )
 
 // Exact _ask input from pinned test_score_and_length.py. Runtime fixture origin

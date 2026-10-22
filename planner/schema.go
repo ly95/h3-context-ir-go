@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 
-	"github.com/ly95/contextir"
+	"github.com/ly95/h3-context-ir-go"
 )
 
 // responseSchema specializes the wire schema using only explicit typed input.

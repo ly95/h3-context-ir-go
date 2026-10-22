@@ -7,7 +7,7 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/ly95/contextir"
+	"github.com/ly95/h3-context-ir-go"
 )
 
 func (p *Planner) collectEvidence(ctx context.Context, assets []contextir.Asset, supplied []contextir.Evidence) ([]contextir.Evidence, error) {

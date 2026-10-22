@@ -11,10 +11,10 @@ import (
 	"math"
 	"sync"
 
-	"github.com/ly95/contextir/compiler"
-	"github.com/ly95/contextir/lora"
-	"github.com/ly95/contextir/plan"
-	"github.com/ly95/contextir/uploads"
+	"github.com/ly95/h3-context-ir-go/compiler"
+	"github.com/ly95/h3-context-ir-go/lora"
+	"github.com/ly95/h3-context-ir-go/plan"
+	"github.com/ly95/h3-context-ir-go/uploads"
 )
 
 type CompileFunc func(context.Context, plan.Brief) (compiler.Result, error)

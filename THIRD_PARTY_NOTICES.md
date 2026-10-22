@@ -1,6 +1,6 @@
 # Third-party notices
 
-ContextIR is distributed under [Apache License 2.0](LICENSE). The following
+H3 Context-IR Go is distributed under [Apache License 2.0](LICENSE). The following
 materials retain their original attribution and applicable licenses. The root
 [NOTICE](NOTICE) summarizes adaptations made by this project; it does not replace
 the original notices.
@@ -13,7 +13,7 @@ the original notices.
 - License: [Apache-2.0](third_party/open-h3-ir/LICENSE).
 - Original attribution: [NOTICE](third_party/open-h3-ir/NOTICE).
 
-ContextIR adapts its public planning, geometry/budget, tokenization, H3 rendering
+H3 Context-IR Go adapts its public planning, geometry/budget, tokenization, H3 rendering
 and validation, evaluation, media/LoRA, upload, HTTP and ComfyUI contracts into Go.
 The Go implementation adds an authoritative versioned Document, typed model
 contracts, explicit dependencies and policies, strict provenance, bounded repair
@@ -34,7 +34,7 @@ guidance and tiny placeholder `.safetensors` file for registry tests. It is not
 a trained or usable LoRA model. The same upstream license and notices apply.
 
 The upstream NOTICE also records attribution for MIT-licensed ComfyUI browser
-widgets. Those browser widget sources are not bundled in ContextIR; their
+widgets. Those browser widget sources are not bundled in H3 Context-IR Go; their
 original notice is preserved unchanged as part of the upstream attribution.
 
 ## Qwen2.5 tokenizer vocabulary
@@ -55,7 +55,7 @@ Protocol spelling and examples follow MiniMax's publicly published H3 prompt
 guides, as identified in [UPSTREAM.md](docs/UPSTREAM.md). The retained upstream
 NOTICE identifies quoted MiniMax examples in its golden prompt fixtures.
 
-ContextIR includes no MiniMax model weights or hosted Context-IR implementation.
+H3 Context-IR Go includes no MiniMax model weights or hosted Context-IR implementation.
 The library's Apache-2.0 license does not grant a license to MiniMax H3 model
 weights or a right to use a hosted service. Those resources and any generated or
 caller-provided media remain subject to their own applicable terms.

@@ -2,7 +2,7 @@ package planner
 
 import (
 	"fmt"
-	"github.com/ly95/contextir"
+	"github.com/ly95/h3-context-ir-go"
 )
 
 func validateControls(request contextir.Request, doc contextir.Document) error {

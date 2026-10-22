@@ -7,9 +7,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/ly95/contextir"
-	"github.com/ly95/contextir/evaluate"
-	"github.com/ly95/contextir/h3"
+	"github.com/ly95/h3-context-ir-go"
+	"github.com/ly95/h3-context-ir-go/evaluate"
+	"github.com/ly95/h3-context-ir-go/h3"
 )
 
 func TestGoConformanceFramePoseCompileWithObservedIdentity(t *testing.T) {

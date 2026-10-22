@@ -1,6 +1,6 @@
 package compiler
 
-import "github.com/ly95/contextir"
+import "github.com/ly95/h3-context-ir-go"
 
 // AudioPropertyRecipientKind is the typed recipient of a property relationship:
 // vocal_performance, new_score, cut_action_timing or new_sound_texture. It never

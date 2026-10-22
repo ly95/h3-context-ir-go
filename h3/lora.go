@@ -1,7 +1,7 @@
 package h3
 
 import (
-	"github.com/ly95/contextir"
+	"github.com/ly95/h3-context-ir-go"
 	"strings"
 )
 

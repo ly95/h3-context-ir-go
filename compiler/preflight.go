@@ -5,8 +5,8 @@ import (
 	"math"
 	"strings"
 
-	"github.com/ly95/contextir"
-	"github.com/ly95/contextir/h3check"
+	"github.com/ly95/h3-context-ir-go"
+	"github.com/ly95/h3-context-ir-go/h3check"
 )
 
 func (c *Compiler) preflight(b Brief, st Structure, request contextir.Request) ([]h3check.Finding, error) {

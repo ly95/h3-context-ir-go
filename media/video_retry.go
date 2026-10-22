@@ -6,8 +6,8 @@ import (
 	"encoding/json"
 	"errors"
 
-	"github.com/ly95/contextir"
-	"github.com/ly95/contextir/deepseek"
+	"github.com/ly95/h3-context-ir-go"
+	"github.com/ly95/h3-context-ir-go/deepseek"
 )
 
 func validateVideoObservation(observed contextir.Evidence, asset contextir.Asset) error {

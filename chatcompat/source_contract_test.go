@@ -6,7 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	contextir "github.com/ly95/contextir"
+	contextir "github.com/ly95/h3-context-ir-go"
 	"image/png"
 	"io"
 	"math"

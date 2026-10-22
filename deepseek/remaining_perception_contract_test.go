@@ -4,8 +4,8 @@ import (
 	"context"
 	"testing"
 
-	"github.com/ly95/contextir"
-	"github.com/ly95/contextir/deepseek"
+	"github.com/ly95/h3-context-ir-go"
+	"github.com/ly95/h3-context-ir-go/deepseek"
 )
 
 // Multi-frame and still-image observation use the explicit repair budget, but

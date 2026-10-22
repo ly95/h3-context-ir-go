@@ -12,12 +12,12 @@ import (
 	"strings"
 	"unicode/utf8"
 
-	"github.com/ly95/contextir/budget"
-	"github.com/ly95/contextir/compiler"
-	"github.com/ly95/contextir/h3"
-	"github.com/ly95/contextir/h3check"
-	"github.com/ly95/contextir/service"
-	"github.com/ly95/contextir/tokens"
+	"github.com/ly95/h3-context-ir-go/budget"
+	"github.com/ly95/h3-context-ir-go/compiler"
+	"github.com/ly95/h3-context-ir-go/h3"
+	"github.com/ly95/h3-context-ir-go/h3check"
+	"github.com/ly95/h3-context-ir-go/service"
+	"github.com/ly95/h3-context-ir-go/tokens"
 )
 
 const maxCLIInputBytes int64 = 16 << 20
@@ -124,7 +124,7 @@ func runDeterministic(command string, args []string, in io.Reader, out, errOut i
 					return encodeOutput(out, d)
 				}
 			}
-			return messageError(errOut, "unknown-director", "No shipped director has that ID; run contextir directors")
+			return messageError(errOut, "unknown-director", "No shipped director has that ID; run h3-context-ir-go directors")
 		}
 		return encodeOutput(out, profiles)
 	case "budget":

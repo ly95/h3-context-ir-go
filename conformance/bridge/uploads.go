@@ -6,7 +6,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/ly95/contextir/uploads"
+	"github.com/ly95/h3-context-ir-go/uploads"
 )
 
 var uploadStores = map[string]*uploads.Store{}

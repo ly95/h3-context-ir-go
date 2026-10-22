@@ -1,6 +1,6 @@
 # 架构与合同
 
-ContextIR 的持久化资产是 `Document`，不是一段经过润色的字符串。调用方可在任意步骤检查或编辑 IR，随后重新验证与编译。
+H3 Context-IR Go 的持久化资产是 `Document`，不是一段经过润色的字符串。调用方可在任意步骤检查或编辑 IR，随后重新验证与编译。
 
 ## 分层
 
@@ -10,7 +10,7 @@ ContextIR 的持久化资产是 `Document`，不是一段经过润色的字符�
 4. `h3`：唯一 Document 渲染路径、素材 manifest、标签分配、公开 H3 格式、运行时 Profile、内容哈希。`h3check` 负责写作规则；`budget`、`tokens`、`plan`、`lora` 提供可独立调用的确定性能力。
 5. `deepseek` / `chatcompat`：显式配置的模型适配器与真实像素请求；`media`：显式本地解析、文件头、ffprobe/ffmpeg、抽帧、可选缓存和可注入 ASR。核心与内置包均仅依赖 Go 标准库。
 6. `service` / `uploads`：可选 HTTP handler、编译记录与内容寻址上传；`comfy`：远端 ComfyUI HTTP 与图操作。库不自动监听或启动任务。
-7. `cmd/contextir`：离线操作及显式模型编译 CLI；`cmd/contextir-score`：离线评分与基线比较；`cmd/contextir-live-eval`、`cmd/contextir-upstream-eval`：显式输入的真实模型录制；`cmd/contextir-eval`：内置合成场景的 smoke 验证。
+7. `cmd/h3-context-ir-go`：离线操作及显式模型编译 CLI；`cmd/h3-context-ir-go-score`：离线评分与基线比较；`cmd/h3-context-ir-go-live-eval`、`cmd/h3-context-ir-go-upstream-eval`：显式输入的真实模型录制；`cmd/h3-context-ir-go-eval`：内置合成场景的 smoke 验证。
 
 模型与感知适配器由宿主注入。核心验证与渲染不做 IO；`media` 只对显式 resolver 返回的本地文件执行配置好的媒体工具，`comfy` 只访问配置的端点。模型包不读取环境变量或自动下载素材。CLI 仅读取指定名称的凭据变量，不搜索 dotenv。应用的鉴权、资产读取、计费与任务生命周期由宿主负责。
 

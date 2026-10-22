@@ -10,10 +10,10 @@ import (
 	"testing"
 	"time"
 
-	contextir "github.com/ly95/contextir"
-	"github.com/ly95/contextir/compiler"
-	"github.com/ly95/contextir/plan"
-	"github.com/ly95/contextir/uploads"
+	contextir "github.com/ly95/h3-context-ir-go"
+	"github.com/ly95/h3-context-ir-go/compiler"
+	"github.com/ly95/h3-context-ir-go/plan"
+	"github.com/ly95/h3-context-ir-go/uploads"
 )
 
 func heldUpload(t *testing.T, s *Service) (plan.Brief, string) {

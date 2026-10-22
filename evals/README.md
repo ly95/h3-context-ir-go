@@ -1,6 +1,6 @@
 # Optional live smoke evaluation
 
-`cmd/contextir-eval` runs three built-in synthetic scenes through a configured
+`cmd/h3-context-ir-go-eval` runs three built-in synthetic scenes through a configured
 model: text-only generation, exact cross-cut Chinese dialogue, and real-pixel
 observation of a synthetic first-frame image. These are smoke cases, not the
 complete upstream behavior suite or a statistical quality benchmark.
@@ -10,12 +10,12 @@ To make a new live recording, explicitly provide the endpoint and model and set
 the API key in the variable read by the command:
 
 ```sh
-go run ./cmd/contextir-eval \
+go run ./cmd/h3-context-ir-go-eval \
   -base-url https://api.deepseek.com \
   -model deepseek-flash \
   -reasoning-effort low \
   -max-retries 1 \
-  -out /tmp/contextir-eval-new-run
+  -out /tmp/h3-context-ir-go-eval-new-run
 ```
 
 The output directory must not exist. The command reads only the explicitly named
@@ -31,7 +31,7 @@ quality remain separate checks. Do not use the raw-content recorder for private
 application media without an explicit approved content policy.
 
 For broader configurable Compile/Refine inputs and separate assertions, use
-[contextir-live-eval](../cmd/contextir-live-eval/README.md). Upstream fixtures and
+[h3-context-ir-go-live-eval](../cmd/h3-context-ir-go-live-eval/README.md). Upstream fixtures and
 native test scope are described in [UPSTREAM_TESTS.md](../docs/UPSTREAM_TESTS.md).
 Generated reports and historical development recordings are not distributed in
 this source tree.

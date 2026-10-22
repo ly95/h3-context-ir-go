@@ -14,11 +14,11 @@ import (
 	"testing"
 	"time"
 
-	contextir "github.com/ly95/contextir"
-	"github.com/ly95/contextir/compiler"
-	"github.com/ly95/contextir/h3"
-	"github.com/ly95/contextir/plan"
-	"github.com/ly95/contextir/uploads"
+	contextir "github.com/ly95/h3-context-ir-go"
+	"github.com/ly95/h3-context-ir-go/compiler"
+	"github.com/ly95/h3-context-ir-go/h3"
+	"github.com/ly95/h3-context-ir-go/plan"
+	"github.com/ly95/h3-context-ir-go/uploads"
 )
 
 func testService(t *testing.T, compile CompileFunc, refine RefineFunc) *Service {

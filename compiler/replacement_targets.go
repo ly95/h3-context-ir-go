@@ -3,8 +3,8 @@ package compiler
 import (
 	"fmt"
 
-	"github.com/ly95/contextir"
-	"github.com/ly95/contextir/plan"
+	"github.com/ly95/h3-context-ir-go"
+	"github.com/ly95/h3-context-ir-go/plan"
 )
 
 // explicitReplacementTargets translates graph identifiers, never descriptive

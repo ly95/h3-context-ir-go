@@ -1,6 +1,6 @@
 package planner
 
-import "github.com/ly95/contextir"
+import "github.com/ly95/h3-context-ir-go"
 
 func copySlice[T any](values []T) []T {
 	if values == nil {

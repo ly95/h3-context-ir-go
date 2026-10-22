@@ -5,8 +5,8 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/ly95/contextir"
-	"github.com/ly95/contextir/h3"
+	"github.com/ly95/h3-context-ir-go"
+	"github.com/ly95/h3-context-ir-go/h3"
 )
 
 // Draft explicitly requests the deterministic floor. It never calls Model and

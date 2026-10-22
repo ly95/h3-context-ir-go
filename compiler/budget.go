@@ -1,10 +1,10 @@
 package compiler
 
 import (
-	"github.com/ly95/contextir"
-	"github.com/ly95/contextir/budget"
-	"github.com/ly95/contextir/h3"
-	"github.com/ly95/contextir/tokens"
+	"github.com/ly95/h3-context-ir-go"
+	"github.com/ly95/h3-context-ir-go/budget"
+	"github.com/ly95/h3-context-ir-go/h3"
+	"github.com/ly95/h3-context-ir-go/tokens"
 )
 
 type BudgetReport struct {

@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"math/big"
 
-	contextir "github.com/ly95/contextir"
+	contextir "github.com/ly95/h3-context-ir-go"
 )
 
 const (

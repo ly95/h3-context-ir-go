@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/ly95/contextir"
+	"github.com/ly95/h3-context-ir-go"
 )
 
 // ExecutionOptions are caller choices affecting the model/analyzer, not film

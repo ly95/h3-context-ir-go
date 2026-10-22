@@ -8,7 +8,7 @@ import (
 	"math/big"
 	"strings"
 
-	contextir "github.com/ly95/contextir"
+	contextir "github.com/ly95/h3-context-ir-go"
 )
 
 // Artifact is derived from exactly one validated Document. Hashes use the full

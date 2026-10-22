@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	contextir "github.com/ly95/contextir"
+	contextir "github.com/ly95/h3-context-ir-go"
 )
 
 func renderDefinitions(doc contextir.Document, state bindingState) (string, string, error) {

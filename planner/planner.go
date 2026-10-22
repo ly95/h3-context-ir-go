@@ -11,7 +11,7 @@ import (
 	"errors"
 	"reflect"
 
-	"github.com/ly95/contextir"
+	"github.com/ly95/h3-context-ir-go"
 )
 
 // PromptVersion identifies the interpretation contract embedded in this package.

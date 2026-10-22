@@ -7,7 +7,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/ly95/contextir"
+	"github.com/ly95/h3-context-ir-go"
 )
 
 const sourceContributionIntent = "Define it once as a single subject that draws its body from the first picture and its wheels from the second."

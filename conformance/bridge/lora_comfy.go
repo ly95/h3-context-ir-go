@@ -3,8 +3,8 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/ly95/contextir/comfy"
-	"github.com/ly95/contextir/lora"
+	"github.com/ly95/h3-context-ir-go/comfy"
+	"github.com/ly95/h3-context-ir-go/lora"
 	"strings"
 )
 

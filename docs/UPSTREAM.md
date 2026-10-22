@@ -2,7 +2,7 @@
 
 ## 固定上游
 
-ContextIR 参考 [ruashots/open-h3-ir](https://github.com/ruashots/open-h3-ir/tree/fd031e136ae3d89147324c0d1b2aa65e838c21f5)，固定提交为 `fd031e136ae3d89147324c0d1b2aa65e838c21f5`，对应 Python 包版本 0.4.1。固定提交用于稳定格式、算法和测试来源，不表示以后自动跟随其 `main`。
+H3 Context-IR Go 参考 [ruashots/open-h3-ir](https://github.com/ruashots/open-h3-ir/tree/fd031e136ae3d89147324c0d1b2aa65e838c21f5)，固定提交为 `fd031e136ae3d89147324c0d1b2aa65e838c21f5`，对应 Python 包版本 0.4.1。固定提交用于稳定格式、算法和测试来源，不表示以后自动跟随其 `main`。
 
 原项目的确定性计划、素材编号与音轨配对、帧与画布网格、latent rows、完整词表 BPE、H3 校验规则、LoRA 合同、ComfyUI 远端操作、HTTP 请求合同和上传存储已实现为原生 Go 能力。高层 `compiler` 将自然语言和结构化观察编译进统一 `Document`，随后由 `h3` 确定性渲染。
 
@@ -15,7 +15,7 @@ ContextIR 参考 [ruashots/open-h3-ir](https://github.com/ruashots/open-h3-ir/tr
 - [官方 H3 提示词 Skill](https://github.com/MiniMax-AI/MiniMax-H3/blob/main/skills/h3-prompt-writing/SKILL.md)
 - [托管 Context-IR API 文档](https://platform.minimax.io/docs/api-reference/video-generation-v2-h3-context-ir)
 
-这些资料描述公开的提示词字段、引用、音频、对白和关键帧。ContextIR 没有取得 MiniMax 托管系统的内部代码、训练数据或模型，也不宣称其内部实现或生成质量等价。
+这些资料描述公开的提示词字段、引用、音频、对白和关键帧。H3 Context-IR Go 没有取得 MiniMax 托管系统的内部代码、训练数据或模型，也不宣称其内部实现或生成质量等价。
 
 ## Go 实现的明确差异
 
@@ -23,7 +23,7 @@ ContextIR 参考 [ruashots/open-h3-ir](https://github.com/ruashots/open-h3-ir/tr
 - 观察、用户要求与创意补充分别记录来源；部分视频观察与 ASR 转写不会被表述为完整音视频理解。
 - 固定对白、镜头边界、摄影机闭集、素材绑定与不可变文字由宿主管理。
 - 失败、有限修复、草稿政策、澄清和时长对齐均显式可见，调用方选择不会被偷偷替换。
-- 公共 HTTP 合同使用 ContextIR 的版本与 IR 表示；命令行采用 Go 的实际接口。兼容原业务能力不要求复刻 Python 命令、内部常量或 dataclass。
+- 公共 HTTP 合同使用 H3 Context-IR Go 的版本与 IR 表示；命令行采用 Go 的实际接口。兼容原业务能力不要求复刻 Python 命令、内部常量或 dataclass。
 
 ## 许可证与保留素材
 

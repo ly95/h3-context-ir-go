@@ -5,7 +5,7 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
-	"github.com/ly95/contextir/h3check"
+	"github.com/ly95/h3-context-ir-go/h3check"
 	"io"
 	"io/fs"
 	"math"

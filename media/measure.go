@@ -3,7 +3,7 @@ package media
 import (
 	"context"
 
-	"github.com/ly95/contextir"
+	"github.com/ly95/h3-context-ir-go"
 )
 
 // MeasureOptions explicitly authorizes resource resolution. Images need only

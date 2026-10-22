@@ -3,7 +3,7 @@ package h3
 import (
 	"fmt"
 
-	"github.com/ly95/contextir"
+	"github.com/ly95/h3-context-ir-go"
 )
 
 // editReferenceRelationships uses graph ownership, then explicit shot scope.

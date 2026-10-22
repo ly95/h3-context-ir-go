@@ -8,9 +8,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/ly95/contextir"
-	"github.com/ly95/contextir/h3"
-	"github.com/ly95/contextir/planner"
+	"github.com/ly95/h3-context-ir-go"
+	"github.com/ly95/h3-context-ir-go/h3"
+	"github.com/ly95/h3-context-ir-go/planner"
 )
 
 func TestTranscriptLiteralChannelChecksEmittedRunsAndDefinitions(t *testing.T) {

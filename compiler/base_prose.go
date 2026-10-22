@@ -1,6 +1,6 @@
 package compiler
 
-import "github.com/ly95/contextir"
+import "github.com/ly95/h3-context-ir-go"
 
 // Base H3 formats insert subject descriptions inline. Natural sentences must be
 // composed as literal text there, rather than splicing an arbitrary definition

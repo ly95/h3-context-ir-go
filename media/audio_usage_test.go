@@ -7,8 +7,8 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/ly95/contextir"
-	"github.com/ly95/contextir/media"
+	"github.com/ly95/h3-context-ir-go"
+	"github.com/ly95/h3-context-ir-go/media"
 )
 
 func TestAudioAnalyzerMeteringSurvivesSuccessAndFailure(t *testing.T) {

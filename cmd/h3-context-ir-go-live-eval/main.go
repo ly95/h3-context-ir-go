@@ -1,4 +1,4 @@
-// Command contextir-live-eval records explicit public/synthetic acceptance cases.
+// Command h3-context-ir-go-live-eval records explicit public/synthetic acceptance cases.
 // Assertions are loaded separately and are never supplied to model adapters.
 package main
 
@@ -23,12 +23,12 @@ import (
 	"sync"
 	"time"
 
-	"github.com/ly95/contextir"
-	"github.com/ly95/contextir/compiler"
-	"github.com/ly95/contextir/deepseek"
-	"github.com/ly95/contextir/h3"
-	"github.com/ly95/contextir/plan"
-	"github.com/ly95/contextir/planner"
+	"github.com/ly95/h3-context-ir-go"
+	"github.com/ly95/h3-context-ir-go/compiler"
+	"github.com/ly95/h3-context-ir-go/deepseek"
+	"github.com/ly95/h3-context-ir-go/h3"
+	"github.com/ly95/h3-context-ir-go/plan"
+	"github.com/ly95/h3-context-ir-go/planner"
 )
 
 const fixtureSchema = "contextir-live-eval/v1"

@@ -1,6 +1,6 @@
 package compiler
 
-import "github.com/ly95/contextir"
+import "github.com/ly95/h3-context-ir-go"
 
 // Prose length is a mode/task-specific writing guide, not a content validity
 // floor. In particular the published reference example is shorter than 350

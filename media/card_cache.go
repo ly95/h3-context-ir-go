@@ -14,7 +14,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/ly95/contextir"
+	"github.com/ly95/h3-context-ir-go"
 )
 
 // CardCacheKey identifies an observation contract, never an interpretation of a

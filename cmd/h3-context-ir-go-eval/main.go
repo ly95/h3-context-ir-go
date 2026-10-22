@@ -1,4 +1,4 @@
-// contextir-eval is an opt-in, paid DeepSeek smoke test using only synthetic
+// h3-context-ir-go-eval is an opt-in, paid DeepSeek smoke test using only synthetic
 // inputs. It never runs as part of go test and never reads a dotenv file.
 package main
 
@@ -17,10 +17,10 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/ly95/contextir"
-	"github.com/ly95/contextir/deepseek"
-	"github.com/ly95/contextir/h3"
-	"github.com/ly95/contextir/planner"
+	"github.com/ly95/h3-context-ir-go"
+	"github.com/ly95/h3-context-ir-go/deepseek"
+	"github.com/ly95/h3-context-ir-go/h3"
+	"github.com/ly95/h3-context-ir-go/planner"
 )
 
 type callRecord struct {

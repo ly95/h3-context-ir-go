@@ -2237,10 +2237,10 @@
         }
       ],
       "verification_mapping": {
-        "go_package": "./cmd/contextir",
+        "go_package": "./cmd/h3-context-ir-go",
         "go_test": "TestRemainingSurfaceContractCLIPrintsPublishedBytes",
         "assertion_intent": "The native executable exports JSON/JavaScript exactly byte-for-byte as the actual public service AsJSON/AsJS API, with successful exit and no stderr.",
-        "adaptation": "Build and invoke the real Go contextir executable for contract and contract -js. The original Python subprocess is not counted as Go merely because its expected value used a Go helper. Native contract version3 and its actual generated comment remain authoritative; source Python history is preserved.",
+        "adaptation": "Build and invoke the real Go h3-context-ir-go executable for contract and contract -js. The original Python subprocess is not counted as Go merely because its expected value used a Go helper. Native contract version3 and its actual generated comment remain authoritative; source Python history is preserved.",
         "verification_kind": "go_test",
         "mapping_manifest": "conformance/adaptations/remaining_cli.json"
       }
@@ -3573,7 +3573,7 @@
         "go_package": "./compiler",
         "go_test": "TestRemainingRunProvenance",
         "assertion_intent": "assert d[\"commit\"] == \"abc1234\"; assert d[\"config\"][\"note\"] == \"supersedes the composed path\"; assert d[\"config\"][\"compose_prompt\"] is None and d[\"config\"][\"omit\"] == (); assert _commit(), \"the repo's HEAD must be readable, or a baseline cannot name its pipeline\"",
-        "adaptation": "Go evaluate.SaveBaseline and LoadBaseline persist the complete real Run and preserve the original abc1234 commit, note, null compose_prompt and empty omit fields. JSON [] replaces the Python empty tuple representation. Pipeline revision discovery belongs to the Go host: cmd/contextir-score exposes -commit and passes it unchanged to Run.Commit; the library's distributed module ZIP has no .git directory. The test runs in t.TempDir with Git unavailable, verifies both short and full caller-supplied revisions survive actual file save/reload, and checks an omitted revision remains an explicit empty unknown rather than an invented checkout HEAD. No current-checkout Git requirement, original-test alteration, skip or N/A is claimed.",
+        "adaptation": "Go evaluate.SaveBaseline and LoadBaseline persist the complete real Run and preserve the original abc1234 commit, note, null compose_prompt and empty omit fields. JSON [] replaces the Python empty tuple representation. Pipeline revision discovery belongs to the Go host: cmd/h3-context-ir-go-score exposes -commit and passes it unchanged to Run.Commit; the library's distributed module ZIP has no .git directory. The test runs in t.TempDir with Git unavailable, verifies both short and full caller-supplied revisions survive actual file save/reload, and checks an omitted revision remains an explicit empty unknown rather than an invented checkout HEAD. No current-checkout Git requirement, original-test alteration, skip or N/A is claimed.",
         "verification_kind": "go_test",
         "mapping_manifest": "conformance/adaptations/remaining_provenance.json"
       }

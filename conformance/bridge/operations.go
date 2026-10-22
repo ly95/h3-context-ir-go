@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 	"strings"
 
-	"github.com/ly95/contextir/budget"
-	"github.com/ly95/contextir/plan"
-	"github.com/ly95/contextir/tokens"
+	"github.com/ly95/h3-context-ir-go/budget"
+	"github.com/ly95/h3-context-ir-go/plan"
+	"github.com/ly95/h3-context-ir-go/tokens"
 )
 
 func operation(name string, b json.RawMessage) (any, error) {

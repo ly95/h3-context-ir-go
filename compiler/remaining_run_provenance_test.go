@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/ly95/contextir/evaluate"
+	"github.com/ly95/h3-context-ir-go/evaluate"
 )
 
 // Pinned source: tests/test_creativity.py::test_a_stored_run_carries_its_provenance.

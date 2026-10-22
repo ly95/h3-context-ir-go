@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/ly95/contextir"
+	"github.com/ly95/h3-context-ir-go"
 )
 
 func canonicalSubjects(b Brief, st Structure, req contextir.Request, licence *LicenceDecision) ([]contextir.Subject, error) {

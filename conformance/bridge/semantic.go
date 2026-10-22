@@ -8,10 +8,10 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/ly95/contextir"
-	"github.com/ly95/contextir/compiler"
-	"github.com/ly95/contextir/h3"
-	"github.com/ly95/contextir/plan"
+	"github.com/ly95/h3-context-ir-go"
+	"github.com/ly95/h3-context-ir-go/compiler"
+	"github.com/ly95/h3-context-ir-go/h3"
+	"github.com/ly95/h3-context-ir-go/plan"
 )
 
 // The transcript contains actual prior model outputs, never oracle answers. This

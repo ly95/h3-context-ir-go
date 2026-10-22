@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"sort"
 
-	contextir "github.com/ly95/contextir"
+	contextir "github.com/ly95/h3-context-ir-go"
 )
 
 // MediaBinding identifies a single conditioning input. Source intervals are

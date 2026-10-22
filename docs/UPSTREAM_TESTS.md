@@ -45,7 +45,7 @@ go test ./cmd/... ./conformance/bridge
 
 高层编译录制放在 [compiler/testdata](../compiler/testdata)。严格回放检查 Stage、System、Input 和 Schema 后才消费响应，保留失败候选与实际调用顺序。回放不访问模型服务，不是当前模型的一次新实测。桥接工具的边界测试另外验证错误请求不得消费录制，以及 provider 拒绝的类型与用量不能丢失。
 
-真实模型录制使用单独的 [live-eval 命令](../cmd/contextir-live-eval/README.md)。模型安全输入与期望断言分开保存；成功响应、结构校验、最终产物语义和实际视频质量分别评估。
+真实模型录制使用单独的 [live-eval 命令](../cmd/h3-context-ir-go-live-eval/README.md)。模型安全输入与期望断言分开保存；成功响应、结构校验、最终产物语义和实际视频质量分别评估。
 
 ## 历史对照与当前检查的区别
 
@@ -53,4 +53,4 @@ go test ./cmd/... ./conformance/bridge
 
 当前发布树不包含 Python 桥接、历史运行报告或重放完整历史审计所需的脚本。运行上述 Go 命令验证的是当前原生实现及其测试，不能称作重新执行了全部 991 个未修改的原 Python 断言。需求清单中保留的历史状态同样不能替代一次当前执行。
 
-ContextIR 不以测试数量证明与 MiniMax 托管 Context-IR 内部实现等价。真实 H3 推理、人物一致性、音画同步、原文字形和来源像素保真需要额外的生成视频评测。
+H3 Context-IR Go 不以测试数量证明与 MiniMax 托管 Context-IR 内部实现等价。真实 H3 推理、人物一致性、音画同步、原文字形和来源像素保真需要额外的生成视频评测。

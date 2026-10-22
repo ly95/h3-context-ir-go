@@ -1,6 +1,6 @@
 package compiler
 
-import "github.com/ly95/contextir/plan"
+import "github.com/ly95/h3-context-ir-go/plan"
 
 // Legacy Plan flattens every depicted object into the environment definition.
 // The native target keeps field ownership: a car's identity is not a material

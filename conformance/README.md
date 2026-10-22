@@ -80,7 +80,7 @@ role inputs and representation differences.
 
 ## Live evaluation
 
-Use the explicitly configured [Go live recorder](../cmd/contextir-live-eval/README.md)
+Use the explicitly configured [Go live recorder](../cmd/h3-context-ir-go-live-eval/README.md)
 for a new model run. Assertions remain separate from model inputs. Record every
 attempt, failure and valid usage; do not count replay or duplicate trace ledgers
 as new provider calls.

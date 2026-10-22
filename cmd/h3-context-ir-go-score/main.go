@@ -1,4 +1,4 @@
-// Command contextir-score scores archived final output and compares stored
+// Command h3-context-ir-go-score scores archived final output and compares stored
 // runs offline. It has no provider configuration, credential lookup or HTTP IO.
 package main
 
@@ -13,9 +13,9 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/ly95/contextir/compiler"
-	"github.com/ly95/contextir/evaluate"
-	"github.com/ly95/contextir/h3"
+	"github.com/ly95/h3-context-ir-go/compiler"
+	"github.com/ly95/h3-context-ir-go/evaluate"
+	"github.com/ly95/h3-context-ir-go/h3"
 )
 
 func main() {
@@ -80,7 +80,7 @@ func emit(path string, value any, stdout io.Writer) error {
 
 func run(args []string, stdin io.Reader, stdout io.Writer) (int, error) {
 	if len(args) == 0 {
-		return 2, errors.New("usage: contextir-score score|compare|baseline [flags]")
+		return 2, errors.New("usage: h3-context-ir-go-score score|compare|baseline [flags]")
 	}
 	fs := flag.NewFlagSet(args[0], flag.ContinueOnError)
 	fs.SetOutput(io.Discard)

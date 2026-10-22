@@ -7,11 +7,11 @@ must be identified by a fixture-relative path and its full SHA256 digest.
 Recording user-owned/private content requires a separate approved policy.
 
 ```sh
-go build -o /tmp/contextir-live-eval ./cmd/contextir-live-eval
-/tmp/contextir-live-eval \
+go build -o /tmp/h3-context-ir-go-live-eval ./cmd/h3-context-ir-go-live-eval
+/tmp/h3-context-ir-go-live-eval \
   -input conformance/release_acceptance_inputs.json \
   -assertions conformance/release_acceptance_assertions.json \
-  -out /tmp/contextir-live-new-run \
+  -out /tmp/h3-context-ir-go-live-new-run \
   -base-url https://api.deepseek.com \
   -model deepseek-flash \
   -api-key-env DEEPSEEK_API_KEY \

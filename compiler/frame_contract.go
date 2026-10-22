@@ -1,6 +1,6 @@
 package compiler
 
-import "github.com/ly95/contextir"
+import "github.com/ly95/h3-context-ir-go"
 
 type FramePreservation struct {
 	AssetID             string         `json:"asset_id"`
