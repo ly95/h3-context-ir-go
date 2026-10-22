@@ -214,7 +214,7 @@ func TestGoConformancePinnedShots(t *testing.T) {
 	if err := contextir.Validate(wrong); err != nil {
 		t.Fatal("negative artifact must be structurally valid before the pin check", err)
 	}
-	findings, err := floorCompiler.assess(floor.Brief, floor.Structure, floor.Scope, wrong)
+	_, findings, err := floorCompiler.assess(floor.Brief, floor.Structure, floor.Scope, wrong)
 	found := false
 	for _, f := range findings {
 		found = found || f.Rule == "T11-shot-count-pinned" && f.Severity == "ERROR"
@@ -278,7 +278,7 @@ func TestGoConformanceRetention(t *testing.T) {
 			if result.Document.Mode != tc.mode || result.Document.Style != licence.Style.Phrase || result.Artifact.Prompt == "" || len(result.Artifact.Manifest.Media) != 1 {
 				t.Fatal("the transformed native artifact was not actually produced")
 			}
-			if _, err := c.assess(result.Brief, result.Structure, result.Scope, result.Document, &licence); err != nil {
+			if _, _, err := c.assess(result.Brief, result.Structure, result.Scope, result.Document, &licence); err != nil {
 				t.Fatal("actual transformed output failed its native licence/retention gates", err)
 			}
 			if tc.role == RoleSubject {
@@ -316,7 +316,7 @@ func TestGoConformanceRetention(t *testing.T) {
 				t.Fatal(err)
 			}
 			wrong.References[0].Retention = contextir.AttributeTransfer
-			findings, err := c.assess(result.Brief, result.Structure, result.Scope, wrong, &licence)
+			_, findings, err := c.assess(result.Brief, result.Structure, result.Scope, wrong, &licence)
 			rejected := false
 			for _, f := range findings {
 				rejected = rejected || f.Rule == "R7-picture-transfer" && f.Severity == "ERROR"
@@ -390,7 +390,7 @@ func TestGoConformanceRetention(t *testing.T) {
 		if len(anchors) != 0 || strings.Contains(result.Artifact.Prompt, "attribute_transfer") {
 			t.Fatal("a frame was dropped or restyling became transfer in the actual prompt")
 		}
-		if _, err := c.assess(result.Brief, result.Structure, result.Scope, result.Document, &licence); err != nil {
+		if _, _, err := c.assess(result.Brief, result.Structure, result.Scope, result.Document, &licence); err != nil {
 			t.Fatal("the real transformation licence contradicts the dual-frame artifact", err)
 		}
 		preserve := brief
@@ -409,7 +409,7 @@ func TestGoConformanceRetention(t *testing.T) {
 					t.Fatal(err)
 				}
 				wrong.References[index].Retention = marker
-				if _, err := c.assess(result.Brief, result.Structure, result.Scope, wrong, &licence); err == nil {
+				if _, _, err := c.assess(result.Brief, result.Structure, result.Scope, wrong, &licence); err == nil {
 					t.Fatal("an actual conditioning frame accepted a changed-pixel retention marker", index, marker)
 				}
 			}

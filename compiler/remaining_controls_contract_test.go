@@ -340,7 +340,7 @@ func TestRemainingControlsCreativity(t *testing.T) {
 			r := remainingDraft(t, level, &one)
 			r.Document.Shots[0].Events = []contextir.Event{{Kind: contextir.EventCamera, Description: contextir.Text("The camera pushes in with small amplitude at slow speed.")}}
 			c, _ := New(nil, nil, Options{Profile: h3.ComfyUIProfile(), FramePolicy: FramePolicySnapUp})
-			findings, err := c.assess(r.Brief, r.Structure, r.Scope, r.Document)
+			_, findings, err := c.assess(r.Brief, r.Structure, r.Scope, r.Document)
 			commits := false
 			for _, f := range findings {
 				commits = commits || f.Rule == "Q3-extreme-not-honoured" && f.Severity == "ERROR"

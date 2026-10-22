@@ -8,7 +8,9 @@ import (
 	"flag"
 	"io"
 	"math"
+	"net"
 	"net/http"
+	"net/url"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -20,11 +22,12 @@ import (
 	"github.com/ly95/h3-context-ir-go/compiler"
 	"github.com/ly95/h3-context-ir-go/lora"
 	"github.com/ly95/h3-context-ir-go/media"
-	"github.com/ly95/h3-context-ir-go/openai"
 	"github.com/ly95/h3-context-ir-go/perception"
 	"github.com/ly95/h3-context-ir-go/planner"
 	"github.com/ly95/h3-context-ir-go/service"
 	"github.com/ly95/h3-context-ir-go/uploads"
+	sdk "github.com/openai/openai-go/v3"
+	"github.com/openai/openai-go/v3/option"
 )
 
 type pathsFlag []string
@@ -51,7 +54,7 @@ func registerProviderFlags(fs *flag.FlagSet, f *briefFlags) {
 	fs.StringVar(&f.model, "model", "", "Explicit provider model ID")
 	fs.StringVar(&f.keyEnv, "key-env", "", "Name of the one environment variable to read for the API key")
 	fs.StringVar(&f.reasoning, "reasoning-effort", "", "OpenAI-compatible reasoning effort (omitted means do not send); chatcompat none|thinking")
-	fs.StringVar(&f.api, "api", string(openai.Responses), "OpenAI-compatible API: responses or chat_completions")
+	fs.StringVar(&f.api, "api", string(chatcompat.Responses), "OpenAI-compatible API: responses or chat_completions")
 	fs.BoolVar(&f.imageInputs, "image-inputs", false, "Declare that the explicitly chosen model supports image inputs")
 	fs.StringVar(&f.structured, "structured-mode", chatcompat.PromptSchema, "Chat schema protocol: prompt or json_schema")
 	fs.IntVar(&f.tokens, "max-output-tokens", 8192, "Hard output-token ceiling for each provider call")
@@ -80,10 +83,8 @@ func (p *providers) make(effort string) (compiler.Model, perception.ImageModel, 
 	}
 	switch p.flags.provider {
 	case "openai":
-		c, e := openai.New(openai.Config{API: openai.API(p.flags.api), SupportsImages: p.flags.imageInputs, BaseURL: p.flags.base, APIKey: p.key, Model: p.flags.model, MaxOutputTokens: p.flags.tokens, ReasoningEffort: reason, Timeout: p.flags.timeout, MaxResponseBytes: 8 << 20, HTTPClient: p.http})
-		if e == nil {
-			p.cleanups = append(p.cleanups, c.Close)
-		}
+		client := sdk.Client{Options: []option.RequestOption{option.WithBaseURL(p.flags.base), option.WithAPIKey(p.key), option.WithHTTPClient(p.http)}}
+		c, e := chatcompat.NewModel(client, chatcompat.ModelOptions{API: chatcompat.API(p.flags.api), SupportsImages: p.flags.imageInputs, Model: p.flags.model, MaxOutputTokens: p.flags.tokens, ReasoningEffort: reason, MaxResponseBytes: 8 << 20})
 		if !p.flags.imageInputs {
 			return c, nil, e
 		}
@@ -178,7 +179,18 @@ func runBrief(command string, args []string, in io.Reader, out, errOut io.Writer
 	if f.provider == "openai" && insecureSelected {
 		return messageError(errOut, "invalid-configuration", "-allow-insecure-http configures only the chatcompat adapter; openai requires HTTPS or loopback HTTP")
 	}
-	if f.api != string(openai.Responses) && f.api != string(openai.ChatCompletions) {
+	if f.provider == "openai" {
+		endpoint, err := url.Parse(f.base)
+		secure := err == nil && endpoint.Scheme == "https"
+		if err == nil && endpoint.Scheme == "http" {
+			address := net.ParseIP(endpoint.Hostname())
+			secure = strings.EqualFold(endpoint.Hostname(), "localhost") || address != nil && address.IsLoopback()
+		}
+		if err != nil || endpoint.Host == "" || endpoint.User != nil || endpoint.RawQuery != "" || endpoint.Fragment != "" || endpoint.Opaque != "" || !secure {
+			return messageError(errOut, "invalid-configuration", "Provide an HTTPS API root or a loopback HTTP API root without credentials, query or fragment")
+		}
+	}
+	if f.api != string(chatcompat.Responses) && f.api != string(chatcompat.ChatCompletions) {
 		return messageError(errOut, "invalid-api", "Choose responses or chat_completions")
 	}
 	payload, e := readInput(*input, in, maxCLIInputBytes)
@@ -326,7 +338,7 @@ func runBrief(command string, args []string, in io.Reader, out, errOut io.Writer
 			}
 		}
 		transport := &http.Transport{ForceAttemptHTTP2: true, TLSHandshakeTimeout: 10 * time.Second, IdleConnTimeout: 90 * time.Second}
-		provider = &providers{flags: f, key: key, http: &http.Client{Transport: transport, Timeout: f.timeout}}
+		provider = &providers{flags: f, key: key, http: &http.Client{Transport: transport, Timeout: f.timeout, CheckRedirect: func(*http.Request, []*http.Request) error { return http.ErrUseLastResponse }}}
 		defer provider.close()
 		var imageModel perception.ImageModel
 		model, imageModel, e = provider.make("standard")

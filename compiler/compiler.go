@@ -308,7 +308,6 @@ func (c *Compiler) compile(ctx context.Context, brief Brief) (Result, error) {
 		return r, err
 	}
 	b, st, scope, request, director, evidence := r.Brief, r.Structure, r.Scope, r.Request, r.Director, r.Evidence
-	loraFindings := r.Findings
 	r.Status = "failed"
 
 	identities, identityErr := canonicalSubjects(b, st, request, r.Licence)
@@ -334,6 +333,7 @@ func (c *Compiler) compile(ctx context.Context, brief Brief) (Result, error) {
 	plannerOptions := c.options.Planner
 	parentValidator := plannerOptions.ValidateDocument
 	assessmentFindings := r.Findings
+	var acceptedArtifact h3.Artifact
 	plannerOptions.ValidateDocument = func(locked contextir.Request, doc contextir.Document) error {
 		if parentValidator != nil {
 			if err := parentValidator(locked, doc); err != nil {
@@ -356,7 +356,7 @@ func (c *Compiler) compile(ctx context.Context, brief Brief) (Result, error) {
 		if err := RequiredPlacedAppearances(doc); err != nil {
 			return err
 		}
-		findings, err := c.assess(b, st, scope, doc, r.Licence)
+		artifact, findings, err := c.assess(b, st, scope, doc, r.Licence)
 		assessmentFindings = append(append(r.Findings[:0:0], r.Findings...), findings...)
 		if err != nil {
 			return err
@@ -376,6 +376,7 @@ func (c *Compiler) compile(ctx context.Context, brief Brief) (Result, error) {
 			}
 			return reviewErr
 		}
+		acceptedArtifact = artifact
 		return nil
 	}
 	p, err := planner.New(cm, nil, plannerOptions)
@@ -389,16 +390,7 @@ func (c *Compiler) compile(ctx context.Context, brief Brief) (Result, error) {
 		return r, err
 	}
 	r.Document = plan.Document
-	r.Artifact, err = h3.Compile(plan.Document, c.options.Profile)
-	if err != nil {
-		return r, err
-	}
-	finalFindings, assessmentErr := c.assess(b, st, scope, plan.Document)
-	r.Findings = append(append(loraFindings[:0:0], loraFindings...), finalFindings...)
-	err = assessmentErr
-	if err != nil {
-		return r, err
-	}
+	r.Artifact = acceptedArtifact
 	r.Budget, err = estimateBudget(r.Artifact, b)
 	if err != nil {
 		return r, err

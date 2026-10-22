@@ -13,15 +13,21 @@ import (
 	"image"
 	"image/color"
 	"image/png"
+	"net"
+	"net/http"
+	"net/url"
 	"os"
 	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/ly95/h3-context-ir-go"
+	"github.com/ly95/h3-context-ir-go/chatcompat"
 	"github.com/ly95/h3-context-ir-go/h3"
-	"github.com/ly95/h3-context-ir-go/openai"
 	"github.com/ly95/h3-context-ir-go/perception"
 	"github.com/ly95/h3-context-ir-go/planner"
+	sdk "github.com/openai/openai-go/v3"
+	"github.com/openai/openai-go/v3/option"
 )
 
 type callRecord struct {
@@ -56,7 +62,7 @@ type report struct {
 }
 
 type recordedModel struct {
-	client  *openai.Client
+	client  *chatcompat.Model
 	calls   *[]callRecord
 	dir     string
 	attempt int
@@ -105,7 +111,7 @@ func run() error {
 	output := flag.String("out", "", "New output directory for synthetic requests, documents, prompts, and report")
 	keyEnv := flag.String("api-key-env", "", "Explicit environment variable containing the API key; omit for an unauthenticated endpoint")
 	maxRetries := flag.Int("max-retries", 0, "Explicit extra planner calls per case on invalid model output, from 0 to 3")
-	api := flag.String("api", string(openai.Responses), "OpenAI-compatible API: responses or chat_completions")
+	api := flag.String("api", string(chatcompat.Responses), "OpenAI-compatible API: responses or chat_completions")
 	reasoning := flag.String("reasoning-effort", "", "Optional reasoning effort; omitted means do not send")
 	flag.Parse()
 	if flag.NArg() != 0 || *baseURL == "" || *model == "" || *output == "" {
@@ -122,11 +128,21 @@ func run() error {
 			return errors.New("the explicitly named key environment variable is unset or empty")
 		}
 	}
-	client, err := openai.New(openai.Config{API: openai.API(*api), SupportsImages: true, BaseURL: *baseURL, APIKey: key, Model: *model, MaxOutputTokens: 8192, ReasoningEffort: *reasoning, Timeout: 90 * time.Second})
+	endpoint, endpointErr := url.Parse(*baseURL)
+	secure := endpointErr == nil && endpoint.Scheme == "https"
+	if endpointErr == nil && endpoint.Scheme == "http" {
+		address := net.ParseIP(endpoint.Hostname())
+		secure = strings.EqualFold(endpoint.Hostname(), "localhost") || address != nil && address.IsLoopback()
+	}
+	if endpointErr != nil || endpoint.Host == "" || endpoint.User != nil || endpoint.RawQuery != "" || endpoint.Fragment != "" || endpoint.Opaque != "" || !secure {
+		return errors.New("provide an HTTPS API root or a loopback HTTP API root without credentials, query or fragment")
+	}
+	httpClient := &http.Client{Transport: &http.Transport{ForceAttemptHTTP2: true, TLSHandshakeTimeout: 10 * time.Second, IdleConnTimeout: 90 * time.Second}, Timeout: 90 * time.Second, CheckRedirect: func(*http.Request, []*http.Request) error { return http.ErrUseLastResponse }}
+	defer httpClient.CloseIdleConnections()
+	client, err := chatcompat.NewModel(sdk.Client{Options: []option.RequestOption{option.WithBaseURL(*baseURL), option.WithAPIKey(key), option.WithHTTPClient(httpClient)}}, chatcompat.ModelOptions{API: chatcompat.API(*api), SupportsImages: true, Model: *model, MaxOutputTokens: 8192, ReasoningEffort: *reasoning})
 	if err != nil {
 		return err
 	}
-	defer client.Close()
 	if err := os.Mkdir(*output, 0700); err != nil {
 		return errors.New("create a new evaluation output directory: destination must not already exist")
 	}

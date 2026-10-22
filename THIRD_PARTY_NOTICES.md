@@ -62,7 +62,7 @@ caller-provided media remain subject to their own applicable terms.
 
 ## External tools and services
 
-The optional `openai` and `chatcompat` adapters depend on the official
+The optional `chatcompat` model conversion and local-service tools depend on the official
 [OpenAI Go SDK v3.73.0](https://github.com/openai/openai-go/tree/v3.73.0),
 distributed under [Apache-2.0](https://github.com/openai/openai-go/blob/v3.73.0/LICENSE).
 Its source is resolved through Go modules, with versions and integrity checksums

@@ -1,10 +1,11 @@
-package openai_test
+package chatcompat_test
 
 import (
 	"context"
 	"encoding/json"
 	"errors"
 	"io"
+	"math"
 	"net/http"
 	"net/http/httptest"
 	"reflect"
@@ -14,14 +15,15 @@ import (
 	"time"
 
 	"github.com/ly95/h3-context-ir-go"
-	"github.com/ly95/h3-context-ir-go/openai"
+	"github.com/ly95/h3-context-ir-go/chatcompat"
 	"github.com/ly95/h3-context-ir-go/planner"
+	sdk "github.com/openai/openai-go/v3"
 )
 
-var _ planner.Model = (*openai.Client)(nil)
+var _ planner.Model = (*chatcompat.Model)(nil)
 
-func wireConfig(baseURL string) openai.Config {
-	return openai.Config{API: openai.Responses, SupportsImages: true, BaseURL: baseURL, APIKey: "test-key", Model: "fixture-vision-model", MaxOutputTokens: 8192, ReasoningEffort: "none"}
+func wireConfig(baseURL string) modelFixture {
+	return modelFixture{ModelOptions: chatcompat.ModelOptions{API: chatcompat.Responses, SupportsImages: true, Model: "fixture-vision-model", MaxOutputTokens: 8192, ReasoningEffort: "none"}, BaseURL: baseURL, APIKey: "test-key"}
 }
 
 func wireRequest() contextir.ModelRequest {
@@ -37,9 +39,9 @@ func wireResponse(text string) map[string]any {
 	}
 }
 
-func mustWireClient(t *testing.T, config openai.Config) *openai.Client {
+func mustWireClient(t *testing.T, config modelFixture) *chatcompat.Model {
 	t.Helper()
-	client, err := openai.New(config)
+	client, err := chatcompat.NewModel(fixtureSDK(t, config), config.ModelOptions)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -96,7 +98,7 @@ func TestGenerateSendsCompleteResponsesContract(t *testing.T) {
 }
 
 func TestGenerateWithImagesUsesUserInputImageParts(t *testing.T) {
-	images := []openai.Image{{URI: "data:image/png;base64,AQID", Detail: "original"}, {URI: "https://example.com/image.png?signature=private", Detail: "high"}}
+	images := []chatcompat.Image{{URI: "data:image/png;base64,AQID", Detail: "original"}, {URI: "https://example.com/image.png?signature=private", Detail: "high"}}
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		var body struct {
 			Input []struct {
@@ -189,7 +191,7 @@ func TestFailuresRetainUsageAndNeverRetry(t *testing.T) {
 				t.Fatal("error exposes private data")
 			}
 			if tc.status != 200 {
-				var status *openai.HTTPError
+				var status *chatcompat.HTTPError
 				if !errors.As(err, &status) || status.StatusCode != tc.status {
 					t.Fatal("HTTP status must remain inspectable")
 				}
@@ -283,7 +285,7 @@ func TestMalformedResponsesOutputPreservesConfirmedUsage(t *testing.T) {
 		}))
 		client := mustWireClient(t, wireConfig(server.URL))
 		got, err := client.Generate(context.Background(), wireRequest())
-		client.Close()
+
 		server.Close()
 		if !contextir.HasCode(err, contextir.CodeModelOutput) || len(got.JSON) != 0 || got.UsageInvalid || got.Model != "fixture-vision-model" || got.Usage != (contextir.Usage{InputTokens: 31, OutputTokens: 17}) {
 			t.Fatalf("malformed output discarded independent accounting: %v, %#v", err, got)
@@ -341,7 +343,7 @@ func TestResponseLimitRejectsWithoutTruncating(t *testing.T) {
 	}
 }
 
-func TestRedirectsDoNotForwardAuthorization(t *testing.T) {
+func TestCallerRedirectPolicyDoesNotForwardAuthorization(t *testing.T) {
 	var redirected atomic.Int32
 	destination := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		redirected.Add(1)
@@ -352,15 +354,19 @@ func TestRedirectsDoNotForwardAuthorization(t *testing.T) {
 		http.Redirect(w, r, destination.URL, http.StatusTemporaryRedirect)
 	}))
 	defer origin.Close()
-	callerClient := &http.Client{CheckRedirect: func(*http.Request, []*http.Request) error { return nil }}
+	var checked atomic.Int32
+	callerClient := &http.Client{CheckRedirect: func(*http.Request, []*http.Request) error {
+		checked.Add(1)
+		return http.ErrUseLastResponse
+	}}
 	config := wireConfig(origin.URL)
 	config.HTTPClient = callerClient
 	_, err := mustWireClient(t, config).Generate(context.Background(), wireRequest())
-	var status *openai.HTTPError
+	var status *chatcompat.HTTPError
 	if !errors.As(err, &status) || status.StatusCode != 307 || redirected.Load() != 0 {
 		t.Fatalf("redirect must fail without credential forwarding: %v", err)
 	}
-	if callerClient.CheckRedirect == nil {
+	if callerClient.CheckRedirect == nil || checked.Load() != 1 {
 		t.Fatal("caller HTTP client must not be modified")
 	}
 }
@@ -396,7 +402,7 @@ func TestCancellationAndTimeoutPropagate(t *testing.T) {
 		t.Fatalf("active cancellation must propagate: %v", err)
 	}
 	config := wireConfig(server.URL)
-	config.Timeout = 20 * time.Millisecond
+	config.HTTPClient = &http.Client{Timeout: 20 * time.Millisecond}
 	_, err = mustWireClient(t, config).Generate(context.Background(), wireRequest())
 	if !errors.Is(err, context.DeadlineExceeded) || !contextir.HasCode(err, contextir.CodeCanceled) {
 		t.Fatalf("timeout must be explicit: %v", err)
@@ -404,27 +410,37 @@ func TestCancellationAndTimeoutPropagate(t *testing.T) {
 }
 
 func TestSetupAndInputsFailBeforeHTTP(t *testing.T) {
-	for _, mutate := range []func(*openai.Config){
-		func(c *openai.Config) { c.BaseURL = "http://example.com" },
-		func(c *openai.Config) { c.BaseURL = "https://user:secret@example.com" },
-		func(c *openai.Config) { c.BaseURL = "https://example.com?api_key=private" },
-		func(c *openai.Config) { c.APIKey = "bad\nkey" },
-		func(c *openai.Config) { c.Model = "" },
-		func(c *openai.Config) { c.MaxOutputTokens = 0 },
-		func(c *openai.Config) { c.Timeout = -1 },
+	// Endpoint, credential and timeout validation belongs to the caller's SDK
+	// setup. NewModel validates the generation contract before making any call.
+	for name, mutate := range map[string]func(*chatcompat.ModelOptions){
+		"missing API":             func(o *chatcompat.ModelOptions) { o.API = "" },
+		"unsupported API":         func(o *chatcompat.ModelOptions) { o.API = "other" },
+		"missing model":           func(o *chatcompat.ModelOptions) { o.Model = "" },
+		"invalid model":           func(o *chatcompat.ModelOptions) { o.Model = " model " },
+		"invalid alias":           func(o *chatcompat.ModelOptions) { o.AllowedResponseModels = []string{""} },
+		"invalid reasoning":       func(o *chatcompat.ModelOptions) { o.ReasoningEffort = "bad\nvalue" },
+		"missing output limit":    func(o *chatcompat.ModelOptions) { o.MaxOutputTokens = 0 },
+		"negative response limit": func(o *chatcompat.ModelOptions) { o.MaxResponseBytes = -1 },
+		"overflow response limit": func(o *chatcompat.ModelOptions) { o.MaxResponseBytes = math.MaxInt64 },
+		"negative request limit":  func(o *chatcompat.ModelOptions) { o.MaxRequestBytes = -1 },
+		"overflow request limit":  func(o *chatcompat.ModelOptions) { o.MaxRequestBytes = math.MaxInt64 },
+		"negative image limit":    func(o *chatcompat.ModelOptions) { o.MaxImageBytes = -1 },
+		"overflow image limit":    func(o *chatcompat.ModelOptions) { o.MaxImageBytes = math.MaxInt64 },
 	} {
-		config := wireConfig("https://api.openai.com")
-		mutate(&config)
-		if _, err := openai.New(config); err == nil {
-			t.Fatal("invalid explicit config must fail")
-		}
+		t.Run(name, func(t *testing.T) {
+			options := wireConfig("https://fixture.invalid").ModelOptions
+			mutate(&options)
+			if _, err := chatcompat.NewModel(sdk.Client{}, options); err == nil {
+				t.Fatal("invalid generation options must fail")
+			}
+		})
 	}
 	var calls atomic.Int32
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) { calls.Add(1) }))
 	defer server.Close()
 	client := mustWireClient(t, wireConfig(server.URL))
-	for _, image := range []openai.Image{{URI: ""}, {URI: "file:///private/image.png"}, {URI: "http://example.com/image.png"}, {URI: "data:image/png;base64,!!!"}, {URI: "data:image/svg+xml;base64,AQID"}, {URI: "https://example.com/image.png", Detail: "unsupported"}} {
-		if _, err := client.GenerateWithImages(context.Background(), wireRequest(), []openai.Image{image}); err == nil {
+	for _, image := range []chatcompat.Image{{URI: ""}, {URI: "file:///private/image.png"}, {URI: "http://example.com/image.png"}, {URI: "data:image/png;base64,!!!"}, {URI: "data:image/svg+xml;base64,AQID"}, {URI: "https://example.com/image.png", Detail: "unsupported"}} {
+		if _, err := client.GenerateWithImages(context.Background(), wireRequest(), []chatcompat.Image{image}); err == nil {
 			t.Fatal("invalid image must fail")
 		}
 	}
@@ -440,7 +456,7 @@ func TestSetupAndInputsFailBeforeHTTP(t *testing.T) {
 	}
 	config := wireConfig(server.URL)
 	config.SupportsImages = false
-	if _, err := mustWireClient(t, config).GenerateWithImages(context.Background(), wireRequest(), []openai.Image{{URI: "https://example.com/image.png"}}); !contextir.HasCode(err, contextir.CodeUnsupported) {
+	if _, err := mustWireClient(t, config).GenerateWithImages(context.Background(), wireRequest(), []chatcompat.Image{{URI: "https://example.com/image.png"}}); !contextir.HasCode(err, contextir.CodeUnsupported) {
 		t.Fatal("unsupported image model must fail")
 	}
 	if calls.Load() != 0 {

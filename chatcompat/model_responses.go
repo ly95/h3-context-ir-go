@@ -1,4 +1,4 @@
-package openai
+package chatcompat
 
 import (
 	"context"
@@ -8,13 +8,12 @@ import (
 
 	"github.com/ly95/h3-context-ir-go"
 	sdk "github.com/openai/openai-go/v3"
-	"github.com/openai/openai-go/v3/option"
 	"github.com/openai/openai-go/v3/packages/param"
 	"github.com/openai/openai-go/v3/responses"
 	"github.com/openai/openai-go/v3/shared"
 )
 
-func (c *Client) generateResponses(ctx context.Context, request contextir.ModelRequest, images []Image) (contextir.ModelResponse, error) {
+func (c *Model) generateResponses(ctx context.Context, request contextir.ModelRequest, images []Image) (contextir.ModelResponse, error) {
 	// The SDK's map encoder treats json.Number as a string. Preserve the supplied
 	// schema as raw JSON through its supported parameter override, so integer
 	// constraints and arbitrary definitions cannot be rounded or retyped.
@@ -23,23 +22,23 @@ func (c *Client) generateResponses(ctx context.Context, request contextir.ModelR
 		Name   string          `json:"name"`
 		Schema json.RawMessage `json:"schema"`
 		Strict bool            `json:"strict"`
-	}{Type: "json_schema", Name: "contextir_document", Schema: request.ResponseSchema, Strict: c.strictSchema})
+	}{Type: "json_schema", Name: "contextir_document", Schema: request.ResponseSchema, Strict: c.options.StrictSchema})
 	if err != nil {
 		return emptyResponse(), failure(contextir.CodeInvalid, "request", "schema", "The complete response schema could not be encoded.", nil)
 	}
 	format := param.Override[responses.ResponseFormatTextJSONSchemaConfigParam](json.RawMessage(formatBytes))
 	params := responses.ResponseNewParams{
-		Model:           shared.ResponsesModel(c.model),
+		Model:           shared.ResponsesModel(c.options.Model),
 		Instructions:    sdk.String(request.System),
 		Input:           responses.ResponseNewParamsInputUnion{OfString: sdk.String(string(request.Input))},
-		MaxOutputTokens: sdk.Int(int64(c.maxOutputTokens)),
+		MaxOutputTokens: sdk.Int(int64(c.options.MaxOutputTokens)),
 		Store:           sdk.Bool(false),
 		Text: responses.ResponseTextConfigParam{Format: responses.ResponseFormatTextConfigUnionParam{
 			OfJSONSchema: &format,
 		}},
 	}
-	if c.reasoningEffort != "" {
-		params.Reasoning = shared.ReasoningParam{Effort: shared.ReasoningEffort(c.reasoningEffort)}
+	if c.options.ReasoningEffort != "" {
+		params.Reasoning = shared.ReasoningParam{Effort: shared.ReasoningEffort(c.options.ReasoningEffort)}
 	}
 	if len(images) != 0 {
 		content := responses.ResponseInputMessageContentListParam{
@@ -54,17 +53,14 @@ func (c *Client) generateResponses(ctx context.Context, request contextir.ModelR
 			{OfMessage: &responses.EasyInputMessageParam{Type: "message", Role: "user", Content: responses.EasyInputMessageContentUnionParam{OfInputItemContentList: content}}},
 		}}
 	}
-	data, status, err := c.execute(ctx, params, func(opts ...option.RequestOption) error {
-		_, err := c.responses.New(ctx, params, opts...)
-		return err
-	})
+	data, status, err := c.execute(ctx, "responses", params)
 	if err != nil {
 		return c.responseMetadata(data), err
 	}
 	return c.parseResponses(data, status)
 }
 
-func (c *Client) parseResponses(data []byte, status int) (contextir.ModelResponse, error) {
+func (c *Model) parseResponses(data []byte, status int) (contextir.ModelResponse, error) {
 	wire, result := c.responseEnvelopeMetadata(data)
 	if status < 200 || status >= 300 {
 		return result, failure(contextir.CodeModel, "http", "status", "The model endpoint returned an unsuccessful HTTP status.", &HTTPError{StatusCode: status})
@@ -72,13 +68,13 @@ func (c *Client) parseResponses(data []byte, status int) (contextir.ModelRespons
 	if wire.Status != "completed" || present(wire.Error) || present(wire.IncompleteDetails) {
 		return result, failure(contextir.CodeModelOutput, "response", "status", "The model response did not complete successfully.", nil)
 	}
-	if !c.models[result.Model] {
+	if !c.acceptsModel(result.Model) {
 		return result, failure(contextir.CodeModelOutput, "response", "model", "The response model must match the explicitly selected model.", nil)
 	}
 	if result.Usage.InputTokens < 0 || result.Usage.OutputTokens < 0 {
 		return result, failure(contextir.CodeModelOutput, "response", "usage", "Both nonnegative input and output token counts are required.", nil)
 	}
-	if result.Usage.OutputTokens > int64(c.maxOutputTokens) {
+	if result.Usage.OutputTokens > int64(c.options.MaxOutputTokens) {
 		return result, failure(contextir.CodeModelOutput, "response", "usage", "Reported output tokens exceed the requested hard limit.", nil)
 	}
 	var items []outputItem

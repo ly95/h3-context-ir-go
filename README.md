@@ -77,20 +77,32 @@ func Compile(ctx context.Context, model planner.Model) (compiler.Result, error) 
 
 成功结果的 `Document` 是持久化和编辑入口，`Artifact` 包含最终 prompt 与 manifest。调用方必须检查错误和 `Status`：`needs_input` 表示需要展示结构化澄清问题，尚未发布产物。无论成功或失败，均应保留返回的 `Calls`，其中包含已经发生的模型与感知用量。
 
-可选 [openai](openai/README.md) 适配器通过官方 OpenAI Go SDK 调用 Responses 或 Chat Completions 协议，支持调用方显式配置的兼容服务；[chatcompat](chatcompat/README.md) 保留本地 Chat Completions 服务的发现与结构化输出选项，同样使用该 SDK。端点、模型、凭据、输出上限、协议和图片能力由调用方提供，库不读取环境变量、推断模型能力、切换协议或自行寻找凭据。通用图片观察合同位于 [perception](perception/README.md)。完整高层 API 见 [compiler](compiler/README.md)。
+可选 [chatcompat](chatcompat/README.md) 只负责把 Context-IR 的模型合同转换为官方 OpenAI Go SDK 请求，并检查返回内容、模型身份与用量。调用方直接配置 SDK 的连接选项和 HTTP 客户端；库不再定义另一套 OpenAI 客户端配置。通用图片观察合同位于 [perception](perception/README.md)，完整高层 API 见 [compiler](compiler/README.md)。
 
 ```go
-model, err := openai.New(openai.Config{
-    BaseURL: "https://your-compatible-service.example/v1",
-    APIKey: apiKey,
-    API: openai.Responses, // 或 openai.ChatCompletions，按端点能力显式选择
+// sdk 是 github.com/openai/openai-go/v3；option 是该 SDK 的 option 包。
+httpClient := &http.Client{
+    Transport: &http.Transport{}, // 不读取环境代理
+    Timeout: 2 * time.Minute,
+    CheckRedirect: func(*http.Request, []*http.Request) error {
+        return http.ErrUseLastResponse
+    },
+}
+defer httpClient.CloseIdleConnections()
+client := sdk.Client{Options: []option.RequestOption{
+    option.WithBaseURL("https://your-compatible-service.example/v1"),
+    option.WithAPIKey(apiKey),
+    option.WithHTTPClient(httpClient),
+}}
+model, err := chatcompat.NewModel(client, chatcompat.ModelOptions{
+    API: chatcompat.Responses, // 或 chatcompat.ChatCompletions
     Model: modelID,
     MaxOutputTokens: 8192,
-    SupportsImages: true, // 仅在调用方已确认该模型支持图片时声明
+    SupportsImages: true, // 调用方已确认模型支持图片时声明
 })
 ```
 
-此示例导入 `github.com/ly95/h3-context-ir-go/openai`；检查 `err` 后把 `model` 注入编译器。省略 `ReasoningEffort` 表示不发送该参数；省略 `APIKey` 用于无认证端点，SDK 的环境变量默认值不会启用。原 `deepseek` 适配包由通用 `openai` 包替代；原图片与观察类型迁至 `perception`，业务合同与已保存文档保持原版本。
+示例还需导入 `net/http`、`time` 与 `github.com/ly95/h3-context-ir-go/chatcompat`。检查 `err` 后把 `model` 注入编译器。这里直接提供 SDK `Options`，避免 `sdk.NewClient` 默认读取环境配置；空 `apiKey` 用于无认证端点。端点信任、传输、超时和连接回收由调用方负责，适配代码只管理业务协议、内容上限、图片能力和输出合同。省略 `ReasoningEffort` 表示不发送该参数。`chatcompat.New` 仍保留上游本地服务的发现、探测与 thinking 控制；普通生成使用 `NewModel`。原图片与观察类型位于 `perception`，业务合同与已保存文档保持原版本。
 
 ## 能力
 
@@ -112,7 +124,7 @@ model, err := openai.New(openai.Config{
 | [h3](h3/README.md)、[h3check](h3check/README.md) | H3 渲染、manifest、执行 profile 与最终文本检查 |
 | [plan](plan/README.md)、[budget](budget/README.md)、[tokens](tokens/README.md) | 确定性结构、帧与画布预算、离线精确 BPE 计数 |
 | [media](media/README.md) | 本地媒体检查、ffprobe/ffmpeg、视频抽帧、可选缓存与 ASR 接口 |
-| [openai](openai/README.md)、[chatcompat](chatcompat/README.md) | 使用官方 OpenAI Go SDK、显式配置协议与能力的模型适配器 |
+| [chatcompat](chatcompat/README.md) | 官方 SDK 与业务模型合同之间的转换，以及上游本地服务探测工具 |
 | [perception](perception/README.md) | 与模型服务无关的图片输入、观察合同与感知器 |
 | [evaluate](evaluate/README.md) | 离线评分、基线与回归比较 |
 | [service](service/README.md)、`uploads` | 可选 HTTP handler、记录接口与内容寻址上传存储 |

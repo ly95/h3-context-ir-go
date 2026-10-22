@@ -13,8 +13,8 @@ import (
 	"net/url"
 	"strings"
 	"time"
-	"unicode/utf8"
 
+	"github.com/ly95/h3-context-ir-go/internal/strictjson"
 	openaisdk "github.com/openai/openai-go/v3"
 	"github.com/openai/openai-go/v3/option"
 )
@@ -189,12 +189,7 @@ func (b *boundedResponseBody) Read(p []byte) (int, error) {
 	return n, err
 }
 func object(b []byte) (map[string]any, error) {
-	if !utf8.Valid(b) {
-		return nil, errors.New("response JSON must be valid UTF-8")
-	}
-	check := json.NewDecoder(bytes.NewReader(b))
-	check.UseNumber()
-	if e := checkUniqueJSON(check, 0); e != nil {
+	if e := strictjson.Check(b, 512); e != nil {
 		return nil, e
 	}
 	d := json.NewDecoder(bytes.NewReader(b))
@@ -211,50 +206,6 @@ func object(b []byte) (map[string]any, error) {
 		return nil, errors.New("response must contain one JSON object")
 	}
 	return m, nil
-}
-func checkUniqueJSON(d *json.Decoder, depth int) error {
-	if depth > 512 {
-		return errors.New("JSON nesting exceeds 512 levels")
-	}
-	t, e := d.Token()
-	if e != nil {
-		return e
-	}
-	delim, ok := t.(json.Delim)
-	if !ok {
-		return nil
-	}
-	switch delim {
-	case '{':
-		seen := map[string]bool{}
-		for d.More() {
-			key, e := d.Token()
-			if e != nil {
-				return e
-			}
-			s, ok := key.(string)
-			if !ok {
-				return errors.New("JSON object key must be a string")
-			}
-			if seen[s] {
-				return fmt.Errorf("duplicate JSON field %q", s)
-			}
-			seen[s] = true
-			if e = checkUniqueJSON(d, depth+1); e != nil {
-				return e
-			}
-		}
-	case '[':
-		for d.More() {
-			if e := checkUniqueJSON(d, depth+1); e != nil {
-				return e
-			}
-		}
-	default:
-		return errors.New("unexpected JSON closing delimiter")
-	}
-	_, e = d.Token()
-	return e
 }
 func ServerSentence(body string) string {
 	text := body

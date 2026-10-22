@@ -10,16 +10,16 @@ import (
 	"github.com/ly95/h3-context-ir-go/tokens"
 )
 
-func (c *Compiler) assess(b Brief, st Structure, scope Scope, d contextir.Document, licences ...*LicenceDecision) ([]h3check.Finding, error) {
+func (c *Compiler) assess(b Brief, st Structure, scope Scope, d contextir.Document, licences ...*LicenceDecision) (h3.Artifact, []h3check.Finding, error) {
 	if err := verifyTranscriptPerformance(d, st); err != nil {
-		return nil, err
+		return h3.Artifact{}, nil, err
 	}
 	if err := verifyTranscriptLiteralPlacement(d, st.TranscriptUses, st.OnscreenText); err != nil {
-		return nil, err
+		return h3.Artifact{}, nil, err
 	}
 	a, err := h3.Compile(d, c.options.Profile)
 	if err != nil {
-		return nil, err
+		return h3.Artifact{}, nil, err
 	}
 	ctx := h3check.NewContext()
 	ctx.Mode = string(d.Mode)
@@ -67,7 +67,7 @@ func (c *Compiler) assess(b Brief, st Structure, scope Scope, d contextir.Docume
 	}
 	tokenCount, tokenErr := tokens.Count(a.Prompt)
 	if tokenErr != nil {
-		return nil, failure(contextir.CodeInvalid, "tokenize", "prompt", "H3 token counting failed.", tokenErr)
+		return h3.Artifact{}, nil, failure(contextir.CodeInvalid, "tokenize", "prompt", "H3 token counting failed.", tokenErr)
 	}
 	ctx.PromptTokens = &tokenCount
 	ctx.Pictures = &pictures
@@ -147,9 +147,9 @@ func (c *Compiler) assess(b Brief, st Structure, scope Scope, d contextir.Docume
 		}
 	}
 	if len(issues) > 0 {
-		return findings, &contextir.Error{Code: contextir.CodeModelOutput, Stage: "h3.validation", Issues: issues}
+		return h3.Artifact{}, findings, &contextir.Error{Code: contextir.CodeModelOutput, Stage: "h3.validation", Issues: issues}
 	}
-	return findings, nil
+	return a, findings, nil
 }
 
 // assessmentDialogueContract binds the actual rendered parts to the accepted

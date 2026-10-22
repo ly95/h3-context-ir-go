@@ -3,13 +3,13 @@ package contextir
 import (
 	"bytes"
 	"encoding/json"
-	"errors"
 	"io"
 	"math"
 	"reflect"
 	"strconv"
 	"strings"
-	"unicode/utf8"
+
+	"github.com/ly95/h3-context-ir-go/internal/strictjson"
 )
 
 // MaxDocumentBytes is Decode's documented resource limit. Larger documents can
@@ -62,19 +62,11 @@ func decodeStrictJSON[T any](r io.Reader, options DecodeOptions, kind string) (T
 	if int64(len(data)) > options.MaxBytes {
 		return result, &Error{Code: CodeLimit, Stage: "decode", Issues: []Issue{{Code: CodeLimit, Path: "$", Message: kind + " exceeds configured byte limit"}}}
 	}
-	if !utf8.Valid(data) || !validSurrogates(data) {
-		return invalid()
-	}
-	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.UseNumber()
-	if err := scanValue(decoder, 0); err != nil {
-		return invalid()
-	}
-	if _, err := decoder.Token(); err != io.EOF {
+	if err := strictjson.Check(data, 128); err != nil {
 		return invalid()
 	}
 	var shape any
-	decoder = json.NewDecoder(bytes.NewReader(data))
+	decoder := json.NewDecoder(bytes.NewReader(data))
 	decoder.UseNumber()
 	if err := decoder.Decode(&shape); err != nil {
 		return invalid()
@@ -289,130 +281,6 @@ func normalizeIntegers(value any) any {
 	default:
 		return value
 	}
-}
-
-func scanValue(dec *json.Decoder, depth int) error {
-	if depth > 128 {
-		return errors.New("JSON nesting limit")
-	}
-	token, err := dec.Token()
-	if err != nil {
-		return err
-	}
-	delim, ok := token.(json.Delim)
-	if !ok {
-		return nil
-	}
-	switch delim {
-	case '{':
-		keys := map[string]struct{}{}
-		for dec.More() {
-			key, err := dec.Token()
-			if err != nil {
-				return err
-			}
-			name, ok := key.(string)
-			if !ok {
-				return errors.New("object key")
-			}
-			if _, exists := keys[name]; exists {
-				return errors.New("duplicate key")
-			}
-			keys[name] = struct{}{}
-			if err := scanValue(dec, depth+1); err != nil {
-				return err
-			}
-		}
-		end, err := dec.Token()
-		if err != nil {
-			return err
-		}
-		if end != json.Delim('}') {
-			return errors.New("object end")
-		}
-	case '[':
-		for dec.More() {
-			if err := scanValue(dec, depth+1); err != nil {
-				return err
-			}
-		}
-		end, err := dec.Token()
-		if err != nil {
-			return err
-		}
-		if end != json.Delim(']') {
-			return errors.New("array end")
-		}
-	default:
-		return errors.New("unexpected delimiter")
-	}
-	return nil
-}
-
-// encoding/json replaces lone UTF-16 surrogates with U+FFFD. Reject them before
-// decoding so exact dialogue cannot be silently changed at the JSON boundary.
-func validSurrogates(data []byte) bool {
-	inString := false
-	for i := 0; i < len(data); i++ {
-		if data[i] == '"' {
-			inString = !inString
-			continue
-		}
-		if !inString || data[i] != '\\' {
-			continue
-		}
-		i++
-		if i >= len(data) {
-			return false
-		}
-		if data[i] != 'u' {
-			continue
-		}
-		if i+4 >= len(data) {
-			return false
-		}
-		v, ok := hex4(data[i+1 : i+5])
-		if !ok {
-			return false
-		}
-		i += 4
-		if v >= 0xdc00 && v <= 0xdfff {
-			return false
-		}
-		if v < 0xd800 || v > 0xdbff {
-			continue
-		}
-		if i+6 >= len(data) || data[i+1] != '\\' || data[i+2] != 'u' {
-			return false
-		}
-		low, ok := hex4(data[i+3 : i+7])
-		if !ok || low < 0xdc00 || low > 0xdfff {
-			return false
-		}
-		i += 6
-	}
-	return true
-}
-
-func hex4(data []byte) (uint16, bool) {
-	if len(data) != 4 {
-		return 0, false
-	}
-	var v uint16
-	for _, b := range data {
-		v <<= 4
-		switch {
-		case b >= '0' && b <= '9':
-			v += uint16(b - '0')
-		case b >= 'a' && b <= 'f':
-			v += uint16(b - 'a' + 10)
-		case b >= 'A' && b <= 'F':
-			v += uint16(b - 'A' + 10)
-		default:
-			return 0, false
-		}
-	}
-	return v, true
 }
 
 // Encode validates first and emits canonical Go JSON field order. The result

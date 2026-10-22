@@ -1,4 +1,4 @@
-package openai_test
+package chatcompat_test
 
 import (
 	"context"
@@ -13,11 +13,11 @@ import (
 	"testing"
 
 	contextir "github.com/ly95/h3-context-ir-go"
-	"github.com/ly95/h3-context-ir-go/openai"
+	"github.com/ly95/h3-context-ir-go/chatcompat"
 )
 
-func chatConfig(base string) openai.Config {
-	return openai.Config{API: openai.ChatCompletions, BaseURL: base, APIKey: "test-key", Model: "custom/provider-model", MaxOutputTokens: 2048}
+func chatConfig(base string) modelFixture {
+	return modelFixture{ModelOptions: chatcompat.ModelOptions{API: chatcompat.ChatCompletions, Model: "custom/provider-model", MaxOutputTokens: 2048}, BaseURL: base, APIKey: "test-key"}
 }
 
 func chatRequest() contextir.ModelRequest {
@@ -35,9 +35,9 @@ func chatResponse(text string) map[string]any {
 	}
 }
 
-func chatClient(t *testing.T, config openai.Config) *openai.Client {
+func chatClient(t *testing.T, config modelFixture) *chatcompat.Model {
 	t.Helper()
-	c, err := openai.New(config)
+	c, err := chatcompat.NewModel(fixtureSDK(t, config), config.ModelOptions)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -98,7 +98,7 @@ func TestChatSDKProtocolPreservesSchemaInstructionsAndCustomModel(t *testing.T) 
 }
 
 func TestChatSDKImagesAndExplicitReasoningUseTheirOwnChannels(t *testing.T) {
-	images := []openai.Image{{URI: "https://example.com/private.png?signature=secret", Detail: "high"}, {URI: "data:image/png;base64,AQID", Detail: "original"}}
+	images := []chatcompat.Image{{URI: "https://example.com/private.png?signature=secret", Detail: "high"}, {URI: "data:image/png;base64,AQID", Detail: "original"}}
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		var body struct {
 			ReasoningEffort string `json:"reasoning_effort"`
@@ -230,7 +230,7 @@ func TestChatFailuresKeepObservedUsageAndNeverRetry(t *testing.T) {
 				t.Fatal("failure leaked model content or credentials")
 			}
 			if test.status != 200 {
-				var status *openai.HTTPError
+				var status *chatcompat.HTTPError
 				if !errors.As(err, &status) || status.StatusCode != test.status {
 					t.Fatal("HTTP status was not inspectable")
 				}

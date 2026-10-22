@@ -61,8 +61,10 @@ h3-context-ir-go brief -input brief.json \
   -profile comfyui -frame-policy snap_up -max-retries 1 > result.json
 ```
 
-The `openai` adapter uses the official OpenAI Go SDK with the explicitly supplied
-API root and model. Choose `-api responses` (default) or `-api chat_completions`
+The `-provider openai` command option configures the official OpenAI Go SDK
+directly, then passes it to `chatcompat.NewModel` for the Context-IR contract
+conversion. The command owns its HTTP transport, timeout and connection cleanup;
+SDK environment defaults are not enabled. The API root and model are explicit. Choose `-api responses` (default) or `-api chat_completions`
 to match the endpoint. It does not switch protocols or infer model capabilities.
 `-reasoning-effort` is optional; omitting it sends no reasoning parameter. Values
 must be supported by the selected model and endpoint. The command reads only the
@@ -71,7 +73,7 @@ A local Chat Completions service with discovery/schema options uses
 `-provider chatcompat -base-url http://127.0.0.1:PORT/v1 -model MODEL
 -reasoning-effort none`. An unauthenticated local endpoint needs no key flag.
 For `chatcompat`, remote plaintext HTTP requires `-allow-insecure-http`.
-`-api` applies only to the `openai` adapter. `-structured-mode` and
+`-api` applies only to `-provider openai`. `-structured-mode` and
 `-allow-insecure-http` apply only to `chatcompat`; explicitly supplying them for
 `openai` returns a configuration error, including when their default values are
 spelled out. Chat structured mode is available as

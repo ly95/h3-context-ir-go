@@ -1,4 +1,4 @@
-package openai
+package chatcompat
 
 import (
 	"bytes"
@@ -7,7 +7,10 @@ import (
 	"strings"
 
 	"github.com/ly95/h3-context-ir-go"
+	"github.com/ly95/h3-context-ir-go/internal/strictjson"
 )
+
+func validJSON(data []byte) bool { return strictjson.Check(data, 128) == nil }
 
 func schemaObject(data []byte) bool {
 	if !validJSON(data) {
@@ -97,7 +100,7 @@ type outputPart struct {
 
 // Keep generated output opaque while decoding authoritative response metadata.
 // Invalid output must not discard independently reported usage.
-func (c *Client) responseEnvelopeMetadata(data []byte) (responseEnvelope, contextir.ModelResponse) {
+func (c *Model) responseEnvelopeMetadata(data []byte) (responseEnvelope, contextir.ModelResponse) {
 	result := emptyResponse()
 	var wire responseEnvelope
 	if validJSON(data) && exactResponseKeys(data, reflect.TypeFor[responseEnvelope]()) && json.Unmarshal(data, &wire) == nil {
@@ -113,14 +116,14 @@ func (c *Client) responseEnvelopeMetadata(data []byte) (responseEnvelope, contex
 	} else {
 		wire = responseEnvelope{}
 	}
-	result.UsageInvalid = result.Usage.InputTokens < 0 || result.Usage.OutputTokens < 0 || result.Usage.OutputTokens > int64(c.maxOutputTokens)
+	result.UsageInvalid = result.Usage.InputTokens < 0 || result.Usage.OutputTokens < 0 || result.Usage.OutputTokens > int64(c.options.MaxOutputTokens)
 	return wire, result
 }
 
 // responseMetadata recovers only confirmed accounting evidence after an HTTP
 // cancellation. It never returns model-authored JSON or a rejected candidate.
-func (c *Client) responseMetadata(data []byte) contextir.ModelResponse {
-	if c.api == Responses {
+func (c *Model) responseMetadata(data []byte) contextir.ModelResponse {
+	if c.options.API == Responses {
 		_, result := c.responseEnvelopeMetadata(data)
 		return result
 	}
@@ -137,6 +140,6 @@ func (c *Client) responseMetadata(data []byte) contextir.ModelResponse {
 			}
 		}
 	}
-	result.UsageInvalid = result.Usage.InputTokens < 0 || result.Usage.OutputTokens < 0 || result.Usage.OutputTokens > int64(c.maxOutputTokens)
+	result.UsageInvalid = result.Usage.InputTokens < 0 || result.Usage.OutputTokens < 0 || result.Usage.OutputTokens > int64(c.options.MaxOutputTokens)
 	return result
 }

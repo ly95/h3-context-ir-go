@@ -128,7 +128,16 @@ type metricPolicy struct {
 var policies = []metricPolicy{{"word_ratio", .10, false, true}, {"restatement", .05, false, false}, {"sound_overlap", .05, false, false}, {"camera_level", .5, true, false}, {"errors", 0, false, false}, {"warnings", .5, false, true}, {"shot_distinctness", .01, false, true}, {"repairs", 1, false, false}, {"fallback_rate", 0, false, false}, {"clean_rate", .15, true, false}, {"fix_rounds", .5, false, false}}
 
 // ReportOnly returns a new slice: callers cannot change the gate's policy.
-func ReportOnly() []string { return []string{"shot_distinctness", "word_ratio", "warnings"} }
+func ReportOnly() []string {
+	var names []string
+	for _, policy := range policies {
+		if policy.reportOnly {
+			names = append(names, policy.name)
+		}
+	}
+	sort.Strings(names)
+	return names
+}
 func (a Aggregate) metrics() map[string]float64 {
 	return map[string]float64{"errors": a.Errors, "warnings": a.Warnings, "word_ratio": a.WordRatio, "desc_words": a.DescriptionWords, "restatement": a.Restatement, "shot_distinctness": a.ShotDistinctness, "n_planned_shots": a.PlannedShots, "repairs": a.Repairs, "fix_rounds": a.FixRounds, "sound_overlap": a.SoundOverlap, "camera_level": a.CameraLevel, "n_timed_cuts": a.TimedCuts, "fallback_rate": a.FallbackRate, "clean_rate": a.CleanRate}
 }

@@ -11,7 +11,9 @@ import (
 	"errors"
 	"flag"
 	"fmt"
+	"net"
 	"net/http"
+	"net/url"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -21,12 +23,14 @@ import (
 	"time"
 
 	"github.com/ly95/h3-context-ir-go"
+	"github.com/ly95/h3-context-ir-go/chatcompat"
 	"github.com/ly95/h3-context-ir-go/compiler"
 	"github.com/ly95/h3-context-ir-go/h3"
-	"github.com/ly95/h3-context-ir-go/openai"
 	"github.com/ly95/h3-context-ir-go/perception"
 	"github.com/ly95/h3-context-ir-go/plan"
 	"github.com/ly95/h3-context-ir-go/planner"
+	sdk "github.com/openai/openai-go/v3"
+	"github.com/openai/openai-go/v3/option"
 )
 
 type inputCase struct {
@@ -66,7 +70,7 @@ type outcome struct {
 	Scope      *compiler.ScopeDecision   `json:"scope_decision,omitempty"`
 }
 type recorder struct {
-	client *openai.Client
+	client *chatcompat.Model
 	dir    string
 	calls  []call
 }
@@ -91,7 +95,7 @@ func (r *recorder) generate(ctx context.Context, req contextir.ModelRequest, ima
 				record.Diagnostics = append(record.Diagnostics, typed.Issues...)
 			}
 		}
-		var status *openai.HTTPError
+		var status *chatcompat.HTTPError
 		if errors.As(err, &status) {
 			record.HTTPStatus = status.StatusCode
 		}
@@ -121,7 +125,7 @@ func run() error {
 	output := flag.String("out", "", "New output directory")
 	base := flag.String("base-url", "", "Explicit OpenAI-compatible API root")
 	model := flag.String("model", "", "Explicit image-capable model; image fixtures send image inputs")
-	api := flag.String("api", string(openai.Responses), "OpenAI-compatible API: responses or chat_completions")
+	api := flag.String("api", string(chatcompat.Responses), "OpenAI-compatible API: responses or chat_completions")
 	keyEnv := flag.String("api-key-env", "", "Explicit credential environment variable name; omit for an unauthenticated endpoint")
 	effort := flag.String("reasoning-effort", "", "Optional reasoning effort; omitted means do not send")
 	parallel := flag.Int("parallel", 2, "Maximum simultaneous cases, 1 to 4")
@@ -138,11 +142,21 @@ func run() error {
 			return errors.New("the explicitly named key environment variable is unset or empty")
 		}
 	}
-	client, err := openai.New(openai.Config{API: openai.API(*api), SupportsImages: true, BaseURL: *base, Model: *model, APIKey: key, ReasoningEffort: *effort, MaxOutputTokens: 12288, Timeout: 2 * time.Minute})
+	endpoint, endpointErr := url.Parse(*base)
+	secure := endpointErr == nil && endpoint.Scheme == "https"
+	if endpointErr == nil && endpoint.Scheme == "http" {
+		address := net.ParseIP(endpoint.Hostname())
+		secure = strings.EqualFold(endpoint.Hostname(), "localhost") || address != nil && address.IsLoopback()
+	}
+	if endpointErr != nil || endpoint.Host == "" || endpoint.User != nil || endpoint.RawQuery != "" || endpoint.Fragment != "" || endpoint.Opaque != "" || !secure {
+		return errors.New("provide an HTTPS API root or a loopback HTTP API root without credentials, query or fragment")
+	}
+	httpClient := &http.Client{Transport: &http.Transport{ForceAttemptHTTP2: true, TLSHandshakeTimeout: 10 * time.Second, IdleConnTimeout: 90 * time.Second}, Timeout: 2 * time.Minute, CheckRedirect: func(*http.Request, []*http.Request) error { return http.ErrUseLastResponse }}
+	defer httpClient.CloseIdleConnections()
+	client, err := chatcompat.NewModel(sdk.Client{Options: []option.RequestOption{option.WithBaseURL(*base), option.WithAPIKey(key), option.WithHTTPClient(httpClient)}}, chatcompat.ModelOptions{API: chatcompat.API(*api), SupportsImages: true, Model: *model, ReasoningEffort: *effort, MaxOutputTokens: 12288})
 	if err != nil {
 		return err
 	}
-	defer client.Close()
 	data, err := os.ReadFile(*input)
 	if err != nil {
 		return err

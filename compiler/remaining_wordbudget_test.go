@@ -52,7 +52,7 @@ func TestRemainingPipelineWordBudget(t *testing.T) {
 		// a hard floor. The real native writer/artifact gate accepts this short,
 		// structurally valid candidate and reports P2 instead of silently padding it.
 		c, _ := New(nil, nil, Options{})
-		findings, e := c.assess(r.Brief, r.Structure, r.Scope, r.Document)
+		_, findings, e := c.assess(r.Brief, r.Structure, r.Scope, r.Document)
 		if e != nil || !remainingRule(findings, "P2-too-short") {
 			t.Fatal("generation length is either ignored or incorrectly made a failure", findings, e)
 		}
@@ -101,7 +101,7 @@ func TestRemainingPipelineWordBudget(t *testing.T) {
 			t.Fatal("base description not routed to its actual format", sections, e)
 		}
 		c, _ := New(nil, nil, Options{})
-		findings, e := c.assess(r.Brief, r.Structure, r.Scope, r.Document)
+		_, findings, e := c.assess(r.Brief, r.Structure, r.Scope, r.Document)
 		if e != nil || remainingRule(findings, "P2-too-short") {
 			t.Fatal("base body policed as reference generation", findings, e)
 		}
@@ -117,7 +117,7 @@ func TestRemainingPipelineWordBudget(t *testing.T) {
 			t.Fatal("edit complexity policy absent from actual writer ask")
 		}
 		c, _ := New(nil, nil, Options{})
-		findings, e := c.assess(r.Brief, r.Structure, r.Scope, r.Document)
+		_, findings, e := c.assess(r.Brief, r.Structure, r.Scope, r.Document)
 		if e != nil || remainingRule(findings, "P2-too-short") {
 			t.Fatal("native validator still applies generation floor to edit", findings, e)
 		}

@@ -7,12 +7,11 @@ import (
 	"errors"
 	"io"
 	"sort"
-	"strconv"
 	"strings"
-	"unicode/utf8"
 
 	"github.com/ly95/h3-context-ir-go"
 	"github.com/ly95/h3-context-ir-go/budget"
+	"github.com/ly95/h3-context-ir-go/internal/strictjson"
 	"github.com/ly95/h3-context-ir-go/plan"
 	"github.com/ly95/h3-context-ir-go/planner"
 )
@@ -238,23 +237,12 @@ func (c *Compiler) structure(ctx context.Context, b Brief, target contextir.Targ
 }
 
 func strictDecode(data []byte, out any) error {
-	// Detect duplicate names before decoding the typed contract. Ordinary
-	// encoding/json accepts them and would silently choose the last value.
-	if !validUnicodeEscapes(data) {
-		return errors.New("invalid Unicode escape in JSON")
-	}
-	if !utf8.Valid(data) {
-		return errors.New("invalid UTF-8 JSON")
-	}
-	d := json.NewDecoder(bytes.NewReader(data))
-	d.UseNumber()
-	if err := uniqueValue(d); err != nil {
+	// Keep encoding/json's 10,000-level syntax limit while rejecting duplicate
+	// names and lossy Unicode before decoding the typed contract.
+	if err := strictjson.Check(data, 10000); err != nil {
 		return err
 	}
-	if _, err := d.Token(); err != io.EOF {
-		return errors.New("trailing JSON")
-	}
-	d = json.NewDecoder(bytes.NewReader(data))
+	d := json.NewDecoder(bytes.NewReader(data))
 	d.DisallowUnknownFields()
 	if err := d.Decode(out); err != nil {
 		return err
@@ -264,45 +252,6 @@ func strictDecode(data []byte, out any) error {
 	}
 	return nil
 }
-func uniqueValue(d *json.Decoder) error {
-	t, err := d.Token()
-	if err != nil {
-		return err
-	}
-	delim, ok := t.(json.Delim)
-	if !ok {
-		return nil
-	}
-	switch delim {
-	case '{':
-		seen := map[string]bool{}
-		for d.More() {
-			k, err := d.Token()
-			if err != nil {
-				return err
-			}
-			name, ok := k.(string)
-			if !ok || seen[name] {
-				return errors.New("duplicate JSON member")
-			}
-			seen[name] = true
-			if err := uniqueValue(d); err != nil {
-				return err
-			}
-		}
-	case '[':
-		for d.More() {
-			if err := uniqueValue(d); err != nil {
-				return err
-			}
-		}
-	default:
-		return errors.New("invalid JSON delimiter")
-	}
-	_, err = d.Token()
-	return err
-}
-
 func validateStructure(b Brief, target contextir.Target, st Structure, mode contextir.Mode, maxShots int) (Structure, []Decision, error) {
 	if len(b.SubjectProjections) > 0 && !sameJSON(st.SubjectProjections, b.SubjectProjections) {
 		return st, nil, invalid("subject_projections", "Preserve the caller's explicit target source projection.")
@@ -414,45 +363,4 @@ func sameJSON(a, b any) bool {
 	x, _ := json.Marshal(a)
 	y, _ := json.Marshal(b)
 	return bytes.Equal(x, y)
-}
-
-func validUnicodeEscapes(data []byte) bool {
-	inString := false
-	for i := 0; i < len(data); i++ {
-		if data[i] == '"' {
-			inString = !inString
-			continue
-		}
-		if !inString || data[i] != '\\' {
-			continue
-		}
-		i++
-		if i >= len(data) {
-			return false
-		}
-		if data[i] != 'u' {
-			continue
-		}
-		if i+4 >= len(data) {
-			return false
-		}
-		v, err := strconv.ParseUint(string(data[i+1:i+5]), 16, 16)
-		if err != nil {
-			return false
-		}
-		i += 4
-		if v >= 0xD800 && v <= 0xDBFF {
-			if i+6 >= len(data) || data[i+1] != '\\' || data[i+2] != 'u' {
-				return false
-			}
-			low, err := strconv.ParseUint(string(data[i+3:i+7]), 16, 16)
-			if err != nil || low < 0xDC00 || low > 0xDFFF {
-				return false
-			}
-			i += 6
-		} else if v >= 0xDC00 && v <= 0xDFFF {
-			return false
-		}
-	}
-	return true
 }

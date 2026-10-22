@@ -34,7 +34,7 @@ func runDemo(args []string, out, errOut io.Writer) int {
 	fs.Usage = func() {
 		fmt.Fprintln(errOut, "usage: h3-context-ir-go demo [flags]")
 		fmt.Fprintln(errOut, "With no flags, runs an offline bakery draft and prints the complete result JSON.")
-		fmt.Fprintln(errOut, "Use -mode brief -base-url URL -model MODEL for model compilation (OpenAI adapter by default).")
+		fmt.Fprintln(errOut, "Use -mode brief -base-url URL -model MODEL for model compilation (official SDK model conversion by default).")
 		fmt.Fprintln(errOut, "Choose -api chat_completions for a compatible Chat Completions endpoint; -key-env names an optional key variable.")
 		fmt.Fprintln(errOut, "The demo accepts no attachments and prints result JSON to stdout; it does not create files or generate video.")
 		fs.PrintDefaults()

@@ -1,6 +1,19 @@
 # Chat-compatible model adapter
 
-This optional adapter uses the official `github.com/openai/openai-go/v3` SDK and implements `planner.Model` and the image model interface used by `perception.ImagePerceiver`. Inject it into the compiler. Configuration supplies the endpoint, model policy, structured-output mode, transport, timeout, maximum response size and output-token ceiling. SDK retries and environment-derived settings are disabled; no model is silently substituted. This adapter retains the pinned upstream probe and thinking controls; use the `openai` adapter for general OpenAI-compatible generation.
+`NewModel(client, ModelOptions)` converts Context-IR model requests into official
+`github.com/openai/openai-go/v3` SDK requests for Responses or Chat Completions,
+then validates model identity, structured output and usage. It implements
+`planner.Model` and `perception.ImageModel`. The caller configures the SDK's
+`Options` directly, including the endpoint, credentials and HTTP client; there is
+no second SDK client configuration. See the [root example](../README.md).
+The caller owns transport, proxy, timeout, redirect and connection cleanup policy.
+`NewModel` disables SDK retries so the compiler owns the call ledger and retry
+budget. `ModelOptions` contains only business request choices and content limits.
+No model, protocol or image capability is inferred.
+
+`New(Config)` and the local-service helpers below retain the pinned upstream
+model-discovery, probe and thinking controls. They also use the official SDK,
+with explicit connection settings and no environment-derived configuration.
 
 Use `Discovery: ExplicitModel` with a named model in production, or explicitly choose `SingleModel` to resolve `/models` when it describes one set of weights. `ServerDefault` is an explicit low-level `Chat` option; `Generate` requires an identified model for provenance. `StructuredMode` must be `PromptSchema` or `GuidedSchema`. Each production generation requires provider usage and model evidence. Reported usage outside the hard request limit is retained and marked invalid.
 

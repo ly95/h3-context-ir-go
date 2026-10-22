@@ -463,7 +463,7 @@ func TestRemainingWriterReferenceWords(t *testing.T) {
 			t.Fatal(e)
 		}
 		for _, actual := range []Result{r, draft} {
-			findings, e := c.assess(actual.Brief, actual.Structure, actual.Scope, actual.Document)
+			_, findings, e := c.assess(actual.Brief, actual.Structure, actual.Scope, actual.Document)
 			if e != nil || remainingRule(findings, "D16-transcript-not-reperformed") {
 				t.Fatal("real native assessment lost exact supplied words", findings, e)
 			}
@@ -480,7 +480,7 @@ func TestRemainingWriterReferenceWords(t *testing.T) {
 					}
 				}
 			}
-			findings, e = c.assess(actual.Brief, actual.Structure, actual.Scope, wrong)
+			_, findings, e = c.assess(actual.Brief, actual.Structure, actual.Scope, wrong)
 			if !contextir.HasCode(e, contextir.CodeModelOutput) {
 				t.Fatal("typed source selection accepted changed words even though no prose cue was present", findings, e)
 			}
@@ -503,7 +503,7 @@ func TestRemainingWriterReferenceWords(t *testing.T) {
 			// selector. Keeping the fixed line while deleting its events would be
 			// a real missing-dialogue defect rather than the advisory-only case.
 			contextPlan.Dialogue = nil
-			findings, e = c.assess(actual.Brief, contextPlan, actual.Scope, unperformed)
+			_, findings, e = c.assess(actual.Brief, contextPlan, actual.Scope, unperformed)
 			if e != nil || !remainingRule(findings, "D16-transcript-not-reperformed") {
 				t.Fatal("native context did not carry original source words on this path", findings, e)
 			}

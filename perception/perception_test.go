@@ -15,15 +15,18 @@ import (
 	"reflect"
 	"strings"
 	"testing"
+	"time"
 
 	contextir "github.com/ly95/h3-context-ir-go"
-	"github.com/ly95/h3-context-ir-go/openai"
+	"github.com/ly95/h3-context-ir-go/chatcompat"
 	"github.com/ly95/h3-context-ir-go/perception"
 	"github.com/ly95/h3-context-ir-go/planner"
+	sdk "github.com/openai/openai-go/v3"
+	"github.com/openai/openai-go/v3/option"
 )
 
 var _ planner.Perceiver = (*perception.ImagePerceiver)(nil)
-var _ perception.ImageModel = (*openai.Client)(nil)
+var _ perception.ImageModel = (*chatcompat.Model)(nil)
 
 type perceptionModelFunc func(context.Context, contextir.ModelRequest, []perception.Image) (contextir.ModelResponse, error)
 
@@ -147,7 +150,9 @@ func TestImagePerceiverSendsImageThroughOpenAIResponsesSDK(t *testing.T) {
 		_ = json.NewEncoder(w).Encode(map[string]any{"status": "completed", "model": "fixture-vision-model", "output": []any{map[string]any{"type": "message", "role": "assistant", "status": "completed", "content": []any{map[string]any{"type": "output_text", "text": string(evidence.JSON)}}}}, "usage": map[string]int{"input_tokens": 101, "output_tokens": 31}})
 	}))
 	defer server.Close()
-	client, err := openai.New(openai.Config{API: openai.Responses, SupportsImages: true, BaseURL: server.URL, APIKey: "test-key", Model: "fixture-vision-model", MaxOutputTokens: 4096, ReasoningEffort: "none"})
+	httpClient := &http.Client{Transport: &http.Transport{}, Timeout: 30 * time.Second, CheckRedirect: func(*http.Request, []*http.Request) error { return http.ErrUseLastResponse }}
+	defer httpClient.CloseIdleConnections()
+	client, err := chatcompat.NewModel(sdk.Client{Options: []option.RequestOption{option.WithBaseURL(server.URL), option.WithAPIKey("test-key"), option.WithHTTPClient(httpClient)}}, chatcompat.ModelOptions{API: chatcompat.Responses, SupportsImages: true, Model: "fixture-vision-model", MaxOutputTokens: 4096, ReasoningEffort: "none"})
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -31,7 +31,7 @@ func remainingWardrobeGuard(t *testing.T, b Brief, l LicenceDecision, want strin
 	}
 	r.Document.Subjects = subjects
 	r.Document.Shots[0].Description = contextir.RichText{{SubjectID: subjects[0].ID}, {Text: " walks through the stone corridor."}}
-	findings, e := c.assess(r.Brief, r.Structure, r.Scope, r.Document, &l)
+	_, findings, e := c.assess(r.Brief, r.Structure, r.Scope, r.Document, &l)
 	if e != nil || remainingRule(findings, "R15-wardrobe-not-restated") != (want == "reference") {
 		t.Fatal("actual native assessment ignored authority or restated replaced clothing", e, findings, l)
 	}
@@ -49,7 +49,7 @@ func remainingWardrobeGuard(t *testing.T, b Brief, l LicenceDecision, want strin
 	} else {
 		control.Governs["wardrobe"] = "reference"
 	}
-	opposite, e := c.assess(r.Brief, r.Structure, r.Scope, r.Document, &control)
+	_, opposite, e := c.assess(r.Brief, r.Structure, r.Scope, r.Document, &control)
 	if e != nil || remainingRule(opposite, "R15-wardrobe-not-restated") == remainingRule(findings, "R15-wardrobe-not-restated") {
 		t.Fatal("negative authority control did not change actual guard", e, opposite)
 	}

@@ -3,7 +3,7 @@
 `ImagePerceiver` turns actual image inputs into validated observation evidence.
 The caller supplies an `ImageModel` and an `ImageResolver`; the package does not
 select a provider, read credentials, open media files, or fetch image locations.
-Model adapters such as `openai.Client` implement the image-model contract.
+`chatcompat.NewModel` adapts a caller-configured official SDK client to this image-model contract.
 
 `PerceptionOptions.MaxRetries` explicitly bounds content repair. Every actual
 model attempt retains its usage and invokes `OnCall`, including rejected output

@@ -1,4 +1,4 @@
-package openai_test
+package chatcompat_test
 
 import (
 	"bytes"
@@ -12,8 +12,81 @@ import (
 	"testing"
 
 	"github.com/ly95/h3-context-ir-go"
-	"github.com/ly95/h3-context-ir-go/openai"
+	"github.com/ly95/h3-context-ir-go/chatcompat"
+	"github.com/openai/openai-go/v3/option"
 )
+
+func TestModelHonorsCallerSDKHeadersAndMiddleware(t *testing.T) {
+	for _, api := range []chatcompat.API{chatcompat.Responses, chatcompat.ChatCompletions} {
+		t.Run(string(api), func(t *testing.T) {
+			var calls, middlewareCalls atomic.Int32
+			config := wireConfig("")
+			reply := wireResponse(`{"ok":true}`)
+			if api == chatcompat.ChatCompletions {
+				config = chatConfig("")
+				reply = chatResponse(`{"ok":true}`)
+			}
+			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				calls.Add(1)
+				if r.Header.Get("Authorization") != "Bearer test-key" || r.Header.Get("X-Caller") != "explicit-header" || r.Header.Get("X-Caller-Middleware") != "executed" {
+					t.Error("the injected SDK configuration was not preserved")
+				}
+				_ = json.NewEncoder(w).Encode(reply)
+			}))
+			defer server.Close()
+			config.BaseURL = server.URL
+			client := fixtureSDK(t, config)
+			client.Options = append(client.Options,
+				option.WithHeader("X-Caller", "explicit-header"),
+				option.WithMiddleware(func(r *http.Request, next option.MiddlewareNext) (*http.Response, error) {
+					middlewareCalls.Add(1)
+					r.Header.Set("X-Caller-Middleware", "executed")
+					return next(r)
+				}),
+			)
+			model, err := chatcompat.NewModel(client, config.ModelOptions)
+			if err != nil {
+				t.Fatal(err)
+			}
+			result, err := model.Generate(context.Background(), wireRequest())
+			if err != nil || string(result.JSON) != `{"ok":true}` || calls.Load() != 1 || middlewareCalls.Load() != 1 {
+				t.Fatalf("caller-owned SDK behavior was lost: %v, %#v, calls=%d, middleware=%d", err, result, calls.Load(), middlewareCalls.Load())
+			}
+		})
+	}
+}
+
+func TestModelDisablesInjectedSDKRetries(t *testing.T) {
+	for _, api := range []chatcompat.API{chatcompat.Responses, chatcompat.ChatCompletions} {
+		t.Run(string(api), func(t *testing.T) {
+			var calls atomic.Int32
+			config := wireConfig("")
+			reply := wireResponse(`{"ok":true}`)
+			if api == chatcompat.ChatCompletions {
+				config = chatConfig("")
+				reply = chatResponse(`{"ok":true}`)
+			}
+			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				calls.Add(1)
+				w.Header().Set("Retry-After", "0")
+				w.WriteHeader(http.StatusServiceUnavailable)
+				_ = json.NewEncoder(w).Encode(reply)
+			}))
+			defer server.Close()
+			config.BaseURL = server.URL
+			client := fixtureSDK(t, config)
+			client.Options = append(client.Options, option.WithMaxRetries(5))
+			model, err := chatcompat.NewModel(client, config.ModelOptions)
+			if err != nil {
+				t.Fatal(err)
+			}
+			result, err := model.Generate(context.Background(), wireRequest())
+			if !contextir.HasCode(err, contextir.CodeModel) || len(result.JSON) != 0 || result.UsageInvalid || calls.Load() != 1 {
+				t.Fatalf("injected retry policy caused hidden attempts or lost usage: %v, %#v, calls=%d", err, result, calls.Load())
+			}
+		})
+	}
+}
 
 func TestResponsesSDKUsesOnlyExplicitConfigurationAndPreservesSchemaNumbers(t *testing.T) {
 	var unintended atomic.Int32
@@ -73,8 +146,8 @@ func TestResponsesSDKUsesOnlyExplicitConfigurationAndPreservesSchemaNumbers(t *t
 		_ = json.NewEncoder(w).Encode(reply)
 	}))
 	defer s.Close()
-	c := mustWireClient(t, openai.Config{API: openai.Responses, BaseURL: s.URL + "/custom/v1", Model: "custom/team-model:revision", MaxOutputTokens: 8192})
-	defer c.Close()
+	c := mustWireClient(t, modelFixture{ModelOptions: chatcompat.ModelOptions{API: chatcompat.Responses, Model: "custom/team-model:revision", MaxOutputTokens: 8192}, BaseURL: s.URL + "/custom/v1"})
+
 	response, err := c.Generate(context.Background(), request)
 	if err != nil || response.UsageInvalid || string(response.JSON) != `{"value":9007199254740993}` || calls.Load() != 1 || unintended.Load() != 0 {
 		t.Fatalf("explicit generic SDK request failed: %v %#v", err, response)
@@ -107,12 +180,12 @@ func (f sdkRoundTripFunc) RoundTrip(request *http.Request) (*http.Response, erro
 }
 
 func TestCancellationAfterCapturedBodyDoesNotPublishOutput(t *testing.T) {
-	for _, api := range []openai.API{openai.Responses, openai.ChatCompletions} {
+	for _, api := range []chatcompat.API{chatcompat.Responses, chatcompat.ChatCompletions} {
 		t.Run(string(api), func(t *testing.T) {
 			config := wireConfig("https://fixture.invalid/v1")
 			reply := wireResponse(`{"ok":true}`)
 			wantUsage := contextir.Usage{InputTokens: 31, OutputTokens: 17}
-			if api == openai.ChatCompletions {
+			if api == chatcompat.ChatCompletions {
 				config = chatConfig("https://fixture.invalid/v1")
 				reply = chatResponse(`{"ok":true}`)
 				wantUsage = contextir.Usage{InputTokens: 19, OutputTokens: 11}
@@ -133,7 +206,7 @@ func TestCancellationAfterCapturedBodyDoesNotPublishOutput(t *testing.T) {
 				return &http.Response{StatusCode: http.StatusOK, Header: http.Header{"Content-Type": []string{"application/json"}}, Body: body, Request: request}, nil
 			})}
 			client := mustWireClient(t, config)
-			defer client.Close()
+
 			got, err := client.Generate(ctx, wireRequest())
 			if !contextir.HasCode(err, contextir.CodeCanceled) || !errors.Is(err, context.Canceled) || len(got.JSON) != 0 || got.RejectedOutput != "" || got.UsageInvalid || got.Usage != wantUsage || got.Model != config.Model || calls.Load() != 1 || !body.closed.Load() {
 				t.Fatalf("completed body hid cancellation or lost confirmed usage: %v, %#v, calls=%d, closed=%v", err, got, calls.Load(), body.closed.Load())
@@ -172,7 +245,7 @@ func TestChatEmptyRefusalAndToolCallsRemainCompatible(t *testing.T) {
 			}))
 			defer server.Close()
 			client := mustWireClient(t, chatConfig(server.URL))
-			defer client.Close()
+
 			got, err := client.Generate(context.Background(), wireRequest())
 			if tc.success {
 				if err != nil || string(got.JSON) != `{"ok":true}` {
@@ -198,7 +271,7 @@ func TestResponsesAcceptsOnlyExplicitResponseModelAliases(t *testing.T) {
 	cfg := wireConfig(s.URL)
 	cfg.AllowedResponseModels = []string{"explicit-snapshot"}
 	c := mustWireClient(t, cfg)
-	defer c.Close()
+
 	response, err := c.Generate(context.Background(), wireRequest())
 	if err != nil || response.Model != "explicit-snapshot" || response.UsageInvalid {
 		t.Fatalf("explicit alias was rejected: %v %#v", err, response)
@@ -212,15 +285,15 @@ func TestConfiguredRequestAndImageLimitsRejectBeforeHTTP(t *testing.T) {
 	cfg := wireConfig(s.URL)
 	cfg.MaxRequestBytes = 32
 	c := mustWireClient(t, cfg)
-	defer c.Close()
+
 	if _, err := c.Generate(context.Background(), wireRequest()); !contextir.HasCode(err, contextir.CodeLimit) {
 		t.Fatalf("request must be rejected in full: %v", err)
 	}
 	cfg = wireConfig(s.URL)
 	cfg.MaxImageBytes = 2
 	c2 := mustWireClient(t, cfg)
-	defer c2.Close()
-	if _, err := c2.GenerateWithImages(context.Background(), wireRequest(), []openai.Image{{URI: "data:image/png;base64,AQID"}}); !contextir.HasCode(err, contextir.CodeLimit) {
+
+	if _, err := c2.GenerateWithImages(context.Background(), wireRequest(), []chatcompat.Image{{URI: "data:image/png;base64,AQID"}}); !contextir.HasCode(err, contextir.CodeLimit) {
 		t.Fatalf("image must be rejected in full: %v", err)
 	}
 	if calls.Load() != 0 {
@@ -239,7 +312,7 @@ func TestSDKErrorResponsesAreBoundedWithoutRetries(t *testing.T) {
 	cfg := wireConfig(s.URL)
 	cfg.MaxResponseBytes = 64
 	c := mustWireClient(t, cfg)
-	defer c.Close()
+
 	response, err := c.Generate(context.Background(), wireRequest())
 	if !contextir.HasCode(err, contextir.CodeLimit) || !response.UsageInvalid || len(response.JSON) != 0 || calls.Load() != 1 {
 		t.Fatalf("SDK error body must be bounded without retry: %v %#v calls=%d", err, response, calls.Load())

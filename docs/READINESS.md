@@ -12,7 +12,7 @@ H3 Context-IR Go 已实现独立的 Brief → Document → H3 流程，包括原
 | 引用与音频 | 身份与环境分离、首尾帧完整保留、音轨复制与属性引用、voice/music/beat/SFX 接收对象、参考属性优先级 |
 | 渲染与预算 | 同一 Document 派生 prompt、manifest、来源元数据和哈希；帧/画布/latent 预算与精确离线 BPE |
 | 媒体 | 明确的本地 resolver、文件头与容器测量、ffprobe/ffmpeg、视频采样、可选缓存与可注入 ASR |
-| 集成 | 通用 OpenAI-compatible Responses 与 Chat Completions 适配器、独立图片感知合同、HTTP handler、上传存储、ComfyUI 远端客户端、LoRA 注册 |
+| 集成 | 直接配置官方 SDK 的 Responses 与 Chat Completions 业务合同转换、独立图片感知合同、HTTP handler、上传存储、ComfyUI 远端客户端、LoRA 注册 |
 | 验证与评估 | 公开 H3 文本规则、原始 controls、原生行为测试、固定语料、严格录制回放、离线评分与回归比较 |
 
 具体接口见 [README](../README.md)、[架构](ARCHITECTURE.md) 与各包文档。上游来源、业务行为映射和当前复验入口见 [UPSTREAM_TESTS.md](UPSTREAM_TESTS.md)。

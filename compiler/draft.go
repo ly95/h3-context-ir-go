@@ -6,7 +6,6 @@ import (
 	"fmt"
 
 	"github.com/ly95/h3-context-ir-go"
-	"github.com/ly95/h3-context-ir-go/h3"
 )
 
 // Draft explicitly requests the deterministic floor. It never calls Model and
@@ -195,11 +194,7 @@ func (c *Compiler) draft(ctx context.Context, brief Brief, known *Structure) (Re
 	if err = contextir.Validate(d); err != nil {
 		return r, err
 	}
-	artifact, err := h3.Compile(d, c.options.Profile)
-	if err != nil {
-		return r, err
-	}
-	assessedFindings, assessErr := c.assess(b, st, r.Scope, d)
+	artifact, assessedFindings, assessErr := c.assess(b, st, r.Scope, d)
 	r.Findings = append(r.Findings, assessedFindings...)
 	err = assessErr
 	if err != nil {

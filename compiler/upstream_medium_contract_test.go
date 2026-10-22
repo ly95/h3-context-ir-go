@@ -56,7 +56,7 @@ func TestGoConformanceMediumCelAnimationKeepsExplicitRendition(t *testing.T) {
 					t.Fatal("restyling the same identifiable figure became a replacement relationship", subject)
 				}
 			}
-			findings, err := c.assess(r.Brief, r.Structure, r.Scope, r.Document, &licence)
+			_, findings, err := c.assess(r.Brief, r.Structure, r.Scope, r.Document, &licence)
 			if err != nil || goMediumHasRule(findings, "R23-transformation-not-in-style-opening") {
 				t.Fatal("the correct native same-family rendition was rejected", findings, err)
 			}
@@ -89,7 +89,7 @@ func TestGoConformanceMediumUnknownClassificationDoesNotProveRendition(t *testin
 			c, r := renderGoMediumDraft(t, b, licence)
 			regression := r.Document
 			regression.Style = original.Style.ObservedPhrase
-			findings, err := c.assess(r.Brief, r.Structure, r.Scope, regression, &licence)
+			_, findings, err := c.assess(r.Brief, r.Structure, r.Scope, regression, &licence)
 			if err != nil || goMediumHasRule(findings, "R23-transformation-not-in-style-opening") {
 				t.Fatal("absence of classification incorrectly armed a bucket comparison", findings, err)
 			}
@@ -110,13 +110,13 @@ func TestGoConformanceMediumKnownCrossBucketDetectsSourceStyleRegression(t *test
 				t.Fatal("a known cross-family departure did not arm the production guard", licence)
 			}
 			c, r := renderGoMediumDraft(t, b, licence)
-			findings, err := c.assess(r.Brief, r.Structure, r.Scope, r.Document, &licence)
+			_, findings, err := c.assess(r.Brief, r.Structure, r.Scope, r.Document, &licence)
 			if err != nil || goMediumHasRule(findings, "R23-transformation-not-in-style-opening") {
 				t.Fatal("the correctly rendered claymation target triggered R23", findings, err)
 			}
 			regression := r.Document
 			regression.Style = licence.Style.ObservedPhrase
-			findings, err = c.assess(r.Brief, r.Structure, r.Scope, regression, &licence)
+			_, findings, err = c.assess(r.Brief, r.Structure, r.Scope, regression, &licence)
 			if err != nil || !goMediumHasRule(findings, "R23-transformation-not-in-style-opening") {
 				t.Fatal("returning to the actual source medium escaped the armed native checker", findings, err)
 			}

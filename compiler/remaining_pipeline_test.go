@@ -134,7 +134,7 @@ func remainingWrite(t *testing.T, b Brief, poison func(*contextir.Document, rema
 		if e := checkDocumentControls(r.Brief, r.Structure, r.Scope, d); e != nil {
 			return e
 		}
-		_, e := c.assess(r.Brief, r.Structure, r.Scope, d)
+		_, _, e := c.assess(r.Brief, r.Structure, r.Scope, d)
 		return e
 	}})
 	if e != nil {

@@ -1,4 +1,4 @@
-package openai
+package chatcompat
 
 import (
 	"encoding/base64"
@@ -10,7 +10,7 @@ import (
 	"github.com/ly95/h3-context-ir-go"
 )
 
-func (c *Client) validateImage(image Image) error {
+func (c *Model) validateImage(image Image) error {
 	switch image.Detail {
 	case "", "auto", "low", "high", "original":
 	default:
@@ -19,7 +19,7 @@ func (c *Client) validateImage(image Image) error {
 	if image.URI == "" || !utf8.ValidString(image.URI) {
 		return failure(contextir.CodeInvalid, "request", "images.uri", "A valid UTF-8 image locator is required.", nil)
 	}
-	if int64(len(image.URI)) > c.maxRequestBytes {
+	if int64(len(image.URI)) > c.options.MaxRequestBytes {
 		return failure(contextir.CodeLimit, "request", "images.uri", "The image locator exceeds the request-size limit.", nil)
 	}
 	if strings.HasPrefix(image.URI, "data:") {
@@ -32,11 +32,11 @@ func (c *Client) validateImage(image Image) error {
 		default:
 			return failure(contextir.CodeUnsupported, "request", "images.uri", "Inline images must use a supported image MIME type and base64 encoding.", nil)
 		}
-		count, err := io.Copy(io.Discard, io.LimitReader(base64.NewDecoder(base64.StdEncoding.Strict(), strings.NewReader(payload)), c.maxImageBytes+1))
+		count, err := io.Copy(io.Discard, io.LimitReader(base64.NewDecoder(base64.StdEncoding.Strict(), strings.NewReader(payload)), c.options.MaxImageBytes+1))
 		if err != nil || count == 0 {
 			return failure(contextir.CodeInvalid, "request", "images.uri", "The inline image must contain valid nonempty base64 data.", nil)
 		}
-		if count > c.maxImageBytes {
+		if count > c.options.MaxImageBytes {
 			return failure(contextir.CodeLimit, "request", "images.uri", "The inline image exceeds configured per-image byte limit.", nil)
 		}
 		return nil

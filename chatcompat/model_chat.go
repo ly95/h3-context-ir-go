@@ -1,4 +1,4 @@
-package openai
+package chatcompat
 
 import (
 	"context"
@@ -8,14 +8,13 @@ import (
 
 	contextir "github.com/ly95/h3-context-ir-go"
 	sdk "github.com/openai/openai-go/v3"
-	"github.com/openai/openai-go/v3/option"
 	"github.com/openai/openai-go/v3/shared"
 )
 
 // generateChat uses only the explicitly selected Chat Completions protocol.
 // The SDK transports the request; local checks enforce the Model contract on
 // the original response bytes, before accepting any model-authored JSON.
-func (c *Client) generateChat(ctx context.Context, request contextir.ModelRequest, images []Image) (contextir.ModelResponse, error) {
+func (c *Model) generateChat(ctx context.Context, request contextir.ModelRequest, images []Image) (contextir.ModelResponse, error) {
 	result := emptyResponse()
 	user := sdk.UserMessage(string(request.Input))
 	if len(images) > 0 {
@@ -26,22 +25,19 @@ func (c *Client) generateChat(ctx context.Context, request contextir.ModelReques
 		user = sdk.UserMessage(parts)
 	}
 	params := sdk.ChatCompletionNewParams{
-		Model:               shared.ChatModel(c.model),
+		Model:               shared.ChatModel(c.options.Model),
 		Messages:            []sdk.ChatCompletionMessageParamUnion{sdk.SystemMessage(request.System), user},
-		MaxCompletionTokens: sdk.Int(int64(c.maxOutputTokens)),
+		MaxCompletionTokens: sdk.Int(int64(c.options.MaxOutputTokens)),
 		ResponseFormat: sdk.ChatCompletionNewParamsResponseFormatUnion{OfJSONSchema: &shared.ResponseFormatJSONSchemaParam{
 			JSONSchema: shared.ResponseFormatJSONSchemaJSONSchemaParam{
-				Name: "contextir_document", Schema: request.ResponseSchema, Strict: sdk.Bool(c.strictSchema),
+				Name: "contextir_document", Schema: request.ResponseSchema, Strict: sdk.Bool(c.options.StrictSchema),
 			},
 		}},
 	}
-	if c.reasoningEffort != "" {
-		params.ReasoningEffort = shared.ReasoningEffort(c.reasoningEffort)
+	if c.options.ReasoningEffort != "" {
+		params.ReasoningEffort = shared.ReasoningEffort(c.options.ReasoningEffort)
 	}
-	data, status, err := c.execute(ctx, params, func(opts ...option.RequestOption) error {
-		_, callErr := c.chat.New(ctx, params, opts...)
-		return callErr
-	})
+	data, status, err := c.execute(ctx, "chat/completions", params)
 	if err != nil {
 		return c.responseMetadata(data), err
 	}
@@ -59,7 +55,7 @@ func (c *Client) generateChat(ctx context.Context, request contextir.ModelReques
 			}
 		}
 	}
-	result.UsageInvalid = result.Usage.InputTokens < 0 || result.Usage.OutputTokens < 0 || result.Usage.OutputTokens > int64(c.maxOutputTokens)
+	result.UsageInvalid = result.Usage.InputTokens < 0 || result.Usage.OutputTokens < 0 || result.Usage.OutputTokens > int64(c.options.MaxOutputTokens)
 	var choices []chatChoice
 	validChoices := exactResponseKeys(wire.Choices, reflect.TypeFor[[]chatChoice]()) && json.Unmarshal(wire.Choices, &choices) == nil && len(choices) == 1 && choices[0].Message != nil
 	var text string
@@ -74,7 +70,7 @@ func (c *Client) generateChat(ctx context.Context, request contextir.ModelReques
 	if present(wire.Error) {
 		return result, failure(contextir.CodeModelOutput, "response", "error", "The model response contains an upstream error.", nil)
 	}
-	if !c.models[result.Model] {
+	if !c.acceptsModel(result.Model) {
 		return result, failure(contextir.CodeModelOutput, "response", "model", "The response model must match an explicitly permitted model.", nil)
 	}
 	if result.UsageInvalid {
