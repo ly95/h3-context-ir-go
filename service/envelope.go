@@ -306,7 +306,6 @@ func amendedBrief(previous plan.Brief, before compiler.Brief, b compiler.Brief, 
 	previous.AudioCopyModes = map[string]string{}
 	for i, asset := range b.Assets {
 		if mode, stated := b.AudioCopyModes[asset.ID]; stated {
-			// The source-compatible DTO has positional asset-N IDs on re-import.
 			previous.AudioCopyModes[fmt.Sprintf("asset-%d", i+1)] = string(mode)
 		}
 	}
@@ -398,9 +397,6 @@ func amendedBrief(previous plan.Brief, before compiler.Brief, b compiler.Brief, 
 	return previous, nil
 }
 
-// A typed refinement can explicitly restate the same resolved role. Equality of
-// before/after values cannot recover that caller choice; use the host's actual
-// update record, never a lexical reading of the refinement instruction.
 func refinementRoleDeclarations(decisions [][]compiler.Decision) (map[string]bool, error) {
 	out := map[string]bool{}
 	if len(decisions) > 1 {

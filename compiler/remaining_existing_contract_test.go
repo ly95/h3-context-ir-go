@@ -11,9 +11,6 @@ import (
 	"github.com/ly95/h3-context-ir-go/h3"
 )
 
-// Original SFX/BGM ROLE_CASES retain their Brief/cards. The source
-// audio_relations helper recomputes a marker in Python; assert the actual native
-// Document, typed roles, task and final H3 instead of counting that helper as Go.
 func TestRemainingExistingAudioRoleRelationships(t *testing.T) {
 	corpus := loadUpstream(t)
 	for _, tc := range []struct {
@@ -75,8 +72,6 @@ func (p *remainingNeverObserve) Perceive(context.Context, contextir.Asset) (cont
 	return contextir.Evidence{}, fmt.Errorf("expensive perception reached before capacity refusal")
 }
 
-// Original test_capacity.py::test_the_refusal_happens_before_anything_is_analysed.
-// Inject fail-loud ports required by Go; do not substitute a hand-checked limit.
 func TestRemainingExistingCapacityBeforeObservation(t *testing.T) {
 	b := Brief{Intent: "Put all of these together.", Mode: contextir.ModeReference, Seconds: 8}
 	for i := 0; i < 10; i++ {

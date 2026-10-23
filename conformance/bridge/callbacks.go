@@ -7,8 +7,6 @@ import (
 	"fmt"
 )
 
-// Callback traffic stays inside this test process pair. Native production code
-// receives an injected interface, not Python or process-global configuration.
 var callbackInput *bufio.Scanner
 var callbackOutput *json.Encoder
 
@@ -36,9 +34,6 @@ func invokePythonCallback(name string, payload any) (callbackReply, error) {
 			}
 			return callbackReply{}, fmt.Errorf("test callback channel closed")
 		}
-		// An explicitly injected source collaborator can call another already native
-		// helper (for example video sampling). Serve that nested, framed RPC before
-		// resuming the outer callback; never confuse it with a callback reply.
 		var envelope map[string]json.RawMessage
 		if e := json.Unmarshal(callbackInput.Bytes(), &envelope); e != nil {
 			return callbackReply{}, e

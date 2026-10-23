@@ -10,10 +10,6 @@ import (
 	"testing"
 )
 
-// This is the native counterpart of upstream's pinned contract ceremony. The
-// independently recorded v3 hashes cover the complete Go boundary, including
-// native extensions; projecting back to Python v2 would miss later changes to
-// those extensions. Change the version and review/update this table together.
 const nativePinnedContractVersion = 3
 
 func nativePinnedContractDigests() map[string]string {
@@ -29,8 +25,6 @@ func nativePinnedContractDigests() map[string]string {
 	}
 }
 
-// Hash the actual section values independently of production Digest/Digests.
-// Reading every body key also catches new sections omitted from SectionNames.
 func nativeBoundaryDigests(t *testing.T, snapshot map[string]any) map[string]string {
 	t.Helper()
 	out := map[string]string{}
@@ -80,8 +74,6 @@ func TestGoContractVersionTracksPublishedBoundary(t *testing.T) {
 		}
 	}
 
-	// A driver must see the same vocabulary, timing and version wherever it
-	// reads them. Exercise the actual HTTP surfaces, not only shared constants.
 	s := testService(t, nil, nil)
 	status, caps := call(t, s, "GET", "/v1/capabilities", nil)
 	if status != 200 {
@@ -131,8 +123,6 @@ func TestGoContractVersionGateRejectsUnversionedChanges(t *testing.T) {
 			snapshot := Snapshot()
 			test.mutate(snapshot)
 			live := nativeBoundaryDigests(t, snapshot)
-			// Even if a changed implementation honestly recomputes its own
-			// hashes, it cannot pass by comparing those hashes with itself.
 			if err := nativeContractVersionGate(nativePinnedContractVersion, live); err == nil {
 				t.Fatal("changed public boundary passed without a version increase")
 			}

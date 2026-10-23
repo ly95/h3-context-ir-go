@@ -8,8 +8,6 @@ import (
 	"testing"
 )
 
-// The oracle is the unchanged original pytest execution captured at the pinned
-// source revision. There are no independently invented acceptance examples here.
 func TestUpstreamScopeFormattingCalls(t *testing.T) {
 	raw, err := os.ReadFile("../conformance/fixtures/scope_calls.json")
 	if err != nil {

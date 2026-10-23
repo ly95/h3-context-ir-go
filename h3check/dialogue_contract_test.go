@@ -157,9 +157,6 @@ type actualCrossshotTape struct {
 	} `json:"calls"`
 }
 
-// This is a historical validator regression, not replay of the current writer
-// contract. Restore only host-owned fields from the same first-wave recording;
-// the changed current System is deliberately never matched to old responses.
 func TestActualLiveChineseWriterCandidateDialogueDiagnostics(t *testing.T) {
 	raw, err := os.ReadFile("testdata/live_crossshot_v1.json")
 	if err != nil {

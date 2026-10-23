@@ -155,8 +155,6 @@ func writerResponseSchema(raw json.RawMessage, req contextir.Request) (json.RawM
 
 func assembleFixedEvents(raw json.RawMessage, req contextir.Request, st Structure, slots []DialogueSlot, canonical ...[]contextir.Subject) json.RawMessage {
 	var doc contextir.Document
-	// FALLBACK: unchanged malformed bytes go to the planner strict decoder and its
-	// bounded repair path; no malformed document or partial artifact is accepted.
 	if strictDecode(raw, &doc) != nil {
 		return raw
 	}
@@ -233,14 +231,11 @@ func assembleFixedEvents(raw json.RawMessage, req contextir.Request, st Structur
 	return wire
 }
 
-// These are compiler protocol tokens, not a detector for user intent. A writer
-// which emits a placeholder in prose must repair that prose; fixed words are
-// assembled from the separate slots and are never substituted inside sentences.
 func unexpandedWriterSlots(raw json.RawMessage, slots []DialogueSlot) error {
 	var doc contextir.Document
 	if strictDecode(raw, &doc) != nil {
 		return nil
-	} // the planner reports malformed JSON
+	}
 	tokens := []string{"{{CAM}}"}
 	for _, slot := range slots {
 		tokens = append(tokens, slot.Placeholder)

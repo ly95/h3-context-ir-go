@@ -8,9 +8,6 @@ import (
 	"github.com/ly95/h3-context-ir-go"
 )
 
-// Draft explicitly requests the deterministic floor. It never calls Model and
-// never invents a semantic mode for ambiguous pictures. Structured cards support
-// exact identity/pose and unique-target replacement decisions without heuristics.
 func (c *Compiler) Draft(ctx context.Context, b Brief) (result Result, err error) {
 	defer func() { completeAccounting(&result) }()
 	return c.draft(ctx, b, nil)
@@ -79,7 +76,6 @@ func (c *Compiler) draft(ctx context.Context, brief Brief, known *Structure) (Re
 		st.Mode = mode
 		st.Style = b.Style
 		if st.Style == "" {
-			// A source edit owns the scene look; incoming identity plates do not.
 			for _, asset := range b.Assets {
 				if asset.Role == RoleEditSource || asset.Role == RoleContinuationSource || asset.Role == "" && asset.Kind == contextir.MediaVideo {
 					if card, ok := cardByID(b.Cards, asset.ID); ok && card.Style != "" {

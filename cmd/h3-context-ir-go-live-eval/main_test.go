@@ -330,7 +330,6 @@ func TestDocumentAndCompleteArtifactPersistence(t *testing.T) {
 	if loaded.Artifact.SHA256 != result.Artifact.SHA256 {
 		t.Fatal("artifact changed on reload")
 	}
-	// A valid document cannot conceal an altered manifest, even with its old hash.
 	result.Artifact.ManifestSHA256 = "tampered"
 	if _, err = roundtrip(root, "", result); err == nil {
 		t.Fatal("roundtrip accepted an artifact unrelated to its authoritative document")
@@ -400,8 +399,6 @@ func TestSafeErrorDoesNotLeakTransportText(t *testing.T) {
 	}
 }
 func TestReleaseFixtureSchemaPreflight(t *testing.T) {
-	// The executable fixture is a separate review artifact. Its assertions remain
-	// independent; inspecting their schema makes no calls and grants no success.
 	for _, path := range []string{"../../conformance/release_acceptance_inputs.json", "../../conformance/release_acceptance_assertions.json"} {
 		if _, err := os.Stat(path); err != nil {
 			t.Fatal("release fixture required for this schema preflight", err)

@@ -1,7 +1,3 @@
-// Package chatcompat converts Context-IR model contracts using a caller-owned
-// OpenAI-compatible SDK client and provides local Chat Completions helpers.
-// Local-service portability and probe contracts are ported from OpenH3-IR backend.py at
-// fd031e136ae3d89147324c0d1b2aa65e838c21f5 (Apache-2.0).
 package chatcompat
 
 import (

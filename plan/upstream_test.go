@@ -106,9 +106,6 @@ func TestUpstreamCorpus(t *testing.T) {
 			}
 		} else {
 			resolution := resolutions[call.ID]
-			// This original test asserts final compile refusal. Its earlier Python
-			// internal plan is not a shippable result. Preserve the distinct outcome
-			// rather than claiming its internal output equals a successful Go plan.
 			refused := false
 			if call.Function == "h3ir.plan.build_plan" && resolution.Status == "failed" {
 				for _, issue := range resolution.Issues {

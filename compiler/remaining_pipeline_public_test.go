@@ -19,8 +19,6 @@ import (
 	"github.com/ly95/h3-context-ir-go/service"
 )
 
-// These are real adapter/HTTP-decode boundaries, rather than the original
-// Python field/source introspection. No upstream test or remote model is used.
 func TestRemainingPipelineGuidedDecoding(t *testing.T) {
 	calls := 0
 	s := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -122,8 +120,6 @@ func TestRemainingPipelineReplacementWordsWire(t *testing.T) {
 	if e = json.Unmarshal([]byte(wire), &contract); e != nil {
 		t.Fatal(e)
 	}
-	// GET /v1/contract's actual published field inventory must expose the same
-	// accepted name; parsing succeeds only if actual source contract is intact.
 	if !strings.Contains(wire, `"replaces"`) {
 		t.Fatal("field accepted but not published", contract)
 	}

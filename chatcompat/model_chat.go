@@ -11,9 +11,6 @@ import (
 	"github.com/openai/openai-go/v3/shared"
 )
 
-// generateChat uses only the explicitly selected Chat Completions protocol.
-// The SDK transports the request; local checks enforce the Model contract on
-// the original response bytes, before accepting any model-authored JSON.
 func (c *Model) generateChat(ctx context.Context, request contextir.ModelRequest, images []Image) (contextir.ModelResponse, error) {
 	result := emptyResponse()
 	user := sdk.UserMessage(string(request.Input))
@@ -60,8 +57,6 @@ func (c *Model) generateChat(ctx context.Context, request contextir.ModelRequest
 	validChoices := exactResponseKeys(wire.Choices, reflect.TypeFor[[]chatChoice]()) && json.Unmarshal(wire.Choices, &choices) == nil && len(choices) == 1 && choices[0].Message != nil
 	var text string
 	if validChoices && len(choices[0].Message.Content) > 0 && json.Unmarshal(choices[0].Message.Content, &text) == nil {
-		// Retain the rejected candidate for callers that explicitly record output.
-		// It remains untrusted and must never be logged by default.
 		result.RejectedOutput = text
 	}
 	if status < 200 || status >= 300 {
@@ -111,8 +106,6 @@ func emptyOptionalArray(data json.RawMessage) bool {
 	return json.Unmarshal(data, &values) == nil && len(values) == 0
 }
 
-// Keep choices opaque while decoding authoritative response metadata. Malformed
-// output choices must not discard independently valid token usage.
 type chatEnvelope struct {
 	Model   string          `json:"model"`
 	Choices json.RawMessage `json:"choices"`

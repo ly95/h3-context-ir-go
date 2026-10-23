@@ -6,17 +6,11 @@ import (
 	"github.com/ly95/h3-context-ir-go"
 )
 
-// MeasureOptions explicitly authorizes resource resolution. Images need only
-// the stdlib header reader; video/audio stream metadata needs configured tools.
 type MeasureOptions struct {
 	Resolve Resolver
 	Tools   *Tools
 }
 
-// MeasureAssets fills missing source metadata without mutating caller assets.
-// It validates visual kind against bytes before any model sees the source.
-// A caller-provided tensor size is authoritative even if its temporary encoded
-// representation has a different size, matching the original measure_assets.
 func MeasureAssets(ctx context.Context, assets []contextir.Asset, options MeasureOptions) ([]contextir.Asset, error) {
 	out := append([]contextir.Asset(nil), assets...)
 	for i := range out {
@@ -57,9 +51,6 @@ func MeasureAsset(ctx context.Context, asset contextir.Asset, options MeasureOpt
 		}
 		return out, nil
 	}
-	// Like the original header intake, an audio declaration is never rejected
-	// merely because an ISO container was identified as video. Decode/probe is
-	// an explicit additional capability, rather than an inferred visual track.
 	if options.Tools == nil {
 		return out, nil
 	}
@@ -82,8 +73,6 @@ func MeasureAsset(ctx context.Context, asset contextir.Asset, options MeasureOpt
 	return out, nil
 }
 
-// InspectAsset implements compiler.AssetInspector structurally, avoiding a
-// dependency from the media adapter back to the high-level compiler package.
 func (p *Perceiver) InspectAsset(ctx context.Context, asset contextir.Asset) (contextir.MediaMetadata, error) {
 	if p == nil {
 		return asset.Metadata, mediaError(contextir.CodeInvalid, "perceiver", "Initialize media perception first.", nil)

@@ -78,8 +78,6 @@ func TestCompilePublishesAcceptedArtifactAndLicenceFindings(t *testing.T) {
 			d.Shots[0].Description = contextir.RichText{{SubjectID: d.Subjects[0].ID}, {Text: " walks through the stone corridor, passing the pillars as the doorway grows closer."}}
 			d.Shots[0].Events = nil
 			if plans == 1 {
-				// The first complete candidate violates the fixed silent score.
-				// Publication must retain the repaired candidate's artifact.
 				d.Music = "A drum score."
 			}
 			out = d

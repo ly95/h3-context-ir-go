@@ -50,7 +50,6 @@ func TestBindingsProtectSourceIntervalRolesAndAnchors(t *testing.T) {
 			r.Bindings = bindingsFor(d)
 			switch name {
 			case "source_interval":
-				// Different pointers holding equal intervals must compare by value.
 				d.References[1].Source.Interval = &contextir.Interval{Start: 1000, End: 5000}
 			case "role":
 				d.References[1].Roles = []contextir.Role{contextir.RoleAction}
@@ -99,7 +98,6 @@ func TestSharedKeyframeReferenceLocksOnlyExplicitAnchors(t *testing.T) {
 	d.References[0].Anchor = &anchor
 	d.References[0].Retention = contextir.FullyPreserved
 	r.Bindings = bindingsFor(d)
-	// The style responsibility has no target-time constraint; the keyframe does.
 	r.Bindings[0].Anchor = nil
 	p := mustPlanner(t, modelFunc(func(context.Context, contextir.ModelRequest) (contextir.ModelResponse, error) {
 		return response(t, d), nil
@@ -194,9 +192,6 @@ func TestAdditionalDialogueRequiresExplicitPermission(t *testing.T) {
 	}
 }
 
-// This is deliberately a boundary test, not a semantic-quality success test.
-// Structural validation cannot infer that unrelated prose violates an instruction.
-// No keyword list or string comparison should masquerade as that capability.
 func TestFreeformSemanticConsistencyRequiresExternalEvaluation(t *testing.T) {
 	r := request(contextir.ModeText)
 	r.Instruction = "Show only a red ball; do not add anything."
@@ -219,7 +214,6 @@ func TestPlannerSnapshotsCoverageAndBindingPointers(t *testing.T) {
 	evidence := allEvidence(r)
 	evidence[1].Coverage.SampleTimes = []contextir.Time{0, 2000}
 	evidence[1].Coverage.Intervals = []contextir.Interval{{Start: 0, End: 7000}}
-	// Returned documents use a distinct interval pointer, as real model JSON does.
 	d.References[1].Source.Interval = &contextir.Interval{Start: 1000, End: 6000}
 	p := mustPlanner(t, modelFunc(func(_ context.Context, in contextir.ModelRequest) (contextir.ModelResponse, error) {
 		r.Bindings[1].Source.Interval.End = 1001

@@ -23,9 +23,6 @@ type StyleDecision struct {
 	Note            string `json:"note"`
 }
 
-// LicenceDecision exposes exactly who may govern each visual attribute. Pose and
-// sheet presentation remain in the observed subject record, with a separate
-// mechanism-owned permission rather than being promoted into identity.
 type IdentityDecision struct {
 	RequestBinding       string                        `json:"request_binding,omitempty"`
 	DescriptorSource     string                        `json:"descriptor_source,omitempty"`
@@ -68,9 +65,6 @@ type LicenceDecision struct {
 	Calls                []planner.CallUsage `json:"calls,omitempty"`
 }
 
-// DecideLicence is the production reference/request precedence boundary. It
-// interprets open-ended language through a typed model contract, never verb or
-// garment lists. The same decision locks the structural and prose stages.
 type LicenceReference struct {
 	ActualFrame bool                `json:"actual_frame,omitempty"`
 	ID          string              `json:"id"`
@@ -83,9 +77,6 @@ func (c *Compiler) DecideLicence(ctx context.Context, b Brief) (LicenceDecision,
 	return c.DecideLicenceWithReferences(ctx, b, nil)
 }
 
-// DecideLicenceWithReferences supports reference analysis independent of media
-// attachment/publication. Additional readings govern licence/style only: they
-// are never fabricated Asset entries, conditioning sockets or observed subjects.
 func (c *Compiler) DecideLicenceWithReferences(ctx context.Context, b Brief, references []LicenceReference) (LicenceDecision, error) {
 	if c.needsExecution(b) {
 		next, err := c.executionFor(ctx, b)
@@ -219,8 +210,6 @@ func (c *Compiler) decideLicence(ctx context.Context, brief Brief, additional []
 	if identityErr != nil {
 		return out, identityErr
 	}
-	// Qualify source-sheet presentation before target identities are locked into
-	// structural and prose contracts. The host's sheet set excludes actual frames.
 	identity, presentationCalls, presentationErr := c.qualifyReferenceSheetIdentity(ctx, b, out.Subjects, sheets, responsibilities, identity)
 	out.Calls = append(out.Calls, presentationCalls...)
 	if presentationErr != nil {
@@ -295,8 +284,6 @@ Target identities are already resolved by identity_requirements. Those are TARGE
 	return out, failure(contextir.CodeModelOutput, "licence", "licence", "Reference licence interpretation did not satisfy its typed contract.", err)
 }
 
-// A media track's presence does not license all of its contents. These are
-// declared responsibility boundaries, not interpretations of caller prose.
 func roleLicencesVisual(role Role, attribute string) bool {
 	switch role {
 	case RoleStructure, RoleStoryboard:

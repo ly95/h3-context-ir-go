@@ -10,8 +10,6 @@ import (
 	"github.com/ly95/h3-context-ir-go"
 )
 
-// The words, baker input and template ownership assertions come from upstream
-// test_enrichment_path_imports and test_hardening, at UpstreamRevision.
 func TestOriginalFixedDialogueBypassesProse(t *testing.T) {
 	for _, tc := range []struct{ intent, text, hint string }{{"A baker sets the first tray on the counter before sunrise.", "First batch of the morning.", "the baker"}, {"two mechanics argue", "That belt is done.", ""}} {
 		t.Run(tc.text, func(t *testing.T) {
@@ -75,8 +73,8 @@ func TestOriginalFixedDialogueBypassesProse(t *testing.T) {
 					}
 					d.Dialogue = nil
 					d.Speakers = nil
-					d.Shots[0].Events = nil // original missing-placeholder fallback shape
-					d.Style = ""            // The writer omits the host-owned style field.
+					d.Shots[0].Events = nil
+					d.Style = ""
 					out = d
 				} else {
 					t.Fatal("unexpected typed model boundary", m.Stage)
@@ -110,8 +108,6 @@ func TestOriginalFixedDialogueBypassesProse(t *testing.T) {
 }
 
 func TestOriginalCrossCutLineHostSegments(t *testing.T) {
-	// Exact LINE/HALF_A/HALF_B from test_dialogue_across_a_cut.py. The source
-	// separator between the halves is preserved in the second segment.
 	line := "If it turns halfway and stops, the pin is worn, so you change the pin and not the whole lock."
 	b := Brief{Intent: "the locksmith leans over the vice, then the heavy wooden door of the shop", Seconds: 12, Mode: contextir.ModeText, Creativity: CreativityRestrained, Dialogue: []Dialogue{{Text: line, Language: "English"}}, Cuts: []contextir.Time{6000}}
 	c, _ := New(nil, nil, Options{})

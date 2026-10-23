@@ -46,19 +46,6 @@ func goConformanceReferenceDraft(t *testing.T, b compiler.Brief) compiler.Result
 	return r
 }
 
-// TestGoConformanceManifest binds the original asset rather than accepting an
-// empty manifest (where used <= published would hold vacuously).
-// Source: fd031e13 tests/test_hardening.py::
-// test_every_label_in_the_text_has_a_manifest_entry_behind_it.
-//
-// Go adaptation: the source passes cards={}, while the public Go Draft requires
-// observed evidence for an identity reference. We inject stable fields copied
-// verbatim from the already recorded real ref1 observation in
-// conformance/reports/live-suite-round8/ref2va_two_subjects/result.json,
-// result.evidence[asset-1].card. No new observation or model call is fabricated;
-// the caller note "the woman" remains a note, not an observed gender claim.
-// The source's explicit REF2VA argument becomes Brief.Mode, and its SUBJECT
-// attachment becomes an explicit typed Go RoleSubject.
 func TestGoConformanceManifest(t *testing.T) {
 	path, err := filepath.Abs("../third_party/open-h3-ir/testdata/golden/assets/ref1.png")
 	if err != nil {
@@ -126,8 +113,6 @@ func TestGoConformanceManifest(t *testing.T) {
 	assertConformanceArtifactBindings(t, r)
 
 	t.Run("text_only_binds_nothing", func(t *testing.T) {
-		// This is the opposite half of the same upstream contract: an app must
-		// not attach inert conditioning media to a prompt that binds none.
 		text := goConformanceReferenceDraft(t, compiler.Brief{Intent: "the man walks down the stone corridor", Seconds: 8, Mode: contextir.ModeText})
 		if len(text.Artifact.Manifest.Media) != 0 || len(text.Artifact.Manifest.Subjects) != 0 || len(text.Artifact.Manifest.References) != 0 {
 			t.Fatal("text-only draft published phantom media", text.Artifact.Manifest)
@@ -158,9 +143,6 @@ func TestGoConformanceManifest(t *testing.T) {
 	})
 }
 
-// The contract is equality of the actual H3 label set and the shipped manifest,
-// as well as correspondence to the authoritative Document. Checking only
-// `used <= published` could let a renderer omit every conditioned input.
 func assertConformanceArtifactBindings(t *testing.T, result compiler.Result) {
 	t.Helper()
 	published := map[string]bool{}
@@ -171,7 +153,6 @@ func assertConformanceArtifactBindings(t *testing.T, result compiler.Result) {
 		published[binding.Label] = true
 	}
 	used := map[string]bool{}
-	// Label syntax is the H3 output protocol, not an intent classifier.
 	for _, label := range regexp.MustCompile(`<(?:Picture|Video|Audio|Subject) [1-9][0-9]*>`).FindAllString(result.Artifact.Prompt, -1) {
 		used[label] = true
 	}
@@ -184,21 +165,6 @@ func assertConformanceArtifactBindings(t *testing.T, result compiler.Result) {
 	}
 }
 
-// TestGoConformanceFramePose ports the actual Draft/Artifact assertions from
-// fd031e13 tests/test_reference_licence.py::
-// test_a_frame_anchor_DOES_licence_its_pose, with the counterexample from
-// test_a_subject_plate_does_not_put_its_pose_in_the_definition and
-// test_the_pose_is_still_recorded_even_when_not_asserted.
-//
-// The character card below is the original synthetic POSE/IDENTITY test double,
-// not a claimed observation of ref1.png or a new perception result. Go requires
-// explicit coverage on this injected card. REF2VA is an explicit input and
-// OfficialProfile explicitly supports its first-frame relationship. The native
-// REF2VA Document represents it as RoleKeyframe at zero, while Brief/Structure
-// retain RoleFirstFrame; the Subject source supplies identity, not an anchor. We select
-// 209 frames (upstream's snap-up target for nominal 8 seconds) explicitly so the
-// same Document also meets ComfyUI's 17k+5 grid; that negative test must fail for
-// the unsupported frame-anchor capability, not an unrelated timing error.
 func TestGoConformanceFramePose(t *testing.T) {
 	identity := []string{"black hair shaved at the sides", "a thin pale scar through the left eyebrow", "charcoal technical jacket", "worn black boots"}
 	pose := []string{"fists clenched in a fighting stance", "looking toward the camera"}

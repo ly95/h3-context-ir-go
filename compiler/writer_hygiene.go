@@ -1,6 +1,3 @@
 package compiler
 
-// The free-prose writer owns these generated characters. Caller-owned dialogue,
-// visible text, observations and request fields stay byte-exact; the host never
-// repairs their punctuation to satisfy a generated-prose writing convention.
 const writerHygieneInstruction = `For model-authored English scene prose, use straight ASCII apostrophes and quotation marks and ordinary spaces. Do not introduce smart quotation marks (U+2018/U+2019/U+201C/U+201D), non-breaking spaces, or full-width substitutes for H3 brackets. This rule concerns generated structural prose only, not an ASCII-only video: preserve every caller-authored dialogue line, visible-text literal, source observation, exact name, and other locked field byte for byte, including their Unicode punctuation and original language. The host restores fixed dialogue verbatim after writing. Never normalize or rewrite those literal fields to satisfy a hygiene diagnostic. Em dashes in the official frame-alignment instructions are valid and must remain unchanged. When repairing H1-unicode-hazard, change only the identified character in your own generated prose to its indicated ASCII equivalent; return a complete valid Document and preserve all unrelated choices and fixed text.`

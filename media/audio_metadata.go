@@ -6,9 +6,6 @@ import (
 	"strings"
 )
 
-// AudioMetadataRequest carries declarations, not observations of a waveform.
-// Transcript/language must come from the caller or their recognizer; they never
-// establish timbre, instrumentation, rhythm or music style.
 type AudioMetadataRequest struct {
 	AssetID                    string
 	Role                       contextir.Role

@@ -23,9 +23,6 @@ type AudioObservation struct {
 }
 type AudioAnalyzer func(context.Context, string, Info) (AudioObservation, error)
 
-// MeteredAudioAnalyzer reports every actual model attempt, including failures.
-// An explicitly local analyzer may return no calls. Basic AudioAnalyzer cannot
-// make that declaration: its invocation is recorded with unknown usage.
 type MeteredAudioAnalyzer func(context.Context, string, Info) (AudioObservation, []contextir.CallUsage, error)
 type PerceiverOptions struct {
 	Tools              *Tools
@@ -40,14 +37,10 @@ type PerceiverOptions struct {
 	MeteredAudio       MeteredAudioAnalyzer
 	OnCall             func(perception.PerceptionCall)
 	OnAudioCall        func(contextir.CallUsage)
-	// MaxImageRetries is the explicit content-repair budget for both still-image
-	// and sampled-video observation. Zero performs exactly one attempt.
-	MaxImageRetries int
+	MaxImageRetries    int
 }
 type Perceiver struct{ options PerceiverOptions }
 
-// PerceiveWithCalls uses a private callback wrapper for this invocation, leaving
-// the shared Perceiver immutable and preserving the caller's existing callback.
 func (p *Perceiver) PerceiveWithCalls(ctx context.Context, asset contextir.Asset) (contextir.Evidence, []contextir.CallUsage, error) {
 	if p == nil {
 		return contextir.Evidence{}, nil, mediaError(contextir.CodeInvalid, "perceiver", "Initialize media perception first.", nil)
@@ -92,10 +85,6 @@ func NewPerceiver(options PerceiverOptions) (*Perceiver, error) {
 	return &Perceiver{options: options}, nil
 }
 
-// Perceive implements planner.Perceiver. Static images are inspected in full;
-// video and audio retain partial coverage unless a separate full-modality adapter
-// is supplied by the caller. No source modality is claimed to be understood from
-// a filename, a descriptive note, three stills, or transcript alone.
 func (p *Perceiver) Perceive(ctx context.Context, asset contextir.Asset) (_ contextir.Evidence, err error) {
 	if p == nil || p.options.Resolve == nil {
 		return contextir.Evidence{}, mediaError(contextir.CodeInvalid, "perceiver", "Initialize media perception first.", nil)

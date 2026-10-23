@@ -132,8 +132,6 @@ reference_medium and requested_medium are the supplied semantic taxonomy IDs; un
 	return out, failure(contextir.CodeModelOutput, "medium", "medium", "Medium permission did not satisfy the typed contract.", nil)
 }
 
-// This is deterministic formatting of trusted observation fields, not intent
-// inference. It never grants a permission or decides which medium was requested.
 func tidyObservedStyle(raw string) string {
 	text := strings.TrimRight(strings.TrimSpace(raw), ". ")
 	for _, prefix := range []string{"resembling ", "similar to ", "like ", "reminiscent of ", "suggesting "} {
@@ -222,9 +220,6 @@ func resolvedVisualStyle(b Brief, medium MediumDecision, readings []LicenceRefer
 		style.Phrase = b.Style
 		style.Source = "request"
 	case medium.Disposition == "convert" && medium.RequestedStyle != "":
-		// The model-owned noun phrase uses the same explicit display formatting as
-		// observed style metadata. Caller-authored structured Style is handled
-		// above and remains byte-for-byte unchanged.
 		style.Phrase = tidyObservedStyle(medium.RequestedStyle)
 		style.Source = "request"
 	case observed != "":
@@ -234,9 +229,6 @@ func resolvedVisualStyle(b Brief, medium MediumDecision, readings []LicenceRefer
 		}
 		style.Source = "reference"
 	case medium.RequestedStyle != "":
-		// The model-owned noun phrase uses the same explicit display formatting as
-		// observed style metadata. Caller-authored structured Style is handled
-		// above and remains byte-for-byte unchanged.
 		style.Phrase = tidyObservedStyle(medium.RequestedStyle)
 		style.Source = "request"
 	default:

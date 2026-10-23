@@ -52,7 +52,6 @@ func remainingSurfaceManifest(t *testing.T) struct {
 	return result
 }
 
-// Source test_golden_asset_geometry.py::test_the_reference_assets_are_pngs_and_present.
 func TestRemainingSurfaceGoldenAssetsAreRealPNGs(t *testing.T) {
 	manifest := remainingSurfaceManifest(t)
 	paths, err := filepath.Glob("../third_party/open-h3-ir/testdata/golden/assets/*.png")
@@ -82,9 +81,6 @@ func TestRemainingSurfaceGoldenAssetsAreRealPNGs(t *testing.T) {
 	}
 }
 
-// Source test_golden_asset_geometry.py::test_declared_dimensions_match_the_file_on_disk.
-// Every original declaration is kept as a list, so repeated ref1/ref2 entries
-// cannot mask a wrong literal through a dictionary keyed by filename.
 func TestRemainingSurfaceEveryDeclaredGeometryMatchesBytes(t *testing.T) {
 	fixture := remainingSurfaceManifest(t)
 	seen := map[string]int{}
@@ -112,7 +108,6 @@ func TestRemainingSurfaceEveryDeclaredGeometryMatchesBytes(t *testing.T) {
 	}
 }
 
-// Source test_video_reference.py::test_a_video_with_no_path_raises_instead_of_returning_an_empty_card.
 func TestRemainingSurfaceVideoWithoutPathFailsBeforeObservation(t *testing.T) {
 	calls := 0
 	p, err := media.NewPerceiver(media.PerceiverOptions{Resolve: func(context.Context, contextir.Asset) (string, error) { return "", nil }, Model: vision(func(context.Context, contextir.ModelRequest, []perception.Image) (contextir.ModelResponse, error) {
@@ -129,10 +124,6 @@ func TestRemainingSurfaceVideoWithoutPathFailsBeforeObservation(t *testing.T) {
 	}
 }
 
-// Source test_video_reference.py::test_the_analyzer_version_moves_when_the_card_contract_does.
-// Go has its own version namespace rather than reusing Python's integer. Cache
-// identity includes BOTH analyzer version and prompt/schema contract digest;
-// demonstrate a real old-card hit and invalidation by each changed contract.
 func TestRemainingSurfaceAnalyzerContractInvalidatesOldCards(t *testing.T) {
 	var revision int
 	if _, err := fmt.Sscanf(media.AnalyzerVersion, "contextir-media/v%d", &revision); err != nil || revision < 1 {

@@ -11,10 +11,6 @@ import (
 	"github.com/ly95/h3-context-ir-go/plan"
 )
 
-// FromOriginal adapts an original open-h3-ir Brief and perception cards into the
-// public compiler contract. It reads no files, infers no intent, and never turns
-// a caller note into observed evidence. Synthetic upstream sha keys remain ID
-// provenance; only actual 64-digit hex values enter the root SHA256 field.
 func FromOriginal(original plan.Brief, cards map[string]plan.AssetCard) (Brief, error) {
 	b := Brief{Seed: original.Seed, Effort: original.Effort, Transcripts: map[string]string{}, SecondsExplicit: true, AspectExplicit: true, Intent: original.Intent, Seconds: original.Seconds, Aspect: original.Aspect, Canvas: original.Canvas, Megapixels: original.Megapixels, Shots: original.Shots, Constraints: original.Constraints, Silent: original.Silent, Creativity: Creativity(original.Creativity), OnscreenText: original.OnscreenText, Director: original.Director}
 	if original.Mode != nil {
@@ -148,8 +144,6 @@ func FromOriginal(original plan.Brief, cards map[string]plan.AssetCard) (Brief, 
 	return b, nil
 }
 
-// CardFromOriginal converts a source reading without inventing an attachment or
-// conditioning source. The caller chooses its independent stable reading ID.
 func CardFromOriginal(assetID string, card plan.AssetCard) AssetCard {
 	copied := AssetCard{AssetID: assetID, Summary: card.Summary, Environment: card.Environment, Lighting: card.Lighting, Palette: card.Palette, Framing: card.Framing, Style: card.Style, VisibleText: card.VisibleText, Motion: card.Motion, Camera: observedCamera(card.Camera), FramesSeen: card.FramesSeen, Characterisation: card.Characterisation, Composition: card.Composition, IsReferenceSheet: card.IsReferenceSheet, Transcript: card.Transcript, Language: card.Language, Timbre: card.Timbre, Music: card.Music, AnalyzerVersion: card.AnalyzerVersion, Model: card.ModelID}
 	for _, s := range card.Subjects {

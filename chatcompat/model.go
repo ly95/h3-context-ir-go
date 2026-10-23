@@ -21,7 +21,6 @@ import (
 	"github.com/openai/openai-go/v3/option"
 )
 
-// API selects the endpoint protocol. It is never inferred from a model name.
 type API string
 
 const (
@@ -29,35 +28,26 @@ const (
 	ChatCompletions API = "chat_completions"
 )
 
-// ModelOptions describes the Context-IR generation contract. Configure endpoints,
-// credentials, HTTP transport and timeouts on the injected SDK client itself.
 type ModelOptions struct {
-	API             API
-	Model           string
-	MaxOutputTokens int
-	ReasoningEffort string
-	SupportsImages  bool
-	// AllowedResponseModels permits explicit snapshots of the requested model.
+	API                   API
+	Model                 string
+	MaxOutputTokens       int
+	ReasoningEffort       string
+	SupportsImages        bool
 	AllowedResponseModels []string
-	// StrictSchema requests the endpoint's strict schema subset without rewriting it.
-	StrictSchema bool
-	// Zero byte limits use 8 MiB per response, 48 MiB per request and 32 MiB per image.
-	MaxResponseBytes int64
-	MaxRequestBytes  int64
-	MaxImageBytes    int64
+	StrictSchema          bool
+	MaxResponseBytes      int64
+	MaxRequestBytes       int64
+	MaxImageBytes         int64
 }
 
-// Model converts Context-IR requests and results using a caller-owned SDK client.
-// It does not create, configure or close connections, read the environment, or retry.
 type Model struct {
 	client  sdk.Client
 	options ModelOptions
 }
 
-// HTTPError retains an upstream status without exposing SDK dumps or credentials.
 type HTTPError struct{ StatusCode int }
 
-// Keep diagnostic text compatible with the former openai adapter package.
 func (e *HTTPError) Error() string { return fmt.Sprintf("openai: HTTP status %d", e.StatusCode) }
 
 func NewModel(client sdk.Client, options ModelOptions) (*Model, error) {
@@ -164,9 +154,6 @@ var (
 	errResponseLimit = errors.New("response exceeds byte limit")
 )
 
-// execute sends SDK request types and retains raw, bounded response bytes
-// for the library's deterministic JSON and accounting checks. The middleware also
-// bounds unsuccessful bodies before the SDK's automatic error decoding reads them.
 func (c *Model) execute(ctx context.Context, path string, params any) ([]byte, int, error) {
 	encoded, err := json.Marshal(params)
 	if err != nil {
@@ -177,8 +164,6 @@ func (c *Model) execute(ctx context.Context, path string, params any) ([]byte, i
 	var requestErr error
 	var readErr error
 	capture := func(req *http.Request, next option.MiddlewareNext) (*http.Response, error) {
-		// SDK options and caller middleware may replace or extend the body.
-		// Check the final bytes before transport, including unknown-length readers.
 		if req.ContentLength > c.options.MaxRequestBytes {
 			if req.Body != nil {
 				_ = req.Body.Close()
@@ -259,6 +244,5 @@ func (c *Model) execute(ctx context.Context, path string, params any) ([]byte, i
 	return nil, 0, failure(contextir.CodeModel, "http", "response", "The model endpoint did not return a response.", nil)
 }
 func failure(code contextir.Code, stage, path, message string, cause error) *contextir.Error {
-	// The package moved, but stable diagnostic stages remain compatible.
 	return &contextir.Error{Code: code, Stage: "openai." + stage, Issues: []contextir.Issue{{Code: code, Path: path, Message: message}}, Cause: cause}
 }

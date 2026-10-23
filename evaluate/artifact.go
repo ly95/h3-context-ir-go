@@ -21,8 +21,6 @@ type ArtifactOptions struct {
 
 var sectionPattern = regexp.MustCompile(`(?m)^(subject_definitions|summary|retention_analysis|detailed_description|integrated_multimodal_description|overall_soundscape|non_diegetic_music):[ \t]*`)
 
-// Sections parses H3 section labels only. It does not classify narrative or
-// infer an omitted authoring decision. Repeated labels are an invalid protocol.
 func Sections(prompt string) (map[string]string, error) {
 	m := sectionPattern.FindAllStringSubmatchIndex(prompt, -1)
 	out := map[string]string{}
@@ -45,8 +43,6 @@ func Sections(prompt string) (map[string]string, error) {
 	return out, nil
 }
 
-// ScoreArtifact reads only the shipped prompt and the caller-supplied original
-// plan/provenance. It never measures Document summaries as shot descriptions.
 func ScoreArtifact(a h3.Artifact, options ArtifactOptions) (Score, error) {
 	if strings.TrimSpace(a.Prompt) == "" {
 		return Score{}, errors.New("artifact has no shipped prompt")

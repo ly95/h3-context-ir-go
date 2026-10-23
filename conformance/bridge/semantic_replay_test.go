@@ -8,8 +8,6 @@ import (
 	"github.com/ly95/h3-context-ir-go"
 )
 
-// Replaying a real provider rejection must retain its usage and typed error;
-// dropping that attempt would change both repair inputs and billed evidence.
 func TestRecordedProviderRejectionRetainsTypedBoundary(t *testing.T) {
 	request := contextir.ModelRequest{Stage: "licence", System: "explicit contract", Input: json.RawMessage(`{"source":1}`), ResponseSchema: json.RawMessage(`{"type":"object"}`)}
 	problem := &contextir.Error{Code: contextir.CodeModelOutput, Stage: "deepseek.response", Issues: []contextir.Issue{{Code: contextir.CodeModelOutput, Path: "output", Message: "The output must contain exactly one complete JSON value."}}}

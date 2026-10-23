@@ -12,12 +12,6 @@ import (
 	"github.com/ly95/h3-context-ir-go"
 )
 
-// Header contains facts encoded in a file's header. Reading it does not prove
-// that the compressed image or audio/video stream can be decoded, and supplies
-// no semantic observation. Unknown formats return an empty Kind and MIME.
-// Header recognition never uses a filename or user-authored description.
-// Format layouts and tests derive from open-h3-ir analyse.py at fd031e136a
-// (Apache-2.0; see third_party/open-h3-ir).
 type Header struct {
 	Kind   contextir.MediaKind `json:"kind,omitempty"`
 	MIME   string              `json:"mime,omitempty"`
@@ -25,10 +19,6 @@ type Header struct {
 	Height int                 `json:"height,omitempty"`
 }
 
-// ValidateDeclaration checks a visual declaration against identified container
-// bytes before a model or decoder is asked to interpret them. Audio declarations
-// are outside this header check: an audio-only m4a legitimately uses ISO boxes.
-// Unknown headers remain unknown and require the caller's normal decode path.
 func ValidateDeclaration(path string, declared contextir.MediaKind) (Header, error) {
 	header, err := ReadHeader(path)
 	if err != nil {
@@ -112,7 +102,7 @@ func ReadHeader(path string) (Header, error) {
 			out.Kind = contextir.MediaVideo
 		}
 	case has(4, []byte("ftyp")) || has(0, []byte("\x1a\x45\xdf\xa3")):
-		out.Kind = contextir.MediaVideo // ISO container ambiguity is retained; Inspect reads actual streams.
+		out.Kind = contextir.MediaVideo
 	case has(0, []byte("ID3")) || has(0, []byte("\xff\xfb")) || has(0, []byte("\xff\xf3")) || has(0, []byte("\xff\xf2")) || has(0, []byte("fLaC")) || has(0, []byte("OggS")):
 		out.Kind = contextir.MediaAudio
 	}

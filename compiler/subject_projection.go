@@ -6,18 +6,12 @@ import (
 	"github.com/ly95/h3-context-ir-go"
 )
 
-// SubjectProjection merges explicitly selected observed identities into a single
-// target identity. Subject IDs are the unprojected canonical subject-N IDs.
-// It never guesses identity from names or merges sources merely because they
-// have similar descriptions. The request/model must select the relationship.
 type SubjectProjection struct {
 	SubjectID  string                    `json:"subject_id"`
 	Descriptor string                    `json:"descriptor"`
 	Sources    []SubjectProjectionSource `json:"sources"`
 }
 
-// Attributes names exact accepted source/target attributes to contribute. An
-// unrelated garment, pose or backdrop is not inherited merely by merging IDs.
 type SubjectProjectionSource struct {
 	SubjectID  string   `json:"subject_id"`
 	Attributes []string `json:"attributes"`
@@ -42,10 +36,6 @@ func projectCanonicalSubjects(subjects []contextir.Subject, projections []Subjec
 			return nil, invalid("subject_projections", "Removed figures, actual-frame contents and environment responsibilities cannot be collapsed into a content identity.")
 		}
 		out := primary
-		// A source descriptor may itself contain an unselected colour, garment,
-		// or other property. The caller/model explicitly chooses the target noun
-		// phrase; its consistency is checked by the semantic review, not guessed
-		// by deleting words from the original observation.
 		out.Descriptor = projection.Descriptor
 		out.Sources = nil
 		out.Attributes = nil
@@ -63,9 +53,6 @@ func projectCanonicalSubjects(subjects []contextir.Subject, projections []Subjec
 			for _, attribute := range selection.Attributes {
 				targetAttribute := attribute
 				if !contains(source.Attributes, targetAttribute) && len(approvedTargets) > 0 {
-					// Only an already accepted, source-specific adjustment can
-					// carry an explicit original selection into canonical wording.
-					// The caller's raw selection remains in Structure/Evidence.
 					if target, ok := approvedTargets[0][source.ID][attribute]; ok {
 						targetAttribute = target
 					}

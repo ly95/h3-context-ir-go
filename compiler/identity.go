@@ -100,8 +100,6 @@ func canonicalSubjects(b Brief, st Structure, req contextir.Request, licence *Li
 				subject.Description += "; " + strings.Join(subject.Pose, ", ")
 			}
 			if licence != nil {
-				// Retention is a projection of the accepted target, never a cached
-				// source-attribute sentence that can restore excluded presentation.
 				subject.RetentionDetails = "Preserve this canonical target identity and its listed stable attributes."
 				if subject.Origin == "user" {
 					subject.RetentionDetails += " Explicit caller identity requirements replace the corresponding observed source properties."

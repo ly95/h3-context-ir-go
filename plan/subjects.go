@@ -134,17 +134,11 @@ func lowerFirst(s string) string {
 	return string(r)
 }
 
-// BindReplacements uses explicit identity IDs and uniquely determined kinds.
-// Ambiguous free-text names are resolved upstream by the typed structure stage,
-// never by token overlap or regular-expression matching here.
 func BindReplacements(subjects []SubjectPlan, manifest []ManifestEntry, targets map[string]string) ([]SubjectPlan, []string, error) {
 	resolved, bound, _, err := bindReplacements(subjects, manifest, targets, false)
 	return resolved, bound, err
 }
 
-// BindReplacementsForInspection leaves unresolved figures unbound and
-// returns their picture labels. It never guesses a target. This is for structural
-// analysis; callers must refuse publishing a plan with any unresolved labels.
 func BindReplacementsForInspection(subjects []SubjectPlan, manifest []ManifestEntry, targets map[string]string) ([]SubjectPlan, []string, []string, error) {
 	return bindReplacements(subjects, manifest, targets, true)
 }
@@ -206,8 +200,6 @@ func bindReplacements(subjects []SubjectPlan, manifest []ManifestEntry, targets 
 		} else if len(all) == 1 && len(free) == 1 {
 			target = free[0]
 		} else {
-			// An exact caller description already present in typed perception is an
-			// identity equality, not a lexical similarity guess.
 			exact := []int{}
 			for _, i := range free {
 				if named != "" && (subjects[i].Label == named || subjects[i].Descriptor == named) {

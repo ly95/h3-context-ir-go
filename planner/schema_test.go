@@ -65,7 +65,6 @@ func TestRequestSpecificSchemaLocksOriginalValuesWithoutMutatingGlobalSchema(t *
 		if !bytes.Contains(in.ResponseSchema, []byte("9223372036854775807")) {
 			t.Fatal("schema specialization must retain exact int64 boundaries")
 		}
-		// Model implementations own this request buffer, never the global schema.
 		in.ResponseSchema[0] = '!'
 		return response(t, document(r)), nil
 	}), nil, planner.Options{})
@@ -109,7 +108,6 @@ func TestEmptyLockedArraysAcceptNullAndEmptyAndDialogueGenerationRemainsExplicit
 func TestSchemaUsesStructuredSilenceAndNoDialogueConstraints(t *testing.T) {
 	for _, kind := range []contextir.ConstraintKind{contextir.ConstraintSilence, contextir.ConstraintNoDialogue} {
 		r := request(contextir.ModeText)
-		// Deliberately meaningless prose: only the typed kind chooses the policy.
 		r.Constraints = []contextir.Constraint{{ID: "typed", Kind: kind, Text: "Opaque caller text."}}
 		p := mustPlanner(t, modelFunc(func(_ context.Context, in contextir.ModelRequest) (contextir.ModelResponse, error) {
 			props := schemaProperties(t, in.ResponseSchema, "Document")

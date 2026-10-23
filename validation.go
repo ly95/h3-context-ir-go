@@ -9,8 +9,6 @@ import (
 	"unicode/utf8"
 )
 
-// Inspect returns deterministic diagnostics containing field paths and safe
-// descriptions only. It never embeds submitted text, IDs, or media locators.
 func Inspect(d Document) []Issue {
 	v := newValidation()
 	if d.Version != Version {
@@ -57,11 +55,8 @@ func Inspect(d Document) []Issue {
 	return v.issues
 }
 
-// Validate checks the provider-neutral document contract without IO or mutation.
 func Validate(d Document) error { return validationError(Inspect(d), "validation") }
 
-// ValidateEvidence validates independently supplied perception output before a
-// model consumes it. Coverage of requested assets is a caller policy.
 func ValidateEvidence(assets []Asset, evidence []Evidence) error {
 	v := newValidation()
 	v.assetsCheck(assets)
@@ -69,7 +64,6 @@ func ValidateEvidence(assets []Asset, evidence []Evidence) error {
 	return validationError(v.issues, "evidence")
 }
 
-// ValidateRequest validates caller-owned inputs before perception or model work.
 func ValidateRequest(r Request) error {
 	v := newValidation()
 	v.text(r.Instruction, "instruction", true)
@@ -219,7 +213,6 @@ func (v *validationState) target(t Target) {
 		v.bad("target.frame_count", "must not be negative")
 	}
 	if t.FrameCount > 0 && fpsOK {
-		// Use exact arithmetic so even maximal caller-owned integers cannot wrap.
 		n := new(big.Int).Mul(big.NewInt(t.FrameCount), big.NewInt(t.FPS.Denominator))
 		n.Mul(n, big.NewInt(1000))
 		den := big.NewInt(t.FPS.Numerator)
@@ -373,8 +366,6 @@ func (v *validationState) evidenceCheck(evidence []Evidence) {
 	}
 }
 
-// Coverage records an adapter's explicit declaration. It cannot establish that
-// a model actually inspected the media or that its observations are accurate.
 func (v *validationState) coverage(e Evidence, path string) map[Track]bool {
 	checked := map[Track]bool{}
 	if e.Coverage == nil {

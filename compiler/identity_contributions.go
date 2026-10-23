@@ -8,8 +8,6 @@ import (
 	"github.com/ly95/h3-context-ir-go/plan"
 )
 
-// These bindings identify host-owned observations. They contain no inferred
-// relationship between sources: only the caller/model may choose that relation.
 type identitySourceBinding struct {
 	SubjectID          string   `json:"subject_id"`
 	SubjectLabel       string   `json:"subject_label"`

@@ -16,8 +16,6 @@ func missingDependencies(digests []string) *Error {
 	return &Error{Status: 422, Code: "asset-not-uploaded", Missing: digests, Message: "This service no longer holds an attachment required by the brief. Upload the missing bytes again with PUT /v1/assets/{sha256}, then retry the request. Uploads are kept for a while and then dropped."}
 }
 
-// uploadedDependencies identifies only paths owned by this configured store.
-// Caller-authorized external paths remain the resolver's responsibility.
 func (s *Service) uploadedDependencies(b plan.Brief) ([]string, error) {
 	digests := []string{}
 	seen := map[string]bool{}
@@ -63,10 +61,6 @@ func (s *Service) touchDependencies(digests []string) error {
 	return nil
 }
 
-// withUploadedDependencies checks dependencies before a paid call and refreshes
-// their existing TTL/LRU grace while the operation runs. Touch is the store's
-// retention mechanism, not an atomic pin: a disappearing dependency cancels the
-// operation and returns a caller-visible refusal with its partial call ledger.
 func (s *Service) withUploadedDependencies(ctx context.Context, b plan.Brief, operation func(context.Context) (compiler.Result, error)) (compiler.Result, error) {
 	digests, err := s.uploadedDependencies(b)
 	if err != nil {

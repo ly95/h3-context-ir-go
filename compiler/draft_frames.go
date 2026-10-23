@@ -7,9 +7,6 @@ import (
 	"github.com/ly95/h3-context-ir-go"
 )
 
-// Only the explicitly selected deterministic operation may bind an unobserved
-// actual frame. It describes the socket relationship, never unknown pixels.
-// An injected perceiver's failure is always propagated rather than downgraded.
 func (c *Compiler) collectDraftEvidence(ctx context.Context, b Brief, known *Structure) (perceptionAccounting, []string, error) {
 	if !isNil(c.perceiver) {
 		out, err := c.collectEvidenceMode(ctx, b, false)
@@ -71,10 +68,6 @@ func (c *Compiler) collectDraftEvidence(ctx context.Context, b Brief, known *Str
 	return out, unknown, err
 }
 
-// The endpoint order is mechanical: only the opening plate is asserted at the
-// beginning, and only the closing plate at the end. The caller's literal intent
-// is the path between them. Existing cards describe full frames, never a chosen
-// hero panel or a caller upload note masquerading as observation.
 func applyDraftFrameNarrative(d *contextir.Document, b Brief) {
 	if d.Mode == contextir.ModeReference || len(d.Shots) == 0 {
 		return

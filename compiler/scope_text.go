@@ -1,6 +1,3 @@
-// Code generated from the exact brief_instruction heads in h3ir/creativity.py
-// at fd031e136ae3d89147324c0d1b2aa65e838c21f5; DO NOT EDIT.
-// Apache-2.0; see third_party/open-h3-ir/NOTICE.
 package compiler
 
 var scopeInstructionHeads = map[Creativity]string{

@@ -1,5 +1,3 @@
-// Package h3 compiles an authoritative ContextIR document into the published
-// MiniMax H3 prompt format. It does not load media, infer intent, or call a model.
 package h3
 
 import (
@@ -15,16 +13,11 @@ const (
 	ArtifactVersion = "contextir-h3/artifact-v1"
 )
 
-// FrameGrid is a runtime restriction, not a rule of the H3 text protocol.
-// A frame count is legal when frames % Modulus == Remainder.
 type FrameGrid struct {
 	Modulus   int64 `json:"modulus"`
 	Remainder int64 `json:"remainder"`
 }
 
-// Limits are limits of a particular inference adapter. Zero means unlimited.
-// VideoAudio counts explicitly enabled soundtracks of attached visual videos;
-// StandaloneAudio has its own socket numbering.
 type Limits struct {
 	Pictures        int `json:"pictures"`
 	Videos          int `json:"videos"`
@@ -32,9 +25,6 @@ type Limits struct {
 	StandaloneAudio int `json:"standalone_audio"`
 }
 
-// Profile keeps the published prompt protocol separate from runtime limits.
-// Use a constructor; a zero Profile is invalid. Custom profiles must explicitly
-// identify their format, FPS, supported modes and capabilities.
 type Profile struct {
 	Name                          string             `json:"name"`
 	Format                        string             `json:"format"`
@@ -49,10 +39,6 @@ type Profile struct {
 	SupportsSourceIntervals       bool               `json:"supports_source_intervals"`
 }
 
-// OfficialProfile targets the published H3 prompt format. Source intervals are
-// carried as explicit manifest instructions; the caller must supply the bound
-// source segment to its inference adapter. This profile makes no runtime claim
-// about frame grids, attachment counts or exact-frame conditioning in Ref2VA.
 func OfficialProfile() Profile {
 	return Profile{
 		Name: "h3-published-format-v1", Format: FormatVersion,
@@ -63,9 +49,6 @@ func OfficialProfile() Profile {
 	}
 }
 
-// ComfyUIProfile additionally targets the native ComfyUI H3 node contract.
-// It never snaps a duration or downgrades a reference anchor. Source trimming
-// must be performed explicitly before constructing a document for this profile.
 func ComfyUIProfile() Profile {
 	p := OfficialProfile()
 	p.Name = "h3-comfyui-17k5-v1"
@@ -114,8 +97,6 @@ func checkProfile(doc contextir.Document, p Profile) (int64, contextir.Rational,
 	}
 	frames := doc.Target.FrameCount
 	if frames == 0 {
-		// Multiplication uses integers of arbitrary precision so a malformed huge
-		// duration cannot wrap into an apparently valid frame count.
 		n := new(big.Int).Mul(big.NewInt(int64(doc.Target.Duration)), big.NewInt(24))
 		q, rem := new(big.Int), new(big.Int)
 		q.QuoRem(n, big.NewInt(1000), rem)

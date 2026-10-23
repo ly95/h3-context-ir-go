@@ -22,8 +22,6 @@ func validateVideoObservation(observed contextir.Evidence, asset contextir.Asset
 	if observed.Card.Transcript != "" || observed.Card.Timbre != "" || observed.Card.Music != "" || observed.Card.Language != "" {
 		return mediaError(contextir.CodeModelOutput, "card", "Video images cannot establish sound or speech.", nil)
 	}
-	// Coverage and analyzer identity are host facts. Validate source content on a
-	// host-owned visual sample projection rather than trusting model coverage.
 	copy := observed
 	card := *observed.Card
 	copy.Card = &card

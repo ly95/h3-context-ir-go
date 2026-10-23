@@ -15,9 +15,6 @@ import (
 	"github.com/ly95/h3-context-ir-go/planner"
 )
 
-// Ported from pinned fd031e13 tests/_clip_card, _plate_card, _brief. Literal
-// observations and intent are unchanged; Go uses stable attachment IDs in place
-// of Python SHA keys and an explicit 124-frame exact target (5.167s rounded).
 func remainingSwapBrief(role Role) Brief {
 	n := 1
 	return Brief{Intent: "swap the man for her and change nothing else", Mode: contextir.ModeReference, Seconds: 124.0 / 24, FrameCount: 124, Shots: &n, Assets: []Asset{
@@ -30,7 +27,6 @@ func remainingSwapBrief(role Role) Brief {
 }
 
 func remainingAudioBrief(role Role) Brief {
-	// test_music_referenced_not_copied._audio_brief exact caller/observed words.
 	return Brief{Intent: "a bricklayer lays a course, one brick per hit", Mode: contextir.ModeReference, Seconds: 8, Assets: []Asset{{Asset: contextir.Asset{ID: "aud", Kind: contextir.MediaAudio, Description: "a steady 120 bpm kick pattern, four to the bar", Metadata: contextir.MediaMetadata{Duration: 6000}}, Role: role}}, Cards: []AssetCard{{AssetID: "aud", Summary: "a rhythmic reference supplying beat and tempo.", Characterisation: "a steady 120 bpm kick pattern, four to the bar"}}}
 }
 
@@ -71,10 +67,6 @@ type remainingWriterInput struct {
 	} `json:"compiler_controls"`
 }
 
-// The contract double supplies candidate bytes only. The production
-// controlledModel, Planner locked contract, H3 renderer and validator decide
-// acceptance. A poisoned candidate therefore tests native gates, not an oracle
-// implemented in the double. Captures are the actual outbound writer request.
 func remainingWrite(t *testing.T, b Brief, poison func(*contextir.Document, remainingWriterInput)) (Result, contextir.ModelRequest, remainingWriterInput, error) {
 	t.Helper()
 	c, r := remainingPipelineDraft(t, b)
@@ -228,8 +220,6 @@ func TestRemainingPipelineAudioClaims(t *testing.T) {
 		if in.Facts.Audio.MayReuse || !strings.Contains(req.System, "do not claim in any section that original audio is preserved, reused or carried over") {
 			t.Fatal("wiring prohibition missing from actual ask")
 		}
-		// Native rule still rejects a prefix claim; no prose checker pretends to
-		// infer an unwired track from the visual clip's container.
 		_, r := remainingPipelineDraft(t, b)
 		sections, _ := evaluate.Sections(r.Artifact.Prompt)
 		before := sections["summary"]
@@ -788,10 +778,6 @@ func TestRemainingPipelineReferenceLicence(t *testing.T) {
 	})
 }
 
-// Full public Compile regression for newly executable typed copy and advertised
-// video property roles. Semantic replies are explicit contract doubles; every
-// admission, source graph, writer assembly, final validation and ledger step is
-// the actual production implementation.
 func TestRemainingPipelinePublicCompileResponsibilities(t *testing.T) {
 	for _, role := range []Role{RoleBGM, RoleSubject, RoleEnvironment, RoleStyle, RoleStoryboard} {
 		t.Run(string(role), func(t *testing.T) {
@@ -814,7 +800,6 @@ func TestRemainingPipelinePublicCompileResponsibilities(t *testing.T) {
 			if e != nil {
 				t.Fatal(e)
 			}
-			// Exact source fixture readings retain their origin; no analyzer is invoked.
 			for i := range b.Cards {
 				b.Cards[i].AnalyzerVersion = "pinned-upstream-unit-fixture/fd031e13"
 				track := contextir.TrackVisual
@@ -839,8 +824,6 @@ func TestRemainingPipelinePublicCompileResponsibilities(t *testing.T) {
 				if _, e = bad.Compile(context.Background(), b); !contextir.HasCode(e, contextir.CodeModelOutput) {
 					t.Fatal("public full-copy Compile mixed generated audio", e)
 				}
-				// A normal typed update keeps the independent explicit copy choice. Only an
-				// authorized map update clears it; its snapshot cannot alias caller state.
 				changed, e := applyBriefUpdates(b, "show the mason", []BriefUpdate{{Field: "intent", Action: "set", Quote: "show the mason", Value: json.RawMessage(`"show the mason"`)}})
 				if e != nil || changed.AudioCopyModes["aud"] != contextir.FullyCopy {
 					t.Fatal("refine lost copy policy", e, changed)

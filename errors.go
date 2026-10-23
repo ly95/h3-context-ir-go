@@ -24,7 +24,6 @@ type Issue struct {
 	Message string `json:"message"`
 }
 
-// Error exposes safe operational context without embedding prompts or media URIs.
 type Error struct {
 	Code   Code
 	Stage  string

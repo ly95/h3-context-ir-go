@@ -54,7 +54,6 @@ func TestEditDefinitionsUseReplacementGraphNotEveryClip(t *testing.T) {
 	d.References[2].Roles = []contextir.Role{contextir.RoleReplacementSubject}
 	d.References[2].Replaces = "the original cup"
 	d.Subjects = append(d.Subjects, contextir.Subject{ID: "old", Description: "the original cup", Sources: []contextir.Attribution{{Source: d.References[0].Source, Role: contextir.RoleEditSource}}, TakenOverBy: "cup", Retention: contextir.AttributeTransfer, ShotIDs: []string{"one"}})
-	// Even overlapping edit scopes cannot override explicit transfer ownership.
 	d.References[1].ShotIDs = []string{"one", "two"}
 	a := requireCompile(t, d, h3.OfficialProfile())
 	def := editScopeLine(a.Prompt, "subject_definitions", "<Picture 1>")
@@ -64,7 +63,6 @@ func TestEditDefinitionsUseReplacementGraphNotEveryClip(t *testing.T) {
 	if strings.Contains(editScopeLine(a.Prompt, "retention_analysis", "<Video 2>"), "takes the place of") {
 		t.Fatal("unrelated edit source claims the transfer", a.Prompt)
 	}
-	// Two segments of one asset remain two distinct source ownership keys.
 	d.Assets = d.Assets[:2]
 	d.Assets[1].Metadata.Duration = 8000
 	d.References[0].Source.Interval = &contextir.Interval{Start: 0, End: 4000}

@@ -1,5 +1,3 @@
-// Command h3-context-ir-go-live-eval records explicit public/synthetic acceptance cases.
-// Assertions are loaded separately and are never supplied to model adapters.
 package main
 
 import (
@@ -82,7 +80,6 @@ func safe(err error) *safeError {
 	if errors.As(err, &typed) && typed != nil {
 		return &safeError{Code: typed.Code, Stage: typed.Stage, Message: typed.Error(), Issues: typed.Issues}
 	}
-	// Untrusted IO/transport error text may contain locators or credentials.
 	return &safeError{Code: contextir.CodeModel, Stage: "live_eval", Message: "The acceptance operation failed; inspect the retained structured stage records."}
 }
 
@@ -194,8 +191,6 @@ type retryLimits struct {
 	Planner   int
 }
 
-// A case override is explicit in both dimensions: zero is a supported budget,
-// so omitted fields cannot be interpreted as zero.
 type caseRetryLimits struct {
 	Structure *int `json:"structure"`
 	Planner   *int `json:"planner"`
@@ -253,8 +248,7 @@ type operationExpectation struct {
 	ErrorCode  contextir.Code   `json:"error_code,omitempty"`
 	ErrorCodes []contextir.Code `json:"error_codes,omitempty"`
 	Checks     []check          `json:"checks,omitempty"`
-	// Semantic belongs to the independent artifact checker, never a model input.
-	Semantic json.RawMessage `json:"semantic,omitempty"`
+	Semantic   json.RawMessage  `json:"semantic,omitempty"`
 }
 type assertions struct {
 	Schema string `json:"schema"`

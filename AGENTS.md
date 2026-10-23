@@ -10,6 +10,7 @@ H3 Context-IR Go is an independent Go library. It must not depend on CLW Studio,
 - Keep H3 format rules separate from inference-runtime frame/duration profiles. No implicit duration rounding.
 - Use stable typed errors and structured diagnostics. Never log user content or private media locators by default.
 - Keep the core standard-library-only. Optional OpenAI-compatible model adapters may depend on the official OpenAI Go SDK; keep that dependency outside the core. Run gofmt, go test ./..., go test -race ./..., and go vet ./... before delivery.
+- Do not write comments in Go source. Names, types, and structured diagnostics must carry the meaning. Keep compiler directives such as `//go:embed`; do not add package docs, field docs, or inline explanations.
 - Record upstream provenance. Third-party samples and source retain their notices. Passing unit tests does not establish video generation quality or official equivalence.
 - Port upstream tests by the behavior they protect. Preserve the business invariant, successful scenario, and relevant failure controls while using public Go interfaces and explicit dependencies; Python constants, subprocesses, syntax, and accidental classifier omissions are not Go requirements.
 - Explain adaptations against that invariant. A valid Go mode, injected observation, or capable format profile may replace an upstream setup, but must not remove a supported business scenario or turn an expected success into a rejection-only test. Report native acceptance separately from unchanged Python compatibility diagnostics.

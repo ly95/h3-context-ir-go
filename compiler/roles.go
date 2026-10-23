@@ -56,8 +56,6 @@ func rootRole(r Role) contextir.Role {
 	return ""
 }
 
-// InferMode uses only caller-owned typed fields and attachment kinds. Empty
-// means that the image anchor/content distinction requires the model contract.
 func InferMode(b Brief) (contextir.Mode, string, error) {
 	if b.Mode != "" {
 		switch b.Mode {

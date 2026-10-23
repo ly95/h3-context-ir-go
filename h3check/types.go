@@ -1,7 +1,3 @@
-// Package h3check validates H3 prompt text against the public writing contract.
-// Rules are ported from ruashots/open-h3-ir fd031e136ae3d89147324c0d1b2aa65e838c21f5.
-// Copyright upstream contributors; Apache-2.0. See ../third_party/open-h3-ir.
-// Validation is deterministic and performs no model, process, or network calls.
 package h3check
 
 import (
@@ -78,17 +74,12 @@ type LoRATrigger struct {
 	Slot  string `json:"slot"`
 }
 
-// Scope is explicit caller authorization. No intent or permission is inferred from prose.
 type Scope struct {
 	Level     string   `json:"level"`
 	Requested []string `json:"requested"`
 	Forbidden []string `json:"forbidden"`
 }
 
-// DialogueContract carries explicit caller words and the host's ordered emission
-// plan. It supplements text-only linting when the caller owns structured IR.
-// Text/language for fixed lines must come from the accepted caller contract,
-// rather than being copied back from a writer's candidate.
 type DialogueContract struct {
 	Lines []DialogueLineContract `json:"lines"`
 	Parts []DialoguePartContract `json:"parts"`
@@ -118,12 +109,9 @@ func (s Scope) permits(e string) bool {
 	return contains(s.Requested, e) || s.Level == "bold" || s.Level == "extreme" || (s.Level == "balanced" && e == "music")
 }
 
-// Context preserves the upstream JSON contract. Use NewContext for Go defaults;
-// unmarshalling JSON also installs the defaults before applying explicit fields.
 type Context struct {
-	Mode            string   `json:"mode"`
-	DurationSeconds *float64 `json:"duration_s"`
-	// CheckFrameGrid is a runtime-profile capability; nil keeps the upstream check.
+	Mode                     string            `json:"mode"`
+	DurationSeconds          *float64          `json:"duration_s"`
 	CheckFrameGrid           *bool             `json:"check_frame_grid,omitempty"`
 	Pictures                 *int              `json:"n_pictures"`
 	Videos                   int               `json:"n_videos"`

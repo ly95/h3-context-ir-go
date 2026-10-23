@@ -35,9 +35,6 @@ func remainingWardrobeGuard(t *testing.T, b Brief, l LicenceDecision, want strin
 	if e != nil || remainingRule(findings, "R15-wardrobe-not-restated") != (want == "reference") {
 		t.Fatal("actual native assessment ignored authority or restated replaced clothing", e, findings, l)
 	}
-	// The same artifact with an explicitly supplied contrary typed decision must
-	// produce the opposite hold result. No garment detector or request-word list
-	// is used to choose authority in production.
 	control := l
 	control.Governs = map[string]string{}
 	for k, v := range l.Governs {

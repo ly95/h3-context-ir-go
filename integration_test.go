@@ -26,7 +26,6 @@ type integrationPerceiver struct{ calls int }
 
 func (p *integrationPerceiver) Perceive(_ context.Context, asset contextir.Asset) (contextir.Evidence, error) {
 	p.calls++
-	// This fixture checks orchestration and persistence, not image understanding.
 	return contextir.Evidence{AssetID: asset.ID, AnalyzerVersion: "fixture/v1", Coverage: &contextir.PerceptionCoverage{Status: contextir.CoverageComplete, Tracks: []contextir.Track{contextir.TrackVisual}}, Facts: []contextir.Fact{{ID: asset.ID + "-appearance", Text: asset.Description, Source: contextir.SourceRef{AssetID: asset.ID, Track: contextir.TrackVisual}}}}, nil
 }
 

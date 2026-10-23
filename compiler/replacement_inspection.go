@@ -5,9 +5,6 @@ import (
 	"github.com/ly95/h3-context-ir-go/plan"
 )
 
-// ReplacementInspection is a readonly report of the observed graph. Candidates
-// are not ranked by caller wording and an unresolved report never authorizes a
-// binding. The caller may select a graph identity or use ResolveReplacements.
 type ReplacementInspection struct {
 	Picture    string             `json:"picture"`
 	Incoming   *plan.SubjectPlan  `json:"incoming,omitempty"`
@@ -71,7 +68,7 @@ func inspectReplacementReading(subjects []plan.SubjectPlan, manifest []plan.Mani
 				switch len(d.Candidates) {
 				case 0:
 					d.Problem = "no_compatible_subject"
-				case 1: // A unique candidate remains a report, not a mutation.
+				case 1:
 				default:
 					d.Problem = "crowded"
 				}

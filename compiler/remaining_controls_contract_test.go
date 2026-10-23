@@ -15,9 +15,6 @@ import (
 	"github.com/ly95/h3-context-ir-go/planner"
 )
 
-// Every leaf below maps to one original fd031e13 nodeid in
-// conformance/adaptations/remaining_controls.json. These are native API tests;
-// original Python assertions and their historical results are not changed.
 func TestRemainingControlsDirectors(t *testing.T) {
 	profiles := Directors()
 	t.Run("Distinct", func(t *testing.T) {
@@ -32,8 +29,6 @@ func TestRemainingControlsDirectors(t *testing.T) {
 			t.Fatal("the original seven distinct controls were not published", len(ids))
 		}
 	})
-	// These expressions audit OUR embedded documentation, not caller intent,
-	// authorization or model selection. The source makes the same static checks.
 	patterns := []string{`\[\s*Shot\b|\bShot\s+\d`, `\b\d{1,2}:\d{2}`, `</?d>|</?scenetrans>|</?cutoff>`, `<\s*(?:Subject|Picture|Video|Audio)\s*\d*\s*>`, `"[^"]{25,}"`, `\b\d+\s+shots?\b|\bshot count\b|\bcuts? every\b`}
 	for _, d := range profiles {
 		t.Run("NoExamples/"+d.ID, func(t *testing.T) {
@@ -144,8 +139,6 @@ func TestRemainingControlsPinned(t *testing.T) {
 		if lo != 6 || hi != 6 {
 			t.Fatal("pinned guided decoding is not exact", lo, hi)
 		}
-		// A real compiler provider schema is independently exercised by
-		// TestGoConformancePinnedShots, including rejecting a third shot.
 	})
 	t.Run("SchemaAuto", func(t *testing.T) {
 		lo, hi := remainingSchemaBounds(t, ShotSchema(4, nil))
@@ -263,8 +256,6 @@ func TestRemainingControlsShots(t *testing.T) {
 		}
 	})
 	t.Run("Signature", func(t *testing.T) {
-		// This public diagnostic describes OUTPUT prose only. It cannot route
-		// requests, authorize content, select a model, or reject a legitimate edit.
 		a := h3check.ProseSignature("A wide shot as the man walks forward, camera pushing in.")
 		b := h3check.ProseSignature("A wide view in which he strides ahead while the lens pushes onward.")
 		c := h3check.ProseSignature("A close framing holds a static shot as he stops and looks off left.")
@@ -373,8 +364,6 @@ func remainingTextScope(t *testing.T, level Creativity) ScopeDecision {
 		if request.Stage != "scope" {
 			t.Fatal("unexpected boundary", request.Stage)
 		}
-		// Empty semantic input supplies no requested/forbidden content; host code
-		// must apply the actual setting and permission algebra independently.
 		return contextir.ModelResponse{JSON: json.RawMessage(`{"requested":{"speech":false,"music":false,"onscreen_text":false,"magnitude":""},"forbidden":{"speech":false,"music":false,"onscreen_text":false,"magnitude":""},"dialogue":[],"onscreen_text":[],"reasoning":"No content was supplied."}`)}, nil
 	}), nil, Options{})
 	if err != nil {

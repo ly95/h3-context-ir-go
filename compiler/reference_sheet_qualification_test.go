@@ -48,8 +48,6 @@ func cleanLiveSheetQualifications(f liveSheetIdentityFixture) []sheetIdentityQua
 		}
 		out = append(out, q)
 	}
-	// Explicit expected answer to this pinned historical candidate, not an
-	// implementation that guesses presentation from arbitrary user language.
 	out[0].Descriptor = "adult woman with a short undercut hairstyle with longer hair gathered at the top/back, wearing a black tactical jacket with chest strap and metal buckle, a dark crew-neck shirt, black cargo trousers, and black lace-up combat boots"
 	out[1].Attributes[6].Target = "amber eye"
 	return out

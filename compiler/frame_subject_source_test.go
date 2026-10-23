@@ -13,9 +13,6 @@ import (
 )
 
 func TestGoConformanceFramePoseCompileWithObservedIdentity(t *testing.T) {
-	// Same POSE/IDENTITY and frame relationship as the original
-	// test_a_frame_anchor_DOES_licence_its_pose; interpretation is an explicit
-	// contract double, so this exercises the real public Compile/planner graph.
 	canvas := [2]int{1056, 608}
 	pose := []string{"fists clenched in a fighting stance", "looking toward the camera"}
 	b := Brief{Intent: "the man walks forward down the stone corridor", Mode: contextir.ModeReference, Seconds: 209.0 / 24, FrameCount: 209, Canvas: &canvas,
@@ -109,9 +106,6 @@ func TestGoConformanceFramePoseCompileWithObservedIdentity(t *testing.T) {
 	}
 
 	t.Run("same_observation_as_subject_is_not_an_opening_pose", func(t *testing.T) {
-		// Hold observation and requested action constant; only the caller's
-		// explicit responsibility changes. Pose may remain evidence, but an
-		// ordinary identity plate cannot dictate the target's opening pose.
 		control := b
 		control.Assets = append([]Asset(nil), b.Assets...)
 		control.Assets[0].Role = RoleSubject

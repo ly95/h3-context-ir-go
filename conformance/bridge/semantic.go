@@ -14,8 +14,6 @@ import (
 	"github.com/ly95/h3-context-ir-go/plan"
 )
 
-// The transcript contains actual prior model outputs, never oracle answers. This
-// adapter is test-only; production DecideMode still owns every host decision.
 type semanticTape struct {
 	Responses        []semanticResponse
 	Next             int

@@ -1,5 +1,3 @@
-// Director configuration and prose helpers derive from open-h3-ir director.py
-// fd031e136ae3d89147324c0d1b2aa65e838c21f5 (Apache-2.0).
 package compiler
 
 import (
@@ -9,8 +7,6 @@ import (
 	"unicode/utf8"
 )
 
-// DirectorSelection records resolution policy, including an explicitly opted-in
-// custom choice after an unknown shipped ID. Production resolution uses Reject.
 type DirectorSelection struct {
 	Director   *Director `json:"director"`
 	UnknownID  string    `json:"unknown_id,omitempty"`
@@ -54,9 +50,6 @@ func SelectDirector(value string, custom *Director, policy string) (DirectorSele
 	if result.UnknownID != "" && policy == DirectorRejectUnknown {
 		return result, invalid("director", "Unknown director profile; select an installed profile or explicitly provide custom notes.")
 	}
-	// FALLBACK: only explicit allow_custom permits an unrecognized shipped ID
-	// to use caller-supplied prose. UnknownID and UsedCustom remain observable;
-	// production compiler resolution uses reject.
 	if custom != nil {
 		d := *custom
 		result.Director = &d
@@ -65,8 +58,6 @@ func SelectDirector(value string, custom *Director, policy string) (DirectorSele
 	return result, nil
 }
 
-// DirectorFromMapping reads configuration fields, never user intent. Wrong
-// field types are refused rather than converted into writer prose.
 func DirectorFromMapping(data map[string]any) (*Director, error) {
 	if data == nil {
 		return nil, nil
@@ -116,8 +107,6 @@ func DirectorMapping(d Director) map[string]string {
 	return map[string]string{"id": d.ID, "name": d.Name, "notes": d.Notes, "origin": d.Origin}
 }
 
-// DirectorBriefInstruction is the source's exact mechanical prose contract.
-// Callers that want an inert empty profile use DirectorInstruction's outer gate.
 func DirectorBriefInstruction(d Director, scored bool) string {
 	head := "Direction. This is the taste that fills whatever the request and the references leave open, and it overrides neither of them. Apply it to this scene; do not copy these sentences into it."
 	if !scored {

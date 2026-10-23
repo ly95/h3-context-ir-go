@@ -1,5 +1,3 @@
-// h3-context-ir-go-eval is an opt-in, paid model smoke test using only synthetic
-// inputs. It never runs as part of go test and never reads a dotenv file.
 package main
 
 import (
@@ -76,8 +74,6 @@ func (m *recordedModel) Generate(ctx context.Context, req contextir.ModelRequest
 	response, err := m.client.Generate(ctx, req)
 	*m.calls = append(*m.calls, callRecord{Stage: req.Stage, Model: response.Model, Usage: response.Usage, UsageValid: !response.UsageInvalid && response.Usage.InputTokens >= 0 && response.Usage.OutputTokens >= 0, AdapterSucceeded: err == nil})
 	if len(response.JSON) != 0 {
-		// The corpus is fixed and synthetic. Saving these explicit test outputs
-		// enables human semantic review; production adapters do not log content.
 		if writeErr := os.WriteFile(filepath.Join(m.dir, fmt.Sprintf("model-output-%d.json", m.attempt)), response.JSON, 0600); writeErr != nil {
 			return response, writeErr
 		}

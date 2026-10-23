@@ -19,9 +19,6 @@ type BriefUpdate struct {
 	Value   json.RawMessage `json:"value"`
 }
 
-// Refine interprets a requested edit as typed mutations of the previous Brief,
-// then invokes the same Compile pipeline. The previous evidence is reused with
-// its original IDs; media locators, hashes, and observed facts cannot be rewritten.
 func (c *Compiler) Refine(ctx context.Context, previous Result, change string) (result Result, err error) {
 	defer func() { completeAccounting(&result) }()
 	if c.needsExecution(previous.Brief) {
@@ -51,9 +48,6 @@ func (c *Compiler) Refine(ctx context.Context, previous Result, change string) (
 	if err != nil {
 		return r, err
 	}
-	// The published result, including choices originally interpreted by a model,
-	// is the refinement baseline. Do not mutate the historical Result or leave a
-	// previously fixed performance/source selection open to reinterpretation.
 	previous.Brief = frozen
 	r.Brief = frozen
 	if isNil(c.model) {
@@ -105,8 +99,6 @@ func (c *Compiler) Refine(ctx context.Context, previous Result, change string) (
 			amended, err = applyBriefUpdates(previous.Brief, change, reply.Updates)
 		}
 		if err == nil {
-			// Reuse the actual observations instead of manufacturing replacement fact
-			// IDs from a cached Card or making another media-perception call.
 			amended.Evidence = append([]contextir.Evidence(nil), previous.Evidence...)
 			amended.Cards = nil
 			present := map[string]bool{}
@@ -152,8 +144,6 @@ func applyBriefUpdates(previous Brief, change string, updates []BriefUpdate) (Br
 			return out, invalid("updates", "Each field/asset may be changed only once.")
 		}
 		seen[key] = true
-		// Exact quote validation verifies the typed model's claimed provenance; the
-		// model, rather than these substring operations, interprets authorization.
 		if strings.TrimSpace(update.Quote) == "" || !strings.Contains(change, update.Quote) {
 			return out, invalid("updates.quote", "Every update must quote an exact nonempty part of the new instruction.")
 		}

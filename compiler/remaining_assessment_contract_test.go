@@ -204,8 +204,6 @@ func TestRemainingAssessmentAnchorPolicy(t *testing.T) {
 		if remainingFinding(t, r, "X18-role-overrides-anchor-language") != nil {
 			t.Fatal("deterministic Draft invented a semantic override audit")
 		}
-		// The original assertion is the actual compiler's WARN, not just role
-		// preservation. Remove the explicit mode so the declared-role audit runs.
 		b.Mode = ""
 		calls := []string{}
 		base := remainingCompileDouble(t, b, &calls, false)

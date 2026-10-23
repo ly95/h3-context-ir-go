@@ -12,8 +12,6 @@ import (
 	"github.com/ly95/h3-context-ir-go/internal/strictjson"
 )
 
-// MaxDocumentBytes is Decode's documented resource limit. Larger documents can
-// be read explicitly with DecodeWithOptions; content is never truncated.
 const MaxDocumentBytes int64 = 8 << 20
 
 type DecodeOptions struct{ MaxBytes int64 }
@@ -22,22 +20,14 @@ func Decode(r io.Reader) (Document, error) {
 	return DecodeWithOptions(r, DecodeOptions{MaxBytes: MaxDocumentBytes})
 }
 
-// DecodeWithOptions rejects unknown fields, duplicate object keys, trailing
-// values, invalid UTF-8, and unpaired JSON surrogate escapes. It decodes syntax;
-// call Validate to check the semantic contract before using a document.
 func DecodeWithOptions(r io.Reader, options DecodeOptions) (Document, error) {
 	return decodeStrictJSON[Document](r, options, "document")
 }
 
-// DecodeEvidence decodes a perception adapter's Evidence response using the
-// same strict wire contract and default byte limit as Decode. Call
-// ValidateEvidence with the original assets to check source provenance.
 func DecodeEvidence(r io.Reader) (Evidence, error) {
 	return DecodeEvidenceWithOptions(r, DecodeOptions{MaxBytes: MaxDocumentBytes})
 }
 
-// DecodeEvidenceWithOptions checks Evidence wire syntax without interpreting
-// facts or assuming that declared perception coverage has actually occurred.
 func DecodeEvidenceWithOptions(r io.Reader, options DecodeOptions) (Evidence, error) {
 	return decodeStrictJSON[Evidence](r, options, "evidence")
 }
@@ -74,8 +64,6 @@ func decodeStrictJSON[T any](r io.Reader, options DecodeOptions, kind string) (T
 	if issue := strictShapeIssue(shape, reflect.TypeFor[T](), "$"); issue != nil {
 		return result, &Error{Code: CodeModelOutput, Stage: "decode", Issues: []Issue{*issue}}
 	}
-	// JSON Schema integers may be written as 5000.0 or 5e3. Normalize their
-	// exact value without passing through float64 or rejecting legal JSON.
 	normalized, err := json.Marshal(normalizeIntegers(shape))
 	if err != nil {
 		return invalid()
@@ -94,14 +82,10 @@ func decodeStrictJSON[T any](r io.Reader, options DecodeOptions, kind string) (T
 	return result, nil
 }
 
-// Go's decoder matches keys case-insensitively and accepts null for scalars.
-// The wire schema does neither. Check the exact shape before assigning fields.
 func strictShape(value any, typ reflect.Type) bool {
 	return strictShapeIssue(value, typ, "$") == nil
 }
 
-// Diagnostic paths contain only schema-owned field names and array indexes.
-// Unknown model keys and values never enter errors or repair feedback.
 func strictShapeIssue(value any, typ reflect.Type, path string) *Issue {
 	invalid := func(message string) *Issue {
 		return &Issue{Code: CodeModelOutput, Path: path, Message: message}
@@ -154,7 +138,7 @@ func strictShapeIssue(value any, typ reflect.Type, path string) *Issue {
 	case reflect.Slice:
 		if value == nil {
 			return nil
-		} // nil and empty lists share the same IR meaning.
+		}
 		array, ok := value.([]any)
 		if !ok {
 			return invalid("Expected a JSON array.")
@@ -199,8 +183,6 @@ func strictShapeIssue(value any, typ reflect.Type, path string) *Issue {
 	return invalid("Unsupported JSON property type.")
 }
 
-// exactInteger parses mathematical JSON integers in linear time and bounded
-// memory. Huge exponents never allocate arbitrary powers of ten.
 func exactInteger(s string) (int64, bool) {
 	negative := strings.HasPrefix(s, "-")
 	if negative {
@@ -283,8 +265,6 @@ func normalizeIntegers(value any) any {
 	}
 }
 
-// Encode validates first and emits canonical Go JSON field order. The result
-// round-trips through Decode and is suitable for content addressing.
 func Encode(doc Document) ([]byte, error) {
 	if err := Validate(doc); err != nil {
 		return nil, err

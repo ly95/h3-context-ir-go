@@ -11,9 +11,6 @@ import (
 	"github.com/ly95/h3-context-ir-go/h3"
 )
 
-// This drives the public Compile pipeline with the actual run5 observations and
-// accepted identity. Model doubles supply explicit candidate bytes; production
-// schema, qualification, canonical assembly, review and rendering own acceptance.
 func TestReferenceSheetPublicCompileKeepsStableIdentityAndRejectsPackaging(t *testing.T) {
 	for _, variant := range []string{"clean", "missing_original_trait", "presentation_remains", "caller_identity_changed"} {
 		t.Run(variant, func(t *testing.T) {
@@ -31,8 +28,6 @@ func TestReferenceSheetPublicCompileKeepsStableIdentityAndRejectsPackaging(t *te
 				case "medium":
 					output = MediumDecision{Disposition: "preserve", ReferenceMedium: "live-action", RetainedStyle: "Dark cinematic photographic realism", Treatments: []string{}, Reasoning: "Preserve the source rendering while excluding the sheet layout."}
 				case "identity_requirements":
-					// Replay the accepted pre-qualification decisions, including the
-					// real candidate's HERO label and mixed eye/view attribute.
 					var body map[string]any
 					if err := json.Unmarshal(referenceIdentityReply(t, request), &body); err != nil {
 						t.Fatal(err)
@@ -81,8 +76,6 @@ func TestReferenceSheetPublicCompileKeepsStableIdentityAndRejectsPackaging(t *te
 					wire, _ := json.Marshal(f.Structure)
 					var body map[string]any
 					_ = json.Unmarshal(wire, &body)
-					// The host supplies licensed rendering separately; the structure
-					// model is not authorized to return its own style field.
 					delete(body, "style")
 					body["subject_projections"] = []SubjectProjection{}
 					output = body

@@ -34,8 +34,6 @@ func (c *Client) HealthProbe(ctx context.Context) HealthProbe {
 			h.OK, h.Via = true, target
 			return h
 		}
-		// FALLBACK: the caller requested a health probe; alternative published paths
-		// identify endpoint liveness and never change the model or inference request.
 	}
 	return h
 }
@@ -132,8 +130,6 @@ func (c *Client) RequireAvailable(ctx context.Context) error {
 	return nil
 }
 
-// ServerVersion returns an empty version when the endpoint does not publish one,
-// together with every attempted path. Unknown provenance is explicit.
 func (c *Client) ServerVersion(ctx context.Context) (string, []Attempt) {
 	attempts := []Attempt{}
 	for _, target := range []string{c.root + "/version", c.root + "/api/version"} {
@@ -154,8 +150,6 @@ func (c *Client) ServerVersion(ctx context.Context) (string, []Attempt) {
 		if v, ok := m["version"].(string); ok && v != "" {
 			return v, attempts
 		}
-		// FALLBACK: version discovery is diagnostic only; the second published route
-		// records the same server's version, without changing any model choice.
 	}
 	return "", attempts
 }

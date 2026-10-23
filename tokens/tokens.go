@@ -1,6 +1,3 @@
-// Package tokens counts and encodes prompts using H3's exact Qwen2.5 byte BPE.
-// The vocabulary and algorithm are ported from ruashots/open-h3-ir tokens.py at
-// fd031e136ae3d89147324c0d1b2aa65e838c21f5 (Apache-2.0).
 package tokens
 
 import (
@@ -82,11 +79,8 @@ func load() {
 	}
 }
 
-// Count is exact, including all 26 added tokens. Dialogue markers such as <d>
-// are ordinary byte BPE, not added tokens. No approximate fallback is used.
 func Count(text string) (int, error) { ids, e := Encode(text); return len(ids), e }
 
-// AddedTokens returns an independent copy of the published added-token table.
 func AddedTokens() map[string]int {
 	m := make(map[string]int, len(addedTokens))
 	for k, v := range addedTokens {
@@ -95,7 +89,6 @@ func AddedTokens() map[string]int {
 	return m
 }
 
-// Encode returns H3/Qwen2.5 IDs with every published added token enabled.
 func Encode(text string) ([]int, error) {
 	if !utf8.ValidString(text) {
 		return nil, errors.New("tokenizer input must be valid UTF-8")
@@ -136,8 +129,6 @@ func Encode(text string) ([]int, error) {
 	return ids, nil
 }
 
-// pieceLength implements Qwen2.5 PAT in its declared alternation order. Explicit
-// scanning handles its two lookaheads without changing the Unicode regex contract.
 func pieceLength(s string) int {
 	r, w := utf8.DecodeRuneInString(s)
 	if r == '\'' {

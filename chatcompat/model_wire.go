@@ -24,10 +24,6 @@ func present(data json.RawMessage) bool {
 	return len(data) > 0 && !bytes.Equal(bytes.TrimSpace(data), []byte("null"))
 }
 
-// encoding/json matches struct field names case-insensitively. Reject aliases
-// of fields we consume before decoding, so a second spelling cannot override a
-// status, model, usage counter, or output tag. Provider extension metadata is
-// allowed and left opaque because it cannot influence this adapter's decisions.
 func exactResponseKeys(data []byte, typ reflect.Type) bool {
 	if typ == reflect.TypeFor[json.RawMessage]() {
 		return true
@@ -98,8 +94,6 @@ type outputPart struct {
 	Refusal json.RawMessage `json:"refusal"`
 }
 
-// Keep generated output opaque while decoding authoritative response metadata.
-// Invalid output must not discard independently reported usage.
 func (c *Model) responseEnvelopeMetadata(data []byte) (responseEnvelope, contextir.ModelResponse) {
 	result := emptyResponse()
 	var wire responseEnvelope
@@ -120,8 +114,6 @@ func (c *Model) responseEnvelopeMetadata(data []byte) (responseEnvelope, context
 	return wire, result
 }
 
-// responseMetadata recovers only confirmed accounting evidence after an HTTP
-// cancellation. It never returns model-authored JSON or a rejected candidate.
 func (c *Model) responseMetadata(data []byte) contextir.ModelResponse {
 	if c.options.API == Responses {
 		_, result := c.responseEnvelopeMetadata(data)

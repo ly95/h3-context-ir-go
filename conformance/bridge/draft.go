@@ -17,8 +17,6 @@ import (
 	"github.com/ly95/h3-context-ir-go/planner"
 )
 
-// These are transport DTOs only. The product's Compiler.Draft builds the one
-// authoritative Document, and h3.Compile renders every returned prompt.
 type nativeDraftPacket struct {
 	OriginalBrief  plan.Brief      `json:"original_brief"`
 	Result         compiler.Result `json:"result"`
@@ -75,8 +73,8 @@ func draftOperation(name string, raw json.RawMessage) (any, error) {
 	if err != nil {
 		return nil, err
 	}
-	b.Mode = contextir.Mode(a.Mode) // Actual original call argument, never an expected result.
-	b.Style = a.StylePhrase         // Explicit output of the original call's typed style boundary.
+	b.Mode = contextir.Mode(a.Mode)
+	b.Style = a.StylePhrase
 	b.ReplacementTargets, err = draftReplacementTargets(a.Brief, b, a.Targets)
 	if err != nil {
 		return nil, err
@@ -101,8 +99,6 @@ func draftOperation(name string, raw json.RawMessage) (any, error) {
 	}}, nil
 }
 
-// Translate the actual semantic boundary's closed graph labels into public
-// compiler IDs. Textual replaces descriptions are neither parsed nor changed.
 func draftReplacementTargets(original plan.Brief, native compiler.Brief, targets map[string]string) (map[string]string, error) {
 	if len(targets) == 0 {
 		return nil, nil
@@ -187,7 +183,6 @@ func draftRenderResult(artifact h3.Artifact) map[string]any {
 	if description == "" {
 		description = sections["integrated_multimodal_description"]
 	}
-	// Parse only the serialized closed H3 shot grammar, never user intent.
 	for rest := description; ; {
 		i := strings.Index(rest, "[Shot ")
 		if i < 0 {
@@ -261,9 +256,6 @@ func nativeDraftPlan(original plan.Brief, result compiler.Result, decision *plan
 	output := plan.Plan{Mode: string(d.Mode), Target: target, Manifest: manifest, Subjects: []plan.SubjectPlan{}, Speakers: []plan.SpeakerPlan{}, Shots: []plan.ShotPlan{}, TaskTypes: plan.TaskTypes(manifest, original), StylePhrase: d.Style, Summary: draftPlain(d.Summary, labels), AmbientSound: []string{d.Soundscape}, Music: d.Music, LoRAs: []json.RawMessage{}, ModeDecision: decision, PlannerVersion: compiler.Version}
 	for _, subject := range d.Subjects {
 		s := plan.SubjectPlan{Label: labels[subject.ID], Kind: subject.Kind, Descriptor: subject.Descriptor, Attributes: append([]string{}, subject.Attributes...), Pose: append([]string{}, subject.Pose...), PoseLicensed: subject.PoseLicensed, Retention: string(subject.Retention), RetentionNote: subject.RetentionDetails, TakenOverBy: labels[subject.TakenOverBy], Sources: []string{}, AppearsIn: []int{}}
-		// Original SubjectPlan.pose is observed metadata, unlike a licensed
-		// Document pose. Preserve exact supplied observation metadata here while
-		// the actual Document and its pose licence remain unchanged.
 		if len(s.Pose) == 0 {
 			for _, source := range subject.Sources {
 				for _, evidence := range result.Evidence {
@@ -286,9 +278,6 @@ func nativeDraftPlan(original plan.Brief, result compiler.Result, decision *plan
 		}
 		output.Subjects = append(output.Subjects, s)
 	}
-	// The original writer reads source picture facts from its Plan.subjects even
-	// in base modes. Expose only genuine native observations as DTO metadata;
-	// target subjects and appearances remain those of the unchanged Document.
 	if d.Mode != contextir.ModeReference && len(output.Subjects) == 0 {
 		for _, evidence := range result.Evidence {
 			if evidence.Card == nil {

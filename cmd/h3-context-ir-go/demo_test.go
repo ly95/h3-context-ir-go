@@ -17,8 +17,6 @@ import (
 )
 
 func TestDemoDefaultProducesOfflineDraftFromOneDocument(t *testing.T) {
-	// Run in an empty working directory so the demo cannot rely on checked-in
-	// fixtures or quietly create output files for a first-time user.
 	directory := t.TempDir()
 	t.Chdir(directory)
 	t.Setenv("OPENAI_API_KEY", "implicit-credential-must-not-be-used")

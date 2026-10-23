@@ -6,8 +6,6 @@ import (
 	"strings"
 )
 
-// Validate checks syntax and caller-supplied contracts. Findings retain upstream
-// rule IDs and severity. Prose advisories do not interpret the user's request.
 func Validate(text string, ctx Context) []Finding {
 	if ctx.Mode == "" {
 		ctx.Mode = "ref2va"

@@ -58,7 +58,6 @@ func TestIdentityContributionsPreserveCallerRequestedUnobservedProperty(t *testi
 	if identity[1].Claims[0].Quote != "wheels from the second picture" || identity[1].Claims[0].Value != identity[1].RequestedAttributes[0] {
 		t.Fatal("requested contribution lost audit provenance")
 	}
-	// The ordinary exact projection gate remains strict for unaccepted attributes.
 	st.SubjectProjections[0].Sources[1].Attributes = []string{"unselected alloy wheels"}
 	if _, err = canonicalSubjects(b, st, contextir.Request{}, &LicenceDecision{Subjects: observed, Identity: identity}); err == nil {
 		t.Fatal("projection accepted an unmodeled property")
@@ -193,7 +192,6 @@ func TestIdentityContributionsContractIsRequiredAndRepairsLoss(t *testing.T) {
 
 func TestIdentityContributionCandidatesDoNotGuessTargetMerges(t *testing.T) {
 	b, observed, bindings, identity, _ := contributionFixture(t)
-	// Similar source descriptions are candidates, never merge authority.
 	if err := validateIdentityContributions(b, bindings, identity, nil); err != nil {
 		t.Fatal("independent target identities must remain valid", err)
 	}

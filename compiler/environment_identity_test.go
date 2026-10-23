@@ -40,12 +40,8 @@ func TestOriginal00533KeepsFloorEnvironmentSeparateFromRequestedCar(t *testing.T
 				t.Fatal("environment responsibility was not authoritative input", input)
 			}
 			if identityAttempts == 1 {
-				// The actual 972a failure, before repair: a different requested
-				// actor was incorrectly treated as a renaming of the floor.
 				return contextir.ModelResponse{JSON: json.RawMessage(`{"identity":[{"adjusted_attributes":[],"claims":[{"dimension":"identity","quote":"the car","value":"car"}],"descriptor":"the car","descriptor_source":"request","excluded_presentation":[],"kind":"object","label":"<Subject 1>","request_quote":"the car pulls forward out of the dark","requested_attributes":[],"retained_attributes":["the black sports car — carbon fibre body"],"target_mention":"the car","wardrobe_attributes":[]}]}`)}, nil
 			}
-			// Exact accepted context from 08e0 role 00533 call-05. It is
-			// about the requested car, not an identity change of the floor.
 			return contextir.ModelResponse{JSON: json.RawMessage(`{"identity":[{"adjusted_attributes":[],"claims":[],"descriptor":"an empty showroom floor","descriptor_source":"reference","excluded_presentation":[],"kind":"environment","label":"<Subject 1>","request_binding":"describes_other_scene_entity","request_quote":"the car pulls forward out of the dark","requested_attributes":[],"retained_attributes":["the black sports car — carbon fibre body"],"target_mention":"the car","wardrobe_attributes":[]}]}`)}, nil
 		case "licence":
 			owners, reasons := map[string]string{}, map[string]string{}

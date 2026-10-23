@@ -32,9 +32,7 @@ type Aggregate struct {
 	FallbackRate     float64  `json:"fallback_rate"`
 	CleanRate        float64  `json:"clean_rate"`
 	Failures         []string `json:"failures"`
-	// Non-nil after JSON decoding, including a genuinely empty measurement set.
-	// It prevents absent historical metrics becoming observed default zeros.
-	MeasuredMetrics []string `json:"-"`
+	MeasuredMetrics  []string `json:"-"`
 }
 
 func NewAggregate() Aggregate {
@@ -127,7 +125,6 @@ type metricPolicy struct {
 
 var policies = []metricPolicy{{"word_ratio", .10, false, true}, {"restatement", .05, false, false}, {"sound_overlap", .05, false, false}, {"camera_level", .5, true, false}, {"errors", 0, false, false}, {"warnings", .5, false, true}, {"shot_distinctness", .01, false, true}, {"repairs", 1, false, false}, {"fallback_rate", 0, false, false}, {"clean_rate", .15, true, false}, {"fix_rounds", .5, false, false}}
 
-// ReportOnly returns a new slice: callers cannot change the gate's policy.
 func ReportOnly() []string {
 	var names []string
 	for _, policy := range policies {
@@ -167,9 +164,6 @@ func finiteAggregate(a Aggregate) error {
 	return nil
 }
 
-// Compare uses the baseline's actual JSON fields when decoded. An explicit
-// third argument overrides that set (even an empty slice means no measurements).
-// Native Go Aggregate values are complete observations unless specified otherwise.
 func Compare(baseline, candidate Aggregate, measured ...[]string) (Comparison, error) {
 	r := Comparison{Lines: []string{}, Metrics: []MetricComparison{}}
 	if len(measured) > 1 {
@@ -227,8 +221,6 @@ func Compare(baseline, candidate Aggregate, measured ...[]string) (Comparison, e
 	return r, nil
 }
 
-// Config records actual execution choices, not defaults falsely attributed to
-// a provider. Seed is optional because several providers cannot honor one.
 type Config struct {
 	Label           string            `json:"label"`
 	BeatsheetPrompt string            `json:"beatsheet_prompt,omitempty"`
@@ -282,8 +274,6 @@ func Gate(run Run, baseline *Baseline) (GateResult, error) {
 	for _, score := range run.Scores {
 		if !score.OK || score.Errors > 0 {
 			r.OK = false
-			// AggregateFailures normally carries this already. Independently
-			// inspect the scores so a stale aggregate cannot hide a failure.
 			if len(run.Aggregate.Failures) == 0 && run.Aggregate.Errors == 0 {
 				r.Lines = append(r.Lines, "  validator errors in: "+pythonList([]string{score.Name}))
 			}
@@ -310,8 +300,6 @@ func Gate(run Run, baseline *Baseline) (GateResult, error) {
 	return r, nil
 }
 
-// Report text compatibility only; the values are already typed error/name
-// lists. This never evaluates Python or parses a caller instruction.
 func pythonList(values []string) string {
 	items := make([]string, 0, len(values))
 	for _, s := range values {
@@ -329,8 +317,6 @@ func pythonList(values []string) string {
 	return "[" + strings.Join(items, ", ") + "]"
 }
 
-// DecodeRun preserves historical metric presence and provenance. Unknown fields
-// are rejected so misspelled metrics cannot become silent default values.
 func DecodeRun(data []byte) (Run, error) {
 	var r Run
 	dec := json.NewDecoder(bytes.NewReader(data))
@@ -358,8 +344,6 @@ func LoadBaseline(path string) (*Baseline, error) {
 	return &Baseline{Run: r, MeasuredMetrics: r.Aggregate.MeasuredMetrics}, nil
 }
 
-// SaveBaseline never overwrites a baseline silently. A caller that wants a new
-// baseline writes a new path, preserving the prior run and its provenance.
 func SaveBaseline(path string, run Run) error {
 	if strings.TrimSpace(path) == "" {
 		return errors.New("baseline path required")

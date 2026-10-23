@@ -13,10 +13,6 @@ type MotionSourceSubject struct {
 	TakenOverBy string `json:"taken_over_by,omitempty"`
 }
 
-// ReplacementMotionObligation preserves a relationship, not the source look.
-// SourceMotion is a clip-level observation to resolve in its complete subject
-// context; it is not an assertion that every described action belongs to the
-// removed figure. Unknown timing/positions remain unknown under partial coverage.
 type ReplacementMotionObligation struct {
 	IncomingSubjectID     string                        `json:"incoming_subject_id"`
 	RemovedSubjectID      string                        `json:"removed_subject_id"`
@@ -83,8 +79,6 @@ func BuildReplacementMotionObligations(b Brief, st Structure) ([]ReplacementMoti
 			out = append(out, obligation)
 		}
 	}
-	// Public callers receive a value snapshot, never aliases into cached facts or
-	// coverage arrays they supplied to another compilation.
 	wire, err := json.Marshal(out)
 	if err != nil {
 		return nil, invalid("replacement_motion_obligations", "Motion obligations must have valid finite observation metadata.")

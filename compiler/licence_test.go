@@ -12,9 +12,6 @@ import (
 	"github.com/ly95/h3-context-ir-go/h3"
 )
 
-// Original bare-medium and orphan-reading cases from test_reference_licence.py:
-// caller prose cannot replace the observed look, and analysis references need
-// not masquerade as attached conditioning media.
 func TestOriginalBareMediumPreservesReferenceAndIndependentReading(t *testing.T) {
 	b := Brief{Intent: "the man walks. Anime style, cinematic.", Seconds: 8}
 	readings := []LicenceReference{{ID: "char", Kind: contextir.MediaImage, Role: RoleSubject, Card: AssetCard{AssetID: "char", Style: "3D computer animation", Lighting: "Warm torchlight"}}}

@@ -45,7 +45,6 @@ func TestDecodeEvidenceRoundTripAndProvenanceValidation(t *testing.T) {
 	if err != nil || decoded.Facts[0].Text != original.Facts[0].Text {
 		t.Fatalf("valid surrogate pair changed source content: %v", err)
 	}
-	// Wire decoding never substitutes for caller-owned provenance validation.
 	decoded.Facts[0].Source.AssetID = "unknown"
 	if !contextir.HasCode(contextir.ValidateEvidence(assets, []contextir.Evidence{decoded}), contextir.CodeInvalid) {
 		t.Fatal("unknown decoded source accepted")

@@ -122,7 +122,6 @@ func TestActualLiveCandidateWith1200msShotsPassesTimeline(t *testing.T) {
 	if err := json.Unmarshal(raw, &recorded); err != nil {
 		t.Fatal(err)
 	}
-	// Style is the recorded host-owned structural value, not a writer repair.
 	recorded.Document.Style = recorded.HostStyle
 	artifact, err := h3.Compile(recorded.Document, h3.OfficialProfile())
 	if err != nil {

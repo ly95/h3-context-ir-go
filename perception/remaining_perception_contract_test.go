@@ -8,10 +8,6 @@ import (
 	"github.com/ly95/h3-context-ir-go/perception"
 )
 
-// Multi-frame and still-image observation use the explicit repair budget, but
-// unavailable/invalid accounting must stop rather than make another paid call.
-// This is a provider-boundary control for the native adaptation of pinned
-// test_video_reference.py::test_the_video_analyser_gets_the_deep_retry_budget.
 func TestRemainingMediaImageInvalidUsageStopsBeforeContentRetry(t *testing.T) {
 	for _, name := range []string{"unavailable", "negative_input", "negative_output"} {
 		t.Run(name, func(t *testing.T) {

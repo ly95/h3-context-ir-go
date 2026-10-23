@@ -67,7 +67,6 @@ func request(mode contextir.Mode) contextir.Request {
 }
 
 func evidenceFor(asset contextir.Asset) contextir.Evidence {
-	// These fixtures test contract plumbing, not real media perception.
 	track := contextir.TrackVisual
 	if asset.Kind == contextir.MediaAudio {
 		track = contextir.TrackAudio
@@ -131,8 +130,6 @@ func document(r contextir.Request) contextir.Document {
 				ref.Kind, ref.Roles, ref.Source.Track = contextir.ReferenceAudio, []contextir.Role{contextir.RoleRhythm}, contextir.TrackAudio
 			}
 		}
-		// An actual frame binds the complete supplied pixels. Keep this test
-		// provider's positive fixture valid without changing non-frame markers.
 		for _, role := range ref.Roles {
 			if role == contextir.RoleFirstFrame || role == contextir.RoleLastFrame || role == contextir.RoleKeyframe {
 				ref.Retention = contextir.FullyPreserved

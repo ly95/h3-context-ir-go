@@ -7,8 +7,6 @@ import (
 	"github.com/ly95/h3-context-ir-go"
 )
 
-// InstructionSpec supplies facts already owned by the caller's typed wiring.
-// It does not ask this formatter to infer mode, target, or shot count from prose.
 type InstructionSpec struct {
 	Mode             contextir.Mode
 	FinalShot        int
@@ -40,11 +38,6 @@ func outsideLiteral(text string, fn func(string) string) string {
 	return out.String()
 }
 
-// RepairInstructionLine is an opt-in H3 protocol repair. It recomputes only the
-// mandatory anchor header and FL2VA citation notation from explicit wiring. It
-// preserves dialogue/quoted literals and every shot's description/timing, and
-// reports changes. The authoritative Document compiler never invokes it.
-// Source: h3ir/repair.py fd031e13 (Apache-2.0).
 func RepairInstructionLine(text string, spec InstructionSpec) (TextRepair, error) {
 	r := TextRepair{Text: text, Changes: []string{}}
 	switch spec.Mode {

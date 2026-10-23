@@ -20,9 +20,6 @@ import (
 	"github.com/ly95/h3-context-ir-go/perception"
 )
 
-// Same moving-pattern fixture specification as pinned test_video_reference.py.
-// Actual ffmpeg/ffprobe are explicit local integration prerequisites; no model
-// endpoint, provider credential, cache or source checkout is needed.
 func remainingSixSecondClip(t *testing.T) (*media.Tools, string) {
 	t.Helper()
 	tools, ff := realTools(t)

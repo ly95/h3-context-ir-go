@@ -52,8 +52,6 @@ func normalizedMediaSource(s SourceRef) mediaSourceKey {
 	return k
 }
 
-// One runtime video socket has one synchronized soundtrack socket. Refuse
-// ambiguous asset-only pairings rather than emitting duplicate labels/sockets.
 func (v *validationState) soundtrackPairs(d Document) {
 	videos := map[mediaSourceKey]bool{}
 	for _, s := range d.Subjects {

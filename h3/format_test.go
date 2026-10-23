@@ -24,8 +24,6 @@ func TestUpstreamRenderFormattingCalls(t *testing.T) {
 		} `json:"arguments"`
 		Result string `json:"result"`
 	}
-	// Other render calls return composite values, so first keep their results raw
-	// and decode only the three pure formatting contracts under comparison.
 	var all struct {
 		SourceCommit string            `json:"source_commit"`
 		Calls        []json.RawMessage `json:"calls"`

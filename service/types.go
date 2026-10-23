@@ -1,6 +1,3 @@
-// Package service provides an optional stdlib HTTP boundary for ContextIR.
-// Wire semantics derive from open-h3-ir fd031e136ae3d89147324c0d1b2aa65e838c21f5
-// (Apache-2.0); compilation, storage and readiness are explicit capabilities.
 package service
 
 import (
@@ -26,8 +23,6 @@ type Record struct {
 	Version int             `json:"version"`
 }
 
-// Save increments an existing record's version atomically and returns the stored
-// value. Implementations must keep caller-owned inputs independent of storage.
 type RecordStore interface {
 	Get(context.Context, string) (Record, bool, error)
 	Save(context.Context, string, Record) (Record, error)
@@ -91,9 +86,7 @@ type Config struct {
 	Registry        *lora.Registry
 	Profile         string
 	PackageVersion  string
-	// Health must report the readiness of the configured compile dependencies. It
-	// is optional; omission makes /health answer 503, rather than claiming readiness.
-	Health func(context.Context) (bool, error)
+	Health          func(context.Context) (bool, error)
 }
 type Service struct{ cfg Config }
 
@@ -110,8 +103,6 @@ func New(cfg Config) (*Service, error) {
 	return &Service{cfg: cfg}, nil
 }
 
-// Error is a caller-safe boundary error. Compile adapters can return this type
-// to preserve a stable provider/refusal code without string classification.
 type Error struct {
 	Status   int              `json:"-"`
 	Code     string           `json:"code"`
@@ -151,24 +142,23 @@ type DialogueIn struct {
 type BriefIn struct {
 	TranscriptUses     []plan.TranscriptUse     `json:"transcript_uses"`
 	SubjectProjections []plan.SubjectProjection `json:"subject_projections"`
-	// AudioCopyModes names explicit BGM signal-copy relationships by stable asset-N ID.
-	AudioCopyModes  map[string]string `json:"audio_copy_modes"`
-	Intent          string            `json:"intent"`
-	Assets          []AssetIn         `json:"assets"`
-	Seconds         float64           `json:"seconds"`
-	Aspect          string            `json:"aspect"`
-	Megapixels      *float64          `json:"megapixels"`
-	Dialogue        []DialogueIn      `json:"dialogue"`
-	OnscreenText    []string          `json:"onscreen_text"`
-	Shots           *int              `json:"shots"`
-	LoRAs           []json.RawMessage `json:"loras"`
-	Silent          bool              `json:"silent"`
-	Constraints     []string          `json:"constraints"`
-	Creativity      string            `json:"creativity"`
-	Director        string            `json:"director"`
-	DirectorProfile json.RawMessage   `json:"director_profile"`
-	Effort          string            `json:"effort"`
-	Seed            *int64            `json:"seed"`
-	Transcripts     map[string]string `json:"transcripts"`
-	Answer          map[string]string `json:"answer"`
+	AudioCopyModes     map[string]string        `json:"audio_copy_modes"`
+	Intent             string                   `json:"intent"`
+	Assets             []AssetIn                `json:"assets"`
+	Seconds            float64                  `json:"seconds"`
+	Aspect             string                   `json:"aspect"`
+	Megapixels         *float64                 `json:"megapixels"`
+	Dialogue           []DialogueIn             `json:"dialogue"`
+	OnscreenText       []string                 `json:"onscreen_text"`
+	Shots              *int                     `json:"shots"`
+	LoRAs              []json.RawMessage        `json:"loras"`
+	Silent             bool                     `json:"silent"`
+	Constraints        []string                 `json:"constraints"`
+	Creativity         string                   `json:"creativity"`
+	Director           string                   `json:"director"`
+	DirectorProfile    json.RawMessage          `json:"director_profile"`
+	Effort             string                   `json:"effort"`
+	Seed               *int64                   `json:"seed"`
+	Transcripts        map[string]string        `json:"transcripts"`
+	Answer             map[string]string        `json:"answer"`
 }

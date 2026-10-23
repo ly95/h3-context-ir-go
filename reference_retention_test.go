@@ -7,8 +7,6 @@ import (
 	"github.com/ly95/h3-context-ir-go/h3"
 )
 
-// The upstream R6/R7 preservation rules concern the IR relationship itself,
-// including base modes whose prompt does not print a retention section.
 func TestReferenceRetentionPreservesFrameAndPictureContracts(t *testing.T) {
 	for _, role := range []ir.Role{ir.RoleFirstFrame, ir.RoleLastFrame, ir.RoleKeyframe} {
 		t.Run(string(role), func(t *testing.T) {

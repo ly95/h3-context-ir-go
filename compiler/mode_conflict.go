@@ -9,9 +9,6 @@ import (
 	"github.com/ly95/h3-context-ir-go/planner"
 )
 
-// The counterfactual audit intentionally sees only caller prose and image count.
-// Declared roles and observed media content cannot bias what the words would ask
-// for if no responsibility had been declared. The resolved route remains fixed.
 func (c *Compiler) decideRoleConflict(ctx context.Context, b Brief, mode contextir.Mode, rule string) (ModeDecision, error) {
 	out := ModeDecision{ClarificationPolicy: c.options.ClarificationPolicy, Mode: mode, Rule: rule, Confidence: 1, ConfidenceKind: "routing_policy", Interpretation: "declared_reference"}
 	roles := []string{}

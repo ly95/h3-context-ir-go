@@ -10,9 +10,6 @@ import (
 	"github.com/ly95/h3-context-ir-go/service"
 )
 
-// fd031e13 tests/test_contract.py::test_the_command_prints_what_the_module_builds.
-// Invoke the real native executable; the original Python subprocess is not a
-// Go behavior even if its expected string happened to come from a Go adapter.
 func TestRemainingSurfaceContractCLIPrintsPublishedBytes(t *testing.T) {
 	binary := filepath.Join(t.TempDir(), "h3-context-ir-go")
 	build := exec.Command("go", "build", "-trimpath", "-buildvcs=false", "-o", binary, ".")

@@ -20,9 +20,6 @@ type ShotRepair struct {
 	Reason string `json:"reason"`
 }
 
-// ValidateShotProposal proves the edit legal and returns every clock or vocabulary
-// normalization. It never silently removes shots. Explicit caller cuts bypass
-// normalization and are checked exactly by Compile.
 func ValidateShotProposal(shots []ProposedShot, target contextir.Target, maxShots int, pinned *int) ([]ProposedShot, []ShotRepair, error) {
 	return validateProposal(shots, target, maxShots, pinned, true)
 }
@@ -144,8 +141,6 @@ func cameraPhrase(c Camera) string {
 	return out + "."
 }
 
-// DraftCameras is the original deterministic floor's rotation. Direction never
-// reaches this function; creative magnitude changes values, never shot count.
 func DraftCameras(magnitude string) []Camera {
 	switch magnitude {
 	case "maximal":
@@ -157,7 +152,6 @@ func DraftCameras(magnitude string) []Camera {
 	}
 }
 
-// ShotSpans derives the half-open timeline from already validated starts.
 func ShotSpans(shots []ProposedShot, target contextir.Target) []contextir.Interval {
 	out := make([]contextir.Interval, len(shots))
 	for i, s := range shots {

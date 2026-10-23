@@ -13,9 +13,6 @@ import (
 	"github.com/ly95/h3-context-ir-go/planner"
 )
 
-// These cases migrate the primary Python compose/compile assertions identified
-// by original-native-audit.json. The production writer/Planner/H3 pipeline owns
-// acceptance; the injected model supplies candidate bytes, never a pass verdict.
 func TestRemainingWriterResponsibilities(t *testing.T) {
 	t.Run("declared_video_role", func(t *testing.T) {
 		b := Brief{Intent: "the same volley, but the stadium is empty and it is raining hard", Mode: contextir.ModeReference, Seconds: 8, Assets: []Asset{{Asset: contextir.Asset{ID: "clip", Kind: contextir.MediaVideo, Metadata: contextir.MediaMetadata{Duration: 8000}}, Role: RoleEditSource, Frames: 192}}, Cards: []AssetCard{{AssetID: "clip", Summary: "a footballer striking a volley", Subjects: []SubjectCard{{Kind: "person", Descriptor: "the footballer", Attributes: []string{"green jersey"}}}}}}
@@ -98,8 +95,6 @@ func TestRemainingWriterEnrichment(t *testing.T) {
 			}
 			return resp
 		})
-		// Go has one typed structural stage, not the unreachable additive Python
-		// entry. Fixed words reach it, then host slots keep them out of free prose.
 		if !structureSawLiteral || !strings.Contains(string(req.Input), "{{D1}}") || strings.Contains(string(req.Input), line) || !strings.Contains(r.Artifact.Prompt, "<d>[English] "+line+"</d>") {
 			t.Fatal("fixed words did not traverse the actual native structure/writer/renderer", r.Artifact.Prompt)
 		}
@@ -195,8 +190,6 @@ func remainingRemovedSubject(t *testing.T, ss []contextir.Subject) contextir.Sub
 	return contextir.Subject{}
 }
 
-// This calls the public high-level Compile, rather than constructing a source
-// Python plan or calling a formatter without the native writer acceptance gate.
 func remainingWriterCompile(t *testing.T, b Brief, adjust func(contextir.ModelRequest, contextir.ModelResponse) contextir.ModelResponse) (Result, contextir.ModelRequest, remainingWriterInput) {
 	t.Helper()
 	wire, _ := json.Marshal(b)
@@ -322,8 +315,6 @@ func TestRemainingWriterMultiSourceIdentity(t *testing.T) {
 		if strings.Contains(r.Artifact.Prompt, "unselected red paint") || strings.Contains(r.Artifact.Prompt, "unselected gold cabin") {
 			t.Fatal("unselected source properties leaked", r.Artifact.Prompt)
 		}
-		// Original base source fields are unchanged. The explicit projection is an
-		// additional typed caller selection, not a rewrite of its cards or words.
 		b.SubjectProjections = nil
 		after, _ := json.Marshal(b)
 		if !reflect.DeepEqual(before, after) {
@@ -359,9 +350,6 @@ func TestRemainingWriterMultiSourceIdentity(t *testing.T) {
 }
 func remainingMergedBrief() Brief {
 	b := Brief{Intent: "Define it once as a single subject that draws its body from the first picture and its wheels from the second.", Mode: contextir.ModeReference, Seconds: 8}
-	// The original two source cards carry only the same carbon-fibre attribute.
-	// Distinct wheel/body observations below are an explicit supplementary
-	// perception input so selection has a falsifiable unrelated-attribute control.
 	for i, id := range []string{"a", "b"} {
 		attrs := []string{"carbon fibre body", "unselected red paint"}
 		if i == 1 {
@@ -484,8 +472,6 @@ func TestRemainingWriterReferenceWords(t *testing.T) {
 			if !contextir.HasCode(e, contextir.CodeModelOutput) {
 				t.Fatal("typed source selection accepted changed words even though no prose cue was present", findings, e)
 			}
-			// Remove the explicit performance selection to exercise the legacy
-			// advisory context independently on each actual production result.
 			unperformed := actual.Document
 			unperformed.Dialogue = nil
 			for i := range unperformed.Shots {
@@ -499,9 +485,6 @@ func TestRemainingWriterReferenceWords(t *testing.T) {
 			}
 			contextPlan := actual.Structure
 			contextPlan.TranscriptUses = nil
-			// This branch releases the selected performance, not merely its source
-			// selector. Keeping the fixed line while deleting its events would be
-			// a real missing-dialogue defect rather than the advisory-only case.
 			contextPlan.Dialogue = nil
 			_, findings, e = c.assess(actual.Brief, contextPlan, actual.Scope, unperformed)
 			if e != nil || !remainingRule(findings, "D16-transcript-not-reperformed") {
@@ -556,8 +539,6 @@ func TestTranscriptUsePreservesExplicitLanguageTag(t *testing.T) {
 	if len(r.Document.Dialogue) != 1 || r.Document.Dialogue[0].Language != "en" || r.Document.Dialogue[0].Text != remainingRecordedWords || !strings.Contains(r.Artifact.Prompt, "<d>[en] "+remainingRecordedWords+"</d>") {
 		t.Fatal("explicit original-language tag or exact words were silently rewritten", r.Document.Dialogue, r.Artifact.Prompt)
 	}
-	// The pinned source explicitly removed D6's unsupported language-name
-	// whitelist (validate.py:1471); D2 requires a bracketed language tag.
 	c, _ := New(nil, nil, Options{Planner: planner.Options{AllowPartialPerception: true}})
 	draft, e := c.Draft(context.Background(), r.Brief)
 	if e != nil || !strings.Contains(draft.Artifact.Prompt, "<d>[en] "+remainingRecordedWords+"</d>") {

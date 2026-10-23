@@ -21,8 +21,6 @@ type CompositionFinding struct {
 	SpeakerID     string                     `json:"speaker_id,omitempty"`
 }
 
-// CompositionReview concerns the final document, not a generated video's quality.
-// Quotes ground each reported failure in actual emitted narrative fragments.
 type CompositionReview struct {
 	Version  string                `json:"version"`
 	Required bool                  `json:"required"`
@@ -134,9 +132,6 @@ func compositionFragments(d contextir.Document) (map[string]string, []string) {
 		add("subject:"+subject.ID+":definition", string(definition))
 	}
 	for _, claim := range d.Claims {
-		// Caller claims record authorization, not a promise that the source
-		// recording or any other requested material is actually executed.
-		// They remain visible with provenance in the typed claims input.
 		if claim.Origin != contextir.OriginUser {
 			add("claim:"+claim.ID, claim.Text)
 		}
@@ -155,8 +150,6 @@ func compositionFragments(d contextir.Document) (map[string]string, []string) {
 	return fragments, ids
 }
 
-// RequiredPlacedAppearances is mechanical: a placed/replacement identity must
-// be used in a visual or action description, not merely declared as appearing.
 func RequiredPlacedAppearances(d contextir.Document) error {
 	used := map[string]bool{}
 	mark := func(text contextir.RichText) {
@@ -189,9 +182,6 @@ func RequiredPlacedAppearances(d contextir.Document) error {
 	return nil
 }
 
-// ReviewComposition performs a narrow typed semantic audit after deterministic
-// validation. It does not infer user intent through lexical rules and cannot
-// claim semantic completeness. The caller records its calls beside writer calls.
 func (c *Compiler) ReviewComposition(ctx context.Context, b Brief, st Structure, d contextir.Document) (CompositionReview, error) {
 	out := CompositionReview{Version: CompositionReviewVersion, Required: CompositionReviewRequired(b, st, d)}
 	if c == nil {
@@ -257,9 +247,6 @@ func (c *Compiler) ReviewComposition(ctx context.Context, b Brief, st Structure,
 		findingProperties["speaker_id"] = map[string]any{"type": "string", "enum": speakerIDs}
 	}
 	schema, _ := json.Marshal(map[string]any{"type": "object", "additionalProperties": false, "required": []string{"findings"}, "properties": map[string]any{"findings": map[string]any{"type": "array", "items": map[string]any{"type": "object", "additionalProperties": false, "required": []string{"code", "fragment_id", "quote", "subject_id"}, "properties": findingProperties}}}})
-	// Locators, director names, and unrelated execution configuration have no role
-	// in the audit. Original source evidence is intentionally visible to the critic
-	// so it can detect source content borrowed beyond the writer's authorized view.
 	assets := []map[string]any{}
 	for _, a := range d.Assets {
 		assets = append(assets, map[string]any{"id": a.ID, "kind": a.Kind, "metadata": a.Metadata, "preparation": a.Preparation})

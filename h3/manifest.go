@@ -8,10 +8,6 @@ import (
 	contextir "github.com/ly95/h3-context-ir-go"
 )
 
-// MediaBinding identifies a single conditioning input. Source intervals are
-// binding instructions, not an instruction to this library to access a URI.
-// Label numbering follows H3's presentation order. Socket numbering follows
-// separate image, video, video-audio and standalone-audio input lists.
 type MediaBinding struct {
 	Preparation    contextir.MediaPreparation `json:"preparation,omitempty"`
 	SourceMetadata contextir.MediaMetadata    `json:"source_metadata,omitempty"`
@@ -25,9 +21,6 @@ type MediaBinding struct {
 	TargetUses     []TargetUse                `json:"target_uses,omitempty"`
 }
 
-// TargetUse carries the semantic role and target timeline of one reference.
-// Empty audio ShotIDs in the document mean the entire target unless structural
-// use in a shot narrows the scope; each compiled use records concrete intervals.
 type TargetUse struct {
 	ReferenceID   string              `json:"reference_id"`
 	Roles         []contextir.Role    `json:"roles"`
@@ -50,9 +43,6 @@ type IDBinding struct {
 	Label string `json:"label"`
 }
 
-// Manifest is the binding contract that must travel with Prompt. Merely
-// possessing an audio track does not enable it: a video soundtrack must be
-// explicitly referenced using TrackAudio in the authoritative document.
 type Manifest struct {
 	Media      []MediaBinding `json:"media"`
 	Subjects   []IDBinding    `json:"subjects"`
@@ -71,9 +61,6 @@ type bindingState struct {
 	voices   map[string]contextir.Speaker
 }
 
-// BuildManifest validates the document and deterministically binds its explicit
-// source references. It never enables a source track merely because the media
-// container has that track.
 func BuildManifest(doc contextir.Document) (Manifest, error) {
 	if err := contextir.Validate(doc); err != nil {
 		return Manifest{}, err
@@ -82,7 +69,7 @@ func BuildManifest(doc contextir.Document) (Manifest, error) {
 }
 
 func sourceKey(source contextir.SourceRef) string {
-	b, _ := json.Marshal(source) // SourceRef contains only strings and integer fields.
+	b, _ := json.Marshal(source)
 	return string(b)
 }
 
@@ -119,8 +106,6 @@ func bind(doc contextir.Document) bindingState {
 	for _, reference := range doc.References {
 		used[sourceKey(reference.Source)] = reference.Source
 	}
-	// Asset order is caller-owned. Intervals of one asset are ordered by time;
-	// source encounter order cannot otherwise change the runtime's numbering.
 	var images, videos, audios []contextir.SourceRef
 	for _, asset := range doc.Assets {
 		var sources []contextir.SourceRef
@@ -152,9 +137,6 @@ func bind(doc contextir.Document) bindingState {
 			}
 		}
 	}
-	// First/last frame labels derive from explicit roles, never asset list order.
-	// The same file may explicitly anchor both ends; those are two conditioning
-	// inputs, even though their source bytes are identical.
 	var baseImageRefs []contextir.Reference
 	if doc.Mode != contextir.ModeReference {
 		for _, reference := range doc.References {
@@ -251,7 +233,6 @@ func bind(doc contextir.Document) bindingState {
 		s.speakers[id] = label
 		s.manifest.Speakers = append(s.manifest.Speakers, IDBinding{ID: id, Label: label})
 	}
-	// H3 speaker IDs follow first vocal appearance, not declaration order.
 	for _, shot := range doc.Shots {
 		for _, event := range shot.Events {
 			if event.Dialogue != nil {

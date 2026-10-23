@@ -1,8 +1,5 @@
 package h3
 
-// Explicit prose-only formatters ported from open-h3-ir fd031e13
-// h3ir/textnorm.py and render.py (Apache-2.0). They never run implicitly over a
-// Document, dialogue, visible text or caller-authored literal RichText.
 import (
 	"regexp"
 	"strings"
@@ -10,7 +7,6 @@ import (
 	"unicode/utf8"
 )
 
-// ProseNormalization makes the opt-in byte changes observable to the caller.
 type ProseNormalization struct {
 	Text    string `json:"text"`
 	Changed bool   `json:"changed"`
@@ -25,16 +21,11 @@ var generatedProseReplacer = strings.NewReplacer(
 )
 var generatedHorizontalSpace = regexp.MustCompile(`[ \t]{2,}`)
 
-// NormalizeGeneratedProse is explicitly selected byte hygiene for generated
-// prose. Em dashes remain unchanged for official H3 instructions. Its result
-// still requires normal Document validation; it never makes unsafe labels legal.
 func NormalizeGeneratedProse(text string) ProseNormalization {
 	out := generatedHorizontalSpace.ReplaceAllString(generatedProseReplacer.Replace(text), " ")
 	return ProseNormalization{Text: out, Changed: out != text}
 }
 
-// GeneratedSoundSentences formats explicitly supplied generated sound clauses.
-// It does not infer events or move sounds between ambient and shot tracks.
 func GeneratedSoundSentences(items []string) string {
 	out := []string{}
 	for _, item := range items {
@@ -54,10 +45,6 @@ func GeneratedSoundSentences(items []string) string {
 
 func proseWordRune(r rune) bool { return unicode.IsLetter(r) || unicode.IsNumber(r) || r == '_' }
 
-// ContinueCase is an opt-in continuation grammar formatter. It lowercases only
-// A/An/The, or an opening word independently present in lower case within the
-// same prose sentence. It never classifies a request or changes proper names
-// solely because their first rune is capitalized.
 func ContinueCase(body string) string {
 	first := []rune{}
 	for _, r := range body {

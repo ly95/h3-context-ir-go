@@ -1,9 +1,3 @@
-// Package plan owns deterministic H3 structure: runtime labels, grounding,
-// speakers, explicit shot allocation, sound partition and retention bookkeeping.
-// Algorithms and conformance inputs derive from open-h3-ir at
-// fd031e136ae3d89147324c0d1b2aa65e838c21f5 (Apache-2.0).
-// User intent, ambiguous identity binding, and mode interpretation are supplied
-// as typed inputs by the caller. This package performs no model or IO calls.
 package plan
 
 import (
@@ -64,7 +58,6 @@ func (d *DialogueLine) UnmarshalJSON(b []byte) error {
 	return nil
 }
 
-// TranscriptUse selects exact caller-supplied source words for a new performance.
 type TranscriptUse struct {
 	AssetID     string `json:"asset_id"`
 	Text        string `json:"text"`
@@ -86,28 +79,25 @@ type Brief struct {
 	TranscriptUses     []TranscriptUse     `json:"transcript_uses,omitempty"`
 	SubjectProjections []SubjectProjection `json:"subject_projections,omitempty"`
 	AudioCopyModes     map[string]string   `json:"audio_copy_modes,omitempty"`
-	// Seed and Transcripts are explicit service caller choices carried to the
-	// injected compiler/analyzer boundary; this deterministic planner never
-	// treats them as observations or silently invokes a recognizer.
-	Seed            *int64            `json:"seed,omitempty"`
-	Transcripts     map[string]string `json:"transcripts,omitempty"`
-	Intent          string            `json:"intent"`
-	Assets          []AssetRef        `json:"assets"`
-	Seconds         float64           `json:"seconds"`
-	Aspect          string            `json:"aspect"`
-	Canvas          *[2]int           `json:"canvas"`
-	Megapixels      *float64          `json:"megapixels"`
-	Dialogue        []DialogueLine    `json:"dialogue"`
-	OnscreenText    []string          `json:"onscreen_text"`
-	Shots           *int              `json:"shots"`
-	LoRAs           []json.RawMessage `json:"loras"`
-	Mode            *string           `json:"mode"`
-	Effort          string            `json:"effort"`
-	Constraints     []string          `json:"constraints"`
-	Silent          bool              `json:"silent"`
-	Creativity      string            `json:"creativity"`
-	Director        string            `json:"director"`
-	DirectorProfile json.RawMessage   `json:"director_profile"`
+	Seed               *int64              `json:"seed,omitempty"`
+	Transcripts        map[string]string   `json:"transcripts,omitempty"`
+	Intent             string              `json:"intent"`
+	Assets             []AssetRef          `json:"assets"`
+	Seconds            float64             `json:"seconds"`
+	Aspect             string              `json:"aspect"`
+	Canvas             *[2]int             `json:"canvas"`
+	Megapixels         *float64            `json:"megapixels"`
+	Dialogue           []DialogueLine      `json:"dialogue"`
+	OnscreenText       []string            `json:"onscreen_text"`
+	Shots              *int                `json:"shots"`
+	LoRAs              []json.RawMessage   `json:"loras"`
+	Mode               *string             `json:"mode"`
+	Effort             string              `json:"effort"`
+	Constraints        []string            `json:"constraints"`
+	Silent             bool                `json:"silent"`
+	Creativity         string              `json:"creativity"`
+	Director           string              `json:"director"`
+	DirectorProfile    json.RawMessage     `json:"director_profile"`
 }
 
 func (b *Brief) UnmarshalJSON(data []byte) error {
@@ -169,8 +159,6 @@ type ManifestEntry struct {
 	Replaces         string   `json:"replaces"`
 }
 type SubjectPlan struct {
-	// Origin is user_symbolic only for a caller-named source figure which was
-	// not observed in the supplied cards. It must never become a perception fact.
 	Origin        string   `json:"origin,omitempty"`
 	Label         string   `json:"label"`
 	Kind          string   `json:"kind"`
@@ -282,20 +270,15 @@ type ProposedShot struct {
 	StartMS     int         `json:"start_ms"`
 }
 type BuildOptions struct {
-	// DeferUnresolved is inspection only: an unresolved replacement stays
-	// unbound and is reported in Plan.UnresolvedReplacements. Publishing must reject it.
-	DeferUnresolved bool
-	Profile         *ProfileOptions
-	AlignmentPolicy string // Required: budget.Exact or budget.SnapUp; snapping is never implicit.
-	Beats           []Beat
-	Proposal        []ProposedShot
-	SoundEvents     []SoundEvent
-	StylePhrase     string
-	Music           string
-	LoRAs           []json.RawMessage
-	ModeDecision    *ModeDecision
-	// Explicit identity decisions from the structured understanding stage.
-	// Keys are incoming picture labels, values are target subject labels. An empty
-	// target means the named figure was not observed and must be represented anew.
+	DeferUnresolved    bool
+	Profile            *ProfileOptions
+	AlignmentPolicy    string
+	Beats              []Beat
+	Proposal           []ProposedShot
+	SoundEvents        []SoundEvent
+	StylePhrase        string
+	Music              string
+	LoRAs              []json.RawMessage
+	ModeDecision       *ModeDecision
 	ReplacementTargets map[string]string
 }

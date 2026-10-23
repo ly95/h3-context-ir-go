@@ -25,7 +25,6 @@ func clientFor(t *testing.T, h http.HandlerFunc, limit int64) *Client {
 	return c
 }
 
-// Remote protocol tests supplement the upstream graph assertions; no live GPU is used.
 func TestRemoteProtocol(t *testing.T) {
 	var history atomic.Int32
 	var uploaded atomic.Bool

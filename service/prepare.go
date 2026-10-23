@@ -24,9 +24,6 @@ type PrepareConfig struct {
 	MaxRequestBytes int64
 }
 
-// PrepareRequest reuses the HTTP request boundary without constructing a server
-// or a model capability. An omitted byte bound uses the documented 16 MiB cap;
-// no upload store is needed unless the request actually names uploaded digests.
 func PrepareRequest(cfg PrepareConfig, payload []byte) (plan.Brief, error) {
 	if cfg.MaxRequestBytes == 0 {
 		cfg.MaxRequestBytes = 16 << 20
@@ -106,9 +103,6 @@ func nullableObject(raw json.RawMessage, path string) error {
 	return nil
 }
 
-// ParseBrief applies the public request schema and preserves all caller values.
-// Nested dictionaries explicitly declared open (provenance/director metadata)
-// retain their content; no user-authored text is interpreted as intent here.
 func ParseBrief(data []byte) (BriefIn, error) {
 	var b BriefIn
 	if !utf8.Valid(data) {
@@ -286,8 +280,6 @@ func (s *Service) source(a AssetIn) (string, string, error) {
 	return p, sha, e
 }
 
-// PrepareBrief is the exact conversion used by POST /v1/briefs. An in-process
-// caller receives the same unknown-field, upload and filesystem refusals.
 func (s *Service) PrepareBrief(payload []byte) (plan.Brief, error) {
 	var out plan.Brief
 	if int64(len(payload)) > s.cfg.MaxRequestBytes {

@@ -8,8 +8,6 @@ import (
 	"github.com/ly95/h3-context-ir-go"
 )
 
-// RenderingPermission settles authorization without observing the source look.
-// A source/target taxonomy mismatch cannot grant a rendering change.
 type RenderingPermission struct {
 	Kind           string                `json:"kind"`
 	Disposition    string                `json:"disposition"`

@@ -7,9 +7,6 @@ import (
 	"github.com/ly95/h3-context-ir-go"
 )
 
-// ExecutionOptions are caller choices affecting the model/analyzer, not film
-// content. An adapter factory must explicitly implement requested seed/effort;
-// the compiler never assumes an injected backend supports a sampling parameter.
 type ExecutionOptions struct {
 	Seed   *int64 `json:"seed,omitempty"`
 	Effort string `json:"effort"`
@@ -112,13 +109,8 @@ func executionDecision(b Brief) Decision {
 	return decision("execution", "explicit_adapter_policy", ExecutionOptions{Seed: b.Seed, Effort: effort}, explanation)
 }
 
-// transcriptInputs deliberately labels words as caller supplied. They do not
-// become observed Fact records or evidence of voice, timbre, music or modality.
 func transcriptInputs(b Brief) []map[string]string {
 	var result []map[string]string
-	// The public prepare/Draft paths validate agreement before this formatter.
-	// Supplied card words and explicit caller transcripts carry the same words-only
-	// provenance; neither becomes evidence that audio was heard.
 	sources := map[string]string{}
 	for _, card := range b.Cards {
 		if card.Transcript != "" {

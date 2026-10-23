@@ -55,12 +55,8 @@ func call(t *testing.T, s *Service, method, path string, body []byte) (int, map[
 	return w.Code, out
 }
 
-// These eight values are the unchanged original test_contract.py PINNED table.
 func TestUpstreamContractDigests(t *testing.T) {
 	want := map[string]string{"asset_fields": "38190799fcfb6cf1", "brief_fields": "cf2fb5307dd7d72f", "dialogue_fields": "a63047779f907e58", "error_codes": "19906fa6afaf0a20", "roles": "4b85814fed5254ab", "directors": "8e50d53980fd8777", "camera_moves": "e0ebdca0a4dcaea8", "limits": "78554cef21934947"}
-	// Native v3 adds an explicit BGM-copy field and publishes actual extra
-	// refusals. The frozen source-v2 digests remain an independent subset
-	// oracle; they do not describe the actual native contract.
 	legacy := contractSections()
 	fields := []string{}
 	for _, field := range fieldNames(BriefIn{}) {
@@ -88,8 +84,6 @@ func TestUpstreamContractDigests(t *testing.T) {
 	}
 }
 
-// Supplementary: a full published Document survives create/read/prompt/refine
-// through the real HTTP boundary. Drafting here is an explicit injected choice.
 func TestSupplementaryPublishedLifecycle(t *testing.T) {
 	c, e := compiler.New(nil, nil, compiler.Options{Profile: h3.ComfyUIProfile(), FramePolicy: compiler.FramePolicySnapUp})
 	if e != nil {
@@ -168,9 +162,6 @@ func TestSupplementaryPublishedLifecycle(t *testing.T) {
 	}
 }
 
-// Supplementary: original request digests and compiler asset IDs are different
-// namespaces. Removing an earlier attachment must not move a transcript to the
-// wrong source or collapse two occurrences of the same picture into one slot.
 func TestAmendedRequestPreservesStableSourceIdentity(t *testing.T) {
 	path := "/caller/portrait.png"
 	audioPath, videoPath := "/caller/voice.wav", "/caller/clip.mp4"
@@ -198,15 +189,11 @@ func TestAmendedRequestPreservesStableSourceIdentity(t *testing.T) {
 	if len(got.Assets) != 3 || value(got.Assets[0].Note) != secondNote || value(got.Assets[1].PairedVideoSHA256) != shaVideo || got.Transcripts[shaAudio] != after.Transcripts["asset-3"] {
 		t.Fatal("source identity or caller words were lost", got)
 	}
-	// The compacted original request is valid input again, even though its native
-	// IDs will now be assigned in a different order by FromOriginal.
 	got.Seconds, got.Aspect = 8, "16:9"
 	rebuilt, err := compiler.FromOriginal(got, nil)
 	if err != nil || rebuilt.Transcripts["asset-2"] != after.Transcripts["asset-3"] || rebuilt.Assets[1].PairedVideoID != "asset-3" {
 		t.Fatal("stored request cannot be reconstructed faithfully", rebuilt, err)
 	}
-	// A second projection uses the previous native IDs, not guessed positions in
-	// the compacted original request.
 	after2 := after
 	after2.Assets = append([]compiler.Asset(nil), after.Assets[1:]...)
 	after2.Transcripts = nil
@@ -269,9 +256,6 @@ func TestSupplementaryProtocolAndUploadBoundary(t *testing.T) {
 	}
 }
 
-// Supplementary: failed perception and writing can consume provider tokens.
-// The HTTP boundary must preserve every reported attempt without publishing a
-// result, both when the compiler refuses and when publication checks refuse.
 func TestSupplementaryFailedCompilationPreservesUsage(t *testing.T) {
 	result := compiler.Result{
 		Calls: []contextir.CallUsage{
@@ -291,7 +275,7 @@ func TestSupplementaryFailedCompilationPreservesUsage(t *testing.T) {
 	}
 	for _, phase := range []string{"compiler", "publication"} {
 		if phase == "publication" {
-			failure = nil // The empty document must fail native publication checks.
+			failure = nil
 		}
 		for _, request := range []struct{ method, path, body string }{
 			{"POST", "/v1/briefs", `{"intent":"an explicit scene"}`},

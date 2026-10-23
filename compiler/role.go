@@ -15,8 +15,6 @@ type RoleDecision struct {
 	Decisions []Decision          `json:"decisions,omitempty"`
 }
 
-// DecideRoles resolves missing source responsibilities before replacement
-// identity, shot planning, or prose. Explicit roles remain authoritative.
 func (c *Compiler) DecideRoles(ctx context.Context, b Brief, mode contextir.Mode) (RoleDecision, error) {
 	if c.needsExecution(b) {
 		next, err := c.executionFor(ctx, b)
@@ -107,8 +105,6 @@ func (c *Compiler) DecideRoles(ctx context.Context, b Brief, mode contextir.Mode
 					break
 				}
 				if b.Assets[i].Replaces == "" && asset.Replaces != "" {
-					// This is an exact quotation/provenance check on the model's typed target,
-					// never a substring heuristic for deciding a role or interpreting intent.
 					if !strings.Contains(b.Intent, asset.Replaces) {
 						err = invalid("assets.replaces", "An extracted target must quote the user's exact intent phrase.")
 						break

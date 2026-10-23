@@ -8,9 +8,6 @@ import (
 	"github.com/ly95/h3-context-ir-go"
 )
 
-// responseSchema specializes the wire schema using only explicit typed input.
-// The independent copy preserves number precision and never changes the global
-// Document contract. Validation remains authoritative after model generation.
 func responseSchema(request contextir.Request) (json.RawMessage, error) {
 	var schema map[string]any
 	decoder := json.NewDecoder(bytes.NewReader(contextir.DocumentSchema()))
@@ -37,7 +34,6 @@ func responseSchema(request contextir.Request) (json.RawMessage, error) {
 	if err != nil {
 		return nil, err
 	}
-	// These are exact caller-owned values, not model-authored interpretation.
 	document["mode"] = map[string]any{"const": request.Mode}
 	document["target"] = map[string]any{"const": request.Target}
 	document["assets"] = lockedArray(request.Assets)
@@ -61,8 +57,6 @@ func responseSchema(request contextir.Request) (json.RawMessage, error) {
 	if !ok {
 		return nil, errors.New("document schema is missing event time")
 	}
-	// Per-shot half-open bounds and event ordering still require validation;
-	// this upper bound prevents target-end events even before those checks.
 	at["minimum"] = int64(0)
 	at["maximum"] = int64(request.Target.Duration - 1)
 	part, ok := defs["DialoguePart"].(map[string]any)
@@ -152,8 +146,6 @@ func responseSchema(request contextir.Request) (json.RawMessage, error) {
 	return json.Marshal(schema)
 }
 
-// nil and empty arrays have the same meaning in the Go validation contract.
-// Keep both JSON representations legal rather than forcing a meaningless rewrite.
 func lockedArray[T any](values []T) map[string]any {
 	if len(values) == 0 {
 		return map[string]any{"enum": []any{nil, []T{}}}

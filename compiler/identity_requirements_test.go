@@ -45,8 +45,6 @@ func referenceIdentityReply(t *testing.T, request contextir.ModelRequest) json.R
 		t.Fatal(err)
 	}
 	if _, required := schema.Properties["source_contributions"]; required {
-		// This double follows explicit fixture choices, never infers a merge from
-		// prose. Model-selected projections remain the structure double's decision.
 		targets := []identityContributionTarget{}
 		byID := map[string]identitySourceBinding{}
 		byLabel := map[string]map[string]any{}
@@ -89,9 +87,6 @@ func referenceIdentityReply(t *testing.T, request contextir.ModelRequest) json.R
 	return raw
 }
 
-// Original ref2va_two_subjects intent. The conflicting source description is
-// the actual held-out perception failure's shape; the contract double exercises
-// target assembly and provenance rather than claiming to measure LLM accuracy.
 func TestOriginalRiderIdentityTargetOverridesSourceAndExcludesSheetPackaging(t *testing.T) {
 	b := Brief{Intent: "the woman in the technical jacket rides the dragon into an epic battleground, cinematic hollywood scene with dramatic expressions and camera movements", Seconds: 8, Mode: contextir.ModeReference,
 		Assets: []Asset{{Asset: contextir.Asset{ID: "rider", Kind: contextir.MediaImage}, Role: RoleSubject}, {Asset: contextir.Asset{ID: "dragon", Kind: contextir.MediaImage}, Role: RoleSubject}},
@@ -121,9 +116,6 @@ func TestOriginalRiderIdentityTargetOverridesSourceAndExcludesSheetPackaging(t *
 			identity["adjusted_attributes"] = []IdentityAttributeAdjustment{{Kind: "target_identity_alignment", Source: "diagonal scar above his right eyebrow", Target: "diagonal scar above the right eyebrow"}}
 			out = body
 		case "reference_sheet_qualification":
-			// These are complete, explicit choices for this fixture. In particular,
-			// qualification keeps the earlier caller alignment of the scar rather
-			// than reintroducing the observed source's gendered wording.
 			out = map[string]any{"identities": []sheetIdentityQualification{
 				{Label: "<Subject 1>", Descriptor: "the woman in the technical jacket", Attributes: []sheetAttributeQualification{
 					{Source: "dark hair", Disposition: "retain", Target: "dark hair"},

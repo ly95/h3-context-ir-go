@@ -1,6 +1,3 @@
-// Package comfy edits caller-owned API graphs and accesses ComfyUI over HTTP.
-// Ported from ruashots/open-h3-ir comfy.py at fd031e136ae3d89147324c0d1b2aa65e838c21f5.
-// Apache-2.0, see ../third_party/open-h3-ir. No ComfyUI directory is assumed local.
 package comfy
 
 import (

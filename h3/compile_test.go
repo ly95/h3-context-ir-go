@@ -37,7 +37,6 @@ func base(mode contextir.Mode) contextir.Document {
 		d.Assets = []contextir.Asset{image("last")}
 		d.References = []contextir.Reference{anchor("finish", "last", contextir.RoleLastFrame, 8000)}
 	case contextir.ModeFirstLastFrame:
-		// Input order deliberately differs from the runtime's frame-anchor order.
 		d.Assets = []contextir.Asset{image("last"), image("first")}
 		d.References = []contextir.Reference{anchor("finish", "last", contextir.RoleLastFrame, 8000), anchor("start", "first", contextir.RoleFirstFrame, 0)}
 	case contextir.ModeReference:

@@ -16,8 +16,6 @@ func originalTwoSwapBrief(t *testing.T) Brief {
 
 func TestOriginalTwoSwapDraftAcceptsExplicitGraphChoicesWithoutModel(t *testing.T) {
 	b := originalTwoSwapBrief(t)
-	// These choices are the actual production ResolveReplacements result for
-	// this same original input in live-semantic-round7, not inferred by Draft.
 	b.ReplacementTargets = map[string]string{b.Assets[0].ID: "subject-3", b.Assets[1].ID: "subject-4"}
 	c, _ := New(modelFunc(func(context.Context, contextir.ModelRequest) (contextir.ModelResponse, error) {
 		t.Fatal("an explicit graph choice was sent to a model")

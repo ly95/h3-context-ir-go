@@ -1,5 +1,3 @@
-// Command bridge exposes native conformance operations over JSON Lines.
-// It is a development tool; library consumers use the Go packages directly.
 package main
 
 import (

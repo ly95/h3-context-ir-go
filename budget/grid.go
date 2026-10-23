@@ -1,6 +1,3 @@
-// Package budget implements the public MiniMax H3 frame-grid, canvas and row math.
-// Ported from ruashots/open-h3-ir h3ir/grid.py at fd031e136ae3d89147324c0d1b2aa65e838c21f5.
-// Copyright 2026 Ruashots; Apache-2.0, see ../third_party/open-h3-ir.
 package budget
 
 import (
@@ -144,8 +141,6 @@ func CanvasForAspect(aspect string, megapixels *float64) ([2]int, error) {
 	return roundCanvas(h*ratio, h)
 }
 
-// Target preserves the requested and effective duration independently. Build is
-// the explicit snap-up operation; BuildExact rejects durations that need snapping.
 type Target struct {
 	NominalSeconds  float64 `json:"nominal_seconds"`
 	Frames          int     `json:"frames"`
@@ -198,8 +193,6 @@ func (t Target) SS(policy string) (string, error) {
 	return "", fmt.Errorf("unsupported S.SS policy %q", policy)
 }
 
-// SSecondsText implements decimal half-up from the shortest float spelling, as
-// Decimal(repr(float(seconds))).quantize(Decimal("0.01"), ROUND_HALF_UP) does.
 func SSecondsText(seconds float64) (string, error) {
 	if math.IsNaN(seconds) || math.IsInf(seconds, 0) {
 		return "", errors.New("seconds must be finite")

@@ -237,8 +237,6 @@ func (c *Compiler) structure(ctx context.Context, b Brief, target contextir.Targ
 }
 
 func strictDecode(data []byte, out any) error {
-	// Keep encoding/json's 10,000-level syntax limit while rejecting duplicate
-	// names and lossy Unicode before decoding the typed contract.
 	if err := strictjson.Check(data, 10000); err != nil {
 		return err
 	}

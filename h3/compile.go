@@ -11,10 +11,6 @@ import (
 	contextir "github.com/ly95/h3-context-ir-go"
 )
 
-// Artifact is derived from exactly one validated Document. Hashes use the full
-// SHA-256 digest. DocumentSHA256 identifies encoding/json's deterministic UTF-8
-// serialization of that Document, preserving all caller-owned slice ordering.
-// It is not an RFC 8785 cross-language canonicalization claim.
 type Artifact struct {
 	LoRAs                    []contextir.LoRAChoice `json:"loras,omitempty"`
 	Version                  string                 `json:"version"`
@@ -34,8 +30,6 @@ type Artifact struct {
 	SHA256                   string                 `json:"sha256"`
 }
 
-// Compile performs no IO and never repairs, truncates, rounds a requested
-// duration, selects a mode, or returns a partial artifact after an error.
 func Compile(doc contextir.Document, profile Profile) (Artifact, error) {
 	if err := contextir.Validate(doc); err != nil {
 		return Artifact{}, err
@@ -67,8 +61,6 @@ func Compile(doc contextir.Document, profile Profile) (Artifact, error) {
 	if err != nil {
 		return Artifact{}, err
 	}
-	// Copy profile slices and pointers so subsequent caller changes cannot
-	// silently alter the profile recorded alongside a compiled artifact.
 	profile.Modes = append([]contextir.Mode(nil), profile.Modes...)
 	if profile.Grid != nil {
 		grid := *profile.Grid
@@ -104,8 +96,6 @@ func timestamp(ms contextir.Time) string {
 }
 
 func secondsText(value contextir.Rational) string {
-	// Format the exact rational playback duration to two decimals, half up,
-	// without binary floating-point or truncating fractional milliseconds.
 	n := new(big.Int).Mul(big.NewInt(value.Numerator), big.NewInt(100))
 	q, rem := new(big.Int), new(big.Int)
 	d := big.NewInt(value.Denominator)
@@ -174,9 +164,6 @@ func render(doc contextir.Document, state bindingState, duration contextir.Ratio
 	}
 	summary := rich(doc.Summary, doc, state)
 	if strings.TrimSpace(summary) == "" {
-		// Summary is optional in the authoritative IR. Reusing its explicit
-		// shot descriptions is deterministic projection, not a second generated
-		// narrative or a substitute document.
 		var descriptions []string
 		for _, shot := range doc.Shots {
 			descriptions = append(descriptions, sentence(rich(shot.Description, doc, state)))
@@ -359,8 +346,6 @@ func taskTypes(doc contextir.Document) []string {
 	return TaskTypes(doc)
 }
 
-// TaskTypes derives conditioning responsibilities from the authoritative IR.
-// Source-video actors do not add a new identity reference merely by existing.
 func TaskTypes(doc contextir.Document) []string {
 	set := map[string]bool{}
 	for _, subject := range doc.Subjects {

@@ -7,15 +7,9 @@ import (
 	"strings"
 )
 
-// durationMilliseconds floors the public seconds value at the protocol's
-// millisecond resolution. Its shortest decimal form preserves integer-ms caller
-// values without a float multiply/subtract error. Flooring keeps a fractional-ms
-// end from making a genuinely shorter-than-1200ms last shot pass.
 func durationMilliseconds(seconds float64) (*big.Int, bool) {
 	d, ok := new(big.Rat).SetString(strconv.FormatFloat(seconds, 'f', -1, 64))
 	if !ok {
-		// FALLBACK: nonfinite Go-only contexts have no comparable final mark,
-		// matching the previous T12 behavior; finite inter-cut gaps still check.
 		return nil, false
 	}
 	d.Mul(d, big.NewRat(1000, 1))

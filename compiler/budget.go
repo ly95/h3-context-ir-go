@@ -43,8 +43,6 @@ func estimateBudget(a h3.Artifact, b Brief) (BudgetReport, error) {
 				out.UnknownReferenceRows = append(out.UnknownReferenceRows, m.Label)
 			}
 		case contextir.ReferenceAudio:
-			// The source's codec/latent preparation determines its packed rows. Duration
-			// alone does not establish the exact runtime representation.
 			out.UnknownReferenceRows = append(out.UnknownReferenceRows, m.Label)
 		}
 	}

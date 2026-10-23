@@ -108,8 +108,6 @@ func (p *Planner) validateEvidence(asset contextir.Asset, observation contextir.
 	return nil
 }
 
-// Root validation owns coverage shape, required tracks, and fact-track checks.
-// The planner additionally requires callers to explicitly admit limited evidence.
 func (p *Planner) validateCoveragePolicy(observation contextir.Evidence, path string) error {
 	coverage := observation.Coverage
 	if coverage == nil {
@@ -201,7 +199,7 @@ func binding(source contextir.SourceRef, role contextir.Role) bindingKey {
 
 func validateBindings(bindings []contextir.AssetBinding, document contextir.Document) error {
 	if len(bindings) == 0 {
-		return nil // Free-form role interpretation remains the model's responsibility.
+		return nil
 	}
 	allowed := make(map[bindingKey][]int, len(bindings))
 	used := make([]bool, len(bindings))
@@ -212,8 +210,6 @@ func validateBindings(bindings []contextir.AssetBinding, document contextir.Docu
 	check := func(source contextir.SourceRef, role contextir.Role, anchor *contextir.Time, path string) error {
 		permitted := false
 		for _, i := range allowed[binding(source, role)] {
-			// Only an explicitly supplied anchor locks target time. Other roles
-			// may share a reference carrying an independent keyframe role/anchor.
 			fixed := bindings[i].Anchor
 			if fixed == nil || anchor != nil && *fixed == *anchor {
 				used[i], permitted = true, true

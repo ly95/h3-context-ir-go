@@ -2,9 +2,6 @@ package compiler
 
 import "fmt"
 
-// projectionReviewBindings joins source subject IDs to their original assets
-// before identity projection. The critic receives this graph because the final
-// document intentionally no longer contains consumed source subjects.
 func projectionReviewBindings(b Brief, st Structure) ([]identitySourceBinding, error) {
 	subjects, manifest, err := resolvedCompatibilityPlan(b, st)
 	if err != nil {

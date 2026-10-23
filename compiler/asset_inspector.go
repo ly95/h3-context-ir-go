@@ -9,10 +9,6 @@ import (
 	"github.com/ly95/h3-context-ir-go"
 )
 
-// AssetInspector measures file/container facts through an explicitly injected
-// capability. It performs no semantic interpretation and makes no model call.
-// Existing caller metadata must be returned unchanged, filling only absent
-// fields. Locators remain opaque when this capability is not configured.
 type AssetInspector interface {
 	InspectAsset(context.Context, contextir.Asset) (contextir.MediaMetadata, error)
 }
@@ -21,8 +17,6 @@ func (c *Compiler) inspectBriefAssets(ctx context.Context, brief Brief) (Brief, 
 	if err := c.CheckRequest(brief); err != nil {
 		return brief, nil, err
 	}
-	// Snapshot the raw caller fields rather than normalizing them here: Intake
-	// must still know which defaults were omitted to record its own decisions.
 	wire, err := json.Marshal(brief)
 	if err != nil {
 		return brief, nil, invalid("brief", "Asset inspection requires serializable caller fields.")

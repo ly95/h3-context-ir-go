@@ -90,8 +90,6 @@ func deterministicAllocation(b Brief, st Structure, target contextir.Target, max
 	if int64(n)*int64(MinShotMS) > int64(target.Duration) {
 		return nil, invalid("shots", fmt.Sprintf("%d shots require %.1f seconds at the 1.2 second floor.", n, float64(n)*1.2))
 	}
-	// An explicit 1.2-second pin may be denser than the legacy automatic allocator's
-	// 1.5-second preference. The hard caller pin and explicit cuts remain in charge.
 	if b.Shots != nil || len(b.Cuts) > 0 {
 		out := make([]plan.ShotPlan, n)
 		for i := range out {
@@ -113,9 +111,6 @@ func deterministicAllocation(b Brief, st Structure, target contextir.Target, max
 	if err != nil {
 		return nil, err
 	}
-	// Root.ContextIR uses nearest milliseconds for the exact rational duration.
-	// Legacy plan.Target floors the final endpoint; the final root boundary is
-	// corrected from the authoritative Target, without changing any cut.
 	if len(out) > 0 {
 		out[len(out)-1].EndMS = int(target.Duration)
 	}
@@ -138,8 +133,6 @@ func resolvedCompatibilitySubjects(b Brief, st Structure, target contextir.Targe
 func resolvedCompatibilityPlan(b Brief, st Structure) ([]plan.SubjectPlan, []plan.ManifestEntry, error) {
 	pb, cards := compatibilityInputs(b, st)
 	unobserved := map[string]bool{}
-	// Missing structured cards remain unknown. The deterministic floor can still
-	// cite a caller-described reference, without presenting that note as observed.
 	for _, a := range pb.Assets {
 		if _, ok := cards[a.SHA256]; !ok && (a.Role == string(RoleSubject) || a.Role == string(RolePlacedSubject) || a.Role == string(RoleReplacementSubject)) {
 			desc := "the supplied subject reference"
@@ -178,9 +171,6 @@ func resolvedCompatibilityPlan(b Brief, st Structure) ([]plan.SubjectPlan, []pla
 		}
 		targets[incoming] = target
 	}
-	// Ambiguous caller names are deliberately left for the typed structural stage.
-	// The planner accepts only exact identity keys or a unique compatible figure;
-	// no leftover selection and no automatic unobserved-figure assertion occurs.
 
 	incomingLabels := map[string]bool{}
 	for _, m := range manifest {
@@ -244,9 +234,6 @@ func mapCompatibilitySubjects(b Brief, subs []plan.SubjectPlan, manifest []plan.
 			}
 			attributionRole := rootRole(Role(m.Role))
 			if m.Role == string(RoleFirstFrame) || m.Role == string(RoleLastFrame) {
-				// The picture supplies this depicted identity. Its independent
-				// Reference owns the exact frame/time relationship; frame roles
-				// are never legal Subject attribution roles in the root IR.
 				attributionRole = contextir.RoleIdentity
 			}
 			out.Sources = append(out.Sources, contextir.Attribution{Source: sourceFor(input, Role(m.Role)), Role: attributionRole})
@@ -259,9 +246,6 @@ func mapCompatibilitySubjects(b Brief, subs []plan.SubjectPlan, manifest []plan.
 	return result, nil
 }
 
-// Identity depicted in an actual Ref2VA frame is a separate, explicit source
-// responsibility from that frame's target-time anchor. Only an observed typed
-// subject which the native mapper actually projected earns this companion.
 func bindProjectedFrameIdentities(b Brief, st Structure, req *contextir.Request) error {
 	if req.Mode != contextir.ModeReference {
 		return nil

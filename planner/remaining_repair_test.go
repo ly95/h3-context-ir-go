@@ -18,9 +18,6 @@ import (
 	"github.com/ly95/h3-context-ir-go/planner"
 )
 
-// These cases retain fd031e13's original inputs. The injected Model is an
-// explicit contract test double, not evidence of real media/model quality.
-// Go repairs strict typed Documents, never silently patches caller literals.
 type upstreamRepairFixture struct {
 	Constants map[string]string `json:"constants"`
 	Calls     []struct {
@@ -313,7 +310,6 @@ func TestRemainingRepairFixLoop(t *testing.T) {
 					calls++
 					return response(t, repairDocument(r)), nil
 				}), nil, planner.Options{MaxRetries: 2, ValidateDocument: func(_ contextir.Request, d contextir.Document) error {
-					// This adapter consumes actual native findings; WARN remains report-only.
 					noGrid := false
 					ctx := h3check.NewContext()
 					ctx.Mode = string(d.Mode)
@@ -470,8 +466,6 @@ func TestRemainingRepairDialogue(t *testing.T) {
 					t.Fatal("invalid words/order were silently repaired with retries disabled")
 				}
 			case "test_the_ask_states_how_a_line_crossing_a_cut_is_written":
-				// Native schema expresses cutoff/paired flags; plaintext tokens are derived
-				// by H3. No verbatim Python free-text prompt is falsely asserted here.
 				good.Shots[1].Events[1].Dialogue.CutOff = true
 				var captured contextir.ModelRequest
 				p := mustPlanner(t, modelFunc(func(_ context.Context, in contextir.ModelRequest) (contextir.ModelResponse, error) {
@@ -516,8 +510,6 @@ func TestRemainingRepairDialogue(t *testing.T) {
 				}
 			default:
 
-				// Supplement the verbatim original raw assertions with a real typed success
-				// and product rejection, so validation-only capture is never a repair claim.
 				if name == "test_a_line_still_inside_one_block_is_untouched" {
 					single := repairDocument(r)
 					at := contextir.Time(0)
@@ -534,8 +526,6 @@ func TestRemainingRepairDialogue(t *testing.T) {
 	}
 }
 
-// User regression, not an upstream nodeid: the previously questioned Chinese
-// voiceover must be proven by typed timing/literal continuity and final output.
 func TestRemainingRepairUserChineseTwoFourSecondShots(t *testing.T) {
 	const line = "我们明天见，好吗？"
 	r := request(contextir.ModeText)
@@ -550,7 +540,6 @@ func TestRemainingRepairUserChineseTwoFourSecondShots(t *testing.T) {
 	}
 	bad := repairDocument(r)
 	bad.Shots = append([]contextir.Shot(nil), good.Shots...)
-	// Deep-copy before making the adversarial repeated-line candidate.
 	raw, _ := json.Marshal(good)
 	bad = contextir.Document{}
 	if err := json.Unmarshal(raw, &bad); err != nil {

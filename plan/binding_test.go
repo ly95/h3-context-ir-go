@@ -5,8 +5,6 @@ import (
 	"testing"
 )
 
-// This supplemental contract test exercises explicit caller binding, not model
-// understanding. The complete original corpus remains the conformance gate.
 func TestExplicitBindingAndUnobservedOrigin(t *testing.T) {
 	manifest := []ManifestEntry{{Label: "<Picture 1>", Kind: "image", Role: "replacement_subject", Replaces: "the person who enters later"}, {Label: "<Video 1>", Kind: "video", Role: "edit_source"}}
 	subjects := []SubjectPlan{{Label: "<Subject 1>", Kind: "person", Sources: []string{"<Picture 1>"}, Descriptor: "the incoming performer"}, {Label: "<Subject 2>", Kind: "person", Sources: []string{"<Video 1>"}, Descriptor: "the nearer figure"}, {Label: "<Subject 3>", Kind: "person", Sources: []string{"<Video 1>"}, Descriptor: "the farther figure"}}

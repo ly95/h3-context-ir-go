@@ -12,10 +12,6 @@ import (
 	"github.com/ly95/h3-context-ir-go/planner"
 )
 
-// The live continuation case's final failed writer used "The car’s nose eases
-// forward out of the dark." Its first attempt had already used the one repair
-// for an invalid transition. These controls protect useful H1 diagnostics and
-// caller literals without hiding the exhausted retry budget or cleaning bytes.
 func TestWriterHygieneRepairPreservesCallerLiteralsAndBudget(t *testing.T) {
 	for _, repaired := range []bool{true, false} {
 		t.Run(map[bool]string{true: "provider_repairs_own_prose", false: "persistent_hazard_fails_without_cleaning"}[repaired], func(t *testing.T) {

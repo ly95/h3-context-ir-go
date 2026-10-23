@@ -11,9 +11,6 @@ import (
 	"github.com/ly95/h3-context-ir-go/h3"
 )
 
-// Contract data is extracted from the real ComfyUI node schemas, not from this
-// compiler's strings. See testdata/contracts for the pinned source/hash and the
-// independent Python AST extractor. This test never depends on network access.
 func TestSocketsMatchPinnedComfyUINodeSchema(t *testing.T) {
 	var contract struct {
 		Source       string `json:"source"`
@@ -102,9 +99,6 @@ func TestSocketsMatchPinnedComfyUINodeSchema(t *testing.T) {
 	}
 }
 
-// MiniMax's Full-Reference Guide §5.4 explicitly gives a reused BGM lyric cue
-// whose source is <Audio N>, without inventing an independent (Sx):
-// https://huggingface.co/MiniMaxAI/MiniMax-H3/blob/main/docs/VIDEO_PROMPT_WRITING_GUIDE_ref_en.md
 func TestOfficialAudioSourceLyricCueDoesNotInventASpeaker(t *testing.T) {
 	d := audioScopeDocument()
 	const lyric = "I'm lonely lonely lonely lonely lonely I'm lonely"
