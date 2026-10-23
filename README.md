@@ -1,50 +1,94 @@
 # H3 Context-IR Go
 
-H3 Context-IR Go 是面向 MiniMax H3 的非官方 Context-IR Go 实现。它是独立的 Go 库，把自然语言需求与素材观察编译为可编辑、可持久化的 IR，再从同一份 `Document` 生成 H3 prompt、素材绑定、预算和内容哈希。
+H3 Context-IR Go 接收一整段原始视频需求，通过调用方配置的模型理解内容、规划镜头、保留对白与可见文字，输出 MiniMax H3 提示词。场景、动作、镜头、对白、画面文字和限制条件可以写在同一段输入中。
 
-核心只使用 Go 标准库，不需要 Python；可选模型适配器使用官方 OpenAI Go SDK。模型、感知、存储和 HTTP 执行能力由调用方显式配置；核心验证与渲染可以完全离线运行。
+它是独立、非官方的 Go 库。编译得到的 `Document` 是可编辑、可持久化的权威文档；提示词、素材绑定、预算和内容哈希从同一份文档生成。核心只使用 Go 标准库，可选模型适配器使用官方 OpenAI Go SDK。模型与感知能力由调用方显式注入。
 
-本项目参考 [OpenH3-IR](https://github.com/ruashots/open-h3-ir/tree/fd031e136ae3d89147324c0d1b2aa65e838c21f5) 与 MiniMax 公开的 H3 格式指南，是独立、非官方实现。它不包含 MiniMax 的模型权重或托管 Context-IR 内部实现。
+## 运行完整示例
 
-## 安装
+需要 Go 1.27.3 或更新版本。获取源码：
 
-需要 Go 1.27.3 或更新版本。
+```sh
+git clone https://github.com/ly95/h3-context-ir-go.git
+cd h3-context-ir-go
+```
+
+将占位值替换为你选择的兼容服务配置。`MODEL_BASE_URL` 是 API 根地址；凭据通过 `-key-env` 显式选择，无认证端点省略该参数：
+
+```sh
+export MODEL_BASE_URL='https://your-compatible-service.example/v1'
+export MODEL_ID='your-model-id'
+export MODEL_API_KEY='your-api-key'
+```
+
+[examples/manual](examples/manual/main.go) 是完整的库调用示例。把下面的正文换成自己的原文，直接从标准输入传给编译器：
+
+```sh
+go run ./examples/manual \
+  -base-url "$MODEL_BASE_URL" \
+  -model "$MODEL_ID" \
+  -key-env MODEL_API_KEY \
+  -seconds 8 \
+  -aspect 16:9 <<'PROMPT'
+暖色晨光照进一家街角面包店。一位穿着浅色围裙的面包师推开木质百叶窗，把一盘刚出炉的面包放到柜台上。画面自然、温暖，有真实生活的质感。
+
+先用中景交代面包师与店内空间，再靠近柜台展示面包表面和升起的热气，最多两个镜头。摄影机缓慢推进，动作衔接连贯，不要快速剪辑。
+
+面包师轻声说：“早上好，面包刚出炉。”柜台小立牌仅显示“今日现烤”。对白和文字保留中文原文。声音只保留百叶窗摩擦、托盘轻碰柜台和自然说话声，不要旁白和配乐。
+PROMPT
+```
+
+成功时 stdout 只有 H3 提示词，stderr 记录调用用量。以下仅展示输出结构，**不是一次真实模型调用的输出**：
+
+```text
+integrated_multimodal_description: [Shot 1] ...
+
+overall_soundscape: ...
+
+non_diegetic_music: N/A
+```
+
+长文本可以保存在 UTF-8 文件中，通过重定向或管道输入。仓库中的 [examples/prompt.txt](examples/prompt.txt) 包含上述完整原文：
+
+```sh
+go run ./examples/manual \
+  -base-url "$MODEL_BASE_URL" -model "$MODEL_ID" -key-env MODEL_API_KEY \
+  -seconds 8 < examples/prompt.txt > optimized.txt
+```
+
+短文本也可通过 `-prompt` 输入：
+
+```sh
+go run ./examples/manual \
+  -base-url "$MODEL_BASE_URL" -model "$MODEL_ID" -key-env MODEL_API_KEY \
+  -prompt '一位面包师将新鲜面包放在晨光照亮的柜台上。只保留环境声，不要配乐。'
+```
+
+示例支持以下参数。提供 `-prompt` 时使用该参数的全文，否则读取标准输入；不接受位置参数。输入必须是非空有效 UTF-8，上限为 16 MiB。
+
+| 参数 | 默认值 | 用途 |
+| --- | --- | --- |
+| `-base-url` | 必填 | 兼容服务的 API 根地址 |
+| `-model` | 必填 | 该服务支持的模型 ID |
+| `-key-env` | 不读取密钥 | 指定 API 密钥所在的环境变量名 |
+| `-api` | `responses` | 可选 `responses` 或 `chat_completions` |
+| `-prompt` | 读取 stdin | 完整原始提示词 |
+| `-seconds` | `5` | 视频时长，单位为秒 |
+| `-aspect` | `16:9` | 画幅比例，例如 `9:16` |
+
+服务提供 Chat Completions 时，添加 `-api chat_completions`。示例只读取 `-key-env` 指定的密钥变量，不自动读取 SDK 环境配置。时长和画幅由参数控制，正文中的描述不会自动转换为这两个参数。
+
+示例实际调用模型，失败时明确报错，不自动生成离线草稿。需要澄清时不输出提示词，stderr 给出问题，程序退出码为 `3`。需要判断准确退出码时，可先运行 `go build -o h3-prompt ./examples/manual`，再使用 `./h3-prompt`；`go run` 会包装程序的非零退出状态。`make demo` 仅显示示例参数，不访问模型。纯文本示例不需要 ffmpeg 或 ffprobe。
+
+## 在 Go 项目中使用
+
+在已有 Go module 中添加依赖：
 
 ```sh
 go get github.com/ly95/h3-context-ir-go@main
 ```
 
-项目从 `github.com/ly95/contextir` 迁移至上述 module path，根 Go 包名仍为 `contextir`。现有 `Document` 版本与 Schema ID 保留原标识，以兼容已保存的文档和模型回放。
-
-新 module path 的首个版本发布前使用 `@main`。历史标签 `v0.1.0`、`v0.2.0` 仍声明旧 module path，保留原样。
-
-## 试运行 demo
-
-先运行一个无需模型或凭据的离线示例：
-
-```sh
-go run ./cmd/h3-context-ir-go demo
-```
-
-它演示文本需求 → `Document` → H3 prompt，输出包含完整 `result` 的 JSON。默认模式明确标记为 `draft`，不进行模型理解；也可用 `make demo` 运行同一个示例。
-
-配置兼容端点和模型后，用 `brief` 模式编译自己的需求：
-
-```sh
-go run ./cmd/h3-context-ir-go demo \
-  -mode brief \
-  -base-url "$MODEL_BASE_URL" \
-  -model "$MODEL_ID" \
-  -key-env MODEL_API_KEY \
-  -prompt "暖色晨光中，一位面包师推开木质百叶窗，把一盘面包放在柜台上。" \
-  -seconds 8
-```
-
-默认协议是 Responses；Chat Completions 端点显式添加 `-api chat_completions`。命令只读取 `-key-env` 指定的凭据变量，无认证端点可省略它。`brief` 失败不会改成草稿；`needs_input` 保留结构化澄清问题，所有已发生的调用保留在 `result.calls` 中。运行 `demo -h` 查看选项，完整参数和媒体接入见 [CLI 文档](cmd/h3-context-ir-go/README.md)。
-
-## 从需求编译
-
-向 `compiler.New` 注入实现 `planner.Model` 的模型。素材观察可通过 `planner.Perceiver` 提供，也可使用调用方已取得的结构化 Evidence；纯文本请求的 perceiver 可以为 `nil`。
+业务入口接收用户的完整原文，纯文本请求无需感知器：
 
 ```go
 package video
@@ -54,107 +98,59 @@ import (
 
     "github.com/ly95/h3-context-ir-go/compiler"
     "github.com/ly95/h3-context-ir-go/h3"
-    "github.com/ly95/h3-context-ir-go/planner"
 )
 
-func Compile(ctx context.Context, model planner.Model) (compiler.Result, error) {
+func Compile(ctx context.Context, model compiler.Model, fullPrompt string) (compiler.Result, error) {
     c, err := compiler.New(model, nil, compiler.Options{
         Profile: h3.OfficialProfile(),
         FramePolicy: compiler.FramePolicyExact,
-        MaxStructureRetries: 1,
-        Planner: planner.Options{MaxRetries: 1},
     })
     if err != nil {
         return compiler.Result{}, err
     }
-    return c.Compile(ctx, compiler.Brief{
-        Intent: "A lighthouse keeper climbs the tower stairs in a storm and lights the lamp.",
-        Seconds: 15,
-        Aspect: "16:9",
-    })
+    return c.Compile(ctx, compiler.Brief{Intent: fullPrompt})
 }
 ```
 
-成功结果的 `Document` 是持久化和编辑入口，`Artifact` 包含最终 prompt 与 manifest。调用方必须检查错误和 `Status`：`needs_input` 表示需要展示结构化澄清问题，尚未发布产物。无论成功或失败，均应保留返回的 `Calls`，其中包含已经发生的模型与感知用量。
+`model` 由调用方配置并注入，完整连接与 HTTP 配置见 [examples/manual/main.go](examples/manual/main.go)。检查 `err` 和 `result.Status`，仅在 `compiled` 时发布 `result.Artifact.Prompt`；`needs_input` 应向用户展示问题。调用方可以保存 `result.Document`、决策和诊断，并保留成功或失败结果中的 `Calls`。需要显式时长或画幅时设置 `Brief.Seconds`、`Brief.Aspect`。
 
-可选 [chatcompat](chatcompat/README.md) 只负责把 Context-IR 的模型合同转换为官方 OpenAI Go SDK 请求，并检查返回内容、模型身份与用量。调用方直接配置 SDK 的连接选项和 HTTP 客户端；库不再定义另一套 OpenAI 客户端配置。通用图片观察合同位于 [perception](perception/README.md)，完整高层 API 见 [compiler](compiler/README.md)。
+已有 `Document` 时可调用 `h3.Compile` 离线渲染，示例见 [examples/render/main.go](examples/render/main.go)。`Compiler.Draft` 是独立、显式的确定性草稿 API。普通需求编译不需要调用方手写 `Document`。
 
-```go
-// sdk 是 github.com/openai/openai-go/v3；option 是该 SDK 的 option 包。
-httpClient := &http.Client{
-    Transport: &http.Transport{}, // 不读取环境代理
-    Timeout: 2 * time.Minute,
-    CheckRedirect: func(*http.Request, []*http.Request) error {
-        return http.ErrUseLastResponse
-    },
-}
-defer httpClient.CloseIdleConnections()
-client := sdk.Client{Options: []option.RequestOption{
-    option.WithBaseURL("https://your-compatible-service.example/v1"),
-    option.WithAPIKey(apiKey),
-    option.WithHTTPClient(httpClient),
-}}
-model, err := chatcompat.NewModel(client, chatcompat.ModelOptions{
-    API: chatcompat.Responses, // 或 chatcompat.ChatCompletions
-    Model: modelID,
-    MaxOutputTokens: 8192,
-    SupportsImages: true, // 调用方已确认模型支持图片时声明
-})
-```
+## 能力与边界
 
-示例还需导入 `net/http`、`time` 与 `github.com/ly95/h3-context-ir-go/chatcompat`。检查 `err` 后把 `model` 注入编译器。这里直接提供 SDK `Options`，避免 `sdk.NewClient` 默认读取环境配置；空 `apiKey` 用于无认证端点。端点信任、传输、超时和连接回收由调用方负责，适配代码只管理业务协议、内容上限、图片能力和输出合同。省略 `ReasoningEffort` 表示不发送该参数。`chatcompat.New` 仍保留上游本地服务的发现、探测与 thinking 控制；普通生成使用 `NewModel`。原图片与观察类型位于 `perception`，业务合同与已保存文档保持原版本。
+- 五种生成模式：`t2va`、`i2va`、`l2va`、`fl2va`、`ref2va`，支持主体、环境、风格、分镜、首尾帧、编辑、续写、替换及音频引用。
+- 固定与生成对白、旁白、歌唱、跨镜连续分片、可见文字和音频 cue。固定文字保留原文，来源、职责和创意许可分别记录。
+- 镜头与切点控制、摄影机闭集、创意程度、导演、LoRA、预算、严格 JSON、结构化诊断和有限模型修复。
 
-## 能力
+用户意图由结构化输入或模型的类型化合同解释，不使用关键词或正则猜测授权。输入不合法、能力不足、缺少观察或模型输出不合约时返回明确错误。格式规则与运行后端限制分开；时长不隐式对齐，需要网格对齐时显式选择 `FramePolicySnapUp`。
 
-- 五种生成模式：`t2va`、`i2va`、`l2va`、`fl2va`、`ref2va`。
-- 十六种素材职责，分别管理主体、环境、风格、分镜、结构、首尾帧、编辑、续写、植入、替换及音频引用。
-- 固定与生成对白、旁白、歌唱、说话人、跨镜连续分片、可见文字与原音轨歌词 cue。固定文字保留原文，不由写作模型重新抄写。
-- 内容许可、参考属性优先级、音轨复制与声音属性参考、明确的替换目标和多来源身份属性投影。
-- 镜头与切点锁定、摄影机闭集、四档创意程度、内置与自定义导演，以及 LoRA 注册与约束。
-- 严格 JSON、版本化 Schema、结构化诊断、有限模型修复、用量账本和确定性产物哈希。
-
-用户意图通过显式类型或模型的结构化合同解释。代码管理时间、引用、来源、固定文字与执行约束；输入不合法、能力不足或模型输出不合约时返回明确错误。`Draft` 是单独的离线能力；失败后生成草稿必须显式选择相应政策，并保留降级状态和原因。
-
-## 包
+素材说明不是观察事实。抽样视频只覆盖实际采样帧，转写只建立词语，不能证明音色、音乐或节奏。感知和媒体准备能力见各包说明。实际 H3 视频推理由调用方执行；单元测试、IR 合法性与提示词格式通过不能证明成片质量或与 MiniMax 托管服务等价。这些示例未通过外部真实 API 验证。
 
 | 包 | 用途 |
 | --- | --- |
-| 根包 `contextir` | `Document`、Evidence、严格编解码、Schema、验证、错误与用量 |
-| [compiler](compiler/README.md)、[planner](planner/README.md) | Brief 编译与修订、素材观察、类型化解释与规划 |
-| [h3](h3/README.md)、[h3check](h3check/README.md) | H3 渲染、manifest、执行 profile 与最终文本检查 |
-| [plan](plan/README.md)、[budget](budget/README.md)、[tokens](tokens/README.md) | 确定性结构、帧与画布预算、离线精确 BPE 计数 |
-| [media](media/README.md) | 本地媒体检查、ffprobe/ffmpeg、视频抽帧、可选缓存与 ASR 接口 |
-| [chatcompat](chatcompat/README.md) | 官方 SDK 与业务模型合同之间的转换，以及上游本地服务探测工具 |
-| [perception](perception/README.md) | 与模型服务无关的图片输入、观察合同与感知器 |
+| 根包 `contextir` | Document、Evidence、Schema、验证、编解码、错误与用量 |
+| [compiler](compiler/README.md)、[planner](planner/README.md) | 需求编译与修订、观察、类型化规划 |
+| [h3](h3/README.md)、[h3check](h3check/README.md) | H3 渲染、素材绑定、运行 profile 与文本检查 |
+| [plan](plan/README.md)、[budget](budget/README.md)、[tokens](tokens/README.md) | 确定性结构、帧与画布预算、离线 BPE 计数 |
+| [chatcompat](chatcompat/README.md)、[perception](perception/README.md)、[media](media/README.md) | 可选模型适配、图片观察和本地媒体处理 |
 | [evaluate](evaluate/README.md) | 离线评分、基线与回归比较 |
-| [service](service/README.md)、`uploads` | 可选 HTTP handler、记录接口与内容寻址上传存储 |
-| [comfy](comfy/README.md)、[lora](lora/README.md) | ComfyUI 远端操作、LoRA 注册与运行约束 |
+| [service](service/README.md)、`uploads` | 可选 HTTP handler、记录接口与上传存储 |
+| [comfy](comfy/README.md)、[lora](lora/README.md) | ComfyUI 远端操作与 LoRA 注册 |
 
-## 离线使用与测试
-
-已有 `Document` 时，调用 `h3.Compile(document, profile)` 即可生成产物，不调用模型。`OfficialProfile` 检查公开格式；`ComfyUIProfile` 额外检查执行后端的帧网格、画布、socket 与输入限制。IR 使用整数毫秒和有理数 FPS，不隐式调整时长。需要 `17k+5` 对齐时，调用方显式选择 `FramePolicySnapUp`，结果同时报告请求时长与有效时长。
+## 测试
 
 ```sh
-go run ./cmd/h3-context-ir-go schema
-go run ./cmd/h3-context-ir-go contract
-go run ./cmd/h3-context-ir-go validate < document.json
-go run ./cmd/h3-context-ir-go compile -profile comfyui < document.json
-
 make check
 ```
 
-`make check` 执行格式检查、vet、全部原生测试、race 和解码 fuzz；需要 ffmpeg、ffprobe，以及 race detector 所需的 C 编译器。缺少媒体工具时，完整检查会先报错。也可分别运行 `go test ./...`、`go test -race ./...` 与 `go vet ./...`，但直接运行 Go 测试可能在缺少媒体工具时跳过对应集成用例。
+这会执行格式检查、vet、全部原生测试、race 和解码 fuzz。完整测试需要 ffmpeg、ffprobe，以及 race detector 所需的 C 编译器；缺少媒体工具时 Makefile 先报错。直接运行 `go test ./...` 可能跳过缺少工具的媒体用例。普通测试不调用付费模型，使用显式依赖、固定输入和录制回放。
 
-普通 Go 测试不调用付费模型。命令行参数见 [CLI 文档](cmd/h3-context-ir-go/README.md)；真实模型录制单独使用 [live-eval](cmd/h3-context-ir-go-live-eval/README.md)，会访问显式配置的服务并消耗额度。
+上游输入、来源清单与 Go 测试映射保留在 [conformance](conformance/README.md)。贡献规则见 [CONTRIBUTING.md](CONTRIBUTING.md)。
 
-上游来源、逐项测试映射和 Go 适配原则见 [测试说明](docs/UPSTREAM_TESTS.md) 与 [conformance](conformance/README.md)。
+## 版本与来源
 
-## 能力边界
+项目参考固定版本的 [OpenH3-IR](https://github.com/ruashots/open-h3-ir/tree/fd031e136ae3d89147324c0d1b2aa65e838c21f5) 与 MiniMax 公开格式指南，不包含 MiniMax 的模型权重或托管 Context-IR 内部实现。
 
-素材的文字说明不是观察事实。静态图片可声明完整视觉覆盖；抽样视频只覆盖实际采样帧，ASR 只建立转写词语，不能证明音色、音乐或节奏。部分覆盖需要调用方显式接纳。感知与媒体准备的具体边界见 [media](media/README.md)。
+module path 为 `github.com/ly95/h3-context-ir-go`，根包名仍为 `contextir`。保存文档的版本与 Schema ID 保留原标识。首个新 module path 版本发布前使用 `@main`；历史 `v0.1.0`、`v0.2.0` 标签仍声明旧 module path。
 
-`MediaPreparation` 描述后端所需的素材准备，不表示已经裁剪、转码或生成视频。实际 H3 推理由调用方执行。IR、prompt 与单元测试的通过不能证明成片的人物一致性、音画同步、文字保真或与 MiniMax 托管服务质量等价。已知格式与执行限制见 [实现范围](docs/READINESS.md)。
-
-## 许可证与来源
-
-H3 Context-IR Go 使用 [Apache License 2.0](LICENSE)。OpenH3-IR、Qwen2.5 词表及测试素材的原有声明保留在 [第三方说明](THIRD_PARTY_NOTICES.md) 与 `third_party/`。模型权重、托管服务和调用方媒体的许可独立于本库。来源版本见 [UPSTREAM.md](docs/UPSTREAM.md)，贡献方式见 [CONTRIBUTING.md](CONTRIBUTING.md)。
+本项目使用 [Apache License 2.0](LICENSE)。第三方词表、来源样本和测试素材的原有声明见 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)、`third_party/` 与 [source_manifest.json](conformance/source_manifest.json)。模型权重、服务和调用方媒体的许可独立于本库。

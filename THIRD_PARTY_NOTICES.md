@@ -52,8 +52,9 @@ provenance for the checked-in bytes, not a promise about future model revisions.
 ## MiniMax H3 format and model
 
 Protocol spelling and examples follow MiniMax's publicly published H3 prompt
-guides, as identified in [UPSTREAM.md](docs/UPSTREAM.md). The retained upstream
-NOTICE identifies quoted MiniMax examples in its golden prompt fixtures.
+guides. The [source manifest](conformance/source_manifest.json) records the pinned
+upstream sources. The retained upstream NOTICE identifies quoted MiniMax examples
+in its golden prompt fixtures.
 
 H3 Context-IR Go includes no MiniMax model weights or hosted Context-IR implementation.
 The library's Apache-2.0 license does not grant a license to MiniMax H3 model

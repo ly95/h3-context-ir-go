@@ -51,7 +51,7 @@ Python test suite.
 | `fixtures/licence_inputs.json`, `licence_expectations.json`, `licence_cases.json` | Provider-safe reference-permission inputs, held-out expectations and source assertions. |
 | `fixtures/render_calls.json` | Original render/format/text helper inputs, outputs and mutation states. |
 | `fixtures/suite_briefs.json`, `role_briefs.json`, `role_expectations.json` | Original suite/role inputs and separate expected fields. |
-| `release_acceptance_inputs.json`, `release_acceptance_assertions.json` | Separate model-safe inputs and assertions for the native live recorder. |
+| `release_acceptance_inputs.json`, `release_acceptance_assertions.json` | Separate model-safe acceptance inputs and assertions. |
 
 See the [fixture publication notes](fixtures/README.md) for any explicit
 anonymization of machine-local paths. A stored source digest is provenance, not
@@ -73,17 +73,11 @@ executed. The development-time mixed Python/Go audit and current native Go
 verification are different evidence. The retained 991-entry inventory must not
 be described as a fresh run of all unchanged Python assertions.
 
-[UPSTREAM_TESTS.md](../docs/UPSTREAM_TESTS.md) explains concrete native
-adaptations and their scope. [LICENCE.md](LICENCE.md) describes reference
-permission fixtures; [ROLE_EVALUATION.md](ROLE_EVALUATION.md) describes source
-role inputs and representation differences.
+[LICENCE.md](LICENCE.md) describes reference-permission fixtures;
+[ROLE_EVALUATION.md](ROLE_EVALUATION.md) describes source role inputs and
+representation differences.
 
-## Live evaluation
-
-Use the explicitly configured [Go live recorder](../cmd/h3-context-ir-go-live-eval/README.md)
-for a new model run. Assertions remain separate from model inputs. Record every
-attempt, failure and valid usage; do not count replay or duplicate trace ledgers
-as new provider calls.
+## Strict replay
 
 High-level strict replay uses self-contained data in
 [`compiler/testdata`](../compiler/testdata). It checks complete request identity

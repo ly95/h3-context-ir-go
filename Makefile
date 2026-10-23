@@ -6,7 +6,7 @@ FUZZTIME ?= 10s
 
 help:
 	@printf '%s\n' \
-	  'make demo          Run the offline text-to-Document-to-H3 demo' \
+	  'make demo          Show the library example flags without a model call' \
 	  'make check         Run formatting, vet, all tests, race tests, and decoder fuzzing' \
 	  'make test          Run all native tests, including actual media integrations' \
 	  'make test-race     Run all native tests with the race detector' \
@@ -17,7 +17,7 @@ help:
 	  'Install ffmpeg and ffprobe before running test, test-race, or check.'
 
 demo:
-	@$(GO) run ./cmd/h3-context-ir-go demo
+	@$(GO) run ./examples/manual -h
 
 check: check-format vet test test-race fuzz
 

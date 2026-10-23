@@ -1,7 +1,7 @@
 # Contributing
 
-H3 Context-IR Go is an independent Go library. Read [AGENTS.md](AGENTS.md) and the
-[architecture](docs/ARCHITECTURE.md) before changing its contracts.
+H3 Context-IR Go is an independent Go library. Read [AGENTS.md](AGENTS.md)
+before changing its contracts.
 
 ## Local checks
 
@@ -33,7 +33,7 @@ substitution, or an implicit environment dependency.
 
 When porting an upstream test, preserve its business invariant, successful
 scenario and relevant failure controls through public Go interfaces. Record the
-source and any explicit API/input adaptation; see [upstream tests](docs/UPSTREAM_TESTS.md).
+source and any explicit API/input adaptation; see [conformance](conformance/README.md).
 A static inventory, a component differential and a complete workflow test support
 different claims.
 
@@ -45,8 +45,7 @@ attempts and usage. Replay is not a fresh model evaluation.
 
 Do not commit API keys, private media locators, application user content, local
 absolute paths or generated evaluation reports. Use public or synthetic media,
-record provenance and retain the original license and notices. Running a live
-recorder is an explicit, separately configured operation that may incur charges.
+record provenance and retain the original license and notices. Live model calls require explicit configuration and may incur charges.
 
 ## Licensing
 

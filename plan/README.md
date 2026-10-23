@@ -51,5 +51,5 @@ this deterministic package and is tested through the high-level compiler's
 typed decision boundary. No expected target is read into a model prompt.
 
 The corpus verifies the named planning primitives; passing it does not establish
-complete Compile behavior. See [upstream tests](../docs/UPSTREAM_TESTS.md) for
+complete Compile behavior. See [conformance](../conformance/README.md) for
 the broader native workflow tests and source mappings.

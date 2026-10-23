@@ -3,13 +3,15 @@
   "cases": [
     {
       "upstream_nodeid": "tests/test_contract.py::test_the_command_prints_what_the_module_builds",
-      "go_package": "./cmd/h3-context-ir-go",
-      "go_test": "TestRemainingSurfaceContractCLIPrintsPublishedBytes",
-      "assertion_intent": "The native executable exports JSON/JavaScript exactly byte-for-byte as the actual public service AsJSON/AsJS API, with successful exit and no stderr.",
-      "adaptation": "Build and invoke the real Go h3-context-ir-go executable for contract and contract -js. The original Python subprocess is not counted as Go merely because its expected value used a Go helper. Native contract version3 and its actual generated comment remain authoritative; source Python history is preserved.",
+      "go_package": "./service",
+      "go_test": "TestContractExportsUseAuthoritativeSnapshot",
+      "assertion_intent": "Public Go library contract exports succeed, JSON matches the authoritative service.Snapshot(), and both JSON and JavaScript preserve complete byte-stable output with a trailing newline.",
+      "adaptation": "The Go project is a library and has retired its command executable. Preserve successful contract export through public service.AsJSON()/AsJS() instead of a subprocess: verify the real JSON against service.Snapshot(), verify repeated exports byte-for-byte including their trailing newline, and retain TestRemainingSurfaceGeneratedJS for compiler-owned JavaScript values and regeneration provenance. Original upstream subprocess inputs, assertions and source remain unchanged; this native API adaptation does not claim execution of the unchanged Python CLI assertions.",
       "source_file_sha256": "23fffd5f04758326b6e7653e3f07620642c211859cf4d3e2aeef25ce4bc6abfb",
       "source_line": 286,
-      "oracle": "Actual production service.AsJSON()/AsJS() strings; comparison includes every byte and trailing newline; both subprocess modes execute."
+      "oracle": "Actual public service.Snapshot(), successful service.AsJSON()/AsJS() output, exact repeated bytes and trailing newlines; JavaScript semantic values are additionally checked by TestRemainingSurfaceGeneratedJS.",
+      "go_test_file": "service/contract_exports_test.go",
+      "go_test_file_sha256": "4a51de38080fd7965827227305b5713a88444ad83ab976802d576fa8c5e093e2"
     }
   ]
 }
