@@ -5,13 +5,15 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
-	"github.com/ly95/h3-context-ir-go/h3check"
 	"io"
 	"io/fs"
 	"math"
 	"path/filepath"
+	"slices"
 	"sort"
 	"strings"
+
+	"github.com/ly95/h3-context-ir-go/h3check"
 )
 
 func (r *Registry) Resolve(requested []Request, mode string, b Brief) ([]Choice, []h3check.Finding, error) {
@@ -64,7 +66,7 @@ func (r *Registry) Resolve(requested []Request, mode string, b Brief) ([]Choice,
 		if rec.Strength.Min > rec.Strength.Default || rec.Strength.Default > rec.Strength.Max {
 			return nil, nil, errors.New("LoRA registry strength must satisfy min <= default <= max")
 		}
-		if !contains(rec.H3Variant, checkpoint) {
+		if !slices.Contains(rec.H3Variant, checkpoint) {
 			findings = append(findings, finding("W11-lora-variant", "ERROR", fmt.Sprintf("%s is trained for %v but this request routes to the %s checkpoint", rec.ID, rec.H3Variant, checkpoint)))
 			continue
 		}
@@ -130,20 +132,12 @@ func (r *Registry) Resolve(requested []Request, mode string, b Brief) ([]Choice,
 	}
 	for i, a := range picked {
 		for _, b := range picked[i+1:] {
-			if contains(a.ConflictsWith, b.ID) || contains(b.ConflictsWith, a.ID) {
+			if slices.Contains(a.ConflictsWith, b.ID) || slices.Contains(b.ConflictsWith, a.ID) {
 				findings = append(findings, finding("W15-lora-conflict", "ERROR", a.ID+" and "+b.ID+" declare each other incompatible"))
 			}
 		}
 	}
 	return chosen, findings, nil
-}
-func contains(a []string, s string) bool {
-	for _, x := range a {
-		if x == s {
-			return true
-		}
-	}
-	return false
 }
 
 func PlanTriggers(choices []Choice) ([]Trigger, error) {

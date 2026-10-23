@@ -3,6 +3,7 @@ package h3check
 import (
 	"encoding/json"
 	"fmt"
+	"slices"
 )
 
 type Finding struct {
@@ -103,10 +104,10 @@ type DialoguePartContract struct {
 }
 
 func (s Scope) permits(e string) bool {
-	if contains(s.Forbidden, e) {
+	if slices.Contains(s.Forbidden, e) {
 		return false
 	}
-	return contains(s.Requested, e) || s.Level == "bold" || s.Level == "extreme" || (s.Level == "balanced" && e == "music")
+	return slices.Contains(s.Requested, e) || s.Level == "bold" || s.Level == "extreme" || (s.Level == "balanced" && e == "music")
 }
 
 type Context struct {

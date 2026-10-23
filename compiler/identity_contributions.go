@@ -2,6 +2,7 @@ package compiler
 
 import (
 	"fmt"
+	"slices"
 	"strings"
 
 	"github.com/ly95/h3-context-ir-go/budget"
@@ -75,16 +76,16 @@ func identityContributionBindings(b Brief, subjects []plan.SubjectPlan) ([]ident
 func identityContributionsSchema(bindings []identitySourceBinding, object func(map[string]any) map[string]any) map[string]any {
 	labels, sources, assets, ids := []string{}, []string{}, []string{}, []string{}
 	for _, binding := range bindings {
-		if !contains(labels, binding.SubjectLabel) {
+		if !slices.Contains(labels, binding.SubjectLabel) {
 			labels = append(labels, binding.SubjectLabel)
 		}
-		if !contains(sources, binding.SourceLabel) {
+		if !slices.Contains(sources, binding.SourceLabel) {
 			sources = append(sources, binding.SourceLabel)
 		}
-		if !contains(assets, binding.AssetID) {
+		if !slices.Contains(assets, binding.AssetID) {
 			assets = append(assets, binding.AssetID)
 		}
-		if !contains(ids, binding.SubjectID) {
+		if !slices.Contains(ids, binding.SubjectID) {
 			ids = append(ids, binding.SubjectID)
 		}
 	}
@@ -183,11 +184,11 @@ func validateIdentityContributions(b Brief, bindings []identitySourceBinding, id
 			coverage[target.SubjectID][binding.SubjectID][contribution.Attribute] = true
 			switch contribution.Origin {
 			case "observed":
-				if !contains(binding.ObservedAttributes, contribution.Attribute) || !contains(identity.RetainedAttributes, contribution.Attribute) {
+				if !slices.Contains(binding.ObservedAttributes, contribution.Attribute) || !slices.Contains(identity.RetainedAttributes, contribution.Attribute) {
 					return sourceFailure("origin", "An observed contribution must be the exact property actually observed and retained on that same source.")
 				}
 			case "caller_requested":
-				if contains(binding.ObservedAttributes, contribution.Attribute) || !contains(identity.RequestedAttributes, contribution.Attribute) {
+				if slices.Contains(binding.ObservedAttributes, contribution.Attribute) || !slices.Contains(identity.RequestedAttributes, contribution.Attribute) {
 					return sourceFailure("attribute", "An unobserved selected target property must appear exactly in this source identity's requested_attributes, never be substituted by an unrelated observed attribute or hidden in its descriptor.")
 				}
 				claimFound := false

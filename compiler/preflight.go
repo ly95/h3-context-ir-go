@@ -3,6 +3,7 @@ package compiler
 import (
 	"fmt"
 	"math"
+	"slices"
 	"strings"
 
 	"github.com/ly95/h3-context-ir-go"
@@ -10,7 +11,7 @@ import (
 )
 
 func (c *Compiler) preflight(b Brief, st Structure, request contextir.Request) ([]h3check.Finding, error) {
-	if !contains(c.options.Profile.Modes, st.Mode) {
+	if !slices.Contains(c.options.Profile.Modes, st.Mode) {
 		return nil, failure(contextir.CodeUnsupported, "compiler", "mode", "The selected runtime profile does not support this requested mode.", nil)
 	}
 	var found []h3check.Finding
@@ -26,7 +27,7 @@ func (c *Compiler) preflight(b Brief, st Structure, request contextir.Request) (
 			} else if *binding.Anchor == request.Target.Duration {
 				baseMode = contextir.ModeLastFrame
 			}
-			if baseMode != "" && contains(c.options.Profile.Modes, baseMode) {
+			if baseMode != "" && slices.Contains(c.options.Profile.Modes, baseMode) {
 				message += fmt.Sprintf(" Alternatively, submit this picture on its own and explicitly select %s; that supported base route cannot carry the other content, video or audio references.", baseMode)
 			}
 			return found, failure(contextir.CodeUnsupported, "compiler", "bindings.anchor_ms", message, nil)

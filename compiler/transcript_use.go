@@ -1,6 +1,7 @@
 package compiler
 
 import (
+	"slices"
 	"sort"
 	"strings"
 	"unicode/utf8"
@@ -131,7 +132,7 @@ func verifyTranscriptLiteralPlacement(d contextir.Document, uses []TranscriptUse
 			return failure(contextir.CodeModelOutput, "compose", "shots.description", "Do not echo selected transcript words into visual prose; host dialogue contains them exactly once.", nil)
 		}
 		for _, event := range shot.Events {
-			if rich(event.Description) || event.Kind == contextir.EventVisibleText && check(event.VisibleText) && !contains(onscreen, event.VisibleText) {
+			if rich(event.Description) || event.Kind == contextir.EventVisibleText && check(event.VisibleText) && !slices.Contains(onscreen, event.VisibleText) {
 				return failure(contextir.CodeModelOutput, "compose", "shots.events", "Selected transcript words cannot become visible lettering or prose unless the caller independently supplied that exact on-screen text.", nil)
 			}
 		}

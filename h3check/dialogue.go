@@ -2,6 +2,8 @@ package h3check
 
 import (
 	"fmt"
+	"maps"
+	"slices"
 	"strings"
 )
 
@@ -131,7 +133,7 @@ func (c *checker) checkDialogue() {
 	for _, m := range all(`\(S(\d+)(?:\s*,\s*S\d+)*\)`, c.desc) {
 		ids[atoi(m[1])] = true
 	}
-	ss := ints(ids)
+	ss := slices.Sorted(maps.Keys(ids))
 	if len(ss) > 0 && ss[0] != 1 {
 		c.err("D3-speaker-numbering", fmt.Sprintf("speaker IDs start at S%d, must start at S1", ss[0]))
 	}

@@ -1,6 +1,10 @@
 package compiler
 
-import "github.com/ly95/h3-context-ir-go/plan"
+import (
+	"slices"
+
+	"github.com/ly95/h3-context-ir-go/plan"
+)
 
 func targetEnvironmentAttributes(b Brief, subject plan.SubjectPlan, manifest []plan.ManifestEntry, attributes []string) []string {
 	if subject.Kind != "environment" {
@@ -8,7 +12,7 @@ func targetEnvironmentAttributes(b Brief, subject plan.SubjectPlan, manifest []p
 	}
 	owned, foreign := map[string]bool{}, map[string]bool{}
 	for _, entry := range manifest {
-		if entry.Role != string(RoleEnvironment) || !contains(subject.Sources, entry.Label) {
+		if entry.Role != string(RoleEnvironment) || !slices.Contains(subject.Sources, entry.Label) {
 			continue
 		}
 		card, exists := cardByID(b.Cards, entry.SHA256)

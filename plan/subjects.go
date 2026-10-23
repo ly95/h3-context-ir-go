@@ -2,6 +2,7 @@ package plan
 
 import (
 	"fmt"
+	"slices"
 	"strings"
 	"unicode"
 )
@@ -163,7 +164,7 @@ func bindReplacements(subjects []SubjectPlan, manifest []ManifestEntry, targets 
 		}
 		incoming := -1
 		for i, s := range subjects {
-			if contains(s.Sources, m.Label) {
+			if slices.Contains(s.Sources, m.Label) {
 				incoming = i
 				break
 			}
@@ -174,7 +175,7 @@ func bindReplacements(subjects []SubjectPlan, manifest []ManifestEntry, targets 
 		all := []int{}
 		free := []int{}
 		for i, s := range subjects {
-			if i != incoming && contains(s.Sources, clip) && s.Kind == subjects[incoming].Kind {
+			if i != incoming && slices.Contains(s.Sources, clip) && s.Kind == subjects[incoming].Kind {
 				all = append(all, i)
 				if !taken[s.Label] {
 					free = append(free, i)
@@ -227,14 +228,6 @@ func bindReplacements(subjects []SubjectPlan, manifest []ManifestEntry, targets 
 		bound = append(bound, subjects[target].Label)
 	}
 	return subjects, bound, unresolved, nil
-}
-func contains(a []string, s string) bool {
-	for _, v := range a {
-		if v == s {
-			return true
-		}
-	}
-	return false
 }
 func BuildSpeakers(brief Brief, subjects []SubjectPlan, manifest []ManifestEntry) []SpeakerPlan {
 	refs := []string{}

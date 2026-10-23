@@ -4,8 +4,6 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"errors"
-	"io"
 	"sort"
 	"strings"
 
@@ -242,13 +240,7 @@ func strictDecode(data []byte, out any) error {
 	}
 	d := json.NewDecoder(bytes.NewReader(data))
 	d.DisallowUnknownFields()
-	if err := d.Decode(out); err != nil {
-		return err
-	}
-	if err := d.Decode(new(any)); err != io.EOF {
-		return errors.New("trailing JSON")
-	}
-	return nil
+	return d.Decode(out)
 }
 func validateStructure(b Brief, target contextir.Target, st Structure, mode contextir.Mode, maxShots int) (Structure, []Decision, error) {
 	if len(b.SubjectProjections) > 0 && !sameJSON(st.SubjectProjections, b.SubjectProjections) {

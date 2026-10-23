@@ -1,6 +1,10 @@
 package compiler
 
-import "github.com/ly95/h3-context-ir-go"
+import (
+	"slices"
+
+	"github.com/ly95/h3-context-ir-go"
+)
 
 type requiredSubjectAppearance struct {
 	TargetSubjectID    string   `json:"target_subject_id"`
@@ -13,7 +17,7 @@ type requiredSubjectAppearance struct {
 func requiredAppearanceAssetIDs(subject contextir.Subject) []string {
 	ids := []string{}
 	for _, attribution := range subject.Sources {
-		if !contains(ids, attribution.Source.AssetID) {
+		if !slices.Contains(ids, attribution.Source.AssetID) {
 			ids = append(ids, attribution.Source.AssetID)
 		}
 	}

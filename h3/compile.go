@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"math/big"
+	"slices"
 	"strings"
 
 	contextir "github.com/ly95/h3-context-ir-go"
@@ -176,7 +177,7 @@ func render(doc contextir.Document, state bindingState, duration contextir.Ratio
 	}
 	editSource := ""
 	for _, ref := range doc.References {
-		if containsRole(ref.Roles, contextir.RoleEditSource) {
+		if slices.Contains(ref.Roles, contextir.RoleEditSource) {
 			editSource = state.refs[ref.ID]
 			break
 		}
@@ -367,7 +368,7 @@ func TaskTypes(doc contextir.Document) []string {
 			} else {
 				set["audio reference"] = true
 			}
-			if containsRole(ref.Roles, contextir.RoleVoice) {
+			if slices.Contains(ref.Roles, contextir.RoleVoice) {
 				set["reference generation"] = true
 			}
 			continue

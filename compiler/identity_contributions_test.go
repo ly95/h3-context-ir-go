@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"reflect"
+	"slices"
 	"strings"
 	"testing"
 
@@ -52,7 +53,7 @@ func TestIdentityContributionsPreserveCallerRequestedUnobservedProperty(t *testi
 		t.Fatal("selected source property did not reach the actual canonical target", subjects, err)
 	}
 	after, _ := json.Marshal(b.Cards)
-	if string(before) != string(after) || contains(observed[1].Attributes, "wheels from the second picture") {
+	if string(before) != string(after) || slices.Contains(observed[1].Attributes, "wheels from the second picture") {
 		t.Fatal("caller request was rewritten into observed evidence")
 	}
 	if identity[1].Claims[0].Quote != "wheels from the second picture" || identity[1].Claims[0].Value != identity[1].RequestedAttributes[0] {

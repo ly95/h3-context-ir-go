@@ -8,7 +8,7 @@ H3 Context-IR Go 是面向 MiniMax H3 的非官方 Context-IR Go 实现。它是
 
 ## 安装
 
-需要 Go 1.25 或更新版本。
+需要 Go 1.27.3 或更新版本。
 
 ```sh
 go get github.com/ly95/h3-context-ir-go@main

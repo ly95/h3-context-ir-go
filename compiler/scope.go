@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"reflect"
+	"slices"
 	"sort"
 	"strings"
 
@@ -296,5 +297,5 @@ func scopeTextContains(b Brief, text string, presence *ScopeInput) bool {
 			return true
 		}
 	}
-	return presence != nil && contains(presence.DialogueTexts, text)
+	return presence != nil && slices.Contains(presence.DialogueTexts, text)
 }

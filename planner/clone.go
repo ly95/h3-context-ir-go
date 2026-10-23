@@ -1,28 +1,25 @@
 package planner
 
-import "github.com/ly95/h3-context-ir-go"
+import (
+	"slices"
 
-func copySlice[T any](values []T) []T {
-	if values == nil {
-		return nil
-	}
-	return append(make([]T, 0, len(values)), values...)
-}
+	"github.com/ly95/h3-context-ir-go"
+)
 
 func cloneRequest(request contextir.Request) contextir.Request {
-	request.LoRAs = copySlice(request.LoRAs)
+	request.LoRAs = slices.Clone(request.LoRAs)
 	for i := range request.LoRAs {
-		request.LoRAs[i].Triggers = copySlice(request.LoRAs[i].Triggers)
+		request.LoRAs[i].Triggers = slices.Clone(request.LoRAs[i].Triggers)
 	}
-	request.Assets = copySlice(request.Assets)
-	request.Constraints = copySlice(request.Constraints)
-	request.PinnedShots = copySlice(request.PinnedShots)
-	request.OnscreenText = copySlice(request.OnscreenText)
+	request.Assets = slices.Clone(request.Assets)
+	request.Constraints = slices.Clone(request.Constraints)
+	request.PinnedShots = slices.Clone(request.PinnedShots)
+	request.OnscreenText = slices.Clone(request.OnscreenText)
 	if request.AdditionScope != nil {
 		value := *request.AdditionScope
 		request.AdditionScope = &value
 	}
-	request.Bindings = copySlice(request.Bindings)
+	request.Bindings = slices.Clone(request.Bindings)
 	for i := range request.Bindings {
 		request.Bindings[i].Source = cloneSource(request.Bindings[i].Source)
 		if anchor := request.Bindings[i].Anchor; anchor != nil {
@@ -30,46 +27,46 @@ func cloneRequest(request contextir.Request) contextir.Request {
 			request.Bindings[i].Anchor = &value
 		}
 	}
-	request.Dialogue = copySlice(request.Dialogue)
+	request.Dialogue = slices.Clone(request.Dialogue)
 	for i := range request.Dialogue {
-		request.Dialogue[i].SpeakerIDs = copySlice(request.Dialogue[i].SpeakerIDs)
+		request.Dialogue[i].SpeakerIDs = slices.Clone(request.Dialogue[i].SpeakerIDs)
 	}
 	return request
 }
 
 func cloneEvidence(evidence []contextir.Evidence) []contextir.Evidence {
-	result := copySlice(evidence)
+	result := slices.Clone(evidence)
 	for i := range result {
 		if result[i].Card != nil {
 			b := *result[i].Card
-			b.Subjects = copySlice(b.Subjects)
+			b.Subjects = slices.Clone(b.Subjects)
 			for j := range b.Subjects {
-				b.Subjects[j].Attributes = copySlice(b.Subjects[j].Attributes)
-				b.Subjects[j].Pose = copySlice(b.Subjects[j].Pose)
+				b.Subjects[j].Attributes = slices.Clone(b.Subjects[j].Attributes)
+				b.Subjects[j].Pose = slices.Clone(b.Subjects[j].Pose)
 			}
-			b.Palette = copySlice(b.Palette)
-			b.VisibleText = copySlice(b.VisibleText)
+			b.Palette = slices.Clone(b.Palette)
+			b.VisibleText = slices.Clone(b.VisibleText)
 			if b.Coverage != nil {
 				coverage := *b.Coverage
-				coverage.Tracks = copySlice(coverage.Tracks)
-				coverage.AbsentTracks = copySlice(coverage.AbsentTracks)
-				coverage.SampleTimes = copySlice(coverage.SampleTimes)
-				coverage.Intervals = copySlice(coverage.Intervals)
+				coverage.Tracks = slices.Clone(coverage.Tracks)
+				coverage.AbsentTracks = slices.Clone(coverage.AbsentTracks)
+				coverage.SampleTimes = slices.Clone(coverage.SampleTimes)
+				coverage.Intervals = slices.Clone(coverage.Intervals)
 				b.Coverage = &coverage
 			}
 			result[i].Card = &b
 		}
-		result[i].Limitations = copySlice(result[i].Limitations)
-		result[i].Facts = copySlice(result[i].Facts)
+		result[i].Limitations = slices.Clone(result[i].Limitations)
+		result[i].Facts = slices.Clone(result[i].Facts)
 		for j := range result[i].Facts {
 			result[i].Facts[j].Source = cloneSource(result[i].Facts[j].Source)
 		}
 		if coverage := result[i].Coverage; coverage != nil {
 			value := *coverage
-			value.Tracks = copySlice(coverage.Tracks)
-			value.AbsentTracks = copySlice(coverage.AbsentTracks)
-			value.SampleTimes = copySlice(coverage.SampleTimes)
-			value.Intervals = copySlice(coverage.Intervals)
+			value.Tracks = slices.Clone(coverage.Tracks)
+			value.AbsentTracks = slices.Clone(coverage.AbsentTracks)
+			value.SampleTimes = slices.Clone(coverage.SampleTimes)
+			value.Intervals = slices.Clone(coverage.Intervals)
 			result[i].Coverage = &value
 		}
 	}

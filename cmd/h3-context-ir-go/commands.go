@@ -8,6 +8,7 @@ import (
 	"io"
 	"os"
 	"reflect"
+	"slices"
 	"strconv"
 	"strings"
 	"unicode/utf8"
@@ -163,7 +164,7 @@ func runDeterministic(command string, args []string, in io.Reader, out, errOut i
 		if e != nil {
 			return report(errOut, e)
 		}
-		if !enumCLI(*mode, []string{"t2va", "i2va", "l2va", "fl2va", "ref2va"}) {
+		if !slices.Contains([]string{"t2va", "i2va", "l2va", "fl2va", "ref2va"}, *mode) {
 			return messageError(errOut, "invalid-mode", "Choose a supported H3 mode")
 		}
 		instruction := budget.InstructionLineFor(*mode, 1, sss)
@@ -224,7 +225,7 @@ func runDeterministic(command string, args []string, in io.Reader, out, errOut i
 		if *contextPath == "" || visited["mode"] {
 			ctx.Mode = *mode
 		}
-		if !enumCLI(ctx.Mode, []string{"t2va", "i2va", "l2va", "fl2va", "ref2va"}) {
+		if !slices.Contains([]string{"t2va", "i2va", "l2va", "fl2va", "ref2va"}, ctx.Mode) {
 			return messageError(errOut, "invalid-mode", "Choose a supported H3 mode")
 		}
 		p, e := selectedProfile(*profile)
@@ -251,12 +252,4 @@ func runDeterministic(command string, args []string, in io.Reader, out, errOut i
 		return code
 	}
 	return 2
-}
-func enumCLI(s string, values []string) bool {
-	for _, v := range values {
-		if s == v {
-			return true
-		}
-	}
-	return false
 }

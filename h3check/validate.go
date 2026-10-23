@@ -2,6 +2,8 @@ package h3check
 
 import (
 	"fmt"
+	"maps"
+	"slices"
 	"sort"
 	"strings"
 )
@@ -70,7 +72,7 @@ func Validate(text string, ctx Context) []Finding {
 			c.err("S9-section-empty", fmt.Sprintf("'%s:' is present but empty; every section H3 expects has to be populated", n))
 		}
 	}
-	if contains([]string{"i2va", "fl2va", "l2va"}, ctx.Mode) {
+	if slices.Contains([]string{"i2va", "fl2va", "l2va"}, ctx.Mode) {
 		lines := strings.Split(strings.TrimSpace(text), "\n")
 		first := ""
 		if len(lines) > 0 {
@@ -120,17 +122,17 @@ func (c *checker) checkLabels() {
 	}
 	bad := map[string]bool{}
 	for _, m := range all(`<\s*([A-Za-z]+)\s+\d+\s*>`, c.text) {
-		if !contains([]string{"Subject", "Picture", "Video", "Audio"}, m[1]) {
+		if !slices.Contains([]string{"Subject", "Picture", "Video", "Audio"}, m[1]) {
 			bad[m[1]] = true
 		}
 	}
-	for _, k := range stringsSorted(bad) {
+	for _, k := range slices.Sorted(maps.Keys(bad)) {
 		c.err("L1-unknown-label", "<"+k+" N> is not in the label vocabulary (Subject/Picture/Video/Audio)")
 	}
 	for _, m := range all(`(?m)^\s*<Subject\s+(\d+)>\s+is\b`, c.defs) {
 		c.defined[atoi(m[1])] = true
 	}
-	for _, n := range ints(c.used["Subject"]) {
+	for _, n := range slices.Sorted(maps.Keys(c.used["Subject"])) {
 		if !c.defined[n] {
 			c.err("L2-undefined-subject", fmt.Sprintf("<Subject %d> is used but never defined with '<Subject %d> is ...'", n, n))
 		}
@@ -148,7 +150,7 @@ func (c *checker) checkLabels() {
 			n = c.ctx.Audios
 		}
 		var over, unused []int
-		for _, v := range ints(c.used[k]) {
+		for _, v := range slices.Sorted(maps.Keys(c.used[k])) {
 			if v > n {
 				over = append(over, v)
 			}
@@ -207,7 +209,7 @@ func (c *checker) checkSummary() {
 	for _, p := range strings.Split(m[1], "+") {
 		p = strings.TrimSpace(p)
 		parts = append(parts, p)
-		if !contains(taskTypes, p) {
+		if !slices.Contains(taskTypes, p) {
 			c.err("M2-task-type", "'"+p+"' is not a legal task type")
 		}
 		if seen[p] {
@@ -221,7 +223,7 @@ func (c *checker) checkSummary() {
 	if len(c.ctx.TaskTypes) > 0 && !equalSet(parts, c.ctx.TaskTypes) {
 		c.err("M16-task-prefix-not-derived", "the task-type prefix does not match the roles of the attachments; write ["+strings.Join(c.ctx.TaskTypes, " + ")+"]")
 	}
-	if contains(parts, "video editing") {
+	if slices.Contains(parts, "video editing") {
 		hits := all(`The target video is an edited version of <Video \d+>\s*[.,]`, c.summ)
 		if len(c.used["Video"]) == 0 {
 			c.err("M5-editing-without-video", "'video editing' claimed but no <Video N> is referenced")
@@ -235,7 +237,7 @@ func (c *checker) checkSummary() {
 	for _, b := range brackets[1:] {
 		okay := true
 		for _, p := range strings.Split(b[1], "+") {
-			if !contains(taskTypes, strings.TrimSpace(p)) {
+			if !slices.Contains(taskTypes, strings.TrimSpace(p)) {
 				okay = false
 			}
 		}
@@ -246,14 +248,14 @@ func (c *checker) checkSummary() {
 	}
 	for _, t := range []struct{ role, want, rule string }{{"edit_source", "video editing", "M13-declared-edit-not-claimed"}, {"continuation_source", "video continuation", "M14-declared-continuation-not-claimed"}} {
 		for _, r := range c.ctx.DeclaredRoles {
-			if r.Role == t.role && strings.HasPrefix(r.Label, "<Video") && !contains(parts, t.want) {
+			if r.Role == t.role && strings.HasPrefix(r.Label, "<Video") && !slices.Contains(parts, t.want) {
 				c.err(t.rule, "the caller declared "+t.role+", so the prefix must contain "+t.want)
 				break
 			}
 		}
 	}
 	for _, t := range []struct{ claim, kind, rule string }{{"keyframe completion", "Picture", "M11-keyframe-without-picture"}, {"video continuation", "Video", "M12-continuation-without-video"}, {"audio reuse", "Audio", "M7-audio-reuse-without-audio"}, {"audio reference", "Audio", "M8-audio-reference-without-audio"}} {
-		if contains(parts, t.claim) && len(c.used[t.kind]) == 0 {
+		if slices.Contains(parts, t.claim) && len(c.used[t.kind]) == 0 {
 			msg := "the summary claims " + t.claim + " and no <" + t.kind + " N> is referenced. Delete '" + t.claim + "' from the task-type prefix"
 			if t.kind == "Audio" {
 				msg += " and say what the audio should sound like in overall_soundscape rather than claiming the original is reused (ref-en.txt 2.5)."
@@ -266,12 +268,12 @@ func (c *checker) checkSummary() {
 	for _, r := range c.ctx.DeclaredRoles {
 		if strings.HasPrefix(r.Label, "<Audio") {
 			audioRoles++
-			if !contains(audioReferenceRoles, r.Role) {
+			if !slices.Contains(audioReferenceRoles, r.Role) {
 				allRef = false
 			}
 		}
 	}
-	if audioRoles > 0 && allRef && contains(parts, "audio reuse") && len(c.used["Audio"]) > 0 {
+	if audioRoles > 0 && allRef && slices.Contains(parts, "audio reuse") && len(c.used["Audio"]) > 0 {
 		c.err("M15-audio-reuse-without-a-copy-role", "every attached audio references a property rather than copying the signal; ref-en.txt 3: replace 'audio reuse' with 'audio reference'")
 	}
 }

@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"reflect"
+	"slices"
 	"strings"
 	"testing"
 
@@ -162,13 +163,13 @@ func TestReferenceSheetPublicCompileKeepsStableIdentityAndRejectsPackaging(t *te
 			if err != nil || result.Status != "compiled" || len(result.Document.Subjects) != 2 || result.Artifact.Prompt == "" {
 				t.Fatal("clean sheet failed full native publication", err, result.Status, stages)
 			}
-			if result.Document.Subjects[0].Descriptor != cleanLiveSheetQualifications(f)[0].Descriptor || !contains(result.Document.Subjects[1].Attributes, "amber eye") || contains(result.Document.Subjects[1].Attributes, "amber eye in the head close-up") {
+			if result.Document.Subjects[0].Descriptor != cleanLiveSheetQualifications(f)[0].Descriptor || !slices.Contains(result.Document.Subjects[1].Attributes, "amber eye") || slices.Contains(result.Document.Subjects[1].Attributes, "amber eye in the head close-up") {
 				t.Fatal("final target lost caller identity or the stable eye attribute", result.Document.Subjects)
 			}
 			if strings.Contains(result.Artifact.Prompt, "labeled HERO") || strings.Contains(result.Artifact.Prompt, "amber eye in the head close-up") || !strings.Contains(result.Artifact.Prompt, "amber eye") {
 				t.Fatal("actual H3 artifact contains presentation or drops physical identity", result.Artifact.Prompt)
 			}
-			if !reflect.DeepEqual(result.Licence.Identity[0].Claims, f.Identities[0].Claims) || result.Licence.Subjects[0].Descriptor != f.Subjects[0].Descriptor || !contains(result.Licence.Subjects[1].Attributes, "amber eye in the head close-up") {
+			if !reflect.DeepEqual(result.Licence.Identity[0].Claims, f.Identities[0].Claims) || result.Licence.Subjects[0].Descriptor != f.Subjects[0].Descriptor || !slices.Contains(result.Licence.Subjects[1].Attributes, "amber eye in the head close-up") {
 				t.Fatal("target cleanup rewrote accepted claims or original observations", result.Licence)
 			}
 		})

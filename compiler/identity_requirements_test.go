@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"reflect"
+	"slices"
 	"strings"
 	"testing"
 
@@ -63,7 +64,7 @@ func referenceIdentityReply(t *testing.T, request contextir.ModelRequest) json.R
 				}
 				for _, attribute := range selection.Attributes {
 					origin := "observed"
-					if !contains(binding.ObservedAttributes, attribute) {
+					if !slices.Contains(binding.ObservedAttributes, attribute) {
 						origin = "caller_requested"
 						entry := byLabel[binding.SubjectLabel]
 						entry["descriptor_source"] = "request"

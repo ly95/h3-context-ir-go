@@ -6,6 +6,7 @@ import (
 	"errors"
 	"os"
 	"reflect"
+	"slices"
 	"strings"
 	"testing"
 
@@ -41,7 +42,7 @@ func cleanLiveSheetQualifications(f liveSheetIdentityFixture) []sheetIdentityQua
 		q := sheetIdentityQualification{Label: subject.Label, Descriptor: id.Descriptor, Attributes: []sheetAttributeQualification{}}
 		for _, source := range subject.Attributes {
 			attr := sheetAttributeQualification{Source: source, Disposition: "presentation_only"}
-			if contains(id.RetainedAttributes, source) {
+			if slices.Contains(id.RetainedAttributes, source) {
 				attr.Disposition, attr.Target = "retain", source
 			}
 			q.Attributes = append(q.Attributes, attr)
@@ -84,7 +85,7 @@ func TestReferenceSheetQualificationAccountsForActualRun5Traits(t *testing.T) {
 	if got[0].Kind != f.Identities[0].Kind || !reflect.DeepEqual(got[0].Claims, f.Identities[0].Claims) || !reflect.DeepEqual(got[0].RequestedAttributes, f.Identities[0].RequestedAttributes) || got[0].RequestQuote != f.Identities[0].RequestQuote {
 		t.Fatal("cleanup reinterpreted caller identity", got[0])
 	}
-	if got[0].Descriptor != cleanLiveSheetQualifications(f)[0].Descriptor || !contains(got[1].RetainedAttributes, "amber eye in the head close-up") || !reflect.DeepEqual(got[1].AdjustedAttributes, []IdentityAttributeAdjustment{{Kind: "presentation_cleanup", Source: "amber eye in the head close-up", Target: "amber eye"}}) {
+	if got[0].Descriptor != cleanLiveSheetQualifications(f)[0].Descriptor || !slices.Contains(got[1].RetainedAttributes, "amber eye in the head close-up") || !reflect.DeepEqual(got[1].AdjustedAttributes, []IdentityAttributeAdjustment{{Kind: "presentation_cleanup", Source: "amber eye in the head close-up", Target: "amber eye"}}) {
 		t.Fatal("mixed physical fact was lost or raw view packaging remained", got)
 	}
 	if !reflect.DeepEqual(got[0].WardrobeAttributes, f.Identities[0].WardrobeAttributes) || !reflect.DeepEqual(got[1].ExcludedPresentation, f.Identities[1].ExcludedPresentation) {

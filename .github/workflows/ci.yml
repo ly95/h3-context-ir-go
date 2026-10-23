@@ -14,25 +14,16 @@ env:
 
 jobs:
   test:
-    name: Go ${{ matrix.go }}
+    name: Go
     runs-on: ubuntu-24.04
     timeout-minutes: 30
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          # Keep the exact minimum toolchain in sync with go.mod.
-          - go: '1.25.0'
-            extended: false
-          - go: stable
-            extended: true
     steps:
       - uses: actions/checkout@v7.0.1
         with:
           persist-credentials: false
       - uses: actions/setup-go@v7.0.0
         with:
-          go-version: ${{ matrix.go }}
+          go-version-file: go.mod
           check-latest: true
           cache: false
       - name: Install media integration prerequisites
@@ -42,15 +33,12 @@ jobs:
           ffmpeg -version
           ffprobe -version
       - name: Check formatting
-        if: matrix.extended
         run: make check-format
       - name: Vet every package
         run: make vet
       - name: Run all native tests and media integrations
         run: make test
       - name: Run all native tests with the race detector
-        if: matrix.extended
         run: make test-race
       - name: Fuzz document and evidence decoding
-        if: matrix.extended
         run: make fuzz

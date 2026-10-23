@@ -3,6 +3,7 @@ package compiler
 import (
 	"context"
 	"encoding/json"
+	"slices"
 	"sort"
 
 	"github.com/ly95/h3-context-ir-go"
@@ -199,7 +200,7 @@ func (c *Compiler) decideLicence(ctx context.Context, brief Brief, additional []
 	for _, subject := range out.Subjects {
 		for _, source := range subject.Sources {
 			for _, entry := range manifest {
-				if entry.Label == source && !contains(responsibilities[subject.Label], Role(entry.Role)) {
+				if entry.Label == source && !slices.Contains(responsibilities[subject.Label], Role(entry.Role)) {
 					responsibilities[subject.Label] = append(responsibilities[subject.Label], Role(entry.Role))
 				}
 			}

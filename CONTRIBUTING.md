@@ -5,7 +5,7 @@ H3 Context-IR Go is an independent Go library. Read [AGENTS.md](AGENTS.md) and t
 
 ## Local checks
 
-Use Go 1.25 or newer. Install ffmpeg and ffprobe to run the real-media integration
+Use Go 1.27.3 or newer. Install ffmpeg and ffprobe to run the real-media integration
 tests; their absence produces explicit skips and is not a complete media check.
 No Python environment, provider credentials or paid model calls are required.
 
@@ -16,8 +16,8 @@ make check
 This runs formatting, vet, all native tests, race tests and decoder fuzzing. A C
 compiler is needed for the race detector. `make test` / `make test-race` refuse
 to run without the media tools; direct `go test ./...` may instead skip those
-integration cases. Format changed Go files with `gofmt`. CI also checks the
-minimum supported Go version. Keep ordinary tests deterministic and offline; use loopback servers,
+integration cases. Format changed Go files with `gofmt`. CI uses the Go version
+declared in `go.mod`. Keep ordinary tests deterministic and offline; use loopback servers,
 explicit dependency injection and fixed public or synthetic fixtures.
 
 ## Contract and behavior changes

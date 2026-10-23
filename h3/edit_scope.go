@@ -2,6 +2,7 @@ package h3
 
 import (
 	"fmt"
+	"slices"
 
 	"github.com/ly95/h3-context-ir-go"
 )
@@ -11,17 +12,17 @@ func editReferenceRelationships(doc contextir.Document) (map[string][]contextir.
 	var edits []contextir.Reference
 	seen := map[string]bool{}
 	for _, r := range doc.References {
-		if containsRole(r.Roles, contextir.RoleEditSource) && !seen[sourceKey(r.Source)] {
+		if slices.Contains(r.Roles, contextir.RoleEditSource) && !seen[sourceKey(r.Source)] {
 			edits = append(edits, r)
 			seen[sourceKey(r.Source)] = true
 		}
 	}
 	for i, incoming := range doc.References {
-		if !containsRole(incoming.Roles, contextir.RolePlacedSubject) && !containsRole(incoming.Roles, contextir.RoleReplacementSubject) {
+		if !slices.Contains(incoming.Roles, contextir.RolePlacedSubject) && !slices.Contains(incoming.Roles, contextir.RoleReplacementSubject) {
 			continue
 		}
 		owned := map[string]bool{}
-		if containsRole(incoming.Roles, contextir.RoleReplacementSubject) {
+		if slices.Contains(incoming.Roles, contextir.RoleReplacementSubject) {
 			for _, original := range doc.Subjects {
 				if original.TakenOverBy == "" {
 					continue
@@ -67,7 +68,7 @@ func editReferenceRelationships(doc contextir.Document) (map[string][]contextir.
 			var candidate *contextir.Reference
 			for j := range edits {
 				editScope := referenceShots(doc, edits[j])
-				if len(editScope) == 0 || containsString(editScope, shot) {
+				if len(editScope) == 0 || slices.Contains(editScope, shot) {
 					if candidate != nil {
 						return nil, profileIssue(contextir.CodeUnsupported, fmt.Sprintf("references[%d].shot_ids", i), "multiple edit sources overlap the incoming subject scope; supply an unambiguous source relationship")
 					}
@@ -87,15 +88,7 @@ func editReferenceRelationships(doc contextir.Document) (map[string][]contextir.
 }
 func shotScopeOverlaps(a, b []string) bool {
 	for _, s := range a {
-		if containsString(b, s) {
-			return true
-		}
-	}
-	return false
-}
-func containsString(values []string, want string) bool {
-	for _, v := range values {
-		if v == want {
+		if slices.Contains(b, s) {
 			return true
 		}
 	}

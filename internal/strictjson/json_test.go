@@ -69,6 +69,18 @@ func TestCheckKeepsCallerDepthLimits(t *testing.T) {
 		if err := strictjson.Check([]byte("["+atLimit+"]"), limit); err == nil {
 			t.Fatalf("depth %d must be rejected", limit+1)
 		}
+		for _, empty := range []string{"[]", "{}"} {
+			if limit > 0 {
+				nested := strings.Repeat("[", limit-1) + empty + strings.Repeat("]", limit-1)
+				if err := strictjson.Check([]byte(nested), limit); err != nil {
+					t.Fatalf("empty container %s at depth %d must be accepted: %v", empty, limit, err)
+				}
+			}
+			nested := strings.Repeat("[", limit) + empty + strings.Repeat("]", limit)
+			if err := strictjson.Check([]byte(nested), limit); err == nil {
+				t.Fatalf("empty container %s at depth %d must be rejected", empty, limit+1)
+			}
+		}
 	}
 	if err := strictjson.Check([]byte("0"), -1); err == nil {
 		t.Fatal("accepted invalid depth limit")

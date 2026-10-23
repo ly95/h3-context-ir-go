@@ -2,6 +2,7 @@ package h3
 
 import (
 	"fmt"
+	"slices"
 	"strings"
 
 	contextir "github.com/ly95/h3-context-ir-go"
@@ -68,7 +69,7 @@ func renderDefinitions(doc contextir.Document, state bindingState) (string, stri
 		var description, reasons []string
 		var contexts []string
 		for _, item := range group {
-			if containsRole(item.Roles, contextir.RoleStoryboard) {
+			if slices.Contains(item.Roles, contextir.RoleStoryboard) {
 				shots := referenceShots(doc, item)
 				if len(shots) > 0 {
 					description = append(description, "a storyboard reference for "+strings.Join(shots, " and ")+", defining their viewpoint, subject placement, and shot order.")
@@ -80,12 +81,12 @@ func renderDefinitions(doc contextir.Document, state bindingState) (string, stri
 				roles = append(roles, roleName(role))
 			}
 			description = append(description, sentence("Its role is "+strings.Join(roles, " and ")))
-			if containsRole(item.Roles, contextir.RoleStructure) {
+			if slices.Contains(item.Roles, contextir.RoleStructure) {
 				description = append(description, "Only camera movement and cutting structure are referenced; its people, objects, setting and visible content never appear in the target video.")
 			}
-			if containsRole(item.Roles, contextir.RolePlacedSubject) || containsRole(item.Roles, contextir.RoleReplacementSubject) {
+			if slices.Contains(item.Roles, contextir.RolePlacedSubject) || slices.Contains(item.Roles, contextir.RoleReplacementSubject) {
 				for _, video := range editTargets[item.ID] {
-					if containsRole(item.Roles, contextir.RolePlacedSubject) {
+					if slices.Contains(item.Roles, contextir.RolePlacedSubject) {
 						description = append(description, label+" is placed into "+state.refs[video.ID]+"; the picture contributes its subject only, never its background, pose, or photographic lighting.")
 					} else {
 						target := item.Replaces
@@ -96,7 +97,7 @@ func renderDefinitions(doc contextir.Document, state bindingState) (string, stri
 					}
 				}
 			}
-			if containsRole(item.Roles, contextir.RoleMusicStyle) || containsRole(item.Roles, contextir.RoleBeatReference) || containsRole(item.Roles, contextir.RoleSoundTexture) {
+			if slices.Contains(item.Roles, contextir.RoleMusicStyle) || slices.Contains(item.Roles, contextir.RoleBeatReference) || slices.Contains(item.Roles, contextir.RoleSoundTexture) {
 				description = append(description, "Only the declared audio property is referenced; the recorded audio signal itself is not copied into the target.")
 			}
 			if item.SpeakerID != "" {
@@ -120,7 +121,7 @@ func renderDefinitions(doc contextir.Document, state bindingState) (string, stri
 				description = append(description, "Its selected source segment runs from "+timestamp(item.Source.Interval.Start)+" to "+timestamp(item.Source.Interval.End)+".")
 			}
 			reason := retentionDetails(item.Retention, item.RetentionDetails)
-			if containsRole(item.Roles, contextir.RoleEditSource) {
+			if slices.Contains(item.Roles, contextir.RoleEditSource) {
 				var changes []string
 				for _, subject := range doc.Subjects {
 					if subject.TakenOverBy == "" {
@@ -135,7 +136,7 @@ func renderDefinitions(doc contextir.Document, state bindingState) (string, stri
 					}
 				}
 				for _, incoming := range doc.References {
-					if containsRole(incoming.Roles, contextir.RolePlacedSubject) {
+					if slices.Contains(incoming.Roles, contextir.RolePlacedSubject) {
 						for _, target := range editTargets[incoming.ID] {
 							if sourceKey(target.Source) == sourceKey(item.Source) {
 								changes = append(changes, state.refs[incoming.ID]+" is placed into the scene")
@@ -147,10 +148,10 @@ func renderDefinitions(doc contextir.Document, state bindingState) (string, stri
 					reason = "The original camera movement, timing and setting are maintained while " + strings.Join(changes, "; ") + ". " + reason
 				}
 			}
-			if containsRole(item.Roles, contextir.RolePlacedSubject) {
+			if slices.Contains(item.Roles, contextir.RolePlacedSubject) {
 				reason = label + " is placed into the scene. " + reason
 			}
-			if item.Kind == contextir.ReferenceAudio && containsRole(item.Roles, contextir.RoleSoundTexture) && item.Retention == contextir.AudioReference {
+			if item.Kind == contextir.ReferenceAudio && slices.Contains(item.Roles, contextir.RoleSoundTexture) && item.Retention == contextir.AudioReference {
 				reason = label + "'s sound texture is referenced. " + reason
 			}
 			reasons = append(reasons, reason)
@@ -178,7 +179,7 @@ func renderDefinitions(doc contextir.Document, state bindingState) (string, stri
 				reason += " Applicable scope:" + context + "."
 			}
 			context = ""
-		} else if containsRole(ref.Roles, contextir.RoleStoryboard) {
+		} else if slices.Contains(ref.Roles, contextir.RoleStoryboard) {
 			if context != "" {
 				reason += " Applicable scope:" + context + "."
 			}

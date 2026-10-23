@@ -114,11 +114,7 @@ func (c *Model) responseEnvelopeMetadata(data []byte) (responseEnvelope, context
 	return wire, result
 }
 
-func (c *Model) responseMetadata(data []byte) contextir.ModelResponse {
-	if c.options.API == Responses {
-		_, result := c.responseEnvelopeMetadata(data)
-		return result
-	}
+func (c *Model) chatEnvelopeMetadata(data []byte) (chatEnvelope, contextir.ModelResponse) {
 	result := emptyResponse()
 	var wire chatEnvelope
 	if validJSON(data) && exactResponseKeys(data, reflect.TypeFor[chatEnvelope]()) && json.Unmarshal(data, &wire) == nil {
@@ -131,7 +127,18 @@ func (c *Model) responseMetadata(data []byte) contextir.ModelResponse {
 				result.Usage.OutputTokens = *wire.Usage.CompletionTokens
 			}
 		}
+	} else {
+		wire = chatEnvelope{}
 	}
 	result.UsageInvalid = result.Usage.InputTokens < 0 || result.Usage.OutputTokens < 0 || result.Usage.OutputTokens > int64(c.options.MaxOutputTokens)
+	return wire, result
+}
+
+func (c *Model) responseMetadata(data []byte) contextir.ModelResponse {
+	if c.options.API == Responses {
+		_, result := c.responseEnvelopeMetadata(data)
+		return result
+	}
+	_, result := c.chatEnvelopeMetadata(data)
 	return result
 }

@@ -2,7 +2,9 @@ package h3check
 
 import (
 	"fmt"
+	"maps"
 	"regexp"
+	"slices"
 	"strings"
 )
 
@@ -27,7 +29,7 @@ func (c *checker) checkRetention() {
 			if kind == "Audio" {
 				legal = audioMarkers
 			}
-			if !contains(legal, marker) {
+			if !slices.Contains(legal, marker) {
 				c.err("R2-illegal-marker", kind+" relationship marker '"+marker+"' is not legal")
 			}
 			if kind == "Subject" && !strings.Contains(paren, "appears in") {
@@ -37,7 +39,7 @@ func (c *checker) checkRetention() {
 				c.err("R4-speaker-in-retention", "speaker IDs must not appear in retention_analysis")
 			}
 		}
-		for _, n := range ints(c.defined) {
+		for _, n := range slices.Sorted(maps.Keys(c.defined)) {
 			if !analysed[n] {
 				c.warn("R5-unanalysed-subject", fmt.Sprintf("<Subject %d> defined but absent from retention_analysis", n))
 			}
@@ -45,7 +47,7 @@ func (c *checker) checkRetention() {
 		for _, m := range all(`(?m)^\s*<((?:Subject|Picture|Video|Audio)\s+\d+)>`, c.ret) {
 			counts[m[1]]++
 		}
-		for _, label := range sortedKeys(counts) {
+		for _, label := range slices.Sorted(maps.Keys(counts)) {
 			if counts[label] > 1 {
 				c.err("R24-label-analysed-twice", fmt.Sprintf("<%s> has %d lines in retention_analysis", label, counts[label]))
 			}
@@ -60,9 +62,9 @@ func (c *checker) checkRetention() {
 			}
 			sources[d][m[3]] = true
 		}
-		for _, d := range sortedSliceKeys(descriptors) {
+		for _, d := range slices.Sorted(maps.Keys(descriptors)) {
 			if len(descriptors[d]) > 1 && len(sources[d]) == len(descriptors[d]) {
-				c.warn("R25-subject-defined-twice", "multiple subjects are defined as "+d+", each from a different asset ("+strings.Join(stringsSorted(sources[d]), ", ")+" ); combine sources for one identity: the woman whose appearance comes from <Picture 1> and whose walking motion comes from <Video 1>")
+				c.warn("R25-subject-defined-twice", "multiple subjects are defined as "+d+", each from a different asset ("+strings.Join(slices.Sorted(maps.Keys(sources[d])), ", ")+" ); combine sources for one identity: the woman whose appearance comes from <Picture 1> and whose walking motion comes from <Video 1>")
 			}
 		}
 	}
@@ -97,13 +99,13 @@ func (c *checker) checkRetention() {
 		if got == "" {
 			continue
 		}
-		if contains([]string{"frame_anchor_first", "frame_anchor_last"}, r.Role) && got != "fully_preserved" {
+		if slices.Contains([]string{"frame_anchor_first", "frame_anchor_last"}, r.Role) && got != "fully_preserved" {
 			c.err("R6-anchor-must-be-preserved", r.Label+" is a frame anchor, which requires fully_preserved")
 		}
 		if strings.HasPrefix(r.Label, "<Picture") && got == "attribute_transfer" {
 			c.err("R7-picture-cannot-transfer", r.Label+" is a Picture role and cannot silently carry attribute_transfer")
 		}
-		if r.Role == "edit_source" && !contains([]string{"fully_preserved", "partially_preserved"}, got) {
+		if r.Role == "edit_source" && !slices.Contains([]string{"fully_preserved", "partially_preserved"}, got) {
 			c.err("R8-edit-source-marker", r.Label+" is an edit source; "+got+" is not a coherent claim about it")
 		}
 	}
@@ -146,16 +148,16 @@ func (c *checker) checkRetention() {
 		}
 	}
 	for _, m := range all(`(<Audio\s+\d+>)[^.\n]{0,80}?\b(?:from|of|track of)\s+(<Video\s+\d+>)`, c.defs) {
-		if contains(c.ctx.StandaloneAudio, m[1]) {
+		if slices.Contains(c.ctx.StandaloneAudio, m[1]) {
 			c.err("R21-audio-provenance-invented", m[1]+" is claimed to come from "+m[2]+", and the wiring does not pair them")
 		}
 	}
 	for _, r := range c.ctx.DeclaredRoles {
-		if !contains(audioReferenceRoles, r.Role) {
+		if !slices.Contains(audioReferenceRoles, r.Role) {
 			continue
 		}
 		got := retentionEntry(c.ret, r.Label)
-		if contains([]string{"fully_copy", "partially_copy"}, got) {
+		if slices.Contains([]string{"fully_copy", "partially_copy"}, got) {
 			c.err("R22-audio-marker-role", r.Label+" is wired as "+r.Role+", which references a property rather than copying the signal; use reference or weak_reference")
 		}
 		for _, p := range []string{regexp.QuoteMeta(r.Label) + `\s+is\s+(?:being\s+)?(?:directly\s+|fully\s+|simply\s+)?(?:reused|copied|played)\b`, regexp.QuoteMeta(r.Label) + `\s+(?:is|serves)\s+(?:used\s+)?as\s+the\s+(?:target\s+video's\s+)?(?:complete|entire|whole|final)\b`} {
@@ -163,7 +165,7 @@ func (c *checker) checkRetention() {
 			for _, m := range rx(`(?i)`+p).FindAllStringIndex(c.scrub, -1) {
 				before := c.scrub[:m[0]]
 				w := rx(`\b\w+\s+$`).FindString(strings.ToLower(before))
-				if !contains([]string{"of", "from", "in", "into", "on", "onto", "with", "to", "by", "like", "as", "than", "over", "under", "beneath", "beside", "within", "using"}, strings.TrimSpace(w)) {
+				if !slices.Contains([]string{"of", "from", "in", "into", "on", "onto", "with", "to", "by", "like", "as", "than", "over", "under", "beneath", "beside", "within", "using"}, strings.TrimSpace(w)) {
 					hit = true
 					break
 				}
@@ -192,20 +194,6 @@ func (c *checker) checkRetention() {
 			c.warn("A6-paired-audio-short", p.Audio+" is shorter than "+p.Video+"; a paired soundtrack does not cover its video")
 		}
 	}
-}
-func sortedKeys(m map[string]int) []string {
-	b := map[string]bool{}
-	for k := range m {
-		b[k] = true
-	}
-	return stringsSorted(b)
-}
-func sortedSliceKeys(m map[string][]string) []string {
-	b := map[string]bool{}
-	for k := range m {
-		b[k] = true
-	}
-	return stringsSorted(b)
 }
 
 var audioProperty = map[string]string{"voice_timbre": "voice timbre and delivery", "sfx": "sound texture", "music_style": "musical style, instrumentation and tempo", "beat_reference": "beat and tempo"}

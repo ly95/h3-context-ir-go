@@ -1,6 +1,7 @@
 package compiler
 
 import (
+	"slices"
 	"strings"
 
 	"github.com/ly95/h3-context-ir-go"
@@ -52,18 +53,18 @@ func projectCanonicalSubjects(subjects []contextir.Subject, projections []Subjec
 			selectedTargets := []string{}
 			for _, attribute := range selection.Attributes {
 				targetAttribute := attribute
-				if !contains(source.Attributes, targetAttribute) && len(approvedTargets) > 0 {
+				if !slices.Contains(source.Attributes, targetAttribute) && len(approvedTargets) > 0 {
 					if target, ok := approvedTargets[0][source.ID][attribute]; ok {
 						targetAttribute = target
 					}
 				}
-				if !contains(source.Attributes, targetAttribute) {
+				if !slices.Contains(source.Attributes, targetAttribute) {
 					return nil, invalid("subject_projections.sources.attributes", "Selected attributes must exist exactly on the named canonical source identity.")
 				}
-				if !contains(selectedTargets, targetAttribute) {
+				if !slices.Contains(selectedTargets, targetAttribute) {
 					selectedTargets = append(selectedTargets, targetAttribute)
 				}
-				if !contains(out.Attributes, targetAttribute) {
+				if !slices.Contains(out.Attributes, targetAttribute) {
 					out.Attributes = append(out.Attributes, targetAttribute)
 				}
 			}
@@ -75,7 +76,7 @@ func projectCanonicalSubjects(subjects []contextir.Subject, projections []Subjec
 				out.Sources = append(out.Sources, attribution)
 			}
 			for _, shot := range source.ShotIDs {
-				if !contains(out.ShotIDs, shot) {
+				if !slices.Contains(out.ShotIDs, shot) {
 					out.ShotIDs = append(out.ShotIDs, shot)
 				}
 			}

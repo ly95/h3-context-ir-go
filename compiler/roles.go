@@ -1,10 +1,12 @@
 package compiler
 
 import (
+	"slices"
+
 	"github.com/ly95/h3-context-ir-go"
 )
 
-func validRole(r Role) bool { return contains(Roles, r) }
+func validRole(r Role) bool { return slices.Contains(Roles, r) }
 func roleAccepts(r Role, k contextir.MediaKind) bool {
 	switch r {
 	case RoleFirstFrame, RoleLastFrame, RolePlacedSubject, RoleReplacementSubject:

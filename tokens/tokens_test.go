@@ -7,6 +7,29 @@ import (
 	"testing"
 )
 
+func TestWordCountBoundaries(t *testing.T) {
+	for _, tc := range []struct {
+		name string
+		text string
+		want int
+	}{
+		{name: "empty", text: "", want: 0},
+		{name: "punctuation", text: "--- '' …", want: 0},
+		{name: "ascii_joiners", text: "don't re-enter a--b 'quoted' trailing-", want: 5},
+		{name: "unicode_words", text: "镜头移动 café ١٢٣ _field", want: 4},
+		{name: "unicode_separators", text: "left—right can’t first\u00a0second", want: 6},
+		{name: "combining_mark", text: "e\u0301clair", want: 2},
+		{name: "number_categories", text: "x² Ⅳ ½", want: 3},
+		{name: "invalid_utf8", text: "left\xffright", want: 2},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			if got := WordCount(tc.text); got != tc.want {
+				t.Fatalf("got %d words, want %d", got, tc.want)
+			}
+		})
+	}
+}
+
 func TestPublishedMarkerTokens(t *testing.T) {
 	for s, want := range map[string]int{"<d>": 2, "</d>": 3, "<think>": 1, "<|im_start|>": 1} {
 		got, e := Count(s)

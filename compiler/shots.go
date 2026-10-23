@@ -3,6 +3,7 @@ package compiler
 import (
 	"fmt"
 	"math"
+	"slices"
 	"strings"
 
 	"github.com/ly95/h3-context-ir-go"
@@ -60,7 +61,7 @@ func validateProposal(shots []ProposedShot, target contextir.Target, maxShots in
 		fix := func(field string, before, after any, reason string) {
 			repairs = append(repairs, ShotRepair{i, field, before, after, reason})
 		}
-		if !contains(purposes, s.Purpose) {
+		if !slices.Contains(purposes, s.Purpose) {
 			old := s.Purpose
 			s.Purpose = "develop"
 			if i == 0 {
@@ -68,12 +69,12 @@ func validateProposal(shots []ProposedShot, target contextir.Target, maxShots in
 			}
 			fix("purpose", old, s.Purpose, "Unsupported proposal vocabulary normalized to its documented value.")
 		}
-		if !contains(framings, s.Framing) {
+		if !slices.Contains(framings, s.Framing) {
 			old := s.Framing
 			s.Framing = "medium"
 			fix("framing", old, s.Framing, "Unsupported proposal vocabulary normalized to medium.")
 		}
-		if !contains(CameraTypes, s.Camera.Type) {
+		if !slices.Contains(CameraTypes, s.Camera.Type) {
 			return nil, repairs, invalid("shots.camera.type", "Camera type must use the published H3 camera vocabulary.")
 		}
 		if s.Camera.Amplitude != "" && s.Camera.Amplitude != "small" && s.Camera.Amplitude != "large" {
@@ -106,15 +107,6 @@ func validateProposal(shots []ProposedShot, target contextir.Target, maxShots in
 		}
 	}
 	return out, repairs, nil
-}
-
-func contains[T comparable](values []T, value T) bool {
-	for _, v := range values {
-		if v == value {
-			return true
-		}
-	}
-	return false
 }
 
 func equalCuts(shots []ProposedShot, cuts []contextir.Time) bool {

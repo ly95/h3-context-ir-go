@@ -3,6 +3,7 @@ package compiler
 import (
 	"context"
 	"encoding/json"
+	"slices"
 	"strings"
 	"testing"
 
@@ -112,7 +113,7 @@ func TestRemainingAssessmentWiring(t *testing.T) {
 			t.Fatal(e)
 		}
 		r, e := c.Compile(context.Background(), b)
-		if e != nil || r.Status != "compiled" || remainingFinding(t, r, "X15-audio-uncharacterised") == nil || remainingFinding(t, r, "X19-duration-snapped") == nil || !contains(calls, "plan") {
+		if e != nil || r.Status != "compiled" || remainingFinding(t, r, "X15-audio-uncharacterised") == nil || remainingFinding(t, r, "X19-duration-snapped") == nil || !slices.Contains(calls, "plan") {
 			t.Fatal("written path lost preflight facts", e, r.Status, r.Findings, calls)
 		}
 	})
@@ -194,7 +195,7 @@ func TestRemainingAssessmentAnchorPolicy(t *testing.T) {
 	t.Run("ExplicitStoryboardWins", func(t *testing.T) {
 		b := remainingWiringPlate(contextir.ModeReference, RoleStoryboard, "Animate this photo so the car pulls forward out of the dark.")
 		r, _, in := remainingMustWrite(t, b)
-		if r.Document.Mode != contextir.ModeReference || len(in.Controls.Subjects) != 0 || len(r.Document.References) != 1 || !contains(r.Document.References[0].Roles, contextir.RoleStoryboard) || r.Document.References[0].Anchor != nil {
+		if r.Document.Mode != contextir.ModeReference || len(in.Controls.Subjects) != 0 || len(r.Document.References) != 1 || !slices.Contains(r.Document.References[0].Roles, contextir.RoleStoryboard) || r.Document.References[0].Anchor != nil {
 			t.Fatal("caller storyboard role overwritten by prose", r.Document)
 		}
 		remainingMustReject(t, b, func(d *contextir.Document, _ remainingWriterInput) {
@@ -220,7 +221,7 @@ func TestRemainingAssessmentAnchorPolicy(t *testing.T) {
 		}
 		compiled, e := c.Compile(context.Background(), b)
 		msg := remainingFinding(t, compiled, "X18-role-overrides-anchor-language")
-		if e != nil || compiled.Status != "compiled" || compiled.Document.Mode != contextir.ModeReference || msg == nil || !strings.Contains(*msg, "frame_anchor_first") || !contains(calls, "mode_conflict") {
+		if e != nil || compiled.Status != "compiled" || compiled.Document.Mode != contextir.ModeReference || msg == nil || !strings.Contains(*msg, "frame_anchor_first") || !slices.Contains(calls, "mode_conflict") {
 			t.Fatal("actual Compile lost the typed override finding", e, compiled.Findings, calls)
 		}
 	})

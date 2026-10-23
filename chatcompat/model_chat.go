@@ -12,7 +12,6 @@ import (
 )
 
 func (c *Model) generateChat(ctx context.Context, request contextir.ModelRequest, images []Image) (contextir.ModelResponse, error) {
-	result := emptyResponse()
 	user := sdk.UserMessage(string(request.Input))
 	if len(images) > 0 {
 		parts := []sdk.ChatCompletionContentPartUnionParam{sdk.TextContentPart(string(request.Input))}
@@ -38,21 +37,7 @@ func (c *Model) generateChat(ctx context.Context, request contextir.ModelRequest
 	if err != nil {
 		return c.responseMetadata(data), err
 	}
-	var wire chatEnvelope
-	if validJSON(data) && exactResponseKeys(data, reflect.TypeFor[chatEnvelope]()) {
-		if json.Unmarshal(data, &wire) == nil {
-			result.Model = wire.Model
-			if wire.Usage != nil {
-				if wire.Usage.PromptTokens != nil {
-					result.Usage.InputTokens = *wire.Usage.PromptTokens
-				}
-				if wire.Usage.CompletionTokens != nil {
-					result.Usage.OutputTokens = *wire.Usage.CompletionTokens
-				}
-			}
-		}
-	}
-	result.UsageInvalid = result.Usage.InputTokens < 0 || result.Usage.OutputTokens < 0 || result.Usage.OutputTokens > int64(c.options.MaxOutputTokens)
+	wire, result := c.chatEnvelopeMetadata(data)
 	var choices []chatChoice
 	validChoices := exactResponseKeys(wire.Choices, reflect.TypeFor[[]chatChoice]()) && json.Unmarshal(wire.Choices, &choices) == nil && len(choices) == 1 && choices[0].Message != nil
 	var text string

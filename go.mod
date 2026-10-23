@@ -1,6 +1,6 @@
 module github.com/ly95/h3-context-ir-go
 
-go 1.25.0
+go 1.27.3
 
 require github.com/openai/openai-go/v3 v3.73.0
 

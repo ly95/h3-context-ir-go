@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"math/big"
+	"slices"
 	"sort"
 	"strings"
 	"unicode/utf8"
@@ -42,14 +43,7 @@ func clone(g Graph) (Graph, error) {
 	}
 	return Decode(b)
 }
-func isH3(s string) bool {
-	for _, c := range h3NodeClasses {
-		if s == c {
-			return true
-		}
-	}
-	return false
-}
+func isH3(s string) bool { return slices.Contains(h3NodeClasses, s) }
 func FindH3Nodes(g Graph) []string {
 	ids := []string{}
 	for id, n := range g {

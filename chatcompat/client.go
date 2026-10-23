@@ -192,10 +192,6 @@ func object(b []byte) (map[string]any, error) {
 	if m == nil {
 		return nil, errors.New("response must be a JSON object")
 	}
-	var x any
-	if e := d.Decode(&x); e != io.EOF {
-		return nil, errors.New("response must contain one JSON object")
-	}
 	return m, nil
 }
 func ServerSentence(body string) string {

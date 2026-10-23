@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"slices"
 	"sort"
 	"strings"
 
@@ -12,7 +13,7 @@ import (
 )
 
 func environmentIdentity(subject plan.SubjectPlan, responsibilities map[string][]Role) bool {
-	return subject.Kind == "environment" || contains(responsibilities[subject.Label], RoleEnvironment)
+	return subject.Kind == "environment" || slices.Contains(responsibilities[subject.Label], RoleEnvironment)
 }
 
 const environmentIdentityInstruction = `The resolved subject_responsibilities are authoritative. An environment/scene subject is the referenced setting itself, with kind fixed to environment. Other entities listed inside its observed attributes are context within that setting, not permission to turn the setting definition into one of those entities. Bind the caller's target mention to its actual referent before applying the general identity-priority rule. A noun phrase naming another requested actor or object is NOT a request to rename, replace or change the kind of this environment. Preserve this environment descriptor and its unaffected source attributes, and use request_binding=describes_other_scene_entity when the request is about such another entity. Under that binding, target_mention/request_quote may hold exact caller words identifying the OTHER scene entity as context; leave claims/requested_attributes empty and do not change this environment's identity or properties. Those contextual words are not authority to label this source environment user-created. That actor must still be included through the caller's complete request in composition; it does not take over this environment label. Empty contextual quote/mention is also valid when no useful excerpt is needed. For an unchanged setting with no such actor mention use no_reference_change, with empty target_mention/request_quote. Only an explicit instruction modifying this referenced setting itself permits descriptor_source=request and request_binding=changes_this_reference_entity, with exact authorizing words for that setting change. It must still remain an environment. A claim quoting another actor's name is insufficient environment-change authority. Do not infer that the only source label must represent the request's moving actor.`
@@ -191,7 +192,7 @@ func validateIdentityRequirements(b Brief, observed []plan.SubjectPlan, sheets m
 		}
 		seen := map[string]bool{}
 		for _, attr := range identity.RetainedAttributes {
-			if !contains(original.Attributes, attr) || seen[attr] {
+			if !slices.Contains(original.Attributes, attr) || seen[attr] {
 				return fail("retained_attributes", "Retain unique exact observed attributes only.")
 			}
 			seen[attr] = true
@@ -221,7 +222,7 @@ func validateIdentityRequirements(b Brief, observed []plan.SubjectPlan, sheets m
 		}
 		excluded := map[string]bool{}
 		for _, presentation := range identity.ExcludedPresentation {
-			if !sheet || !contains(original.Attributes, presentation) || seen[presentation] || excluded[presentation] {
+			if !sheet || !slices.Contains(original.Attributes, presentation) || seen[presentation] || excluded[presentation] {
 				return fail("excluded_presentation", "Only unique unretained observed reference-sheet presentation attributes may be excluded without a caller change.")
 			}
 			excluded[presentation] = true

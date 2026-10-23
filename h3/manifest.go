@@ -3,6 +3,7 @@ package h3
 import (
 	"encoding/json"
 	"fmt"
+	"slices"
 	"sort"
 
 	contextir "github.com/ly95/h3-context-ir-go"
@@ -145,7 +146,7 @@ func bind(doc contextir.Document) bindingState {
 			}
 		}
 		sort.SliceStable(baseImageRefs, func(i, j int) bool {
-			return containsRole(baseImageRefs[i].Roles, contextir.RoleFirstFrame) && !containsRole(baseImageRefs[j].Roles, contextir.RoleFirstFrame)
+			return slices.Contains(baseImageRefs[i].Roles, contextir.RoleFirstFrame) && !slices.Contains(baseImageRefs[j].Roles, contextir.RoleFirstFrame)
 		})
 		images = nil
 		for _, reference := range baseImageRefs {
@@ -172,7 +173,7 @@ func bind(doc contextir.Document) bindingState {
 		socket := fmt.Sprintf("ref_image_%d", i+1)
 		if doc.Mode != contextir.ModeReference {
 			socket = "last_frame"
-			if containsRole(baseImageRefs[i].Roles, contextir.RoleFirstFrame) {
+			if slices.Contains(baseImageRefs[i].Roles, contextir.RoleFirstFrame) {
 				socket = "first_frame"
 			}
 		}

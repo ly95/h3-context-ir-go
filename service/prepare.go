@@ -10,6 +10,7 @@ import (
 	"math"
 	"os"
 	"reflect"
+	"slices"
 	"sort"
 	"strings"
 	"unicode/utf8"
@@ -84,14 +85,6 @@ func required(obj map[string]json.RawMessage, name, path string) error {
 	}
 	return nil
 }
-func enum(v string, valid []string) bool {
-	for _, s := range valid {
-		if v == s {
-			return true
-		}
-	}
-	return false
-}
 func nullableObject(raw json.RawMessage, path string) error {
 	if len(raw) == 0 || bytes.Equal(bytes.TrimSpace(raw), []byte("null")) {
 		return nil
@@ -131,10 +124,10 @@ func ParseBrief(data []byte) (BriefIn, error) {
 			return b, malformed(k, "Input cannot be null")
 		}
 	}
-	if !enum(b.Creativity, creativity) {
+	if !slices.Contains(creativity, b.Creativity) {
 		return b, malformed("creativity", "Input should be restrained, balanced, bold or extreme")
 	}
-	if !enum(b.Effort, effort) {
+	if !slices.Contains(effort, b.Effort) {
 		return b, malformed("effort", "Input should be fast, standard or max")
 	}
 	if math.IsNaN(b.Seconds) || math.IsInf(b.Seconds, 0) {
@@ -172,19 +165,22 @@ func ParseBrief(data []byte) (BriefIn, error) {
 		if er != nil {
 			return b, er
 		}
-		a := AssetIn{Kind: "image", Sizing: "match"}
-		if er = json.Unmarshal(raw, &a); er != nil {
-			return b, malformed(path, er.Error())
+		a := b.Assets[i]
+		if _, ok := aobj["kind"]; !ok {
+			a.Kind = "image"
+		}
+		if _, ok := aobj["sizing"]; !ok {
+			a.Sizing = "match"
 		}
 		for _, k := range []string{"kind", "sizing"} {
 			if v, ok := aobj[k]; ok && bytes.Equal(bytes.TrimSpace(v), []byte("null")) {
 				return b, malformed(path+"."+k, "Input cannot be null")
 			}
 		}
-		if !enum(a.Kind, []string{"image", "video", "audio"}) {
+		if !slices.Contains([]string{"image", "video", "audio"}, a.Kind) {
 			return b, malformed(path+".kind", "Input should be image, video or audio")
 		}
-		if !enum(a.Sizing, sizing) {
+		if !slices.Contains(sizing, a.Sizing) {
 			return b, malformed(path+".sizing", "Input should be match or max")
 		}
 		if e = nullableObject(a.Provenance, path+".provenance"); e != nil {
@@ -205,9 +201,9 @@ func ParseBrief(data []byte) (BriefIn, error) {
 		if er = required(dobj, "text", path); er != nil {
 			return b, er
 		}
-		d := DialogueIn{Language: "English"}
-		if er = json.Unmarshal(raw, &d); er != nil {
-			return b, malformed(path, er.Error())
+		d := b.Dialogue[i]
+		if _, ok := dobj["language"]; !ok {
+			d.Language = "English"
 		}
 		for _, k := range []string{"language", "voiceover"} {
 			if v, ok := dobj[k]; ok && bytes.Equal(bytes.TrimSpace(v), []byte("null")) {
@@ -323,7 +319,7 @@ func (s *Service) PrepareBrief(payload []byte) (plan.Brief, error) {
 		stated := false
 		if role != "" {
 			for _, rs := range rolesByKind {
-				if enum(role, rs) {
+				if slices.Contains(rs, role) {
 					stated = true
 				}
 			}

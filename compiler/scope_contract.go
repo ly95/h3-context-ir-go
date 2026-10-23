@@ -1,6 +1,7 @@
 package compiler
 
 import (
+	"slices"
 	"sort"
 	"strings"
 )
@@ -86,12 +87,7 @@ func (p ScopePolicy) Permits(e ScopeElement) bool {
 	if p.requested[e] {
 		return true
 	}
-	for _, licensed := range p.Licensed() {
-		if licensed == e {
-			return true
-		}
-	}
-	return false
+	return slices.Contains(p.Licensed(), e)
 }
 
 func (p ScopePolicy) WhyNot(e ScopeElement) string {

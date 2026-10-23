@@ -3,6 +3,7 @@ package compiler
 import (
 	"context"
 	"encoding/json"
+	"slices"
 
 	"github.com/ly95/h3-context-ir-go"
 	"github.com/ly95/h3-context-ir-go/budget"
@@ -179,7 +180,7 @@ Enumerate compatible labels from the whole source reading. Unsupported qualifier
 				}
 				compatibleSet := map[string]bool{}
 				for _, label := range binding.Compatible {
-					if !contains(candidates[binding.Picture], label) || compatibleSet[label] {
+					if !slices.Contains(candidates[binding.Picture], label) || compatibleSet[label] {
 						err = invalid("bindings.compatible", "List only unique compatible candidates from this picture's complete candidate set.")
 						break
 					}

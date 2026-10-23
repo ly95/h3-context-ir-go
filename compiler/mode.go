@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"math"
+	"slices"
 	"sort"
 	"strings"
 
@@ -202,7 +203,7 @@ func (c *Compiler) finishMode(out ModeDecision, b Brief) ModeDecision {
 	available := c.availableAlternatives(b, out.Mode)
 	filtered := []contextir.Mode{}
 	for _, alternative := range out.Alternatives {
-		if contains(available, alternative) && !contains(filtered, alternative) {
+		if slices.Contains(available, alternative) && !slices.Contains(filtered, alternative) {
 			filtered = append(filtered, alternative)
 		}
 	}
@@ -232,7 +233,7 @@ func (c *Compiler) availableAlternatives(b Brief, selected contextir.Mode) []con
 	}
 	out := []contextir.Mode{}
 	for _, mode := range candidates {
-		if mode != selected && contains(c.options.Profile.Modes, mode) {
+		if mode != selected && slices.Contains(c.options.Profile.Modes, mode) {
 			out = append(out, mode)
 		}
 	}
@@ -277,7 +278,7 @@ func modeGeometry(out ModeDecision, b Brief) ModeDecision {
 				out.Confidence = math.Min(out.Confidence, .6)
 			}
 			out.Signals = append(out.Signals, fmt.Sprintf("aspect mismatch: Image %s aspect %.6g differs from requested %s by more than 20%%. The anchor choice is preserved; exact-frame conditioning requires an explicit crop/resize/canvas decision.", asset.ID, got, aspect))
-			if !contains(out.Alternatives, contextir.ModeReference) {
+			if !slices.Contains(out.Alternatives, contextir.ModeReference) {
 				out.Alternatives = append(out.Alternatives, contextir.ModeReference)
 			}
 		}

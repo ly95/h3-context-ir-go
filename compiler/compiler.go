@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"math"
 	"reflect"
+	"slices"
 	"strings"
 
 	"github.com/ly95/h3-context-ir-go"
@@ -448,7 +449,7 @@ func (c *Compiler) collectEvidenceMode(ctx context.Context, b Brief, extractCard
 					if actualCalls[i].AssetID != a.ID {
 						actualCalls[i].Valid = false
 					}
-					if actualCalls[i].Unmetered && !contains(out.UnmeteredAssetIDs, a.ID) {
+					if actualCalls[i].Unmetered && !slices.Contains(out.UnmeteredAssetIDs, a.ID) {
 						out.UnmeteredAssetIDs = append(out.UnmeteredAssetIDs, a.ID)
 					}
 				}

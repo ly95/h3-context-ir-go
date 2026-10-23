@@ -1,6 +1,8 @@
 package compiler
 
 import (
+	"slices"
+
 	"github.com/ly95/h3-context-ir-go/budget"
 	"github.com/ly95/h3-context-ir-go/plan"
 )
@@ -44,7 +46,7 @@ func inspectReplacementReading(subjects []plan.SubjectPlan, manifest []plan.Mani
 		}
 		d := ReplacementInspection{Picture: entry.Label, Candidates: []plan.SubjectPlan{}}
 		for i := range subjects {
-			if contains(subjects[i].Sources, entry.Label) {
+			if slices.Contains(subjects[i].Sources, entry.Label) {
 				copy := subjects[i]
 				d.Incoming = &copy
 				break
@@ -56,7 +58,7 @@ func inspectReplacementReading(subjects []plan.SubjectPlan, manifest []plan.Mani
 			d.Problem = "no_incoming_subject"
 		} else {
 			for _, subject := range subjects {
-				if contains(subject.Sources, clip) && subject.Kind == d.Incoming.Kind {
+				if slices.Contains(subject.Sources, clip) && subject.Kind == d.Incoming.Kind {
 					d.Candidates = append(d.Candidates, subject)
 					if subject.TakenOverBy == d.Incoming.Label {
 						copy := subject

@@ -68,22 +68,10 @@ func decodeStrictJSON[T any](r io.Reader, options DecodeOptions, kind string) (T
 	if err != nil {
 		return invalid()
 	}
-	decoder = json.NewDecoder(bytes.NewReader(normalized))
-	decoder.DisallowUnknownFields()
-	if err := decoder.Decode(&result); err != nil {
-		return invalid()
-	}
-	if err := decoder.Decode(new(any)); err != io.EOF {
-		return invalid()
-	}
-	if len(bytes.TrimSpace(data)) == 0 || bytes.Equal(bytes.TrimSpace(data), []byte("null")) {
+	if err := json.Unmarshal(normalized, &result); err != nil {
 		return invalid()
 	}
 	return result, nil
-}
-
-func strictShape(value any, typ reflect.Type) bool {
-	return strictShapeIssue(value, typ, "$") == nil
 }
 
 func strictShapeIssue(value any, typ reflect.Type, path string) *Issue {

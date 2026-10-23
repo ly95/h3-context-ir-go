@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"math"
+	"slices"
 	"strings"
 
 	"github.com/ly95/h3-context-ir-go/budget"
@@ -116,7 +117,7 @@ func SplitSound(events []SoundEvent) (map[int][]string, []string) {
 			continue
 		}
 		if e.Layer == "ambient" || e.Shot == 0 {
-			if !contains(ambient, text) {
+			if !slices.Contains(ambient, text) {
 				ambient = append(ambient, text)
 			}
 		} else {
@@ -208,7 +209,7 @@ func Build(brief Brief, mode string, cards map[string]AssetCard, options BuildOp
 		}
 		valid := []string{}
 		for _, label := range s.Subjects {
-			if label != "" && contains(labels, label) {
+			if label != "" && slices.Contains(labels, label) {
 				valid = append(valid, label)
 			}
 		}
@@ -220,7 +221,7 @@ func Build(brief Brief, mode string, cards map[string]AssetCard, options BuildOp
 	for i := range subjects {
 		s := &subjects[i]
 		for _, shot := range shots {
-			if contains(shot.Subjects, s.Label) {
+			if slices.Contains(shot.Subjects, s.Label) {
 				s.AppearsIn = append(s.AppearsIn, shot.N)
 			}
 		}

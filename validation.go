@@ -3,6 +3,7 @@ package contextir
 import (
 	"encoding/hex"
 	"math/big"
+	"slices"
 	"strconv"
 	"strings"
 	"unicode"
@@ -565,14 +566,6 @@ func visualRetention(r Retention) bool {
 func audioRetention(r Retention) bool {
 	return r == FullyCopy || r == PartiallyCopy || r == AudioReference || r == WeakReference
 }
-func hasRole(roles []Role, role Role) bool {
-	for _, r := range roles {
-		if r == role {
-			return true
-		}
-	}
-	return false
-}
 func (v *validationState) subject(s Subject, p string, d Document) {
 	v.text(s.Description, p+".description", true)
 	v.text(s.Descriptor, p+".descriptor", false)
@@ -627,7 +620,7 @@ func (v *validationState) subject(s Subject, p string, d Document) {
 		if attribution.Role == RoleEditSource || attribution.Role == RoleContinuation {
 			found := false
 			for _, ref := range d.References {
-				if ref.Kind == ReferenceVideo && hasRole(ref.Roles, attribution.Role) && sameValidationSource(ref.Source, attribution.Source) {
+				if ref.Kind == ReferenceVideo && slices.Contains(ref.Roles, attribution.Role) && sameValidationSource(ref.Source, attribution.Source) {
 					found = true
 				}
 			}
@@ -663,10 +656,10 @@ func (v *validationState) reference(r Reference, p string, d Document) {
 	v.text(r.RetentionDetails, p+".retention_details", false)
 	v.ids(r.ShotIDs, p+".shot_ids", v.shots)
 	v.text(r.Replaces, p+".replaces", false)
-	if r.Replaces != "" && !hasRole(r.Roles, RoleReplacementSubject) {
+	if r.Replaces != "" && !slices.Contains(r.Roles, RoleReplacementSubject) {
 		v.bad(p+".replaces", "only replacement_subject may identify a replaced source figure")
 	}
-	if hasRole(r.Roles, RoleReplacementSubject) && strings.TrimSpace(r.Replaces) == "" {
+	if slices.Contains(r.Roles, RoleReplacementSubject) && strings.TrimSpace(r.Replaces) == "" {
 		resolved := false
 		for _, original := range d.Subjects {
 			if original.TakenOverBy != "" {
@@ -685,10 +678,10 @@ func (v *validationState) reference(r Reference, p string, d Document) {
 			v.bad(p+".replaces", "replacement_subject requires an explicit source figure or a structurally resolved subject transfer")
 		}
 	}
-	if hasRole(r.Roles, RolePlacedSubject) || hasRole(r.Roles, RoleReplacementSubject) {
+	if slices.Contains(r.Roles, RolePlacedSubject) || slices.Contains(r.Roles, RoleReplacementSubject) {
 		edit := false
 		for _, other := range d.References {
-			if other.Kind == ReferenceVideo && hasRole(other.Roles, RoleEditSource) {
+			if other.Kind == ReferenceVideo && slices.Contains(other.Roles, RoleEditSource) {
 				edit = true
 			}
 		}
@@ -699,7 +692,7 @@ func (v *validationState) reference(r Reference, p string, d Document) {
 			v.bad(p+".kind", "placement and replacement require a picture reference")
 		}
 	}
-	if hasRole(r.Roles, RoleStructure) && r.Kind != ReferenceVideo {
+	if slices.Contains(r.Roles, RoleStructure) && r.Kind != ReferenceVideo {
 		v.bad(p+".kind", "structure requires a video reference")
 	}
 	if r.PairedVideoID != "" {
@@ -752,7 +745,7 @@ func (v *validationState) reference(r Reference, p string, d Document) {
 			v.bad(q, "frame anchors require a picture reference")
 		}
 	}
-	anchorRole := hasRole(r.Roles, RoleFirstFrame) || hasRole(r.Roles, RoleLastFrame) || hasRole(r.Roles, RoleKeyframe)
+	anchorRole := slices.Contains(r.Roles, RoleFirstFrame) || slices.Contains(r.Roles, RoleLastFrame) || slices.Contains(r.Roles, RoleKeyframe)
 	if anchorRole {
 		if r.Retention != FullyPreserved {
 			v.bad(p+".retention", "frame anchors require fully_preserved retention")
@@ -770,10 +763,10 @@ func (v *validationState) reference(r Reference, p string, d Document) {
 		if *r.Anchor < 0 || *r.Anchor > d.Target.Duration {
 			v.bad(p+".anchor_ms", "anchor must fall within the target timeline")
 		}
-		if hasRole(r.Roles, RoleFirstFrame) && *r.Anchor != 0 {
+		if slices.Contains(r.Roles, RoleFirstFrame) && *r.Anchor != 0 {
 			v.bad(p+".anchor_ms", "first frame must anchor the start")
 		}
-		if hasRole(r.Roles, RoleLastFrame) && *r.Anchor != d.Target.Duration {
+		if slices.Contains(r.Roles, RoleLastFrame) && *r.Anchor != d.Target.Duration {
 			v.bad(p+".anchor_ms", "last frame must anchor the end")
 		}
 		if len(r.ShotIDs) > 0 {
@@ -798,7 +791,7 @@ func (v *validationState) reference(r Reference, p string, d Document) {
 			}
 		}
 	}
-	if hasRole(r.Roles, RoleFirstFrame) && hasRole(r.Roles, RoleLastFrame) {
+	if slices.Contains(r.Roles, RoleFirstFrame) && slices.Contains(r.Roles, RoleLastFrame) {
 		v.bad(p+".roles", "one reference cannot be both first and last frame")
 	}
 	if r.SpeakerID != "" {
@@ -809,17 +802,17 @@ func (v *validationState) reference(r Reference, p string, d Document) {
 		} else if d.Speakers[speakerIndex].VoiceReferenceID != r.ID {
 			v.bad(p+".speaker_id", "speaker and voice reference bindings must be reciprocal")
 		}
-		if r.Kind != ReferenceAudio || !hasRole(r.Roles, RoleVoice) {
+		if r.Kind != ReferenceAudio || !slices.Contains(r.Roles, RoleVoice) {
 			v.bad(p+".speaker_id", "speaker bindings require an audio voice reference")
 		}
 	}
-	if hasRole(r.Roles, RoleVoice) && r.SpeakerID == "" {
+	if slices.Contains(r.Roles, RoleVoice) && r.SpeakerID == "" {
 		v.bad(p+".speaker_id", "voice references require an explicit target speaker binding")
 	}
-	if hasRole(r.Roles, RoleVoice) && r.Retention != AudioReference && r.Retention != WeakReference {
+	if slices.Contains(r.Roles, RoleVoice) && r.Retention != AudioReference && r.Retention != WeakReference {
 		v.bad(p+".retention", "voice timbre references cannot copy the source audio signal")
 	}
-	if (hasRole(r.Roles, RoleMusicStyle) || hasRole(r.Roles, RoleBeatReference) || hasRole(r.Roles, RoleSoundTexture)) && r.Retention != AudioReference && r.Retention != WeakReference {
+	if (slices.Contains(r.Roles, RoleMusicStyle) || slices.Contains(r.Roles, RoleBeatReference) || slices.Contains(r.Roles, RoleSoundTexture)) && r.Retention != AudioReference && r.Retention != WeakReference {
 		v.bad(p+".retention", "property-only audio references cannot copy the source signal")
 	}
 }
@@ -838,7 +831,7 @@ func (v *validationState) speaker(s Speaker, p string, d Document) {
 			v.bad(p+".voice_reference_id", "references an unknown reference")
 		} else {
 			r := d.References[i]
-			if r.Kind != ReferenceAudio || !hasRole(r.Roles, RoleVoice) || r.SpeakerID != s.ID {
+			if r.Kind != ReferenceAudio || !slices.Contains(r.Roles, RoleVoice) || r.SpeakerID != s.ID {
 				v.bad(p+".voice_reference_id", "must identify a reciprocally bound audio voice reference")
 			}
 		}
@@ -1057,18 +1050,18 @@ func (v *validationState) modeReferences(d Document) {
 				completeAudio = &source
 			}
 		}
-		if hasRole(r.Roles, RoleFirstFrame) {
+		if slices.Contains(r.Roles, RoleFirstFrame) {
 			first++
 			firstAsset = r.Source.AssetID
 		}
-		if hasRole(r.Roles, RoleLastFrame) {
+		if slices.Contains(r.Roles, RoleLastFrame) {
 			last++
 			lastAsset = r.Source.AssetID
 		}
-		if d.Mode == ModeReference && (hasRole(r.Roles, RoleFirstFrame) || hasRole(r.Roles, RoleLastFrame)) {
+		if d.Mode == ModeReference && (slices.Contains(r.Roles, RoleFirstFrame) || slices.Contains(r.Roles, RoleLastFrame)) {
 			v.bad(p+".roles", "reference mode cannot use first/last-frame mode roles; use explicit keyframes")
 		}
-		if d.Mode != ModeReference && !hasRole(r.Roles, RoleFirstFrame) && !hasRole(r.Roles, RoleLastFrame) {
+		if d.Mode != ModeReference && !slices.Contains(r.Roles, RoleFirstFrame) && !slices.Contains(r.Roles, RoleLastFrame) {
 			v.bad(p+".roles", "base modes only support their first/last-frame references")
 		}
 	}
@@ -1140,7 +1133,7 @@ func (v *validationState) constraintConflicts(d Document) {
 		if silence && r.Kind == ReferenceAudio {
 			v.bad(vp("references", i), "audio reference conflicts with explicit silence")
 		}
-		if v.constraints[ConstraintNoMusic] && hasRole(r.Roles, RoleMusic) {
+		if v.constraints[ConstraintNoMusic] && slices.Contains(r.Roles, RoleMusic) {
 			v.bad(vp("references", i)+".roles", "music role conflicts with an explicit no-music constraint")
 		}
 	}

@@ -8,6 +8,7 @@ import (
 	"os"
 	"path/filepath"
 	"reflect"
+	"slices"
 	"testing"
 
 	contextir "github.com/ly95/h3-context-ir-go"
@@ -51,7 +52,7 @@ func TestRemainingChoiceWire(t *testing.T) {
 		t.Fatal("record/refine storage dropped choices", e, saved)
 	}
 	for _, key := range []string{"transcript_uses", "subject_projections"} {
-		if !containsString(fieldNames(BriefIn{}), key) {
+		if !slices.Contains(fieldNames(BriefIn{}), key) {
 			t.Fatal("accepted choice absent from published wire fields", key)
 		}
 	}
@@ -89,15 +90,6 @@ func TestRemainingChoiceWire(t *testing.T) {
 		}
 	})
 }
-func containsString(values []string, value string) bool {
-	for _, x := range values {
-		if x == value {
-			return true
-		}
-	}
-	return false
-}
-
 func TestRemainingRefinementRestatedRolePersists(t *testing.T) {
 	source := plan.Brief{Intent: "x", Assets: []plan.AssetRef{{Kind: "image", SHA256: "source", Role: "subject", RoleStated: false}}}
 	native := compiler.Brief{Intent: "x", Assets: []compiler.Asset{{Asset: contextir.Asset{ID: "asset-1", Kind: contextir.MediaImage}, Role: compiler.RoleSubject}}}

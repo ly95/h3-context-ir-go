@@ -6,9 +6,9 @@ import (
 	"sort"
 	"strconv"
 	"strings"
-	"unicode"
 
 	"github.com/ly95/h3-context-ir-go/h3check"
+	"github.com/ly95/h3-context-ir-go/tokens"
 )
 
 type Shot struct {
@@ -158,25 +158,8 @@ func CountableWarnings(findings []h3check.Finding) []h3check.Finding {
 	}
 	return out
 }
-func WordCount(text string) int {
-	word := func(r rune) bool { return unicode.IsLetter(r) || unicode.IsNumber(r) || r == '_' }
-	n := 0
-	seen := false
-	for _, r := range text {
-		if word(r) {
-			seen = true
-		} else if r != '\'' && r != '-' {
-			if seen {
-				n++
-				seen = false
-			}
-		}
-	}
-	if seen {
-		n++
-	}
-	return n
-}
+func WordCount(text string) int { return tokens.WordCount(text) }
+
 func round3(x float64) float64 {
 	v, _ := strconv.ParseFloat(strconv.FormatFloat(x, 'f', 3, 64), 64)
 	return v

@@ -2,7 +2,10 @@ package h3check
 
 import (
 	"fmt"
+	"slices"
 	"strings"
+
+	"github.com/ly95/h3-context-ir-go/tokens"
 )
 
 func (c *checker) checkProse() {
@@ -52,7 +55,7 @@ func (c *checker) checkProse() {
 	} else if m := rx(`^\s*\[Shot 1\]\s*([^.]*)`).FindStringSubmatch(c.desc); m != nil && strings.TrimSpace(m[1]) == "" {
 		c.warn("P6-no-style-in-shot1", "base modes establish style inside [Shot 1]; nothing follows the marker")
 	}
-	words := wordCount(c.desc)
+	words := tokens.WordCount(c.desc)
 	if c.isRef && c.ctx.GenerationTask && words < 300 {
 		c.warn("P2-too-short", fmt.Sprintf("detailed_description is %d words; spec guidance 350-500, official example 336", words))
 	} else if words > 700 {
@@ -77,13 +80,13 @@ func (c *checker) checkProse() {
 	}
 	off := false
 	for _, m := range all(`(?i)\bwith\s+(\w+)\s+amplitude\b`, c.desc) {
-		if !contains([]string{"small", "large"}, strings.ToLower(m[1])) {
+		if !slices.Contains([]string{"small", "large"}, strings.ToLower(m[1])) {
 			off = true
 		}
 	}
 	for _, m := range rx(`(?i)\bat\s+(?:a\s+)?(\w+)\s+speed\b`).FindAllStringSubmatchIndex(c.desc, -1) {
 		v := strings.ToLower(c.desc[m[2]:m[3]])
-		if contains([]string{"slow", "fast"}, v) {
+		if slices.Contains([]string{"slow", "fast"}, v) {
 			continue
 		}
 		lo := m[0] - 12
@@ -152,9 +155,6 @@ func (c *checker) checkProse() {
 }
 func labelStrings(s string) []string {
 	return rx(`<(?:Subject|Picture|Video|Audio)\s+\d+>`).FindAllString(s, -1)
-}
-func wordCount(s string) int {
-	return len(rx(`[\pL\pN_](?:[\pL\pN_'-]*[\pL\pN_])?`).FindAllString(s, -1))
 }
 
 var roleInWords = map[string]string{"frame_anchor_first": "the first frame of the target video", "frame_anchor_last": "the last frame of the target video", "edit_source": "the source video for the target video edit", "continuation_source": "the source video the target video continues from", "voice_timbre": "the voice-timbre reference", "music_style": "a music-style reference", "beat_reference": "a beat reference", "placed_subject": "a subject placed into the source video", "replacement_subject": "the subject that takes the place of one in the source video"}

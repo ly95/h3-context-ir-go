@@ -2,6 +2,7 @@ package h3check
 
 import (
 	"fmt"
+	"slices"
 	"strings"
 )
 
@@ -59,7 +60,7 @@ func (c *checker) checkScope() {
 		if !e.present || s.permits(e.name) {
 			continue
 		}
-		if contains(s.Forbidden, e.name) {
+		if slices.Contains(s.Forbidden, e.name) {
 			c.err("Q1-forbidden-element-present", "the request explicitly ruled out "+e.name+" and the brief contains it; no creativity setting overrides an explicit prohibition")
 		} else {
 			c.err("Q2-unlicensed-addition", "the brief adds "+e.name+", which the request did not ask for and the "+s.Level+" setting does not license")

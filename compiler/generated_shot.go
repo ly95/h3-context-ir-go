@@ -2,6 +2,7 @@ package compiler
 
 import (
 	"fmt"
+	"slices"
 	"sort"
 	"strings"
 	"unicode"
@@ -32,7 +33,7 @@ func PrepareGeneratedShot(in GeneratedShotInput) (GeneratedShotResult, error) {
 	if in.Shot.ID == "" || in.Shot.End <= in.Shot.Start {
 		return out, invalid("shot", "Supply a stable shot ID and increasing boundaries.")
 	}
-	if !contains(CameraTypes, in.Camera.Type) || !contains([]string{"", "small", "large"}, in.Camera.Amplitude) || !contains([]string{"", "slow", "fast"}, in.Camera.Speed) || in.Camera.Type == "Static Shot" && (in.Camera.Amplitude != "" || in.Camera.Speed != "") {
+	if !slices.Contains(CameraTypes, in.Camera.Type) || !slices.Contains([]string{"", "small", "large"}, in.Camera.Amplitude) || !slices.Contains([]string{"", "slow", "fast"}, in.Camera.Speed) || in.Camera.Type == "Static Shot" && (in.Camera.Amplitude != "" || in.Camera.Speed != "") {
 		return out, invalid("camera", "Supply an exact closed camera type and modifiers.")
 	}
 	if in.WordLimit < 0 {

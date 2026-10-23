@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"slices"
 	"strings"
 
 	"github.com/ly95/h3-context-ir-go"
@@ -55,15 +56,15 @@ func (c *Compiler) qualifyReferenceSheetIdentity(ctx context.Context, b Brief, s
 		attrs := []any{}
 		quotes := []string{""}
 		for _, claim := range identity.Claims {
-			if !contains(quotes, claim.Quote) {
+			if !slices.Contains(quotes, claim.Quote) {
 				quotes = append(quotes, claim.Quote)
 			}
 		}
 		for _, attr := range subject.Attributes {
 			dispositions := []string{"retain", "presentation_only"}
-			if !contains(identity.RetainedAttributes, attr) {
+			if !slices.Contains(identity.RetainedAttributes, attr) {
 				dispositions = []string{"caller_replaced"}
-				if contains(identity.ExcludedPresentation, attr) {
+				if slices.Contains(identity.ExcludedPresentation, attr) {
 					dispositions = []string{"presentation_only"}
 				}
 			}
@@ -145,11 +146,11 @@ func applySheetQualifications(subjects []plan.SubjectPlan, indices []int, identi
 			}
 			switch attr.Disposition {
 			case "retain":
-				if !contains(accepted.RetainedAttributes, attr.Source) || strings.TrimSpace(attr.Target) == "" || attr.Authorization != "" {
+				if !slices.Contains(accepted.RetainedAttributes, attr.Source) || strings.TrimSpace(attr.Target) == "" || attr.Authorization != "" {
 					return nil, invalid(path+".attributes", "Retained stable facts need complete wording and no new authorization.")
 				}
 				id.RetainedAttributes = append(id.RetainedAttributes, attr.Source)
-				if contains(accepted.WardrobeAttributes, attr.Source) {
+				if slices.Contains(accepted.WardrobeAttributes, attr.Source) {
 					id.WardrobeAttributes = append(id.WardrobeAttributes, attr.Source)
 				}
 				if attr.Target != attr.Source {
@@ -162,7 +163,7 @@ func applySheetQualifications(subjects []plan.SubjectPlan, indices []int, identi
 					id.AdjustedAttributes = append(id.AdjustedAttributes, IdentityAttributeAdjustment{Kind: kind, Source: attr.Source, Target: attr.Target})
 				}
 			case "presentation_only":
-				if !contains(accepted.RetainedAttributes, attr.Source) && !contains(accepted.ExcludedPresentation, attr.Source) || attr.Target != "" || attr.Authorization != "" {
+				if !slices.Contains(accepted.RetainedAttributes, attr.Source) && !slices.Contains(accepted.ExcludedPresentation, attr.Source) || attr.Target != "" || attr.Authorization != "" {
 					return nil, invalid(path+".attributes", "Pure presentation has no target or caller-change authority.")
 				}
 				id.ExcludedPresentation = append(id.ExcludedPresentation, attr.Source)
@@ -171,7 +172,7 @@ func applySheetQualifications(subjects []plan.SubjectPlan, indices []int, identi
 				for _, claim := range accepted.Claims {
 					authorized = authorized || attr.Authorization != "" && claim.Quote == attr.Authorization
 				}
-				if contains(accepted.RetainedAttributes, attr.Source) || attr.Target != "" || !authorized {
+				if slices.Contains(accepted.RetainedAttributes, attr.Source) || attr.Target != "" || !authorized {
 					return nil, invalid(path+".attributes", "Do not invent a caller replacement or alter an accepted retained trait through new authority.")
 				}
 			default:

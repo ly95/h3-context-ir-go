@@ -3,6 +3,7 @@ package h3
 import (
 	"fmt"
 	"math/big"
+	"slices"
 
 	contextir "github.com/ly95/h3-context-ir-go"
 )
@@ -118,7 +119,7 @@ func checkProfile(doc contextir.Document, p Profile) (int64, contextir.Rational,
 	}
 	for i, ref := range doc.References {
 		if doc.Mode == contextir.ModeReference && !p.SupportsReferenceFrameAnchors {
-			if ref.Anchor != nil || containsRole(ref.Roles, contextir.RoleFirstFrame) || containsRole(ref.Roles, contextir.RoleLastFrame) || containsRole(ref.Roles, contextir.RoleKeyframe) {
+			if ref.Anchor != nil || slices.Contains(ref.Roles, contextir.RoleFirstFrame) || slices.Contains(ref.Roles, contextir.RoleLastFrame) || slices.Contains(ref.Roles, contextir.RoleKeyframe) {
 				return 0, contextir.Rational{}, profileIssue(contextir.CodeUnsupported, fmt.Sprintf("references[%d]", i), "this runtime cannot provide exact frame anchors in reference mode")
 			}
 		}
@@ -142,13 +143,4 @@ func is24FPS(fps contextir.Rational) bool {
 		return false
 	}
 	return new(big.Int).Mul(big.NewInt(fps.Denominator), big.NewInt(24)).Cmp(big.NewInt(fps.Numerator)) == 0
-}
-
-func containsRole(roles []contextir.Role, role contextir.Role) bool {
-	for _, value := range roles {
-		if value == role {
-			return true
-		}
-	}
-	return false
 }

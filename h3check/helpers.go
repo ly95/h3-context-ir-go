@@ -22,35 +22,11 @@ func rx(p string) *regexp.Regexp {
 }
 func has(p, s string) bool       { return rx(p).MatchString(s) }
 func all(p, s string) [][]string { return rx(p).FindAllStringSubmatch(s, -1) }
-func contains(a []string, s string) bool {
-	for _, v := range a {
-		if v == s {
-			return true
-		}
-	}
-	return false
-}
-func atoi(s string) int    { n, _ := strconv.Atoi(s); return n }
-func norm(s string) string { return strings.Join(strings.Fields(s), " ") }
+func atoi(s string) int          { n, _ := strconv.Atoi(s); return n }
+func norm(s string) string       { return strings.Join(strings.Fields(s), " ") }
 func strip(s string) string {
 	s = rx(`(?s)<d>.*?</d>`).ReplaceAllString(s, " ")
 	return rx(`"[^"]*"`).ReplaceAllString(s, " ")
-}
-func ints(m map[int]bool) []int {
-	a := make([]int, 0, len(m))
-	for n := range m {
-		a = append(a, n)
-	}
-	sort.Ints(a)
-	return a
-}
-func stringsSorted(m map[string]bool) []string {
-	a := make([]string, 0, len(m))
-	for s := range m {
-		a = append(a, s)
-	}
-	sort.Strings(a)
-	return a
 }
 func labels(s, k string) map[int]bool {
 	m := map[int]bool{}
@@ -58,17 +34,6 @@ func labels(s, k string) map[int]bool {
 		m[atoi(x[1])] = true
 	}
 	return m
-}
-func equalInt(a, b []int) bool {
-	if len(a) != len(b) {
-		return false
-	}
-	for i := range a {
-		if a[i] != b[i] {
-			return false
-		}
-	}
-	return true
 }
 func equalSet(a, b []string) bool {
 	aa, bb := map[string]bool{}, map[string]bool{}
