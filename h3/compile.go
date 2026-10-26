@@ -164,12 +164,11 @@ func render(doc contextir.Document, state bindingState, duration contextir.Ratio
 		return "", err
 	}
 	summary := rich(doc.Summary, doc, state)
-	if strings.TrimSpace(summary) == "" {
-		var descriptions []string
-		for _, shot := range doc.Shots {
-			descriptions = append(descriptions, sentence(rich(shot.Description, doc, state)))
+	subjectLabels := make([]string, 0, len(state.manifest.Subjects))
+	for _, subject := range doc.Subjects {
+		if subject.TakenOverBy == "" && len(subjectShots(doc, subject)) > 0 {
+			subjectLabels = append(subjectLabels, state.subjects[subject.ID])
 		}
-		summary = strings.Join(descriptions, " ")
 	}
 	tasks := taskTypes(doc)
 	if len(tasks) == 0 {
@@ -182,7 +181,7 @@ func render(doc contextir.Document, state bindingState, duration contextir.Ratio
 			break
 		}
 	}
-	summary = FormatSummary(SummarySpec{TaskTypes: tasks, Body: summary, EditSourceLabel: editSource})
+	summary = FormatSummary(SummarySpec{TaskTypes: tasks, Body: summary, SubjectLabels: subjectLabels, EditSourceLabel: editSource})
 	return strings.Join([]string{
 		"subject_definitions:\n" + definitions,
 		"summary:\n" + summary,

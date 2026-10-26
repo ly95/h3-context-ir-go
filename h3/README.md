@@ -18,8 +18,10 @@ or callers must provide `Target.FrameCount` and its nearest-millisecond
 Five requested seconds are never silently changed to 124 frames.
 
 The document must supply soundscape and music. `N/A` explicitly denotes an absent
-audio layer. Visual style is optional. An omitted reference-mode summary is
-projected from the document's existing shot descriptions. Exact dialogue, visible
+audio layer. Visual style is optional. An omitted reference-mode summary names
+subjects with typed target-shot appearances, excluding replaced source figures,
+or the described scene when there are none. It
+does not copy shot prose into another section. Exact dialogue, visible
 text and constraints remain literal. Normal multiline prose and dialogue are preserved byte-for-byte. H3's
 reserved markers and section headings are rejected at this format boundary;
 they are never escaped, normalized or truncated. RichText's typed subject/reference
@@ -87,6 +89,12 @@ The independent `ruashots/open-h3-ir` project was inspected at commit
   identifies the runtime frame grid and documents the published instruction lines.
 - [plan.py](https://github.com/ruashots/open-h3-ir/blob/fd031e136ae3d89147324c0d1b2aa65e838c21f5/h3ir/plan.py)
   documents reference presentation order and the independent audio/socket indices.
+- [render.py](https://github.com/ruashots/open-h3-ir/blob/fd031e136ae3d89147324c0d1b2aa65e838c21f5/h3ir/render.py#L266-L289)
+  supplies the subject-only default for an omitted reference summary. Native
+  compilation uses that default without copying narrative into the summary,
+  and limits it to typed target appearances so removed source figures and unused
+  definitions are not placed into the target. Explicit summaries and detailed
+  descriptions remain unchanged.
 - [base-en.txt](https://github.com/ruashots/open-h3-ir/blob/fd031e136ae3d89147324c0d1b2aa65e838c21f5/h3ir/prompts/base-en.txt)
   and [ref-en.txt](https://github.com/ruashots/open-h3-ir/blob/fd031e136ae3d89147324c0d1b2aa65e838c21f5/h3ir/prompts/ref-en.txt)
   reproduce MiniMax's public format guides, including marker spelling and section

@@ -85,6 +85,56 @@ before consuming a response and does not access a live service. Original media
 and synthetic observation cards remain distinct: supplied cards are not proof
 of real audio/video perception.
 
+Recordings that contain diagnostics-only repairs explicitly select
+`planner.RepairDiagnosticsOnly` so their complete original requests remain
+unchanged. Default-protocol repair acceptance is tested separately with injected
+models, including reference-marker omission/duplication, candidate feedback,
+writer isolation and bounded failure. Those regressions are native contract
+tests, not fresh real-model validation of `RepairValidatedDocument`.
+
+Pinned v1.2 renderer artifacts remain unchanged. Their complete historical Result
+comparison is reported separately from current native acceptance. Replay permits
+only the v1.3 renderer identity, the structural default summary when the original
+Document summary was absent, the resulting prompt/artifact hashes and the
+independently counted rendered-prompt budget. Every other prompt section, the
+Document, manifest, source/profile hashes, model requests, paid-call usage and all
+other Result fields remain subject to complete comparison, with one explicitly
+checked diagnostic consequence: the shorter summary can remove the original
+`H3-token-band` warning when its token count enters the unchanged budget band.
+The public validator independently verifies the old and new token warning; every
+other finding remains unchanged. This is not a relaxation of a business rule or a
+new live-model recording. Default summary labels are limited to typed appearing
+subjects that are not removed by a replacement.
+
+`go test ./integration -run '^TestLiveReferencePerceptionCompileAndRepair$' -count=1 -v`
+provides a separate live acceptance path. It requires
+`CONTEXTIR_LIVE_REFERENCE=1` and explicit `CONTEXTIR_LIVE_API_KEY`,
+`CONTEXTIR_LIVE_BASE_URL` and `CONTEXTIR_LIVE_MODEL` values. The baseline sends the
+original PNG pixels through real perception and compilation. Missing/duplicated
+binding cases copy that accepted real candidate in memory and change only the
+opaque binding. Their first public-planner response is an explicitly recorded
+candidate with zero new paid usage. It must pass locked-field and core validation,
+fail the binding guard and reach a subsequent real model request as the exact
+previous document. These cases reuse the baseline request and observation; they
+are planner-resume acceptance, not fresh perception or full compilation. Final
+rendered binding counts and a real composition review must pass within the same
+two-repair budget. Logs retain safe hashes, field counts, finding codes and actual
+usage. Default test runs skip these paid calls, and a skipped or failed live run
+is not successful acceptance.
+
+`TestLiveProductionReferenceCases` is a separate gated check of private production
+inputs and unmodified historical failed candidates. It requires
+`CONTEXTIR_LIVE_PRODUCTION_CASES=1`, `CONTEXTIR_LIVE_CASES_DIR` and the same explicit
+API settings. These records describe external media bindings without image
+perception; the test does not add synthetic assets or observations. It separately
+reports fresh full compilation and actual model repair of recorded candidates.
+The historical first candidate incurs no new paid call. Native strict outer
+schema and the requested/returned model identities are recorded explicitly;
+provider-normalized names require `CONTEXTIR_LIVE_ALLOWED_RESPONSE_MODELS`.
+This is current-library acceptance of production inputs, not byte-identical
+replay of a deployed application. Private fixtures and run logs stay in the
+ignored `.ci/` directory and must not be committed.
+
 IR/schema validity, final prose semantics and actual H3 video quality require
 different checks. None of these tests proves equivalence to MiniMax's private
 Context-IR implementation or guarantees generated-video fidelity.

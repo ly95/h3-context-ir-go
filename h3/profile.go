@@ -10,7 +10,7 @@ import (
 
 const (
 	FormatVersion   = "minimax-h3/prompt-v1"
-	CompilerVersion = "contextir-h3/v1.2"
+	CompilerVersion = "contextir-h3/v1.3"
 	ArtifactVersion = "contextir-h3/artifact-v1"
 )
 

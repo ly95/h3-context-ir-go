@@ -5,6 +5,32 @@ package does not contain a provider client or media analyzer. Its fake-model tes
 verify contracts, accounting, isolation, and error propagation; they do not validate
 the model's interpretation of user intent or perception of real media.
 
+`Options.ValidateDocument` can enforce additional content contracts. If a candidate
+passes decoding, locked-field checks and core validation but fails that callback,
+the next configured repair receives `repair.previous_document` together with the
+typed diagnostics. Only the latest eligible candidate is included; authoritative
+evidence stays in the outer input. Invalid wire output, failed locked/core checks
+and provider failures do not replay rejected model text or an older candidate.
+`StopValidation` still stops without another call. Repair requests also constrain
+events in each pinned shot to that shot's half-open time interval. The initial
+request contract remains unchanged.
+For source-free requests, the repair schema also excludes invented media
+references, source attributions and media-retention metadata while retaining
+ordinary user/creative subjects. Caller-owned external literals remain literal
+text; they do not become native H3 reference IDs or claims of inspected media.
+
+`RepairProtocol` defaults to `RepairValidatedDocument`. Integrations pinned to the
+older diagnostics-only model contract can explicitly choose
+`RepairDiagnosticsOnly`; that protocol sends neither the candidate nor the
+additional per-shot repair schema. Historical strict replays select their
+original protocol and still compare the complete request unchanged. They do not
+establish acceptance of the new repair protocol by a live model.
+
+Return structured `contextir.Error.Issues` describing the content to repair;
+untyped errors retain generic, content-safe diagnostics. Candidate feedback does
+not infer a host's binding rules, change the retry budget, correct model output
+mechanically or establish real-model acceptance.
+
 The default policy requires explicit `Evidence.Coverage` with `Status: complete`.
 Images require visual inspection, audio requires audio inspection, and video
 requires visual plus audio inspection, or an explicit declaration that its audio

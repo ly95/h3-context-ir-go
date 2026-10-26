@@ -128,7 +128,7 @@ func remainingWardrobeFreshCompile(t *testing.T) (Brief, LicenceDecision) {
 		}
 		return response.Response, nil
 	})
-	c, err := New(model, nil, Options{Profile: metadata.Options.Profile, FramePolicy: metadata.Options.Frame, FailurePolicy: metadata.Options.Failure, ScopeConflictPolicy: metadata.Options.Scope, ClarificationPolicy: metadata.Options.Clarification, MaxStructureRetries: metadata.Options.StructureRetries, Planner: planner.Options{MaxRetries: metadata.Options.PlannerRetries, AllowPartialPerception: metadata.Options.Partial}})
+	c, err := New(model, nil, Options{Profile: metadata.Options.Profile, FramePolicy: metadata.Options.Frame, FailurePolicy: metadata.Options.Failure, ScopeConflictPolicy: metadata.Options.Scope, ClarificationPolicy: metadata.Options.Clarification, MaxStructureRetries: metadata.Options.StructureRetries, Planner: planner.Options{MaxRetries: metadata.Options.PlannerRetries, RepairProtocol: planner.RepairDiagnosticsOnly, AllowPartialPerception: metadata.Options.Partial}})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -142,11 +142,12 @@ func remainingWardrobeFreshCompile(t *testing.T) (Brief, LicenceDecision) {
 	if err := json.Unmarshal(remainingSemanticFile(t, tape, caseID+"/result.json"), &expected); err != nil {
 		t.Fatal(err)
 	}
+	expected.Result = remainingCurrentRecordedResult(t, r, expected.Result)
 	actual, _ := json.Marshal(r)
 	want, _ := json.Marshal(expected.Result)
 	if !bytes.Equal(actual, want) {
-		t.Fatal("same actual complete recording did not reproduce the full normalized Result/Document/Artifact/usage")
+		t.Fatal("same complete recording did not preserve the full Result with only its controlled renderer projection", remainingRecordedResultDifferenceFields(t, actual, want))
 	}
-	t.Logf("actual-fresh-compile=%s attempts=%d prompt-sha256=%s", tape.Binary, index, r.Artifact.PromptSHA256)
+	t.Logf("historical-real-api-replay=%s repair-protocol=%s current-native-renderer=%s attempts=%d prompt-sha256=%s", tape.Binary, planner.RepairDiagnosticsOnly, h3.CompilerVersion, index, r.Artifact.PromptSHA256)
 	return b, *r.Licence
 }

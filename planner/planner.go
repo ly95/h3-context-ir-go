@@ -27,6 +27,7 @@ type Perceiver interface {
 type Options struct {
 	ValidateDocument         func(contextir.Request, contextir.Document) error
 	MaxRetries               int
+	RepairProtocol           RepairProtocol
 	AllowPartialPerception   bool
 	AllowUnspecifiedCoverage bool
 }
@@ -51,6 +52,12 @@ func New(model Model, perceiver Perceiver, options Options) (*Planner, error) {
 	}
 	if options.MaxRetries < 0 || options.MaxRetries > 3 {
 		return nil, issueError(contextir.CodeInvalid, "setup", "options.max_retries", "MaxRetries must be between zero and three.", nil)
+	}
+	if options.RepairProtocol == "" {
+		options.RepairProtocol = RepairValidatedDocument
+	}
+	if options.RepairProtocol != RepairValidatedDocument && options.RepairProtocol != RepairDiagnosticsOnly {
+		return nil, issueError(contextir.CodeInvalid, "setup", "options.repair_protocol", "Choose validated_document/v1 or diagnostics_only/v1 for model repair requests.", nil)
 	}
 	return &Planner{model: model, perceiver: perceiver, options: options}, nil
 }
@@ -97,25 +104,38 @@ func (p *Planner) PlanWithEvidence(ctx context.Context, request contextir.Reques
 		return result, issueError(contextir.CodeInvalid, "request", "response_schema", "The explicit request cannot be represented by the planning schema.", err)
 	}
 	var diagnostics []contextir.Issue
+	var repair *repairContext
 	for attempt := 1; attempt <= p.options.MaxRetries+1; attempt++ {
 		if err := canceled(ctx, "plan"); err != nil {
 			return result, err
+		}
+		if len(diagnostics) > 0 && p.options.RepairProtocol == RepairValidatedDocument {
+			schema, err = repairResponseSchema(request)
+			if err != nil {
+				return result, issueError(contextir.CodeInvalid, "plan", "response_schema", "The explicit request cannot be represented by the repair schema.", err)
+			}
 		}
 		input, err := json.Marshal(struct {
 			PromptVersion string               `json:"prompt_version"`
 			Request       contextir.Request    `json:"request"`
 			Evidence      []contextir.Evidence `json:"evidence"`
 			Diagnostics   []contextir.Issue    `json:"diagnostics,omitempty"`
-		}{PromptVersion, request, evidence, diagnostics})
+			Repair        *repairContext       `json:"repair,omitempty"`
+		}{PromptVersion, request, evidence, diagnostics, repair})
 		if err != nil {
 			return result, issueError(contextir.CodeInvalid, "request", "request", "The request cannot be encoded.", err)
 		}
 		if err := canceled(ctx, "plan"); err != nil {
 			return result, err
 		}
+		system := systemPrompt
+		if repair != nil {
+			system += "\n" + contentRepairInstruction
+		}
+		repair = nil
 		response, callErr := p.model.Generate(ctx, contextir.ModelRequest{
 			Stage:          "plan",
-			System:         systemPrompt,
+			System:         system,
 			Input:          input,
 			ResponseSchema: append(json.RawMessage(nil), schema...),
 		})
@@ -152,6 +172,7 @@ func (p *Planner) PlanWithEvidence(ctx context.Context, request contextir.Reques
 			document.Evidence = cloneEvidence(evidence)
 			err = contextir.Validate(document)
 		}
+		guarded := false
 		if err == nil && p.options.ValidateDocument != nil {
 			data, copyErr := json.Marshal(document)
 			if copyErr != nil {
@@ -161,6 +182,7 @@ func (p *Planner) PlanWithEvidence(ctx context.Context, request contextir.Reques
 			if copyErr = json.Unmarshal(data, &snapshot); copyErr != nil {
 				return result, issueError(contextir.CodeInvalid, "plan", "document", "The guarded document cannot be copied.", copyErr)
 			}
+			guarded = true
 			err = p.options.ValidateDocument(cloneRequest(request), snapshot)
 		}
 		if canceledErr := canceled(ctx, "plan"); canceledErr != nil {
@@ -179,6 +201,10 @@ func (p *Planner) PlanWithEvidence(ctx context.Context, request contextir.Reques
 			return result, outputErr
 		}
 		diagnostics = outputErr.Issues
+		if guarded && p.options.RepairProtocol == RepairValidatedDocument {
+			document.Evidence = nil
+			repair = &repairContext{PreviousDocument: document}
+		}
 	}
 	panic("planner: unreachable bounded attempt loop")
 }

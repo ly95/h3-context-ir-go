@@ -9,6 +9,14 @@ import (
 )
 
 func responseSchema(request contextir.Request) (json.RawMessage, error) {
+	return buildResponseSchema(request, false)
+}
+
+func repairResponseSchema(request contextir.Request) (json.RawMessage, error) {
+	return buildResponseSchema(request, true)
+}
+
+func buildResponseSchema(request contextir.Request, repair bool) (json.RawMessage, error) {
 	var schema map[string]any
 	decoder := json.NewDecoder(bytes.NewReader(contextir.DocumentSchema()))
 	decoder.UseNumber()
@@ -42,7 +50,14 @@ func responseSchema(request contextir.Request) (json.RawMessage, error) {
 	if len(request.PinnedShots) > 0 {
 		items := make([]any, 0, len(request.PinnedShots))
 		for _, shot := range request.PinnedShots {
-			items = append(items, map[string]any{"allOf": []any{map[string]any{"$ref": "#/$defs/Shot"}, map[string]any{"properties": map[string]any{"id": map[string]any{"const": shot.ID}, "start_ms": map[string]any{"const": shot.Start}, "end_ms": map[string]any{"const": shot.End}}}}})
+			props := map[string]any{"id": map[string]any{"const": shot.ID}, "start_ms": map[string]any{"const": shot.Start}, "end_ms": map[string]any{"const": shot.End}}
+			if repair {
+				props["events"] = map[string]any{"items": map[string]any{"allOf": []any{
+					map[string]any{"$ref": "#/$defs/Event"},
+					map[string]any{"properties": map[string]any{"at_ms": map[string]any{"type": "integer", "minimum": int64(shot.Start), "maximum": int64(shot.End - 1)}}},
+				}}}
+			}
+			items = append(items, map[string]any{"allOf": []any{map[string]any{"$ref": "#/$defs/Shot"}, map[string]any{"properties": props}}})
 		}
 		document["shots"] = map[string]any{"type": "array", "prefixItems": items, "items": false, "minItems": len(items), "maxItems": len(items)}
 	}
@@ -141,6 +156,34 @@ func responseSchema(request contextir.Request) (json.RawMessage, error) {
 		} else {
 			attribution["source"] = map[string]any{"enum": sources}
 			attribution["role"] = map[string]any{"type": "string", "enum": subjectRoles}
+		}
+	}
+	if repair && len(request.Assets) == 0 {
+		document["references"] = lockedArray([]contextir.Reference{})
+		subject, err := properties("Subject")
+		if err != nil {
+			return nil, err
+		}
+		subject["sources"] = lockedArray([]contextir.Attribution{})
+		subject["retention"] = map[string]any{"type": "string", "const": ""}
+		subject["retention_details"] = map[string]any{"type": "string", "const": ""}
+		claim, err := properties("Claim")
+		if err != nil {
+			return nil, err
+		}
+		claim["sources"] = lockedArray([]contextir.SourceRef{})
+		span, ok := defs["Span"].(map[string]any)
+		if !ok {
+			return nil, errors.New("document schema is missing rich-text spans")
+		}
+		spanProperties, err := properties("Span")
+		if err != nil {
+			return nil, err
+		}
+		delete(spanProperties, "reference_id")
+		span["oneOf"] = []any{
+			map[string]any{"required": []string{"text"}, "maxProperties": 1},
+			map[string]any{"required": []string{"subject_id"}, "maxProperties": 1},
 		}
 	}
 	return json.Marshal(schema)

@@ -279,8 +279,8 @@ func TestOptionalStyleAndSummaryAreProjectedWithoutGuessing(t *testing.T) {
 	d.Style = ""
 	d.Summary = nil
 	a := requireCompile(t, d, h3.OfficialProfile())
-	if strings.Contains(a.Prompt, "photographic") || !strings.Contains(a.Prompt, "summary:\n[reference generation] A close shot frames <Subject 1>") {
-		t.Fatalf("optional metadata was invented or the existing shot descriptions were lost:\n%s", a.Prompt)
+	if strings.Contains(a.Prompt, "photographic") || !strings.Contains(a.Prompt, "summary:\n[reference generation] The target video shows <Subject 1>.") || strings.Count(a.Prompt, "A close shot frames <Subject 1>") != 1 {
+		t.Fatalf("optional metadata was invented or the existing shot descriptions were copied or lost:\n%s", a.Prompt)
 	}
 }
 

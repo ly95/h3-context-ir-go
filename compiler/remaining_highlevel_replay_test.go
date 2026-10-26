@@ -175,14 +175,15 @@ func TestRemainingHighlevelRecordedCompile(t *testing.T) {
 			if err := json.Unmarshal(remainingSemanticFile(t, tape, resultFile), &expected); err != nil {
 				t.Fatal(err)
 			}
-			if r.Artifact.SHA256 != expected.Result.Artifact.SHA256 || r.Artifact.Prompt != expected.Result.Artifact.Prompt || !reflect.DeepEqual(r.Document, expected.Result.Document) {
-				t.Fatal("same real model bytes did not reproduce the original final Document/Artifact")
+			expected.Result = remainingCurrentRecordedResult(t, r, expected.Result)
+			if !reflect.DeepEqual(r.Artifact, expected.Result.Artifact) || !reflect.DeepEqual(r.Document, expected.Result.Document) {
+				t.Fatal("same real model bytes did not preserve the original Document and controlled current-renderer Artifact")
 			}
 			if recording.Schema != "" {
 				actualJSON, _ := json.Marshal(r)
 				expectedJSON, _ := json.Marshal(expected.Result)
 				if !bytes.Equal(actualJSON, expectedJSON) {
-					t.Fatal("complete current Result/call accounting differs from actual recording")
+					t.Fatal("complete current Result differs from the recorded result with only its controlled renderer projection", remainingRecordedResultDifferenceFields(t, actualJSON, expectedJSON))
 				}
 			}
 			if strings.HasPrefix(entry.ID, "transcript-") {
@@ -195,7 +196,7 @@ func TestRemainingHighlevelRecordedCompile(t *testing.T) {
 					t.Fatal(err)
 				}
 			}
-			t.Logf("actual-recording=%s model-calls=%d prompt-sha256=%s", tape.Binary, index, r.Artifact.PromptSHA256)
+			t.Logf("historical-real-api-replay=%s current-native-renderer=%s model-calls=%d prompt-sha256=%s", tape.Binary, h3.CompilerVersion, index, r.Artifact.PromptSHA256)
 		})
 	}
 }

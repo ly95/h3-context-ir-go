@@ -307,6 +307,16 @@ still fail; base first/last-frame bindings do not become reference keyframes.
 Every model stage has bounded, explicitly configured repair calls and actionable
 schema diagnostics. Rejected model content with valid usage can use that budget;
 HTTP/network failures remain transport failures with their usage validity intact.
+When an additional document validator rejects an otherwise valid candidate, the
+writer repair receives the previous candidate projected back to its current wire
+contract, using the same role-scoped asset projection as the original writer
+request. Host-restored locators are not newly exposed through the candidate;
+locators already permitted by that projection retain their existing visibility.
+Host references, style, fixed dialogue, camera events, voice bindings, evidence
+and derived subject shot lists remain outside writer-owned fields. Canonical
+subject definitions remain available even
+when final host projection omitted an unused edit-source identity. Invalid wire
+output is not included as repair context.
 Transport failures, invalid usage, cancellation, missing perception and unsupported
 modes never trigger another model or an automatic mode change. The default
 failure policy returns the failure and all reported call usage. `Result.Calls`

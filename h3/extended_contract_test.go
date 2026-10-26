@@ -55,6 +55,11 @@ func TestRemovedFigureUsesReplacementTransferScopeWithoutClaimingItsAppearance(t
 	if !strings.Contains(a.Prompt, "<Subject 1> (appears in [Shot 2]): attribute_transfer") {
 		t.Fatal("low-level caller's explicit transfer scope was changed", a.Prompt)
 	}
+	d.Summary = nil
+	a = requireCompile(t, d, h3.OfficialProfile())
+	if !strings.Contains(a.Prompt, "summary:\n[video editing + reference generation] The target video is an edited version of <Video 1>. The target video shows <Subject 2>.\n\n") {
+		t.Fatal("the default summary placed the removed source figure into the target", a.Prompt)
+	}
 }
 
 func TestSoundtrackSocketHasExactlyOneUnambiguousSource(t *testing.T) {
