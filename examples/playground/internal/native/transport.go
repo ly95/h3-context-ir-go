@@ -131,7 +131,7 @@ func (c *Model) send(ctx context.Context, request contextir.ModelRequest, mime s
 	httpRequest.Header.Set("Authorization", "Bearer "+c.apiKey)
 	httpRequest.Header.Set("Content-Type", "application/json")
 	httpRequest.Header.Set("Accept", "text/event-stream")
-	httpRequest.Header.Set("User-Agent", "contextir-playground/0.2.0")
+	httpRequest.Header.Set("User-Agent", "contextir-playground/0.3.0")
 	httpRequest.Header.Set("x-opencode-session", c.session)
 	response, callErr := c.client.Do(httpRequest)
 	if callErr != nil {

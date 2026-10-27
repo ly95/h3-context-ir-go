@@ -99,7 +99,7 @@ go run ./examples/manual \
 在已有 Go module 中添加依赖：
 
 ```sh
-go get github.com/ly95/h3-context-ir-go@v0.2.0
+go get github.com/ly95/h3-context-ir-go@v0.3.0
 ```
 
 业务入口接收用户的完整原文，纯文本请求无需感知器：
@@ -165,6 +165,6 @@ make check
 
 项目参考固定版本的 [OpenH3-IR](https://github.com/ruashots/open-h3-ir/tree/fd031e136ae3d89147324c0d1b2aa65e838c21f5) 与 MiniMax 公开格式指南，不包含 MiniMax 的模型权重或托管 Context-IR 内部实现。
 
-当前 Go module 版本为 `v0.2.0`，修复协议和渲染变化的升级说明见 [CHANGELOG](CHANGELOG.md)。`v0.1.0` 是 module path `github.com/ly95/h3-context-ir-go` 的首个发布版本，根包名为 `contextir`。保存文档的版本与 Schema ID 保留原标识，与 Go module 的发布版本分别管理。
+当前 Go module 版本为 `v0.3.0`，多参考文件、原生媒体示例和兼容性说明见 [CHANGELOG](CHANGELOG.md)。`v0.1.0` 是 module path `github.com/ly95/h3-context-ir-go` 的首个发布版本，根包名为 `contextir`。保存文档的版本与 Schema ID 保留原标识，与 Go module 的发布版本分别管理。
 
 本项目使用 [Apache License 2.0](LICENSE)。第三方词表、来源样本和测试素材的原有声明见 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)、`third_party/` 与 [source_manifest.json](conformance/source_manifest.json)。模型权重、服务和调用方媒体的许可独立于本库。

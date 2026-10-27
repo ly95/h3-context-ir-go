@@ -35,7 +35,7 @@ func TestNativeMediaTransportPreservesOriginalBytesAndContract(t *testing.T) {
 				if r.Method != http.MethodPost || r.URL.Path != "/native/models/gemini-test:streamGenerateContent" || r.URL.RawQuery != "alt=sse" {
 					t.Error("native streaming endpoint changed")
 				}
-				if r.Header.Get("Authorization") != "Bearer private-test-key" || r.Header.Get("x-opencode-session") != "stable-test-session" || r.Header.Get("User-Agent") != "contextir-native-live/0.2.0" {
+				if r.Header.Get("Authorization") != "Bearer private-test-key" || r.Header.Get("x-opencode-session") != "stable-test-session" || r.Header.Get("User-Agent") != "contextir-native-live/0.3.0" {
 					t.Error("explicit authentication, client identity or session was omitted")
 				}
 				var body struct {

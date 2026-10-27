@@ -397,7 +397,7 @@ func modelWriteEvent(t *testing.T, w http.ResponseWriter, event any) {
 
 func modelReadWire(t *testing.T, r *http.Request) modelWireRequest {
 	t.Helper()
-	if r.Method != http.MethodPost || r.URL.Path != "/native/models/gemini-test:streamGenerateContent" || r.URL.RawQuery != "alt=sse" || r.Header.Get("Authorization") != "Bearer private-test-key" || r.Header.Get("x-opencode-session") != "stable-test-session" || r.Header.Get("User-Agent") != "contextir-playground/0.2.0" {
+	if r.Method != http.MethodPost || r.URL.Path != "/native/models/gemini-test:streamGenerateContent" || r.URL.RawQuery != "alt=sse" || r.Header.Get("Authorization") != "Bearer private-test-key" || r.Header.Get("x-opencode-session") != "stable-test-session" || r.Header.Get("User-Agent") != "contextir-playground/0.3.0" {
 		t.Error("the explicit native endpoint, authentication, client identity or session changed")
 	}
 	var body modelWireRequest
