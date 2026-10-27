@@ -1,0 +1,1706 @@
+{
+  "composition_reviews": [
+    {
+      "version": "contextir/composition-review/v10",
+      "required": true,
+      "passed": true,
+      "calls": [
+        {
+          "stage": "semantic_review",
+          "attempt": 1,
+          "model": "gemini-4-argon",
+          "usage": {
+            "input_tokens": 4880,
+            "output_tokens": 28
+          },
+          "valid": true
+        }
+      ]
+    }
+  ],
+  "usage_complete": true,
+  "clarification_policy": "require",
+  "mode_decision": {
+    "clarification_policy": "require",
+    "confidence_kind": "routing_policy",
+    "aspect_mismatch": false,
+    "needs_clarification": false,
+    "mode": "ref2va",
+    "confidence": 1,
+    "rule": "caller-override",
+    "signals": [
+      "Mode follows explicit structured choices and media socket requirements."
+    ]
+  },
+  "scope_decision": {
+    "music_constraint": "no_music",
+    "conflict_policy": "reject",
+    "requested": {
+      "speech": false,
+      "music": false,
+      "onscreen_text": true,
+      "magnitude": ""
+    },
+    "forbidden": {
+      "speech": true,
+      "music": true,
+      "onscreen_text": false,
+      "magnitude": ""
+    },
+    "allowed": {
+      "speech": false,
+      "music": false,
+      "onscreen_text": true,
+      "magnitude": "plain"
+    },
+    "dialogue": [],
+    "onscreen_text": [],
+    "reasoning": "The caller requests preserving the video's already visible words (onscreen_text requested: true, though no specific strings are provided in the text). The intent explicitly forbids dialogue and music ('silent edit', 'Add no dialogue, music, sound or new lettering'). While it forbids 'new lettering', it explicitly demands preserving 'already visible words', so onscreen_text as a content class is permitted/requested rather than wholly forbidden.",
+    "calls": [
+      {
+        "stage": "scope",
+        "attempt": 1,
+        "model": "gemini-4-argon",
+        "usage": {
+          "input_tokens": 1538,
+          "output_tokens": 162
+        },
+        "valid": true
+      }
+    ]
+  },
+  "licence": {
+    "reference_permissions": {
+      "action": true,
+      "framing": true,
+      "lighting": true,
+      "medium": true,
+      "palette": true,
+      "wardrobe": true
+    },
+    "medium_decision": {
+      "rendering_permission": {
+        "kind": "preserve",
+        "disposition": "preserve",
+        "operation_quote": "",
+        "target": "",
+        "reasoning": "The caller requests a silent edit of the supplied video preserving its layout, action order, transitions, and visible words, with no instruction to transform or restyle the rendering or specify a new target medium/style.",
+        "calls": [
+          {
+            "stage": "rendering_permission",
+            "attempt": 1,
+            "model": "gemini-4-argon",
+            "usage": {
+              "input_tokens": 888,
+              "output_tokens": 76
+            },
+            "valid": true
+          }
+        ]
+      },
+      "disposition": "preserve",
+      "operation_quote": "",
+      "target": "",
+      "requested_style": "",
+      "reference_medium": "live-action",
+      "requested_medium": "",
+      "treatments": [],
+      "reasoning": "The reference video is photorealistic live-action footage ('Cinematic, photorealistic, neo-noir urban night aesthetic'). The user requests a silent edit preserving the observed video without specifying any new rendering medium, style phrase, or visual treatments.",
+      "calls": [
+        {
+          "stage": "rendering_permission",
+          "attempt": 1,
+          "model": "gemini-4-argon",
+          "usage": {
+            "input_tokens": 888,
+            "output_tokens": 76
+          },
+          "valid": true
+        },
+        {
+          "stage": "medium",
+          "attempt": 1,
+          "model": "gemini-4-argon",
+          "usage": {
+            "input_tokens": 2339,
+            "output_tokens": 292
+          },
+          "valid": true
+        }
+      ]
+    },
+    "identity": [
+      {
+        "descriptor_source": "reference",
+        "kind": "person",
+        "label": "<Subject 1>",
+        "descriptor": "An East Asian adult with a serious, contemplative expression",
+        "retained_attributes": [
+          "dark hair in a topknot with shaved sides",
+          "black tactical or utility jacket",
+          "dark cargo pants",
+          "wet skin and clothing from rain"
+        ],
+        "requested_attributes": [],
+        "request_quote": "",
+        "wardrobe_attributes": [
+          "black tactical or utility jacket",
+          "dark cargo pants"
+        ]
+      }
+    ],
+    "governs": {
+      "action": "reference",
+      "framing": "reference",
+      "lighting": "reference",
+      "medium": "reference",
+      "palette": "reference",
+      "wardrobe": "reference"
+    },
+    "reasons": {
+      "action": "The request asks to preserve the supplied video's observed action order and transitions, allowing only a natural final hold to fill the duration rather than introducing a new action.",
+      "framing": "The request explicitly preserves the supplied video's observed layout and transitions without requesting a new camera composition, viewpoint, or shot scale.",
+      "lighting": "The request does not specify any lighting changes, so the edit source's nighttime urban lighting governs.",
+      "medium": "The request preserves the supplied live-action video without asking for a new rendering medium or style transformation.",
+      "palette": "The request makes no color or tonal grading instruction, leaving the reference video's palette in force.",
+      "wardrobe": "The request specifies no clothing or accessory changes, so the subject's observed dark tactical wardrobe is retained from the reference."
+    },
+    "transform_phrase": null,
+    "transform_target": "",
+    "medium_transferred": false,
+    "style": {
+      "observed_phrase": "Cinematic, photorealistic, neo-noir urban night aesthetic, low-key, moody nighttime urban lighting with cool blue-grey streetlights, atmospheric rain mist, warm amber window glow from adjacent buildings, and colorful bokeh from distant city skyscrapers",
+      "phrase": "Cinematic, photorealistic, neo-noir urban night aesthetic, low-key, moody nighttime urban lighting with cool blue-grey streetlights, atmospheric rain mist, warm amber window glow from adjacent buildings, and colorful bokeh from distant city skyscrapers",
+      "source": "reference",
+      "reference_medium": "live-action",
+      "requested_medium": "",
+      "discrepancy": false,
+      "note": ""
+    },
+    "subjects": [
+      {
+        "label": "<Subject 1>",
+        "kind": "person",
+        "sources": [
+          "<Video 1>"
+        ],
+        "descriptor": "An East Asian adult with a serious, contemplative expression",
+        "attributes": [
+          "dark hair in a topknot with shaved sides",
+          "black tactical or utility jacket",
+          "dark cargo pants",
+          "wet skin and clothing from rain"
+        ],
+        "pose": [
+          "walking along a wet bridge",
+          "standing still looking toward the city skyline",
+          "looking down in profile"
+        ],
+        "pose_licensed": false,
+        "retention": "fully_preserved",
+        "retention_note": "",
+        "appears_in": [],
+        "taken_over_by": ""
+      }
+    ],
+    "calls": [
+      {
+        "stage": "rendering_permission",
+        "attempt": 1,
+        "model": "gemini-4-argon",
+        "usage": {
+          "input_tokens": 888,
+          "output_tokens": 76
+        },
+        "valid": true
+      },
+      {
+        "stage": "medium",
+        "attempt": 1,
+        "model": "gemini-4-argon",
+        "usage": {
+          "input_tokens": 2339,
+          "output_tokens": 292
+        },
+        "valid": true
+      },
+      {
+        "stage": "identity_requirements",
+        "attempt": 1,
+        "model": "gemini-4-argon",
+        "usage": {
+          "input_tokens": 2183,
+          "output_tokens": 348
+        },
+        "valid": true
+      },
+      {
+        "stage": "licence",
+        "attempt": 1,
+        "model": "gemini-4-argon",
+        "usage": {
+          "input_tokens": 3554,
+          "output_tokens": 483
+        },
+        "valid": true
+      }
+    ]
+  },
+  "budget": {
+    "prompt_tokens": 853,
+    "target_video_rows": 102816,
+    "target_audio_rows": 1200,
+    "known_reference_rows": 0,
+    "unknown_reference_rows": [
+      "<Video 1>"
+    ],
+    "in_trained_band": true
+  },
+  "findings": [
+    {
+      "rule": "R15-wardrobe-not-restated",
+      "severity": "WARN",
+      "msg": "[Shot 2] names the subject but not the garments"
+    }
+  ],
+  "status": "compiled",
+  "version": "contextir/compiler/v1",
+  "brief": {
+    "seconds_explicit": true,
+    "aspect_explicit": true,
+    "intent": "Create a 15-second silent edit of the supplied video. Preserve its observed layout, action order, transitions and already visible words. Extend only a natural final hold if needed. Add no dialogue, music, sound or new lettering.",
+    "assets": [
+      {
+        "preparation_computed": true,
+        "id": "reference-media",
+        "kind": "video",
+        "uri": "upload://4f04793f4ab19a618cf47bd8981496ad7df330c5beb148374ba78ccfceda2fbe",
+        "sha256": "4f04793f4ab19a618cf47bd8981496ad7df330c5beb148374ba78ccfceda2fbe",
+        "metadata": {
+          "duration_ms": 10125,
+          "width": 1280,
+          "height": 356,
+          "fps": {
+            "numerator": 24,
+            "denominator": 1
+          }
+        },
+        "preparation": {
+          "width": 1344,
+          "height": 768
+        },
+        "role": "edit_source"
+      }
+    ],
+    "seconds": 15,
+    "aspect": "16:9",
+    "mode": "ref2va",
+    "constraints": [
+      "no_dialogue"
+    ],
+    "silent": true,
+    "silence_all": true,
+    "creativity": "restrained",
+    "evidence": [
+      {
+        "card": {
+          "asset_id": "reference-media",
+          "summary": "A split-screen comparison video showing two versions of a rainy nighttime urban scene with an East Asian person in dark tactical clothing on a bridge. The left panel is labeled 'your sentence, sent raw' and shows a continuous orbiting shot from front to back as the person walks and stops. The right panel is labeled 'compiled by open-h3-ir' and shows the person from behind before cutting to a close-up profile shot of their face looking downward in the rain, accompanied by rain sounds, footsteps, and ambient synth music.",
+          "subjects": [
+            {
+              "kind": "person",
+              "descriptor": "An East Asian adult with a serious, contemplative expression",
+              "attributes": [
+                "dark hair in a topknot with shaved sides",
+                "black tactical or utility jacket",
+                "dark cargo pants",
+                "wet skin and clothing from rain"
+              ],
+              "pose": [
+                "walking along a wet bridge",
+                "standing still looking toward the city skyline",
+                "looking down in profile"
+              ]
+            }
+          ],
+          "environment": "A rain-slicked pedestrian walkway or bridge at night, bordered by metal railings and dark brick buildings with warm interior lights on one side, overlooking a modern city skyline with illuminated skyscrapers in the distance.",
+          "lighting": "Low-key, moody nighttime urban lighting with cool blue-grey streetlights, atmospheric rain mist, warm amber window glow from adjacent buildings, and colorful bokeh from distant city skyscrapers.",
+          "palette": [
+            "dark slate blue",
+            "charcoal black",
+            "warm amber",
+            "cool cyan",
+            "steel grey"
+          ],
+          "framing": "Side-by-side split-screen comparison with a bottom black caption bar. The left panel moves from a full-body shot to a medium shot and then a rear medium-full shot. The right panel transitions from a rear full-body shot to a close-up profile shot.",
+          "style": "Cinematic, photorealistic, neo-noir urban night aesthetic.",
+          "visible_text": [
+            "your sentence, sent raw",
+            "compiled by open-h3-ir"
+          ],
+          "motion": "In the left panel, the subject walks toward the camera and stops while the camera orbits around to their back. In the right panel, the subject walks away from the camera, followed by a hard cut to a close-up where the subject looks downward in the falling rain.",
+          "camera": "The left panel uses a single continuous shot that tracks forward and then orbits around the subject from front view to back view. The right panel starts with a rear tracking view and cuts to a close-up profile view of the subject's face.",
+          "characterisation": "A gritty, atmospheric side-by-side comparison video featuring an East Asian person with an undercut topknot walking across a wet urban bridge at night in the rain.",
+          "composition": "composed_scene",
+          "music": "Slow, melancholic ambient synth music with sustained pads mixes with continuous falling rain and footsteps on wet pavement.",
+          "analyzer_version": "contextir-playground-native/v1",
+          "model": "gemini-4-argon",
+          "coverage": {
+            "status": "partial",
+            "tracks": [
+              "visual",
+              "audio"
+            ]
+          }
+        },
+        "asset_id": "reference-media",
+        "facts": [
+          {
+            "analyzer_version": "contextir-playground-native/v1",
+            "id": "reference-media.native-1",
+            "text": "The video is presented as a side-by-side split-screen comparison with white text captions along the bottom reading 'your sentence, sent raw' on the left and 'compiled by open-h3-ir' on the right.",
+            "source": {
+              "asset_id": "reference-media",
+              "track": "visual"
+            }
+          },
+          {
+            "analyzer_version": "contextir-playground-native/v1",
+            "id": "reference-media.native-2",
+            "text": "In the left panel ('your sentence, sent raw'), an East Asian person with shaved sides and a topknot wearing a dark jacket walks toward the camera on a wet, rain-slicked walkway at night, then stops as the camera smoothly arcs around their right side to end behind their back.",
+            "source": {
+              "asset_id": "reference-media",
+              "track": "visual"
+            }
+          },
+          {
+            "analyzer_version": "contextir-playground-native/v1",
+            "id": "reference-media.native-3",
+            "text": "In the right panel ('compiled by open-h3-ir'), the scene begins behind the same person facing away down the wet walkway, then cuts to a close-up three-quarter profile shot of the person looking downward with rain falling around them and blurred city lights in the background.",
+            "source": {
+              "asset_id": "reference-media",
+              "track": "visual"
+            }
+          },
+          {
+            "analyzer_version": "contextir-playground-native/v1",
+            "id": "reference-media.native-4",
+            "text": "The audio track contains the continuous sound of falling rain, distinct footsteps walking on a wet surface in the first half, and slow, atmospheric ambient synthesizer music throughout, with no spoken dialogue.",
+            "source": {
+              "asset_id": "reference-media",
+              "track": "audio"
+            }
+          }
+        ],
+        "model": "gemini-4-argon",
+        "analyzer_version": "contextir-playground-native/v1",
+        "limitations": [
+          "No intelligible speech is present in the audio track.",
+          "The original uploaded bytes were sent to the native model. Native sampling and exact temporal coverage are unknown; no extracted frames, observed frame count or invented sample times are claimed. Empty acoustic properties do not establish silence."
+        ],
+        "coverage": {
+          "status": "partial",
+          "tracks": [
+            "visual",
+            "audio"
+          ]
+        }
+      }
+    ],
+    "cards": [
+      {
+        "asset_id": "reference-media",
+        "summary": "A split-screen comparison video showing two versions of a rainy nighttime urban scene with an East Asian person in dark tactical clothing on a bridge. The left panel is labeled 'your sentence, sent raw' and shows a continuous orbiting shot from front to back as the person walks and stops. The right panel is labeled 'compiled by open-h3-ir' and shows the person from behind before cutting to a close-up profile shot of their face looking downward in the rain, accompanied by rain sounds, footsteps, and ambient synth music.",
+        "subjects": [
+          {
+            "kind": "person",
+            "descriptor": "An East Asian adult with a serious, contemplative expression",
+            "attributes": [
+              "dark hair in a topknot with shaved sides",
+              "black tactical or utility jacket",
+              "dark cargo pants",
+              "wet skin and clothing from rain"
+            ],
+            "pose": [
+              "walking along a wet bridge",
+              "standing still looking toward the city skyline",
+              "looking down in profile"
+            ]
+          }
+        ],
+        "environment": "A rain-slicked pedestrian walkway or bridge at night, bordered by metal railings and dark brick buildings with warm interior lights on one side, overlooking a modern city skyline with illuminated skyscrapers in the distance.",
+        "lighting": "Low-key, moody nighttime urban lighting with cool blue-grey streetlights, atmospheric rain mist, warm amber window glow from adjacent buildings, and colorful bokeh from distant city skyscrapers.",
+        "palette": [
+          "dark slate blue",
+          "charcoal black",
+          "warm amber",
+          "cool cyan",
+          "steel grey"
+        ],
+        "framing": "Side-by-side split-screen comparison with a bottom black caption bar. The left panel moves from a full-body shot to a medium shot and then a rear medium-full shot. The right panel transitions from a rear full-body shot to a close-up profile shot.",
+        "style": "Cinematic, photorealistic, neo-noir urban night aesthetic.",
+        "visible_text": [
+          "your sentence, sent raw",
+          "compiled by open-h3-ir"
+        ],
+        "motion": "In the left panel, the subject walks toward the camera and stops while the camera orbits around to their back. In the right panel, the subject walks away from the camera, followed by a hard cut to a close-up where the subject looks downward in the falling rain.",
+        "camera": "The left panel uses a single continuous shot that tracks forward and then orbits around the subject from front view to back view. The right panel starts with a rear tracking view and cuts to a close-up profile view of the subject's face.",
+        "characterisation": "A gritty, atmospheric side-by-side comparison video featuring an East Asian person with an undercut topknot walking across a wet urban bridge at night in the rain.",
+        "composition": "composed_scene",
+        "music": "Slow, melancholic ambient synth music with sustained pads mixes with continuous falling rain and footsteps on wet pavement.",
+        "analyzer_version": "contextir-playground-native/v1",
+        "model": "gemini-4-argon",
+        "coverage": {
+          "status": "partial",
+          "tracks": [
+            "visual",
+            "audio"
+          ]
+        }
+      }
+    ]
+  },
+  "request": {
+    "instruction": "Create a 15-second silent edit of the supplied video. Preserve its observed layout, action order, transitions and already visible words. Extend only a natural final hold if needed. Add no dialogue, music, sound or new lettering.",
+    "mode": "ref2va",
+    "target": {
+      "duration_ms": 15000,
+      "frame_count": 360,
+      "aspect_ratio": "16:9",
+      "fps": {
+        "numerator": 24,
+        "denominator": 1
+      },
+      "width": 1344,
+      "height": 768
+    },
+    "assets": [
+      {
+        "id": "reference-media",
+        "kind": "video",
+        "uri": "upload://4f04793f4ab19a618cf47bd8981496ad7df330c5beb148374ba78ccfceda2fbe",
+        "sha256": "4f04793f4ab19a618cf47bd8981496ad7df330c5beb148374ba78ccfceda2fbe",
+        "metadata": {
+          "duration_ms": 10125,
+          "width": 1280,
+          "height": 356,
+          "fps": {
+            "numerator": 24,
+            "denominator": 1
+          }
+        },
+        "preparation": {
+          "width": 1344,
+          "height": 768
+        }
+      }
+    ],
+    "bindings": [
+      {
+        "source": {
+          "asset_id": "reference-media",
+          "track": "visual"
+        },
+        "role": "edit_source"
+      }
+    ],
+    "constraints": [
+      {
+        "id": "constraint-1",
+        "kind": "requirement",
+        "text": "no_dialogue"
+      },
+      {
+        "id": "compiler-silence",
+        "kind": "silence",
+        "text": "The target has no sound."
+      }
+    ],
+    "allow_creative_additions": false,
+    "allow_generated_dialogue": false,
+    "pinned_shots": [
+      {
+        "id": "shot-1",
+        "start_ms": 0,
+        "end_ms": 5500
+      },
+      {
+        "id": "shot-2",
+        "start_ms": 5500,
+        "end_ms": 15000
+      }
+    ],
+    "addition_scope": {
+      "dialogue": false,
+      "music": false,
+      "visible_text": true
+    }
+  },
+  "structure": {
+    "music_constraint": "no_music",
+    "replacement_targets": {},
+    "style": "Cinematic, photorealistic, neo-noir urban night aesthetic, low-key, moody nighttime urban lighting with cool blue-grey streetlights, atmospheric rain mist, warm amber window glow from adjacent buildings, and colorful bokeh from distant city skyscrapers",
+    "mode": "ref2va",
+    "assets": [
+      {
+        "asset_id": "reference-media",
+        "role": "edit_source",
+        "replaces": ""
+      }
+    ],
+    "shots": [
+      {
+        "subjects": [
+          "subject-1"
+        ],
+        "sync_sound": [],
+        "start_ms": 0,
+        "purpose": "establish",
+        "framing": "medium wide",
+        "action": "In the preserved side-by-side split-screen layout with bottom captions 'your sentence, sent raw' on the left and 'compiled by open-h3-ir' on the right, the East Asian adult in a dark tactical jacket walks forward on the rain-slicked nighttime walkway in the left panel as the camera tracks and begins orbiting around their right side, while in the right panel the same person walks away from the camera down the wet walkway.",
+        "what_changes": "In the left panel the subject walks toward the camera and comes to a stop as the camera begins arcing around their side; in the right panel the subject walks forward away from the camera before the right panel's internal cut.",
+        "camera": {
+          "type": "Tracking Shot",
+          "amplitude": "small",
+          "speed": "slow"
+        }
+      },
+      {
+        "subjects": [
+          "subject-1"
+        ],
+        "sync_sound": [],
+        "start_ms": 5500,
+        "purpose": "resolve",
+        "framing": "medium close",
+        "action": "Maintaining the same side-by-side split-screen comparison and bottom captions, the left panel completes its smooth orbit to end behind the standing subject's back looking toward the illuminated skyline, while the right panel cuts to a close three-quarter profile of the subject looking downward in the falling rain against blurred city bokeh, holding naturally in both panels through the end of the 15-second duration.",
+        "what_changes": "The right panel transitions to a close profile view looking downward in the rain while the left panel finishes arcing behind the subject's back, and both panels settle into a natural extended hold in the falling rain.",
+        "camera": {
+          "type": "Arc Shot",
+          "amplitude": "small",
+          "speed": "slow"
+        }
+      }
+    ],
+    "dialogue": [],
+    "onscreen_text": [],
+    "requested": {
+      "speech": false,
+      "music": false,
+      "onscreen_text": true,
+      "magnitude": ""
+    },
+    "forbidden": {
+      "speech": true,
+      "music": true,
+      "onscreen_text": false,
+      "magnitude": ""
+    },
+    "reasoning": "The user requests a 15-second silent edit of the supplied split-screen comparison video, preserving its observed side-by-side layout, action order, internal transitions, and existing bottom captions ('your sentence, sent raw' on the left and 'compiled by open-h3-ir' on the right), while extending only with a natural final hold to reach 15 seconds and adding no sound, music, dialogue, or new lettering. We structure this in two shots matching the observed progression across the split-screen layout and extending the final state cleanly through 15000ms with empty sync_sound."
+  },
+  "scope": {
+    "speech": false,
+    "music": false,
+    "onscreen_text": true,
+    "magnitude": "plain"
+  },
+  "document": {
+    "version": "contextir/v1",
+    "mode": "ref2va",
+    "target": {
+      "duration_ms": 15000,
+      "frame_count": 360,
+      "aspect_ratio": "16:9",
+      "fps": {
+        "numerator": 24,
+        "denominator": 1
+      },
+      "width": 1344,
+      "height": 768
+    },
+    "assets": [
+      {
+        "id": "reference-media",
+        "kind": "video",
+        "uri": "upload://4f04793f4ab19a618cf47bd8981496ad7df330c5beb148374ba78ccfceda2fbe",
+        "sha256": "4f04793f4ab19a618cf47bd8981496ad7df330c5beb148374ba78ccfceda2fbe",
+        "metadata": {
+          "duration_ms": 10125,
+          "width": 1280,
+          "height": 356,
+          "fps": {
+            "numerator": 24,
+            "denominator": 1
+          }
+        },
+        "preparation": {
+          "width": 1344,
+          "height": 768
+        }
+      }
+    ],
+    "evidence": [
+      {
+        "card": {
+          "asset_id": "reference-media",
+          "summary": "A split-screen comparison video showing two versions of a rainy nighttime urban scene with an East Asian person in dark tactical clothing on a bridge. The left panel is labeled 'your sentence, sent raw' and shows a continuous orbiting shot from front to back as the person walks and stops. The right panel is labeled 'compiled by open-h3-ir' and shows the person from behind before cutting to a close-up profile shot of their face looking downward in the rain, accompanied by rain sounds, footsteps, and ambient synth music.",
+          "subjects": [
+            {
+              "kind": "person",
+              "descriptor": "An East Asian adult with a serious, contemplative expression",
+              "attributes": [
+                "dark hair in a topknot with shaved sides",
+                "black tactical or utility jacket",
+                "dark cargo pants",
+                "wet skin and clothing from rain"
+              ],
+              "pose": [
+                "walking along a wet bridge",
+                "standing still looking toward the city skyline",
+                "looking down in profile"
+              ]
+            }
+          ],
+          "environment": "A rain-slicked pedestrian walkway or bridge at night, bordered by metal railings and dark brick buildings with warm interior lights on one side, overlooking a modern city skyline with illuminated skyscrapers in the distance.",
+          "lighting": "Low-key, moody nighttime urban lighting with cool blue-grey streetlights, atmospheric rain mist, warm amber window glow from adjacent buildings, and colorful bokeh from distant city skyscrapers.",
+          "palette": [
+            "dark slate blue",
+            "charcoal black",
+            "warm amber",
+            "cool cyan",
+            "steel grey"
+          ],
+          "framing": "Side-by-side split-screen comparison with a bottom black caption bar. The left panel moves from a full-body shot to a medium shot and then a rear medium-full shot. The right panel transitions from a rear full-body shot to a close-up profile shot.",
+          "style": "Cinematic, photorealistic, neo-noir urban night aesthetic.",
+          "visible_text": [
+            "your sentence, sent raw",
+            "compiled by open-h3-ir"
+          ],
+          "motion": "In the left panel, the subject walks toward the camera and stops while the camera orbits around to their back. In the right panel, the subject walks away from the camera, followed by a hard cut to a close-up where the subject looks downward in the falling rain.",
+          "camera": "The left panel uses a single continuous shot that tracks forward and then orbits around the subject from front view to back view. The right panel starts with a rear tracking view and cuts to a close-up profile view of the subject's face.",
+          "characterisation": "A gritty, atmospheric side-by-side comparison video featuring an East Asian person with an undercut topknot walking across a wet urban bridge at night in the rain.",
+          "composition": "composed_scene",
+          "music": "Slow, melancholic ambient synth music with sustained pads mixes with continuous falling rain and footsteps on wet pavement.",
+          "analyzer_version": "contextir-playground-native/v1",
+          "model": "gemini-4-argon",
+          "coverage": {
+            "status": "partial",
+            "tracks": [
+              "visual",
+              "audio"
+            ]
+          }
+        },
+        "asset_id": "reference-media",
+        "facts": [
+          {
+            "analyzer_version": "contextir-playground-native/v1",
+            "id": "reference-media.native-1",
+            "text": "The video is presented as a side-by-side split-screen comparison with white text captions along the bottom reading 'your sentence, sent raw' on the left and 'compiled by open-h3-ir' on the right.",
+            "source": {
+              "asset_id": "reference-media",
+              "track": "visual"
+            }
+          },
+          {
+            "analyzer_version": "contextir-playground-native/v1",
+            "id": "reference-media.native-2",
+            "text": "In the left panel ('your sentence, sent raw'), an East Asian person with shaved sides and a topknot wearing a dark jacket walks toward the camera on a wet, rain-slicked walkway at night, then stops as the camera smoothly arcs around their right side to end behind their back.",
+            "source": {
+              "asset_id": "reference-media",
+              "track": "visual"
+            }
+          },
+          {
+            "analyzer_version": "contextir-playground-native/v1",
+            "id": "reference-media.native-3",
+            "text": "In the right panel ('compiled by open-h3-ir'), the scene begins behind the same person facing away down the wet walkway, then cuts to a close-up three-quarter profile shot of the person looking downward with rain falling around them and blurred city lights in the background.",
+            "source": {
+              "asset_id": "reference-media",
+              "track": "visual"
+            }
+          },
+          {
+            "analyzer_version": "contextir-playground-native/v1",
+            "id": "reference-media.native-4",
+            "text": "The audio track contains the continuous sound of falling rain, distinct footsteps walking on a wet surface in the first half, and slow, atmospheric ambient synthesizer music throughout, with no spoken dialogue.",
+            "source": {
+              "asset_id": "reference-media",
+              "track": "audio"
+            }
+          }
+        ],
+        "model": "gemini-4-argon",
+        "analyzer_version": "contextir-playground-native/v1",
+        "limitations": [
+          "No intelligible speech is present in the audio track.",
+          "The original uploaded bytes were sent to the native model. Native sampling and exact temporal coverage are unknown; no extracted frames, observed frame count or invented sample times are claimed. Empty acoustic properties do not establish silence."
+        ],
+        "coverage": {
+          "status": "partial",
+          "tracks": [
+            "visual",
+            "audio"
+          ]
+        }
+      }
+    ],
+    "subjects": [
+      {
+        "kind": "person",
+        "descriptor": "An East Asian adult with a serious, contemplative expression",
+        "attributes": [
+          "dark hair in a topknot with shaved sides",
+          "black tactical or utility jacket",
+          "dark cargo pants",
+          "wet skin and clothing from rain"
+        ],
+        "origin": "observed",
+        "id": "subject-1",
+        "description": "An East Asian adult with a serious, contemplative expression; dark hair in a topknot with shaved sides, black tactical or utility jacket, dark cargo pants, wet skin and clothing from rain",
+        "sources": [
+          {
+            "source": {
+              "asset_id": "reference-media",
+              "track": "visual"
+            },
+            "role": "edit_source"
+          }
+        ],
+        "retention": "fully_preserved",
+        "retention_details": "Preserve this canonical target identity and its listed stable attributes.",
+        "shot_ids": [
+          "shot-1",
+          "shot-2"
+        ]
+      }
+    ],
+    "references": [
+      {
+        "id": "reference-reference-media-1",
+        "kind": "video",
+        "source": {
+          "asset_id": "reference-media",
+          "track": "visual"
+        },
+        "roles": [
+          "edit_source"
+        ],
+        "description": "The source video being edited.",
+        "retention": "fully_preserved",
+        "retention_details": "Preserve the source except for the caller's explicitly authorised edit; do not introduce unrelated replacements.",
+        "shot_ids": [
+          "shot-1",
+          "shot-2"
+        ]
+      }
+    ],
+    "summary": [
+      {
+        "text": "A 15-second silent edit of "
+      },
+      {
+        "reference_id": "reference-reference-media-1"
+      },
+      {
+        "text": " preserving the side-by-side split-screen comparison layout and bottom captions 'your sentence, sent raw' on the left and 'compiled by open-h3-ir' on the right as "
+      },
+      {
+        "subject_id": "subject-1"
+      },
+      {
+        "text": " walks across a rain-slicked nighttime urban bridge and holds in the falling rain through the extended conclusion."
+      }
+    ],
+    "style": "Cinematic, photorealistic, neo-noir urban night aesthetic, low-key, moody nighttime urban lighting with cool blue-grey streetlights, atmospheric rain mist, warm amber window glow from adjacent buildings, and colorful bokeh from distant city skyscrapers",
+    "shots": [
+      {
+        "id": "shot-1",
+        "start_ms": 0,
+        "end_ms": 5500,
+        "description": [
+          {
+            "text": "In a medium wide view preserving the side-by-side split-screen layout of "
+          },
+          {
+            "reference_id": "reference-reference-media-1"
+          },
+          {
+            "text": " with the bottom black caption bar displaying white text 'your sentence, sent raw' under the left panel and 'compiled by open-h3-ir' under the right panel, the scene unfolds at night on a rain-slicked pedestrian walkway bordered by metal railings and dark brick buildings with warm amber interior lights overlooking an illuminated city skyline. In the left panel, "
+          },
+          {
+            "subject_id": "subject-1"
+          },
+          {
+            "text": ", wearing a black tactical jacket and dark cargo pants with wet skin and dark hair tied in a topknot with shaved sides, walks forward toward the camera along the wet pavement and slows to a stop as the view begins moving around their right side. Simultaneously in the right panel, "
+          },
+          {
+            "subject_id": "subject-1"
+          },
+          {
+            "text": " is seen from behind walking forward away from the camera down the slick walkway under cool blue-grey streetlights and falling rain."
+          }
+        ],
+        "events": [
+          {
+            "kind": "action",
+            "at_ms": 0,
+            "description": [
+              {
+                "text": "In the left panel, "
+              },
+              {
+                "subject_id": "subject-1"
+              },
+              {
+                "text": " walks toward the camera along the rain-slicked walkway and comes to a stop while in the right panel "
+              },
+              {
+                "subject_id": "subject-1"
+              },
+              {
+                "text": " walks away down the wet bridge."
+              }
+            ]
+          },
+          {
+            "kind": "camera",
+            "description": [
+              {
+                "text": "The camera tracks with the subject with small amplitude at slow speed."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "shot-2",
+        "start_ms": 5500,
+        "end_ms": 15000,
+        "transition": "the shot changes to",
+        "description": [
+          {
+            "text": "Maintaining the side-by-side split-screen comparison and the existing bottom captions from "
+          },
+          {
+            "reference_id": "reference-reference-media-1"
+          },
+          {
+            "text": ", the left panel continues its smooth progression around the right side of the standing "
+          },
+          {
+            "subject_id": "subject-1"
+          },
+          {
+            "text": " to settle behind their back facing the glowing skyscrapers across the rainy night sky. Meanwhile, the right panel cuts from the rear walkway view to a medium close three-quarter profile of "
+          },
+          {
+            "subject_id": "subject-1"
+          },
+          {
+            "text": " looking downward with a serious, contemplative expression as raindrops fall past their wet hair and dark tactical jacket against warm amber and cool cyan bokeh. Both panels hold steady in this final state through the end of the 15-second duration."
+          }
+        ],
+        "events": [
+          {
+            "kind": "action",
+            "at_ms": 5500,
+            "description": [
+              {
+                "text": "In the left panel, "
+              },
+              {
+                "subject_id": "subject-1"
+              },
+              {
+                "text": " stands facing the distant city skyline as the view finishes settling behind their back, while the right panel cuts to a close three-quarter profile of "
+              },
+              {
+                "subject_id": "subject-1"
+              },
+              {
+                "text": " looking downward in the continuous rain and holding still until the end."
+              }
+            ]
+          },
+          {
+            "kind": "camera",
+            "description": [
+              {
+                "text": "The camera arcs around the subject with small amplitude at slow speed."
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "soundscape": "N/A",
+    "music": "N/A",
+    "constraints": [
+      {
+        "id": "constraint-1",
+        "kind": "requirement",
+        "text": "no_dialogue"
+      },
+      {
+        "id": "compiler-silence",
+        "kind": "silence",
+        "text": "The target has no sound."
+      }
+    ],
+    "claims": [
+      {
+        "id": "claim-user-1",
+        "origin": "user",
+        "text": "Create a 15-second silent edit of the supplied video preserving its observed layout, action order, transitions, and already visible words, extending only a natural final hold if needed."
+      },
+      {
+        "id": "claim-user-2",
+        "origin": "user",
+        "text": "Add no dialogue, music, sound, or new lettering."
+      },
+      {
+        "id": "claim-obs-1",
+        "origin": "observed",
+        "text": "The video is presented as a side-by-side split-screen comparison with white text captions along the bottom reading 'your sentence, sent raw' on the left and 'compiled by open-h3-ir' on the right.",
+        "sources": [
+          {
+            "asset_id": "reference-media",
+            "track": "visual"
+          }
+        ]
+      },
+      {
+        "id": "claim-obs-2",
+        "origin": "observed",
+        "text": "In the left panel ('your sentence, sent raw'), an East Asian person with shaved sides and a topknot wearing a dark jacket walks toward the camera on a wet, rain-slicked walkway at night, then stops as the camera smoothly arcs around their right side to end behind their back.",
+        "sources": [
+          {
+            "asset_id": "reference-media",
+            "track": "visual"
+          }
+        ]
+      },
+      {
+        "id": "claim-obs-3",
+        "origin": "observed",
+        "text": "In the right panel ('compiled by open-h3-ir'), the scene begins behind the same person facing away down the wet walkway, then cuts to a close-up three-quarter profile shot of the person looking downward with rain falling around them and blurred city lights in the background.",
+        "sources": [
+          {
+            "asset_id": "reference-media",
+            "track": "visual"
+          }
+        ]
+      }
+    ]
+  },
+  "artifact": {
+    "version": "contextir-h3/artifact-v1",
+    "compiler_version": "contextir-h3/v1.3",
+    "format_version": "minimax-h3/prompt-v1",
+    "mode": "ref2va",
+    "target": {
+      "duration_ms": 15000,
+      "frame_count": 360,
+      "aspect_ratio": "16:9",
+      "fps": {
+        "numerator": 24,
+        "denominator": 1
+      },
+      "width": 1344,
+      "height": 768
+    },
+    "profile": {
+      "name": "h3-published-format-v1",
+      "format": "minimax-h3/prompt-v1",
+      "fps": {
+        "numerator": 24,
+        "denominator": 1
+      },
+      "modes": [
+        "t2va",
+        "i2va",
+        "l2va",
+        "fl2va",
+        "ref2va"
+      ],
+      "limits": {
+        "pictures": 0,
+        "videos": 0,
+        "video_audio": 0,
+        "standalone_audio": 0
+      },
+      "supports_reference_frame_anchors": true,
+      "supports_source_intervals": true
+    },
+    "prompt": "subject_definitions:\n<Subject 1> is An East Asian adult with a serious, contemplative expression; dark hair in a topknot with shaved sides, black tactical or utility jacket, dark cargo pants, wet skin and clothing from rain. Its source video for the target video edit is referenced from <Video 1>\n<Video 1> is The source video being edited. Its role is source video for the target video edit.\n\nsummary:\n[video editing] The target video is an edited version of <Video 1>. A 15-second silent edit of <Video 1> preserving the side-by-side split-screen comparison layout and bottom captions 'your sentence, sent raw' on the left and 'compiled by open-h3-ir' on the right as <Subject 1> walks across a rain-slicked nighttime urban bridge and holds in the falling rain through the extended conclusion.\n\nretention_analysis:\n<Subject 1> (appears in [Shot 1], [Shot 2]): fully_preserved - Preserve this canonical target identity and its listed stable attributes.\n<Video 1> ([Shot 1], [Shot 2]; source video for the target video edit): fully_preserved - Preserve the source except for the caller's explicitly authorised edit; do not introduce unrelated replacements.\n\ndetailed_description:\nThe target video is in cinematic style with photorealistic, neo-noir urban night aesthetic, low-key, moody nighttime urban lighting with cool blue-grey streetlights, atmospheric rain mist, warm amber window glow from adjacent buildings, and colorful bokeh from distant city skyscrapers.\n[Shot 1] In a medium wide view preserving the side-by-side split-screen layout of <Video 1> with the bottom black caption bar displaying white text 'your sentence, sent raw' under the left panel and 'compiled by open-h3-ir' under the right panel, the scene unfolds at night on a rain-slicked pedestrian walkway bordered by metal railings and dark brick buildings with warm amber interior lights overlooking an illuminated city skyline. In the left panel, <Subject 1>, wearing a black tactical jacket and dark cargo pants with wet skin and dark hair tied in a topknot with shaved sides, walks forward toward the camera along the wet pavement and slows to a stop as the view begins moving around their right side. Simultaneously in the right panel, <Subject 1> is seen from behind walking forward away from the camera down the slick walkway under cool blue-grey streetlights and falling rain. At 00:00.000, In the left panel, <Subject 1> walks toward the camera along the rain-slicked walkway and comes to a stop while in the right panel <Subject 1> walks away down the wet bridge. The camera tracks with the subject with small amplitude at slow speed. Throughout the target video: no_dialogue. Throughout the target video: The target has no sound.\n[Shot 2] At 00:05.500, the shot changes to. Maintaining the side-by-side split-screen comparison and the existing bottom captions from <Video 1>, the left panel continues its smooth progression around the right side of the standing <Subject 1> to settle behind their back facing the glowing skyscrapers across the rainy night sky. Meanwhile, the right panel cuts from the rear walkway view to a medium close three-quarter profile of <Subject 1> looking downward with a serious, contemplative expression as raindrops fall past their wet hair and dark tactical jacket against warm amber and cool cyan bokeh. Both panels hold steady in this final state through the end of the 15-second duration. At 00:05.500, In the left panel, <Subject 1> stands facing the distant city skyline as the view finishes settling behind their back, while the right panel cuts to a close three-quarter profile of <Subject 1> looking downward in the continuous rain and holding still until the end. The camera arcs around the subject with small amplitude at slow speed.\n\noverall_soundscape:\nN/A\n\nnon_diegetic_music:\nN/A\n",
+    "manifest": {
+      "media": [
+        {
+          "preparation": {
+            "width": 1344,
+            "height": 768
+          },
+          "source_metadata": {
+            "duration_ms": 10125,
+            "width": 1280,
+            "height": 356,
+            "fps": {
+              "numerator": 24,
+              "denominator": 1
+            }
+          },
+          "label": "<Video 1>",
+          "kind": "video",
+          "source": {
+            "asset_id": "reference-media",
+            "track": "visual"
+          },
+          "uri": "upload://4f04793f4ab19a618cf47bd8981496ad7df330c5beb148374ba78ccfceda2fbe",
+          "sha256": "4f04793f4ab19a618cf47bd8981496ad7df330c5beb148374ba78ccfceda2fbe",
+          "socket": "ref_video_1",
+          "target_uses": [
+            {
+              "reference_id": "reference-reference-media-1",
+              "roles": [
+                "edit_source"
+              ],
+              "retention": "fully_preserved",
+              "shots": [
+                {
+                  "id": "shot-1",
+                  "index": 1,
+                  "interval": {
+                    "start_ms": 0,
+                    "end_ms": 5500
+                  }
+                },
+                {
+                  "id": "shot-2",
+                  "index": 2,
+                  "interval": {
+                    "start_ms": 5500,
+                    "end_ms": 15000
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "subjects": [
+        {
+          "id": "subject-1",
+          "label": "<Subject 1>"
+        }
+      ],
+      "references": [
+        {
+          "id": "reference-reference-media-1",
+          "label": "<Video 1>"
+        }
+      ],
+      "speakers": []
+    },
+    "frames": 360,
+    "effective_duration_seconds": {
+      "numerator": 15,
+      "denominator": 1
+    },
+    "document_sha256": "7fc3820745739c2f731847c790ecb0320383c56a1fe8150f65e0e932617132bf",
+    "profile_sha256": "ce4364d3f1242f5aeb2216db44195fb3897f4828dd9e145c4c16c64315786ab6",
+    "prompt_sha256": "1469a140b7cb5f0188198fe34855f970c71c53201ece19b4fefc1bc29ae4014a",
+    "manifest_sha256": "9f5150c5e83627a2e1c595534f6851cb45cabde60ab1f916ba030f04aed64692",
+    "sha256": "2d4e899bbf2c531a8ab367f095eedc2157cb2d324f27963158961014ef326861"
+  },
+  "evidence": [
+    {
+      "card": {
+        "asset_id": "reference-media",
+        "summary": "A split-screen comparison video showing two versions of a rainy nighttime urban scene with an East Asian person in dark tactical clothing on a bridge. The left panel is labeled 'your sentence, sent raw' and shows a continuous orbiting shot from front to back as the person walks and stops. The right panel is labeled 'compiled by open-h3-ir' and shows the person from behind before cutting to a close-up profile shot of their face looking downward in the rain, accompanied by rain sounds, footsteps, and ambient synth music.",
+        "subjects": [
+          {
+            "kind": "person",
+            "descriptor": "An East Asian adult with a serious, contemplative expression",
+            "attributes": [
+              "dark hair in a topknot with shaved sides",
+              "black tactical or utility jacket",
+              "dark cargo pants",
+              "wet skin and clothing from rain"
+            ],
+            "pose": [
+              "walking along a wet bridge",
+              "standing still looking toward the city skyline",
+              "looking down in profile"
+            ]
+          }
+        ],
+        "environment": "A rain-slicked pedestrian walkway or bridge at night, bordered by metal railings and dark brick buildings with warm interior lights on one side, overlooking a modern city skyline with illuminated skyscrapers in the distance.",
+        "lighting": "Low-key, moody nighttime urban lighting with cool blue-grey streetlights, atmospheric rain mist, warm amber window glow from adjacent buildings, and colorful bokeh from distant city skyscrapers.",
+        "palette": [
+          "dark slate blue",
+          "charcoal black",
+          "warm amber",
+          "cool cyan",
+          "steel grey"
+        ],
+        "framing": "Side-by-side split-screen comparison with a bottom black caption bar. The left panel moves from a full-body shot to a medium shot and then a rear medium-full shot. The right panel transitions from a rear full-body shot to a close-up profile shot.",
+        "style": "Cinematic, photorealistic, neo-noir urban night aesthetic.",
+        "visible_text": [
+          "your sentence, sent raw",
+          "compiled by open-h3-ir"
+        ],
+        "motion": "In the left panel, the subject walks toward the camera and stops while the camera orbits around to their back. In the right panel, the subject walks away from the camera, followed by a hard cut to a close-up where the subject looks downward in the falling rain.",
+        "camera": "The left panel uses a single continuous shot that tracks forward and then orbits around the subject from front view to back view. The right panel starts with a rear tracking view and cuts to a close-up profile view of the subject's face.",
+        "characterisation": "A gritty, atmospheric side-by-side comparison video featuring an East Asian person with an undercut topknot walking across a wet urban bridge at night in the rain.",
+        "composition": "composed_scene",
+        "music": "Slow, melancholic ambient synth music with sustained pads mixes with continuous falling rain and footsteps on wet pavement.",
+        "analyzer_version": "contextir-playground-native/v1",
+        "model": "gemini-4-argon",
+        "coverage": {
+          "status": "partial",
+          "tracks": [
+            "visual",
+            "audio"
+          ]
+        }
+      },
+      "asset_id": "reference-media",
+      "facts": [
+        {
+          "analyzer_version": "contextir-playground-native/v1",
+          "id": "reference-media.native-1",
+          "text": "The video is presented as a side-by-side split-screen comparison with white text captions along the bottom reading 'your sentence, sent raw' on the left and 'compiled by open-h3-ir' on the right.",
+          "source": {
+            "asset_id": "reference-media",
+            "track": "visual"
+          }
+        },
+        {
+          "analyzer_version": "contextir-playground-native/v1",
+          "id": "reference-media.native-2",
+          "text": "In the left panel ('your sentence, sent raw'), an East Asian person with shaved sides and a topknot wearing a dark jacket walks toward the camera on a wet, rain-slicked walkway at night, then stops as the camera smoothly arcs around their right side to end behind their back.",
+          "source": {
+            "asset_id": "reference-media",
+            "track": "visual"
+          }
+        },
+        {
+          "analyzer_version": "contextir-playground-native/v1",
+          "id": "reference-media.native-3",
+          "text": "In the right panel ('compiled by open-h3-ir'), the scene begins behind the same person facing away down the wet walkway, then cuts to a close-up three-quarter profile shot of the person looking downward with rain falling around them and blurred city lights in the background.",
+          "source": {
+            "asset_id": "reference-media",
+            "track": "visual"
+          }
+        },
+        {
+          "analyzer_version": "contextir-playground-native/v1",
+          "id": "reference-media.native-4",
+          "text": "The audio track contains the continuous sound of falling rain, distinct footsteps walking on a wet surface in the first half, and slow, atmospheric ambient synthesizer music throughout, with no spoken dialogue.",
+          "source": {
+            "asset_id": "reference-media",
+            "track": "audio"
+          }
+        }
+      ],
+      "model": "gemini-4-argon",
+      "analyzer_version": "contextir-playground-native/v1",
+      "limitations": [
+        "No intelligible speech is present in the audio track.",
+        "The original uploaded bytes were sent to the native model. Native sampling and exact temporal coverage are unknown; no extracted frames, observed frame count or invented sample times are claimed. Empty acoustic properties do not establish silence."
+      ],
+      "coverage": {
+        "status": "partial",
+        "tracks": [
+          "visual",
+          "audio"
+        ]
+      }
+    }
+  ],
+  "decisions": [
+    {
+      "field": "assets.reference-media.metadata",
+      "source": "configured_asset_inspector",
+      "value": {
+        "duration_ms": 10125,
+        "width": 1280,
+        "height": 356,
+        "fps": {
+          "numerator": 24,
+          "denominator": 1
+        }
+      },
+      "explanation": "Container/header facts were measured before target preparation, budgeting and mode geometry. Explicit caller metadata is preserved; this is not semantic media observation."
+    },
+    {
+      "field": "target",
+      "source": "computed",
+      "value": {
+        "effective_seconds": 15,
+        "frame_count": 360,
+        "nominal_seconds": 15,
+        "policy": "exact"
+      },
+      "explanation": "Effective timing and nominal duration are recorded separately; generated cuts use effective timing."
+    },
+    {
+      "field": "canvas",
+      "source": "computed",
+      "value": [
+        1344,
+        768
+      ],
+      "explanation": "Native short-edge canvas is aligned to 32 pixels; explicit megapixels replaces the native area budget."
+    },
+    {
+      "field": "assets.reference-media.preparation",
+      "source": "required_adapter_instruction",
+      "value": {
+        "width": 1344,
+        "height": 768
+      },
+      "explanation": "These required input transforms are recorded separately from the original source metadata; the compiler has not executed media IO."
+    },
+    {
+      "field": "execution",
+      "source": "explicit_adapter_policy",
+      "value": {
+        "effort": "standard"
+      },
+      "explanation": "The injected adapters and explicit compiler repair configuration implement standard effort."
+    },
+    {
+      "field": "mode",
+      "source": "caller-override",
+      "value": {
+        "clarification_policy": "require",
+        "confidence_kind": "routing_policy",
+        "aspect_mismatch": false,
+        "needs_clarification": false,
+        "mode": "ref2va",
+        "confidence": 1,
+        "rule": "caller-override",
+        "signals": [
+          "Mode follows explicit structured choices and media socket requirements."
+        ]
+      },
+      "explanation": "Mode follows the production typed routing contract; publication capabilities are checked separately."
+    },
+    {
+      "field": "content_scope",
+      "source": "typed_request_interpretation",
+      "value": {
+        "music_constraint": "no_music",
+        "conflict_policy": "reject",
+        "requested": {
+          "speech": false,
+          "music": false,
+          "onscreen_text": true,
+          "magnitude": ""
+        },
+        "forbidden": {
+          "speech": true,
+          "music": true,
+          "onscreen_text": false,
+          "magnitude": ""
+        },
+        "allowed": {
+          "speech": false,
+          "music": false,
+          "onscreen_text": true,
+          "magnitude": "plain"
+        },
+        "dialogue": [],
+        "onscreen_text": [],
+        "reasoning": "The caller requests preserving the video's already visible words (onscreen_text requested: true, though no specific strings are provided in the text). The intent explicitly forbids dialogue and music ('silent edit', 'Add no dialogue, music, sound or new lettering'). While it forbids 'new lettering', it explicitly demands preserving 'already visible words', so onscreen_text as a content class is permitted/requested rather than wholly forbidden.",
+        "calls": [
+          {
+            "stage": "scope",
+            "attempt": 1,
+            "model": "gemini-4-argon",
+            "usage": {
+              "input_tokens": 1538,
+              "output_tokens": 162
+            },
+            "valid": true
+          }
+        ]
+      },
+      "explanation": "Caller requests and prohibitions are interpreted before code applies the explicit creativity level."
+    },
+    {
+      "field": "reference_licence",
+      "source": "typed_attribute_precedence",
+      "value": {
+        "reference_permissions": {
+          "action": true,
+          "framing": true,
+          "lighting": true,
+          "medium": true,
+          "palette": true,
+          "wardrobe": true
+        },
+        "medium_decision": {
+          "rendering_permission": {
+            "kind": "preserve",
+            "disposition": "preserve",
+            "operation_quote": "",
+            "target": "",
+            "reasoning": "The caller requests a silent edit of the supplied video preserving its layout, action order, transitions, and visible words, with no instruction to transform or restyle the rendering or specify a new target medium/style.",
+            "calls": [
+              {
+                "stage": "rendering_permission",
+                "attempt": 1,
+                "model": "gemini-4-argon",
+                "usage": {
+                  "input_tokens": 888,
+                  "output_tokens": 76
+                },
+                "valid": true
+              }
+            ]
+          },
+          "disposition": "preserve",
+          "operation_quote": "",
+          "target": "",
+          "requested_style": "",
+          "reference_medium": "live-action",
+          "requested_medium": "",
+          "treatments": [],
+          "reasoning": "The reference video is photorealistic live-action footage ('Cinematic, photorealistic, neo-noir urban night aesthetic'). The user requests a silent edit preserving the observed video without specifying any new rendering medium, style phrase, or visual treatments.",
+          "calls": [
+            {
+              "stage": "rendering_permission",
+              "attempt": 1,
+              "model": "gemini-4-argon",
+              "usage": {
+                "input_tokens": 888,
+                "output_tokens": 76
+              },
+              "valid": true
+            },
+            {
+              "stage": "medium",
+              "attempt": 1,
+              "model": "gemini-4-argon",
+              "usage": {
+                "input_tokens": 2339,
+                "output_tokens": 292
+              },
+              "valid": true
+            }
+          ]
+        },
+        "identity": [
+          {
+            "descriptor_source": "reference",
+            "kind": "person",
+            "label": "<Subject 1>",
+            "descriptor": "An East Asian adult with a serious, contemplative expression",
+            "retained_attributes": [
+              "dark hair in a topknot with shaved sides",
+              "black tactical or utility jacket",
+              "dark cargo pants",
+              "wet skin and clothing from rain"
+            ],
+            "requested_attributes": [],
+            "request_quote": "",
+            "wardrobe_attributes": [
+              "black tactical or utility jacket",
+              "dark cargo pants"
+            ]
+          }
+        ],
+        "governs": {
+          "action": "reference",
+          "framing": "reference",
+          "lighting": "reference",
+          "medium": "reference",
+          "palette": "reference",
+          "wardrobe": "reference"
+        },
+        "reasons": {
+          "action": "The request asks to preserve the supplied video's observed action order and transitions, allowing only a natural final hold to fill the duration rather than introducing a new action.",
+          "framing": "The request explicitly preserves the supplied video's observed layout and transitions without requesting a new camera composition, viewpoint, or shot scale.",
+          "lighting": "The request does not specify any lighting changes, so the edit source's nighttime urban lighting governs.",
+          "medium": "The request preserves the supplied live-action video without asking for a new rendering medium or style transformation.",
+          "palette": "The request makes no color or tonal grading instruction, leaving the reference video's palette in force.",
+          "wardrobe": "The request specifies no clothing or accessory changes, so the subject's observed dark tactical wardrobe is retained from the reference."
+        },
+        "transform_phrase": null,
+        "transform_target": "",
+        "medium_transferred": false,
+        "style": {
+          "observed_phrase": "Cinematic, photorealistic, neo-noir urban night aesthetic, low-key, moody nighttime urban lighting with cool blue-grey streetlights, atmospheric rain mist, warm amber window glow from adjacent buildings, and colorful bokeh from distant city skyscrapers",
+          "phrase": "Cinematic, photorealistic, neo-noir urban night aesthetic, low-key, moody nighttime urban lighting with cool blue-grey streetlights, atmospheric rain mist, warm amber window glow from adjacent buildings, and colorful bokeh from distant city skyscrapers",
+          "source": "reference",
+          "reference_medium": "live-action",
+          "requested_medium": "",
+          "discrepancy": false,
+          "note": ""
+        },
+        "subjects": [
+          {
+            "label": "<Subject 1>",
+            "kind": "person",
+            "sources": [
+              "<Video 1>"
+            ],
+            "descriptor": "An East Asian adult with a serious, contemplative expression",
+            "attributes": [
+              "dark hair in a topknot with shaved sides",
+              "black tactical or utility jacket",
+              "dark cargo pants",
+              "wet skin and clothing from rain"
+            ],
+            "pose": [
+              "walking along a wet bridge",
+              "standing still looking toward the city skyline",
+              "looking down in profile"
+            ],
+            "pose_licensed": false,
+            "retention": "fully_preserved",
+            "retention_note": "",
+            "appears_in": [],
+            "taken_over_by": ""
+          }
+        ],
+        "calls": [
+          {
+            "stage": "rendering_permission",
+            "attempt": 1,
+            "model": "gemini-4-argon",
+            "usage": {
+              "input_tokens": 888,
+              "output_tokens": 76
+            },
+            "valid": true
+          },
+          {
+            "stage": "medium",
+            "attempt": 1,
+            "model": "gemini-4-argon",
+            "usage": {
+              "input_tokens": 2339,
+              "output_tokens": 292
+            },
+            "valid": true
+          },
+          {
+            "stage": "identity_requirements",
+            "attempt": 1,
+            "model": "gemini-4-argon",
+            "usage": {
+              "input_tokens": 2183,
+              "output_tokens": 348
+            },
+            "valid": true
+          },
+          {
+            "stage": "licence",
+            "attempt": 1,
+            "model": "gemini-4-argon",
+            "usage": {
+              "input_tokens": 3554,
+              "output_tokens": 483
+            },
+            "valid": true
+          }
+        ]
+      },
+      "explanation": "Each attribute follows explicit request or observed reference; poses and reference-sheet presentation are not subject identity."
+    },
+    {
+      "field": "shots.camera",
+      "source": "host_template",
+      "value": [
+        {
+          "subjects": [
+            "subject-1"
+          ],
+          "sync_sound": [],
+          "start_ms": 0,
+          "purpose": "establish",
+          "framing": "medium wide",
+          "action": "In the preserved side-by-side split-screen layout with bottom captions 'your sentence, sent raw' on the left and 'compiled by open-h3-ir' on the right, the East Asian adult in a dark tactical jacket walks forward on the rain-slicked nighttime walkway in the left panel as the camera tracks and begins orbiting around their right side, while in the right panel the same person walks away from the camera down the wet walkway.",
+          "what_changes": "In the left panel the subject walks toward the camera and comes to a stop as the camera begins arcing around their side; in the right panel the subject walks forward away from the camera before the right panel's internal cut.",
+          "camera": {
+            "type": "Tracking Shot",
+            "amplitude": "small",
+            "speed": "slow"
+          }
+        },
+        {
+          "subjects": [
+            "subject-1"
+          ],
+          "sync_sound": [],
+          "start_ms": 5500,
+          "purpose": "resolve",
+          "framing": "medium close",
+          "action": "Maintaining the same side-by-side split-screen comparison and bottom captions, the left panel completes its smooth orbit to end behind the standing subject's back looking toward the illuminated skyline, while the right panel cuts to a close three-quarter profile of the subject looking downward in the falling rain against blurred city bokeh, holding naturally in both panels through the end of the 15-second duration.",
+          "what_changes": "The right panel transitions to a close profile view looking downward in the rain while the left panel finishes arcing behind the subject's back, and both panels settle into a natural extended hold in the falling rain.",
+          "camera": {
+            "type": "Arc Shot",
+            "amplitude": "small",
+            "speed": "slow"
+          }
+        }
+      ],
+      "explanation": "Canonical camera events are assembled from the typed structural plan after prose."
+    },
+    {
+      "field": "subjects.shot_ids",
+      "source": "typed_actual_use_projection",
+      "value": [
+        {
+          "kind": "person",
+          "descriptor": "An East Asian adult with a serious, contemplative expression",
+          "attributes": [
+            "dark hair in a topknot with shaved sides",
+            "black tactical or utility jacket",
+            "dark cargo pants",
+            "wet skin and clothing from rain"
+          ],
+          "origin": "observed",
+          "id": "subject-1",
+          "description": "An East Asian adult with a serious, contemplative expression; dark hair in a topknot with shaved sides, black tactical or utility jacket, dark cargo pants, wet skin and clothing from rain",
+          "sources": [
+            {
+              "source": {
+                "asset_id": "reference-media",
+                "track": "visual"
+              },
+              "role": "edit_source"
+            }
+          ],
+          "retention": "fully_preserved",
+          "retention_details": "Preserve this canonical target identity and its listed stable attributes.",
+          "shot_ids": [
+            "shot-1",
+            "shot-2"
+          ]
+        }
+      ],
+      "explanation": "High-level target appearances derive only from actual RichText and speaker-dialogue bindings. Removed figures carry their incoming replacement's transfer scope; unused source observations remain in Evidence."
+    },
+    {
+      "field": "creativity",
+      "source": "caller_or_default",
+      "value": {
+        "speech": false,
+        "music": false,
+        "onscreen_text": true,
+        "magnitude": "plain"
+      },
+      "explanation": "Scope reflects requested elements, explicit prohibitions, and the selected four-position creativity control."
+    }
+  ],
+  "calls": [
+    {
+      "asset_id": "reference-media",
+      "stage": "video_perception",
+      "attempt": 1,
+      "model": "gemini-4-argon",
+      "usage": {
+        "input_tokens": 3835,
+        "output_tokens": 957
+      },
+      "valid": true
+    },
+    {
+      "stage": "scope",
+      "attempt": 1,
+      "model": "gemini-4-argon",
+      "usage": {
+        "input_tokens": 1538,
+        "output_tokens": 162
+      },
+      "valid": true
+    },
+    {
+      "stage": "rendering_permission",
+      "attempt": 1,
+      "model": "gemini-4-argon",
+      "usage": {
+        "input_tokens": 888,
+        "output_tokens": 76
+      },
+      "valid": true
+    },
+    {
+      "stage": "medium",
+      "attempt": 1,
+      "model": "gemini-4-argon",
+      "usage": {
+        "input_tokens": 2339,
+        "output_tokens": 292
+      },
+      "valid": true
+    },
+    {
+      "stage": "identity_requirements",
+      "attempt": 1,
+      "model": "gemini-4-argon",
+      "usage": {
+        "input_tokens": 2183,
+        "output_tokens": 348
+      },
+      "valid": true
+    },
+    {
+      "stage": "licence",
+      "attempt": 1,
+      "model": "gemini-4-argon",
+      "usage": {
+        "input_tokens": 3554,
+        "output_tokens": 483
+      },
+      "valid": true
+    },
+    {
+      "stage": "structure",
+      "attempt": 1,
+      "model": "gemini-4-argon",
+      "usage": {
+        "input_tokens": 6206,
+        "output_tokens": 625
+      },
+      "valid": true
+    },
+    {
+      "stage": "plan",
+      "attempt": 1,
+      "model": "gemini-4-argon",
+      "usage": {
+        "input_tokens": 12214,
+        "output_tokens": 1702
+      },
+      "valid": true
+    },
+    {
+      "stage": "plan",
+      "attempt": 2,
+      "model": "gemini-4-argon",
+      "usage": {
+        "input_tokens": 12323,
+        "output_tokens": 1759
+      },
+      "valid": true
+    },
+    {
+      "stage": "semantic_review",
+      "attempt": 1,
+      "model": "gemini-4-argon",
+      "usage": {
+        "input_tokens": 4880,
+        "output_tokens": 28
+      },
+      "valid": true
+    }
+  ],
+  "prompt": "subject_definitions:\n<Subject 1> is An East Asian adult with a serious, contemplative expression; dark hair in a topknot with shaved sides, black tactical or utility jacket, dark cargo pants, wet skin and clothing from rain. Its source video for the target video edit is referenced from <Video 1>\n<Video 1> is The source video being edited. Its role is source video for the target video edit.\n\nsummary:\n[video editing] The target video is an edited version of <Video 1>. A 15-second silent edit of <Video 1> preserving the side-by-side split-screen comparison layout and bottom captions 'your sentence, sent raw' on the left and 'compiled by open-h3-ir' on the right as <Subject 1> walks across a rain-slicked nighttime urban bridge and holds in the falling rain through the extended conclusion.\n\nretention_analysis:\n<Subject 1> (appears in [Shot 1], [Shot 2]): fully_preserved - Preserve this canonical target identity and its listed stable attributes.\n<Video 1> ([Shot 1], [Shot 2]; source video for the target video edit): fully_preserved - Preserve the source except for the caller's explicitly authorised edit; do not introduce unrelated replacements.\n\ndetailed_description:\nThe target video is in cinematic style with photorealistic, neo-noir urban night aesthetic, low-key, moody nighttime urban lighting with cool blue-grey streetlights, atmospheric rain mist, warm amber window glow from adjacent buildings, and colorful bokeh from distant city skyscrapers.\n[Shot 1] In a medium wide view preserving the side-by-side split-screen layout of <Video 1> with the bottom black caption bar displaying white text 'your sentence, sent raw' under the left panel and 'compiled by open-h3-ir' under the right panel, the scene unfolds at night on a rain-slicked pedestrian walkway bordered by metal railings and dark brick buildings with warm amber interior lights overlooking an illuminated city skyline. In the left panel, <Subject 1>, wearing a black tactical jacket and dark cargo pants with wet skin and dark hair tied in a topknot with shaved sides, walks forward toward the camera along the wet pavement and slows to a stop as the view begins moving around their right side. Simultaneously in the right panel, <Subject 1> is seen from behind walking forward away from the camera down the slick walkway under cool blue-grey streetlights and falling rain. At 00:00.000, In the left panel, <Subject 1> walks toward the camera along the rain-slicked walkway and comes to a stop while in the right panel <Subject 1> walks away down the wet bridge. The camera tracks with the subject with small amplitude at slow speed. Throughout the target video: no_dialogue. Throughout the target video: The target has no sound.\n[Shot 2] At 00:05.500, the shot changes to. Maintaining the side-by-side split-screen comparison and the existing bottom captions from <Video 1>, the left panel continues its smooth progression around the right side of the standing <Subject 1> to settle behind their back facing the glowing skyscrapers across the rainy night sky. Meanwhile, the right panel cuts from the rear walkway view to a medium close three-quarter profile of <Subject 1> looking downward with a serious, contemplative expression as raindrops fall past their wet hair and dark tactical jacket against warm amber and cool cyan bokeh. Both panels hold steady in this final state through the end of the 15-second duration. At 00:05.500, In the left panel, <Subject 1> stands facing the distant city skyline as the view finishes settling behind their back, while the right panel cuts to a close three-quarter profile of <Subject 1> looking downward in the continuous rain and holding still until the end. The camera arcs around the subject with small amplitude at slow speed.\n\noverall_soundscape:\nN/A\n\nnon_diegetic_music:\nN/A\n",
+  "elapsed_ms": 123101
+}

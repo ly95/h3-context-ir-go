@@ -13,7 +13,7 @@ git clone https://github.com/ly95/h3-context-ir-go.git
 cd h3-context-ir-go
 ```
 
-浏览器测试页放在 [examples/playground](examples/playground/README.md)。在仓库根目录启动后，打开 <http://127.0.0.1:8090/>，可以上传参考图、比较优化前后、查看实际调用阶段、诊断与用量：
+浏览器测试页放在 [examples/playground](examples/playground/README.md)。在仓库根目录启动后，打开 <http://127.0.0.1:8090/>，可以混合上传多份参考图、视频和音频，逐份选择用途，并比较优化前后、查看实际调用阶段、诊断与用量。视频、音频使用显式配置的 Gemini 原生接口：
 
 ```sh
 go run ./examples/playground
@@ -21,9 +21,11 @@ go run ./examples/playground
 
 可以在网页连接设置中输入 API key，或通过 `-key-env` 指定已有环境变量。默认连接配置见该示例说明。
 
-下图为一轮真实 `deepseek-flash` 参考图优化：5 秒、16:9，图片感知、编译和语义审查通过。完整输入、输出和用量见 [示例运行记录](examples/playground/README.md#真实运行截图)。
+原始视频、音频理解到完整编译的真实验收、运行方法和输入输出记录见 [examples/media](examples/media/README.md)。
 
-![Playground 真实参考图优化结果](examples/playground/docs/deepseek-flash-reference.jpg)
+下图为当前多参考文件界面的一轮真实运行：图片风格、视频编辑源和音频原词画外音一起提交，`gemini-4-argon` 完成独立感知、完整编译和语义审查。共 12 次实际模型调用，耗时 225.6 秒。完整输入、输出、用量与验证边界见 [示例运行记录](examples/playground/README.md#多参考文件网页实测)。
+
+![Playground 多参考文件真实运行结果](examples/playground/docs/native-multi.jpg)
 
 将占位值替换为你选择的兼容服务配置。`MODEL_BASE_URL` 是 API 根地址；凭据通过 `-key-env` 显式选择，无认证端点省略该参数：
 
@@ -136,7 +138,7 @@ func Compile(ctx context.Context, model compiler.Model, fullPrompt string) (comp
 
 用户意图由结构化输入或模型的类型化合同解释，不使用关键词或正则猜测授权。输入不合法、能力不足、缺少观察或模型输出不合约时返回明确错误。格式规则与运行后端限制分开；时长不隐式对齐，需要网格对齐时显式选择 `FramePolicySnapUp`。
 
-素材说明不是观察事实。抽样视频只覆盖实际采样帧，转写只建立词语，不能证明音色、音乐或节奏。感知和媒体准备能力见各包说明。实际 H3 视频推理由调用方执行；单元测试、IR 合法性与提示词格式通过不能证明成片质量或与 MiniMax 托管服务等价。网页示例的一轮真实 API 运行记录见 [Playground](examples/playground/README.md#真实运行截图)。
+素材说明不是观察事实。抽样视频只覆盖实际采样帧，转写只建立词语，不能证明音色、音乐或节奏。感知和媒体准备能力见各包说明。实际 H3 视频推理由调用方执行；单元测试、IR 合法性与提示词格式通过不能证明成片质量或与 MiniMax 托管服务等价。网页示例的一轮真实 API 运行记录见 [Playground](examples/playground/README.md#多参考文件网页实测)。
 
 | 包 | 用途 |
 | --- | --- |

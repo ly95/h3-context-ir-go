@@ -139,6 +139,17 @@ IR/schema validity, final prose semantics and actual H3 video quality require
 different checks. None of these tests proves equivalence to MiniMax's private
 Context-IR implementation or guarantees generated-video fidelity.
 
+`TestLiveNativeMediaCompile` is a separate gated acceptance of original MP4 and
+FLAC bytes through an explicitly configured native Gemini test adapter, followed
+by full compilation, source/voice bindings, a real composition review and exact
+artifact recompilation. It requires `CONTEXTIR_NATIVE_MEDIA_LIVE=1` and explicit
+native model settings. Same-run observations and actual perception usage enter
+the compiler once; no stored observations, extracted frames or expected transcript
+replace real media input. Partial observation coverage remains explicit. The
+recorded audio case verifies speech words and language only. Native transport,
+contract acceptance and independent visual semantics are reported separately in
+[the media example](../examples/media/README.md); ordinary tests skip paid calls.
+
 ## Attribution
 
 Source tests, examples and assets retain Apache-2.0 attribution under

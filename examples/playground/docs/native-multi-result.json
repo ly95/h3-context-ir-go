@@ -1,0 +1,2849 @@
+{
+  "composition_reviews": [
+    {
+      "version": "contextir/composition-review/v10",
+      "required": true,
+      "passed": true,
+      "calls": [
+        {
+          "stage": "semantic_review",
+          "attempt": 1,
+          "model": "gemini-4-argon",
+          "usage": {
+            "input_tokens": 8251,
+            "output_tokens": 295
+          },
+          "valid": true
+        }
+      ]
+    }
+  ],
+  "usage_complete": true,
+  "clarification_policy": "require",
+  "mode_decision": {
+    "clarification_policy": "require",
+    "confidence_kind": "routing_policy",
+    "aspect_mismatch": false,
+    "needs_clarification": false,
+    "mode": "ref2va",
+    "confidence": 1,
+    "rule": "caller-override",
+    "signals": [
+      "Mode follows explicit structured choices and media socket requirements."
+    ]
+  },
+  "scope_decision": {
+    "transcript_uses": [
+      {
+        "asset_id": "ref-3",
+        "text": "And so, my fellow Americans: ask not what your country can do for you—ask what you can do for your country.",
+        "language": "en",
+        "speaker_hint": "the off-screen narrator for ref-3",
+        "voiceover": true
+      }
+    ],
+    "music_constraint": "no_music",
+    "conflict_policy": "reject",
+    "requested": {
+      "speech": true,
+      "music": false,
+      "onscreen_text": false,
+      "magnitude": ""
+    },
+    "forbidden": {
+      "speech": false,
+      "music": true,
+      "onscreen_text": true,
+      "magnitude": ""
+    },
+    "allowed": {
+      "speech": true,
+      "music": false,
+      "onscreen_text": false,
+      "magnitude": "plain"
+    },
+    "dialogue": [
+      {
+        "text": "And so, my fellow Americans: ask not what your country can do for you—ask what you can do for your country.",
+        "language": "en",
+        "speaker_hint": "the off-screen narrator for ref-3",
+        "voiceover": true,
+        "kind": "",
+        "delivery": ""
+      }
+    ],
+    "onscreen_text": [],
+    "reasoning": "The caller explicitly requests an offscreen voiceover performing the recognized words from the supplied audio ref-3 (speech requested, not forbidden) and explicitly instructs to add no music and no new visible text (music and onscreen_text forbidden, not requested).",
+    "calls": [
+      {
+        "stage": "scope",
+        "attempt": 1,
+        "model": "gemini-4-argon",
+        "usage": {
+          "input_tokens": 2574,
+          "output_tokens": 1032
+        },
+        "valid": true
+      }
+    ]
+  },
+  "licence": {
+    "reference_permissions": {
+      "action": true,
+      "framing": true,
+      "lighting": true,
+      "medium": true,
+      "palette": true,
+      "wardrobe": true
+    },
+    "medium_decision": {
+      "rendering_permission": {
+        "kind": "rendering_transformation",
+        "disposition": "convert",
+        "operation_quote": "Apply only the supplied image's visual rendering style",
+        "target": "the supplied image's visual rendering style",
+        "reasoning": "The caller explicitly instructs to 'Apply only the supplied image's visual rendering style' to the edit of the supplied video, which is an express rendering transformation directive targeting the style of the attached image reference.",
+        "calls": [
+          {
+            "stage": "rendering_permission",
+            "attempt": 1,
+            "model": "gemini-4-argon",
+            "usage": {
+              "input_tokens": 940,
+              "output_tokens": 97
+            },
+            "valid": true
+          }
+        ]
+      },
+      "disposition": "convert",
+      "operation_quote": "Apply only the supplied image's visual rendering style",
+      "target": "the supplied image's visual rendering style",
+      "requested_style": "Photorealistic live-action",
+      "reference_medium": "live-action",
+      "requested_medium": "live-action",
+      "treatments": [
+        "cinematic"
+      ],
+      "reasoning": "The edit-source video (ref-2) is observed as photorealistic live-action ('Photorealistic, cinematic, moody urban night aesthetic' / 'Live-action cinematic style'), giving reference_medium 'live-action'. The caller explicitly authorizes converting the rendering style to the supplied style reference image (ref-4), whose visual rendering style is photorealistic live-action with a cinematic treatment (excluding the character concept sheet layout packaging), giving requested_medium 'live-action', requested_style 'Photorealistic live-action', and treatment 'cinematic'.",
+      "calls": [
+        {
+          "stage": "rendering_permission",
+          "attempt": 1,
+          "model": "gemini-4-argon",
+          "usage": {
+            "input_tokens": 940,
+            "output_tokens": 97
+          },
+          "valid": true
+        },
+        {
+          "stage": "medium",
+          "attempt": 1,
+          "model": "gemini-4-argon",
+          "usage": {
+            "input_tokens": 2664,
+            "output_tokens": 1003
+          },
+          "valid": true
+        }
+      ]
+    },
+    "identity": [
+      {
+        "descriptor_source": "reference",
+        "kind": "person",
+        "label": "<Subject 1>",
+        "descriptor": "East Asian adult",
+        "retained_attributes": [
+          "dark hair in a top bun with shaved sides",
+          "black tactical-style jacket and dark pants"
+        ],
+        "requested_attributes": [],
+        "request_quote": "",
+        "wardrobe_attributes": [
+          "black tactical-style jacket and dark pants"
+        ]
+      }
+    ],
+    "governs": {
+      "action": "reference",
+      "framing": "reference",
+      "lighting": "reference",
+      "medium": "request",
+      "palette": "reference",
+      "wardrobe": "reference"
+    },
+    "reasons": {
+      "action": "The caller explicitly instructs to preserve the edit-source video's action order (with only a natural final hold to fit the duration) and adds an offscreen voiceover rather than a new on-screen subject performance, so the reference governs action.",
+      "framing": "The caller explicitly asks to preserve the edit-source video's scene layout and transitions without adopting the style image's composition, so the reference governs framing.",
+      "lighting": "No lighting direction, illuminating source, or lighting quality change is requested, so the edit-source reference governs lighting.",
+      "medium": "The caller explicitly instructs to apply the supplied image's visual rendering style, so the request governs medium.",
+      "palette": "The request specifies applying only the visual rendering style and makes no explicit color palette or tonal grading instruction, so the reference governs palette.",
+      "wardrobe": "The caller preserves the observed person from the edit-source video with no clothing or accessory changes requested, so the reference governs wardrobe."
+    },
+    "transform_phrase": "Apply only the supplied image's visual rendering style",
+    "transform_target": "the supplied image's visual rendering style",
+    "medium_transferred": true,
+    "style": {
+      "observed_phrase": "Photorealistic, cinematic, moody urban night aesthetic, low-key nighttime urban lighting with cool bluish-teal ambient tones, warm orange window lights, and bright streetlamp reflections on wet pavement",
+      "phrase": "Photorealistic live-action, cinematic",
+      "source": "request",
+      "reference_medium": "live-action",
+      "requested_medium": "live-action",
+      "discrepancy": false,
+      "note": ""
+    },
+    "subjects": [
+      {
+        "label": "<Subject 1>",
+        "kind": "person",
+        "sources": [
+          "<Video 1>"
+        ],
+        "descriptor": "East Asian adult",
+        "attributes": [
+          "dark hair in a top bun with shaved sides",
+          "black tactical-style jacket and dark pants"
+        ],
+        "pose": [
+          "walking along a wet walkway",
+          "standing in profile looking down"
+        ],
+        "pose_licensed": false,
+        "retention": "fully_preserved",
+        "retention_note": "",
+        "appears_in": [],
+        "taken_over_by": ""
+      }
+    ],
+    "calls": [
+      {
+        "stage": "rendering_permission",
+        "attempt": 1,
+        "model": "gemini-4-argon",
+        "usage": {
+          "input_tokens": 940,
+          "output_tokens": 97
+        },
+        "valid": true
+      },
+      {
+        "stage": "medium",
+        "attempt": 1,
+        "model": "gemini-4-argon",
+        "usage": {
+          "input_tokens": 2664,
+          "output_tokens": 1003
+        },
+        "valid": true
+      },
+      {
+        "stage": "identity_requirements",
+        "attempt": 1,
+        "model": "gemini-4-argon",
+        "usage": {
+          "input_tokens": 2149,
+          "output_tokens": 291
+        },
+        "valid": true
+      },
+      {
+        "stage": "licence",
+        "attempt": 1,
+        "model": "gemini-4-argon",
+        "usage": {
+          "input_tokens": 4696,
+          "output_tokens": 592
+        },
+        "valid": true
+      }
+    ]
+  },
+  "budget": {
+    "prompt_tokens": 1358,
+    "target_video_rows": 102816,
+    "target_audio_rows": 1200,
+    "known_reference_rows": 782,
+    "unknown_reference_rows": [
+      "<Video 1>",
+      "<Audio 1>"
+    ],
+    "in_trained_band": true
+  },
+  "findings": [
+    {
+      "rule": "R13-sheet-artefact",
+      "severity": "WARN",
+      "msg": "the brief describes a reference sheet artefact that does not belong to the character"
+    },
+    {
+      "rule": "A2-sound-duplicated",
+      "severity": "WARN",
+      "msg": "overall_soundscape repeats content already in the description rather than a separate layer"
+    },
+    {
+      "rule": "R15-wardrobe-not-restated",
+      "severity": "WARN",
+      "msg": "[Shot 2] names the subject but not the garments"
+    }
+  ],
+  "status": "compiled",
+  "version": "contextir/compiler/v1",
+  "brief": {
+    "transcript_uses": [
+      {
+        "asset_id": "ref-3",
+        "text": "And so, my fellow Americans: ask not what your country can do for you—ask what you can do for your country.",
+        "language": "en",
+        "speaker_hint": "the off-screen narrator for ref-3",
+        "voiceover": true
+      }
+    ],
+    "voice_bindings": {
+      "ref-3": "speaker-1"
+    },
+    "transcripts": {
+      "ref-3": "And so, my fellow Americans: ask not what your country can do for you—ask what you can do for your country."
+    },
+    "seconds_explicit": true,
+    "aspect_explicit": true,
+    "intent": "Create a 15-second edit of the supplied video, preserving its observed people, scene layout, action order, transitions and existing visible words. Apply only the supplied image's visual rendering style, without adding its people, composition or lettering. Add an offscreen voiceover performing the complete words actually recognized from the supplied audio exactly once in their original language, without translation, extra speech or replaying the recorded signal. Extend only a natural final hold if needed. Add no music or new visible text.",
+    "assets": [
+      {
+        "preparation_computed": true,
+        "id": "ref-4",
+        "kind": "image",
+        "uri": "upload://ref-4/e23d00458c9c493d6a8bd2f539a58e180e8caaeabf31d288e7c0d1ee4d648237",
+        "sha256": "e23d00458c9c493d6a8bd2f539a58e180e8caaeabf31d288e7c0d1ee4d648237",
+        "metadata": {
+          "width": 733,
+          "height": 1100,
+          "fps": {
+            "numerator": 0,
+            "denominator": 0
+          }
+        },
+        "preparation": {
+          "sizing": "match",
+          "width": 736,
+          "height": 1088
+        },
+        "role": "style",
+        "sizing": "match"
+      },
+      {
+        "preparation_computed": true,
+        "id": "ref-2",
+        "kind": "video",
+        "uri": "upload://ref-2/4f04793f4ab19a618cf47bd8981496ad7df330c5beb148374ba78ccfceda2fbe",
+        "sha256": "4f04793f4ab19a618cf47bd8981496ad7df330c5beb148374ba78ccfceda2fbe",
+        "metadata": {
+          "duration_ms": 10125,
+          "width": 1280,
+          "height": 356,
+          "fps": {
+            "numerator": 24,
+            "denominator": 1
+          }
+        },
+        "preparation": {
+          "width": 1344,
+          "height": 768
+        },
+        "role": "edit_source"
+      },
+      {
+        "preparation_computed": true,
+        "id": "ref-3",
+        "kind": "audio",
+        "uri": "upload://ref-3/63a4b1e4c1dc655ac70961ffbf518acd249df237e5a0152faae9a4a836949715",
+        "sha256": "63a4b1e4c1dc655ac70961ffbf518acd249df237e5a0152faae9a4a836949715",
+        "metadata": {
+          "duration_ms": 11000,
+          "fps": {
+            "numerator": 0,
+            "denominator": 0
+          }
+        },
+        "preparation": {},
+        "role": "voice_timbre"
+      }
+    ],
+    "seconds": 15,
+    "aspect": "16:9",
+    "mode": "ref2va",
+    "silent": true,
+    "creativity": "restrained",
+    "evidence": [
+      {
+        "card": {
+          "asset_id": "ref-4",
+          "summary": "An eight-panel photorealistic character reference sheet of a stern East Asian woman in all-black tactical attire, featuring a rainy night hero shot on top, front/side/back full-body turnarounds in the middle, and close-up details of her scarred face, jacket collar, hands, and boots at the bottom.",
+          "subjects": [
+            {
+              "kind": "person",
+              "descriptor": "Female tactical operative character shown across full-body turnaround views and close-up detail insets",
+              "attributes": [
+                "East Asian woman",
+                "shaved sides haircut with dark hair tied in a small back bun",
+                "vertical scar cutting through left eyebrow",
+                "weathered skin texture",
+                "black high-collar tactical jacket with shoulder buckle straps",
+                "dark crew-neck undershirt",
+                "black tactical cargo pants",
+                "black lace-up combat boots",
+                "veined weathered hands"
+              ],
+              "pose": [
+                "standing wide-stanced looking camera-left in hero panel",
+                "standing front-facing",
+                "standing in left side profile",
+                "standing rear-facing",
+                "close-up face portrait",
+                "close-up detail of collar, hands, and boots"
+              ]
+            }
+          ],
+          "environment": "Top panel shows a dark, rain-slicked urban industrial walkway or rooftop at night with metal railings and warm distant lights; middle and bottom panels use a plain dark gray studio backdrop",
+          "lighting": "Moody low-key cinematic lighting with cool rim light and warm background practicals in the top scene, and controlled directional studio key lighting on the turnaround and detail panels",
+          "palette": [
+            "black",
+            "charcoal gray",
+            "dark slate blue",
+            "warm amber",
+            "muted skin tone"
+          ],
+          "framing": "Three-row grid layout: one wide full-body top panel, three full-body turnaround panels in the middle row, and four close-up detail panels in the bottom row",
+          "style": "Photorealistic live-action cinematic character concept sheet",
+          "visible_text": [
+            "HERO",
+            "FRONT",
+            "SIDE PROFILE",
+            "BACK",
+            "FACE",
+            "JACKET COLLAR",
+            "HANDS",
+            "BOOTS"
+          ],
+          "camera": "Multi-panel character turnaround and detail sheet combining full-body eye-level views and close-up detail crops",
+          "composition": "composed_scene",
+          "is_reference_sheet": true,
+          "analyzer_version": "contextir-playground-native/v1",
+          "model": "gemini-4-argon",
+          "coverage": {
+            "status": "partial",
+            "tracks": [
+              "visual"
+            ]
+          }
+        },
+        "asset_id": "ref-4",
+        "facts": [
+          {
+            "analyzer_version": "contextir-playground-native/v1",
+            "id": "ref-4.native-1",
+            "text": "The image is an eight-panel character reference sheet organized into three horizontal rows with uppercase white labels below each panel: HERO, FRONT, SIDE PROFILE, BACK, FACE, JACKET COLLAR, HANDS, and BOOTS.",
+            "source": {
+              "asset_id": "ref-4",
+              "track": "visual"
+            }
+          },
+          {
+            "analyzer_version": "contextir-playground-native/v1",
+            "id": "ref-4.native-2",
+            "text": "The subject is an East Asian woman with shaved sides, a small dark topknot/bun at the back of her head, and a vertical scar over her left eyebrow.",
+            "source": {
+              "asset_id": "ref-4",
+              "track": "visual"
+            }
+          },
+          {
+            "analyzer_version": "contextir-playground-native/v1",
+            "id": "ref-4.native-3",
+            "text": "She wears a black high-collar tactical jacket with matte black buckle straps on the shoulders, a dark gray undershirt, black cargo trousers, and black lace-up combat boots.",
+            "source": {
+              "asset_id": "ref-4",
+              "track": "visual"
+            }
+          },
+          {
+            "analyzer_version": "contextir-playground-native/v1",
+            "id": "ref-4.native-4",
+            "text": "The top HERO panel depicts her standing on a wet, rain-swept dark walkway bordered by metal railings at night, with cool light from the upper left and warm amber lights glowing on a dark building structure to the right.",
+            "source": {
+              "asset_id": "ref-4",
+              "track": "visual"
+            }
+          },
+          {
+            "analyzer_version": "contextir-playground-native/v1",
+            "id": "ref-4.native-5",
+            "text": "The bottom row displays close-up detail crops of her face, the black jacket collar and shoulder strap buckle, her bare weathered hands hanging below the jacket cuffs, and her worn black lace-up boots.",
+            "source": {
+              "asset_id": "ref-4",
+              "track": "visual"
+            }
+          }
+        ],
+        "model": "gemini-4-argon",
+        "analyzer_version": "contextir-playground-native/v1",
+        "limitations": [
+          "Single still image; no audio, motion, or temporal information is present.",
+          "Noticeable visual discrepancy between panels: in the top HERO and middle FRONT/SIDE PROFILE panels she wears dark fingerless gloves, whereas in the bottom HANDS close-up panel her hands are bare.",
+          "The original uploaded bytes were sent to the native model. Native sampling and exact temporal coverage are unknown; no extracted frames, observed frame count or invented sample times are claimed. Empty acoustic properties do not establish silence."
+        ],
+        "coverage": {
+          "status": "partial",
+          "tracks": [
+            "visual"
+          ]
+        }
+      },
+      {
+        "card": {
+          "asset_id": "ref-2",
+          "summary": "A side-by-side split-screen video comparing two rainy nighttime urban scenes of a person in dark tactical clothing with a topknot walking along a wet walkway next to a city skyline, labeled 'your sentence, sent raw' on the left and 'compiled by open-h3-ir' on the right, accompanied by piano music and rain sound effects.",
+          "subjects": [
+            {
+              "kind": "person",
+              "descriptor": "East Asian adult",
+              "attributes": [
+                "dark hair in a top bun with shaved sides",
+                "black tactical-style jacket and dark pants"
+              ],
+              "pose": [
+                "walking along a wet walkway",
+                "standing in profile looking down"
+              ]
+            }
+          ],
+          "environment": "Rainy urban walkway or bridge at night with metal railings, streetlamps, adjacent building facades, and an illuminated city skyline in the background.",
+          "lighting": "Low-key nighttime urban lighting with cool bluish-teal ambient tones, warm orange window lights, and bright streetlamp reflections on wet pavement.",
+          "palette": [
+            "dark blue",
+            "teal",
+            "black",
+            "warm amber",
+            "gray"
+          ],
+          "framing": "Side-by-side split screen featuring full/medium-long shots transitioning to medium and close-up views.",
+          "style": "Photorealistic, cinematic, moody urban night aesthetic",
+          "visible_text": [
+            "your sentence, sent raw",
+            "compiled by open-h3-ir"
+          ],
+          "motion": "In the left panel, the person walks toward the camera as the camera arcs around to their back. In the right panel, the person walks away from the camera, followed by a hard cut to a close-up where the person looks downward and turns their head slightly.",
+          "camera": "Split-screen comparison. In the left panel, a continuous tracking camera pulls backward ahead of the walking subject before arcing around to a rear view. In the right panel, the camera tracks behind the walking subject and then cuts to a close-up side profile shot.",
+          "characterisation": "Live-action cinematic style",
+          "composition": "composed_scene",
+          "timbre": "Soft acoustic piano with steady, pattering rain ambiance.",
+          "music": "Slow, melancholic piano melody played over continuous ambient rain sounds.",
+          "analyzer_version": "contextir-playground-native/v1",
+          "model": "gemini-4-argon",
+          "coverage": {
+            "status": "partial",
+            "tracks": [
+              "visual",
+              "audio"
+            ]
+          }
+        },
+        "asset_id": "ref-2",
+        "facts": [
+          {
+            "analyzer_version": "contextir-playground-native/v1",
+            "id": "ref-2.native-1",
+            "text": "The video is presented as a horizontal side-by-side split screen with white text in the bottom-left of the left panel reading 'your sentence, sent raw' and in the bottom-left of the right panel reading 'compiled by open-h3-ir'.",
+            "source": {
+              "asset_id": "ref-2",
+              "track": "visual"
+            }
+          },
+          {
+            "analyzer_version": "contextir-playground-native/v1",
+            "id": "ref-2.native-2",
+            "text": "In the left panel, a person with dark hair tied in a top bun and shaved sides, wearing a black jacket and dark pants, walks forward along a wet, railed urban walkway at night while a single continuous camera shot pulls back and arcs around to show the person from behind.",
+            "source": {
+              "asset_id": "ref-2",
+              "track": "visual"
+            }
+          },
+          {
+            "analyzer_version": "contextir-playground-native/v1",
+            "id": "ref-2.native-3",
+            "text": "In the right panel, the first shot shows the same person from behind walking away along the wet railed walkway at night, then cuts to a close-up profile shot of the person looking down and slightly turning their head against a blurred city skyline.",
+            "source": {
+              "asset_id": "ref-2",
+              "track": "visual"
+            }
+          },
+          {
+            "analyzer_version": "contextir-playground-native/v1",
+            "id": "ref-2.native-4",
+            "text": "The audio track contains a slow, melancholic piano melody layered with the continuous sound of falling rain and footsteps on wet ground, with no spoken dialogue.",
+            "source": {
+              "asset_id": "ref-2",
+              "track": "audio"
+            }
+          }
+        ],
+        "model": "gemini-4-argon",
+        "analyzer_version": "contextir-playground-native/v1",
+        "limitations": [
+          "No spoken words are audible in the audio stream.",
+          "The original uploaded bytes were sent to the native model. Native sampling and exact temporal coverage are unknown; no extracted frames, observed frame count or invented sample times are claimed. Empty acoustic properties do not establish silence."
+        ],
+        "coverage": {
+          "status": "partial",
+          "tracks": [
+            "visual",
+            "audio"
+          ]
+        }
+      },
+      {
+        "card": {
+          "asset_id": "ref-3",
+          "summary": "An adult male voice with a New England accent delivers an emphatic public address in English over a vintage public-address audio recording, stating, \"And so, my fellow Americans: ask not what your country can do for you—ask what you can do for your country,\" followed immediately by rising applause at the end of the clip.",
+          "characterisation": "Declamatory, oratorical public speech delivered with deliberate pacing, emphatic pauses, and strong vocal projection over an amplified microphone system, concluding as crowd applause begins.",
+          "transcript": "And so, my fellow Americans: ask not what your country can do for you—ask what you can do for your country.",
+          "language": "en",
+          "timbre": "Projected adult male voice with a resonant, slightly nasal mid-to-high baritone register, pronounced New England regional vowels, and vintage public-address microphone distortion and ambient hiss.",
+          "analyzer_version": "contextir-playground-native/v1",
+          "model": "gemini-4-argon",
+          "coverage": {
+            "status": "partial",
+            "tracks": [
+              "audio"
+            ]
+          }
+        },
+        "asset_id": "ref-3",
+        "facts": [
+          {
+            "analyzer_version": "contextir-playground-native/v1",
+            "id": "ref-3.native-1",
+            "text": "An adult male voice speaks in English with a deliberate, oratorical cadence and strong projection: \"And so, my fellow Americans: ask not what your country can do for you—ask what you can do for your country.\"",
+            "source": {
+              "asset_id": "ref-3",
+              "track": "audio"
+            }
+          },
+          {
+            "analyzer_version": "contextir-playground-native/v1",
+            "id": "ref-3.native-2",
+            "text": "The audio has a vintage public-address recording texture with background hiss, slight microphone clipping on stressed syllables, deliberate pauses between clauses, and crowd applause starting immediately after the final word.",
+            "source": {
+              "asset_id": "ref-3",
+              "track": "audio"
+            }
+          },
+          {
+            "analyzer_version": "contextir-playground-native/v1",
+            "id": "ref-3.native-3",
+            "text": "No musical accompaniment is audible in the recording.",
+            "source": {
+              "asset_id": "ref-3",
+              "track": "audio"
+            }
+          }
+        ],
+        "model": "gemini-4-argon",
+        "analyzer_version": "contextir-playground-native/v1",
+        "limitations": [
+          "Audio-only attachment; no visual track is present to observe subjects, framing, lighting, or visible text.",
+          "Speaker identity and historical context are not inferred from the voice alone.",
+          "The original uploaded bytes were sent to the native model. Native sampling and exact temporal coverage are unknown; no extracted frames, observed frame count or invented sample times are claimed. Empty acoustic properties do not establish silence."
+        ],
+        "coverage": {
+          "status": "partial",
+          "tracks": [
+            "audio"
+          ]
+        }
+      }
+    ],
+    "cards": [
+      {
+        "asset_id": "ref-4",
+        "summary": "An eight-panel photorealistic character reference sheet of a stern East Asian woman in all-black tactical attire, featuring a rainy night hero shot on top, front/side/back full-body turnarounds in the middle, and close-up details of her scarred face, jacket collar, hands, and boots at the bottom.",
+        "subjects": [
+          {
+            "kind": "person",
+            "descriptor": "Female tactical operative character shown across full-body turnaround views and close-up detail insets",
+            "attributes": [
+              "East Asian woman",
+              "shaved sides haircut with dark hair tied in a small back bun",
+              "vertical scar cutting through left eyebrow",
+              "weathered skin texture",
+              "black high-collar tactical jacket with shoulder buckle straps",
+              "dark crew-neck undershirt",
+              "black tactical cargo pants",
+              "black lace-up combat boots",
+              "veined weathered hands"
+            ],
+            "pose": [
+              "standing wide-stanced looking camera-left in hero panel",
+              "standing front-facing",
+              "standing in left side profile",
+              "standing rear-facing",
+              "close-up face portrait",
+              "close-up detail of collar, hands, and boots"
+            ]
+          }
+        ],
+        "environment": "Top panel shows a dark, rain-slicked urban industrial walkway or rooftop at night with metal railings and warm distant lights; middle and bottom panels use a plain dark gray studio backdrop",
+        "lighting": "Moody low-key cinematic lighting with cool rim light and warm background practicals in the top scene, and controlled directional studio key lighting on the turnaround and detail panels",
+        "palette": [
+          "black",
+          "charcoal gray",
+          "dark slate blue",
+          "warm amber",
+          "muted skin tone"
+        ],
+        "framing": "Three-row grid layout: one wide full-body top panel, three full-body turnaround panels in the middle row, and four close-up detail panels in the bottom row",
+        "style": "Photorealistic live-action cinematic character concept sheet",
+        "visible_text": [
+          "HERO",
+          "FRONT",
+          "SIDE PROFILE",
+          "BACK",
+          "FACE",
+          "JACKET COLLAR",
+          "HANDS",
+          "BOOTS"
+        ],
+        "camera": "Multi-panel character turnaround and detail sheet combining full-body eye-level views and close-up detail crops",
+        "composition": "composed_scene",
+        "is_reference_sheet": true,
+        "analyzer_version": "contextir-playground-native/v1",
+        "model": "gemini-4-argon",
+        "coverage": {
+          "status": "partial",
+          "tracks": [
+            "visual"
+          ]
+        }
+      },
+      {
+        "asset_id": "ref-2",
+        "summary": "A side-by-side split-screen video comparing two rainy nighttime urban scenes of a person in dark tactical clothing with a topknot walking along a wet walkway next to a city skyline, labeled 'your sentence, sent raw' on the left and 'compiled by open-h3-ir' on the right, accompanied by piano music and rain sound effects.",
+        "subjects": [
+          {
+            "kind": "person",
+            "descriptor": "East Asian adult",
+            "attributes": [
+              "dark hair in a top bun with shaved sides",
+              "black tactical-style jacket and dark pants"
+            ],
+            "pose": [
+              "walking along a wet walkway",
+              "standing in profile looking down"
+            ]
+          }
+        ],
+        "environment": "Rainy urban walkway or bridge at night with metal railings, streetlamps, adjacent building facades, and an illuminated city skyline in the background.",
+        "lighting": "Low-key nighttime urban lighting with cool bluish-teal ambient tones, warm orange window lights, and bright streetlamp reflections on wet pavement.",
+        "palette": [
+          "dark blue",
+          "teal",
+          "black",
+          "warm amber",
+          "gray"
+        ],
+        "framing": "Side-by-side split screen featuring full/medium-long shots transitioning to medium and close-up views.",
+        "style": "Photorealistic, cinematic, moody urban night aesthetic",
+        "visible_text": [
+          "your sentence, sent raw",
+          "compiled by open-h3-ir"
+        ],
+        "motion": "In the left panel, the person walks toward the camera as the camera arcs around to their back. In the right panel, the person walks away from the camera, followed by a hard cut to a close-up where the person looks downward and turns their head slightly.",
+        "camera": "Split-screen comparison. In the left panel, a continuous tracking camera pulls backward ahead of the walking subject before arcing around to a rear view. In the right panel, the camera tracks behind the walking subject and then cuts to a close-up side profile shot.",
+        "characterisation": "Live-action cinematic style",
+        "composition": "composed_scene",
+        "timbre": "Soft acoustic piano with steady, pattering rain ambiance.",
+        "music": "Slow, melancholic piano melody played over continuous ambient rain sounds.",
+        "analyzer_version": "contextir-playground-native/v1",
+        "model": "gemini-4-argon",
+        "coverage": {
+          "status": "partial",
+          "tracks": [
+            "visual",
+            "audio"
+          ]
+        }
+      },
+      {
+        "asset_id": "ref-3",
+        "summary": "An adult male voice with a New England accent delivers an emphatic public address in English over a vintage public-address audio recording, stating, \"And so, my fellow Americans: ask not what your country can do for you—ask what you can do for your country,\" followed immediately by rising applause at the end of the clip.",
+        "characterisation": "Declamatory, oratorical public speech delivered with deliberate pacing, emphatic pauses, and strong vocal projection over an amplified microphone system, concluding as crowd applause begins.",
+        "transcript": "And so, my fellow Americans: ask not what your country can do for you—ask what you can do for your country.",
+        "language": "en",
+        "timbre": "Projected adult male voice with a resonant, slightly nasal mid-to-high baritone register, pronounced New England regional vowels, and vintage public-address microphone distortion and ambient hiss.",
+        "analyzer_version": "contextir-playground-native/v1",
+        "model": "gemini-4-argon",
+        "coverage": {
+          "status": "partial",
+          "tracks": [
+            "audio"
+          ]
+        }
+      }
+    ]
+  },
+  "request": {
+    "instruction": "Create a 15-second edit of the supplied video, preserving its observed people, scene layout, action order, transitions and existing visible words. Apply only the supplied image's visual rendering style, without adding its people, composition or lettering. Add an offscreen voiceover performing the complete words actually recognized from the supplied audio exactly once in their original language, without translation, extra speech or replaying the recorded signal. Extend only a natural final hold if needed. Add no music or new visible text.",
+    "mode": "ref2va",
+    "target": {
+      "duration_ms": 15000,
+      "frame_count": 360,
+      "aspect_ratio": "16:9",
+      "fps": {
+        "numerator": 24,
+        "denominator": 1
+      },
+      "width": 1344,
+      "height": 768
+    },
+    "assets": [
+      {
+        "id": "ref-4",
+        "kind": "image",
+        "uri": "upload://ref-4/e23d00458c9c493d6a8bd2f539a58e180e8caaeabf31d288e7c0d1ee4d648237",
+        "sha256": "e23d00458c9c493d6a8bd2f539a58e180e8caaeabf31d288e7c0d1ee4d648237",
+        "metadata": {
+          "width": 733,
+          "height": 1100,
+          "fps": {
+            "numerator": 0,
+            "denominator": 0
+          }
+        },
+        "preparation": {
+          "sizing": "match",
+          "width": 736,
+          "height": 1088
+        }
+      },
+      {
+        "id": "ref-2",
+        "kind": "video",
+        "uri": "upload://ref-2/4f04793f4ab19a618cf47bd8981496ad7df330c5beb148374ba78ccfceda2fbe",
+        "sha256": "4f04793f4ab19a618cf47bd8981496ad7df330c5beb148374ba78ccfceda2fbe",
+        "metadata": {
+          "duration_ms": 10125,
+          "width": 1280,
+          "height": 356,
+          "fps": {
+            "numerator": 24,
+            "denominator": 1
+          }
+        },
+        "preparation": {
+          "width": 1344,
+          "height": 768
+        }
+      },
+      {
+        "id": "ref-3",
+        "kind": "audio",
+        "uri": "upload://ref-3/63a4b1e4c1dc655ac70961ffbf518acd249df237e5a0152faae9a4a836949715",
+        "sha256": "63a4b1e4c1dc655ac70961ffbf518acd249df237e5a0152faae9a4a836949715",
+        "metadata": {
+          "duration_ms": 11000,
+          "fps": {
+            "numerator": 0,
+            "denominator": 0
+          }
+        },
+        "preparation": {}
+      }
+    ],
+    "bindings": [
+      {
+        "source": {
+          "asset_id": "ref-4",
+          "track": "visual"
+        },
+        "role": "style"
+      },
+      {
+        "source": {
+          "asset_id": "ref-2",
+          "track": "visual"
+        },
+        "role": "edit_source"
+      },
+      {
+        "source": {
+          "asset_id": "ref-3",
+          "track": "audio"
+        },
+        "role": "voice"
+      }
+    ],
+    "dialogue": [
+      {
+        "id": "line-1",
+        "speaker_ids": [
+          "speaker-1"
+        ],
+        "language": "en",
+        "text": "And so, my fellow Americans: ask not what your country can do for you—ask what you can do for your country.",
+        "voiceover": true
+      }
+    ],
+    "constraints": [
+      {
+        "id": "compiler-no-music",
+        "kind": "no_music",
+        "text": "The target contains no music, including copied background music."
+      }
+    ],
+    "allow_creative_additions": false,
+    "allow_generated_dialogue": false,
+    "pinned_shots": [
+      {
+        "id": "shot-1",
+        "start_ms": 0,
+        "end_ms": 6000
+      },
+      {
+        "id": "shot-2",
+        "start_ms": 6000,
+        "end_ms": 15000
+      }
+    ],
+    "addition_scope": {
+      "dialogue": true,
+      "music": false,
+      "visible_text": false
+    }
+  },
+  "structure": {
+    "transcript_uses": [
+      {
+        "asset_id": "ref-3",
+        "text": "And so, my fellow Americans: ask not what your country can do for you—ask what you can do for your country.",
+        "language": "en",
+        "speaker_hint": "the off-screen narrator for ref-3",
+        "voiceover": true
+      }
+    ],
+    "music_constraint": "no_music",
+    "replacement_targets": {},
+    "style": "Photorealistic live-action, cinematic",
+    "mode": "ref2va",
+    "assets": [
+      {
+        "asset_id": "ref-4",
+        "role": "style",
+        "replaces": ""
+      },
+      {
+        "asset_id": "ref-2",
+        "role": "edit_source",
+        "replaces": ""
+      },
+      {
+        "asset_id": "ref-3",
+        "role": "voice_timbre",
+        "replaces": ""
+      }
+    ],
+    "shots": [
+      {
+        "subjects": [
+          "subject-1"
+        ],
+        "sync_sound": [
+          "steady falling rain hitting the wet pavement",
+          "footsteps stepping along the wet walkway"
+        ],
+        "start_ms": 0,
+        "purpose": "establish",
+        "framing": "medium wide",
+        "action": "In a horizontal side-by-side split screen labeled 'your sentence, sent raw' at the bottom-left of the left panel and 'compiled by open-h3-ir' at the bottom-left of the right panel, the East Asian adult in a black tactical-style jacket and dark pants with dark hair in a top bun walks along a wet, railed urban walkway at night beside an illuminated city skyline; in the left panel the subject walks forward as the camera pulls back and begins arcing around, while in the right panel the subject walks away from the camera along the wet pavement.",
+        "what_changes": "The subject progresses along the rain-slicked walkway in both split-screen panels while the left camera arcs toward a rear view and the right camera tracks behind.",
+        "camera": {
+          "type": "Tracking Shot",
+          "amplitude": "small",
+          "speed": "slow"
+        }
+      },
+      {
+        "subjects": [
+          "subject-1"
+        ],
+        "sync_sound": [
+          "continuous pattering rain on the urban walkway"
+        ],
+        "start_ms": 6000,
+        "purpose": "resolve",
+        "framing": "close",
+        "action": "Maintaining the side-by-side split-screen layout and its existing bottom-left labels 'your sentence, sent raw' and 'compiled by open-h3-ir', the left panel completes its continuous arc to follow the walking subject from behind along the wet railed walkway, while the right panel hard-cuts to a close-up side profile of the subject standing against the blurred nighttime city skyline, looking downward, turning their head slightly, and holding that poised final expression through the end of the 15-second edit.",
+        "what_changes": "The right panel transitions from the rear walking view to a close-up side profile as the subject looks down, turns their head slightly, and holds a natural final pose while the left panel finishes its rear tracking view.",
+        "camera": {
+          "type": "Static Shot",
+          "amplitude": "",
+          "speed": ""
+        }
+      }
+    ],
+    "dialogue": [
+      {
+        "text": "And so, my fellow Americans: ask not what your country can do for you—ask what you can do for your country.",
+        "language": "en",
+        "speaker_hint": "the off-screen narrator for ref-3",
+        "voiceover": true,
+        "kind": "",
+        "delivery": ""
+      }
+    ],
+    "onscreen_text": [],
+    "requested": {
+      "speech": true,
+      "music": false,
+      "onscreen_text": false,
+      "magnitude": ""
+    },
+    "forbidden": {
+      "speech": false,
+      "music": true,
+      "onscreen_text": true,
+      "magnitude": ""
+    },
+    "reasoning": "The edit preserves the side-by-side split-screen layout, existing visible labels ('your sentence, sent raw' on the left and 'compiled by open-h3-ir' on the right), the East Asian adult in dark tactical attire with a top bun, and the observed action sequence from ref-2 across 15 seconds, rendered in the photorealistic live-action cinematic style of ref-4. An off-screen voiceover delivers the complete recognized line from ref-3 using its vocal timbre and oratorical delivery, while music and new visible text are excluded as requested."
+  },
+  "scope": {
+    "speech": true,
+    "music": false,
+    "onscreen_text": false,
+    "magnitude": "plain"
+  },
+  "document": {
+    "version": "contextir/v1",
+    "mode": "ref2va",
+    "target": {
+      "duration_ms": 15000,
+      "frame_count": 360,
+      "aspect_ratio": "16:9",
+      "fps": {
+        "numerator": 24,
+        "denominator": 1
+      },
+      "width": 1344,
+      "height": 768
+    },
+    "assets": [
+      {
+        "id": "ref-4",
+        "kind": "image",
+        "uri": "upload://ref-4/e23d00458c9c493d6a8bd2f539a58e180e8caaeabf31d288e7c0d1ee4d648237",
+        "sha256": "e23d00458c9c493d6a8bd2f539a58e180e8caaeabf31d288e7c0d1ee4d648237",
+        "metadata": {
+          "width": 733,
+          "height": 1100,
+          "fps": {
+            "numerator": 0,
+            "denominator": 0
+          }
+        },
+        "preparation": {
+          "sizing": "match",
+          "width": 736,
+          "height": 1088
+        }
+      },
+      {
+        "id": "ref-2",
+        "kind": "video",
+        "uri": "upload://ref-2/4f04793f4ab19a618cf47bd8981496ad7df330c5beb148374ba78ccfceda2fbe",
+        "sha256": "4f04793f4ab19a618cf47bd8981496ad7df330c5beb148374ba78ccfceda2fbe",
+        "metadata": {
+          "duration_ms": 10125,
+          "width": 1280,
+          "height": 356,
+          "fps": {
+            "numerator": 24,
+            "denominator": 1
+          }
+        },
+        "preparation": {
+          "width": 1344,
+          "height": 768
+        }
+      },
+      {
+        "id": "ref-3",
+        "kind": "audio",
+        "uri": "upload://ref-3/63a4b1e4c1dc655ac70961ffbf518acd249df237e5a0152faae9a4a836949715",
+        "sha256": "63a4b1e4c1dc655ac70961ffbf518acd249df237e5a0152faae9a4a836949715",
+        "metadata": {
+          "duration_ms": 11000,
+          "fps": {
+            "numerator": 0,
+            "denominator": 0
+          }
+        },
+        "preparation": {}
+      }
+    ],
+    "evidence": [
+      {
+        "card": {
+          "asset_id": "ref-4",
+          "summary": "An eight-panel photorealistic character reference sheet of a stern East Asian woman in all-black tactical attire, featuring a rainy night hero shot on top, front/side/back full-body turnarounds in the middle, and close-up details of her scarred face, jacket collar, hands, and boots at the bottom.",
+          "subjects": [
+            {
+              "kind": "person",
+              "descriptor": "Female tactical operative character shown across full-body turnaround views and close-up detail insets",
+              "attributes": [
+                "East Asian woman",
+                "shaved sides haircut with dark hair tied in a small back bun",
+                "vertical scar cutting through left eyebrow",
+                "weathered skin texture",
+                "black high-collar tactical jacket with shoulder buckle straps",
+                "dark crew-neck undershirt",
+                "black tactical cargo pants",
+                "black lace-up combat boots",
+                "veined weathered hands"
+              ],
+              "pose": [
+                "standing wide-stanced looking camera-left in hero panel",
+                "standing front-facing",
+                "standing in left side profile",
+                "standing rear-facing",
+                "close-up face portrait",
+                "close-up detail of collar, hands, and boots"
+              ]
+            }
+          ],
+          "environment": "Top panel shows a dark, rain-slicked urban industrial walkway or rooftop at night with metal railings and warm distant lights; middle and bottom panels use a plain dark gray studio backdrop",
+          "lighting": "Moody low-key cinematic lighting with cool rim light and warm background practicals in the top scene, and controlled directional studio key lighting on the turnaround and detail panels",
+          "palette": [
+            "black",
+            "charcoal gray",
+            "dark slate blue",
+            "warm amber",
+            "muted skin tone"
+          ],
+          "framing": "Three-row grid layout: one wide full-body top panel, three full-body turnaround panels in the middle row, and four close-up detail panels in the bottom row",
+          "style": "Photorealistic live-action cinematic character concept sheet",
+          "visible_text": [
+            "HERO",
+            "FRONT",
+            "SIDE PROFILE",
+            "BACK",
+            "FACE",
+            "JACKET COLLAR",
+            "HANDS",
+            "BOOTS"
+          ],
+          "camera": "Multi-panel character turnaround and detail sheet combining full-body eye-level views and close-up detail crops",
+          "composition": "composed_scene",
+          "is_reference_sheet": true,
+          "analyzer_version": "contextir-playground-native/v1",
+          "model": "gemini-4-argon",
+          "coverage": {
+            "status": "partial",
+            "tracks": [
+              "visual"
+            ]
+          }
+        },
+        "asset_id": "ref-4",
+        "facts": [
+          {
+            "analyzer_version": "contextir-playground-native/v1",
+            "id": "ref-4.native-1",
+            "text": "The image is an eight-panel character reference sheet organized into three horizontal rows with uppercase white labels below each panel: HERO, FRONT, SIDE PROFILE, BACK, FACE, JACKET COLLAR, HANDS, and BOOTS.",
+            "source": {
+              "asset_id": "ref-4",
+              "track": "visual"
+            }
+          },
+          {
+            "analyzer_version": "contextir-playground-native/v1",
+            "id": "ref-4.native-2",
+            "text": "The subject is an East Asian woman with shaved sides, a small dark topknot/bun at the back of her head, and a vertical scar over her left eyebrow.",
+            "source": {
+              "asset_id": "ref-4",
+              "track": "visual"
+            }
+          },
+          {
+            "analyzer_version": "contextir-playground-native/v1",
+            "id": "ref-4.native-3",
+            "text": "She wears a black high-collar tactical jacket with matte black buckle straps on the shoulders, a dark gray undershirt, black cargo trousers, and black lace-up combat boots.",
+            "source": {
+              "asset_id": "ref-4",
+              "track": "visual"
+            }
+          },
+          {
+            "analyzer_version": "contextir-playground-native/v1",
+            "id": "ref-4.native-4",
+            "text": "The top HERO panel depicts her standing on a wet, rain-swept dark walkway bordered by metal railings at night, with cool light from the upper left and warm amber lights glowing on a dark building structure to the right.",
+            "source": {
+              "asset_id": "ref-4",
+              "track": "visual"
+            }
+          },
+          {
+            "analyzer_version": "contextir-playground-native/v1",
+            "id": "ref-4.native-5",
+            "text": "The bottom row displays close-up detail crops of her face, the black jacket collar and shoulder strap buckle, her bare weathered hands hanging below the jacket cuffs, and her worn black lace-up boots.",
+            "source": {
+              "asset_id": "ref-4",
+              "track": "visual"
+            }
+          }
+        ],
+        "model": "gemini-4-argon",
+        "analyzer_version": "contextir-playground-native/v1",
+        "limitations": [
+          "Single still image; no audio, motion, or temporal information is present.",
+          "Noticeable visual discrepancy between panels: in the top HERO and middle FRONT/SIDE PROFILE panels she wears dark fingerless gloves, whereas in the bottom HANDS close-up panel her hands are bare.",
+          "The original uploaded bytes were sent to the native model. Native sampling and exact temporal coverage are unknown; no extracted frames, observed frame count or invented sample times are claimed. Empty acoustic properties do not establish silence."
+        ],
+        "coverage": {
+          "status": "partial",
+          "tracks": [
+            "visual"
+          ]
+        }
+      },
+      {
+        "card": {
+          "asset_id": "ref-2",
+          "summary": "A side-by-side split-screen video comparing two rainy nighttime urban scenes of a person in dark tactical clothing with a topknot walking along a wet walkway next to a city skyline, labeled 'your sentence, sent raw' on the left and 'compiled by open-h3-ir' on the right, accompanied by piano music and rain sound effects.",
+          "subjects": [
+            {
+              "kind": "person",
+              "descriptor": "East Asian adult",
+              "attributes": [
+                "dark hair in a top bun with shaved sides",
+                "black tactical-style jacket and dark pants"
+              ],
+              "pose": [
+                "walking along a wet walkway",
+                "standing in profile looking down"
+              ]
+            }
+          ],
+          "environment": "Rainy urban walkway or bridge at night with metal railings, streetlamps, adjacent building facades, and an illuminated city skyline in the background.",
+          "lighting": "Low-key nighttime urban lighting with cool bluish-teal ambient tones, warm orange window lights, and bright streetlamp reflections on wet pavement.",
+          "palette": [
+            "dark blue",
+            "teal",
+            "black",
+            "warm amber",
+            "gray"
+          ],
+          "framing": "Side-by-side split screen featuring full/medium-long shots transitioning to medium and close-up views.",
+          "style": "Photorealistic, cinematic, moody urban night aesthetic",
+          "visible_text": [
+            "your sentence, sent raw",
+            "compiled by open-h3-ir"
+          ],
+          "motion": "In the left panel, the person walks toward the camera as the camera arcs around to their back. In the right panel, the person walks away from the camera, followed by a hard cut to a close-up where the person looks downward and turns their head slightly.",
+          "camera": "Split-screen comparison. In the left panel, a continuous tracking camera pulls backward ahead of the walking subject before arcing around to a rear view. In the right panel, the camera tracks behind the walking subject and then cuts to a close-up side profile shot.",
+          "characterisation": "Live-action cinematic style",
+          "composition": "composed_scene",
+          "timbre": "Soft acoustic piano with steady, pattering rain ambiance.",
+          "music": "Slow, melancholic piano melody played over continuous ambient rain sounds.",
+          "analyzer_version": "contextir-playground-native/v1",
+          "model": "gemini-4-argon",
+          "coverage": {
+            "status": "partial",
+            "tracks": [
+              "visual",
+              "audio"
+            ]
+          }
+        },
+        "asset_id": "ref-2",
+        "facts": [
+          {
+            "analyzer_version": "contextir-playground-native/v1",
+            "id": "ref-2.native-1",
+            "text": "The video is presented as a horizontal side-by-side split screen with white text in the bottom-left of the left panel reading 'your sentence, sent raw' and in the bottom-left of the right panel reading 'compiled by open-h3-ir'.",
+            "source": {
+              "asset_id": "ref-2",
+              "track": "visual"
+            }
+          },
+          {
+            "analyzer_version": "contextir-playground-native/v1",
+            "id": "ref-2.native-2",
+            "text": "In the left panel, a person with dark hair tied in a top bun and shaved sides, wearing a black jacket and dark pants, walks forward along a wet, railed urban walkway at night while a single continuous camera shot pulls back and arcs around to show the person from behind.",
+            "source": {
+              "asset_id": "ref-2",
+              "track": "visual"
+            }
+          },
+          {
+            "analyzer_version": "contextir-playground-native/v1",
+            "id": "ref-2.native-3",
+            "text": "In the right panel, the first shot shows the same person from behind walking away along the wet railed walkway at night, then cuts to a close-up profile shot of the person looking down and slightly turning their head against a blurred city skyline.",
+            "source": {
+              "asset_id": "ref-2",
+              "track": "visual"
+            }
+          },
+          {
+            "analyzer_version": "contextir-playground-native/v1",
+            "id": "ref-2.native-4",
+            "text": "The audio track contains a slow, melancholic piano melody layered with the continuous sound of falling rain and footsteps on wet ground, with no spoken dialogue.",
+            "source": {
+              "asset_id": "ref-2",
+              "track": "audio"
+            }
+          }
+        ],
+        "model": "gemini-4-argon",
+        "analyzer_version": "contextir-playground-native/v1",
+        "limitations": [
+          "No spoken words are audible in the audio stream.",
+          "The original uploaded bytes were sent to the native model. Native sampling and exact temporal coverage are unknown; no extracted frames, observed frame count or invented sample times are claimed. Empty acoustic properties do not establish silence."
+        ],
+        "coverage": {
+          "status": "partial",
+          "tracks": [
+            "visual",
+            "audio"
+          ]
+        }
+      },
+      {
+        "card": {
+          "asset_id": "ref-3",
+          "summary": "An adult male voice with a New England accent delivers an emphatic public address in English over a vintage public-address audio recording, stating, \"And so, my fellow Americans: ask not what your country can do for you—ask what you can do for your country,\" followed immediately by rising applause at the end of the clip.",
+          "characterisation": "Declamatory, oratorical public speech delivered with deliberate pacing, emphatic pauses, and strong vocal projection over an amplified microphone system, concluding as crowd applause begins.",
+          "transcript": "And so, my fellow Americans: ask not what your country can do for you—ask what you can do for your country.",
+          "language": "en",
+          "timbre": "Projected adult male voice with a resonant, slightly nasal mid-to-high baritone register, pronounced New England regional vowels, and vintage public-address microphone distortion and ambient hiss.",
+          "analyzer_version": "contextir-playground-native/v1",
+          "model": "gemini-4-argon",
+          "coverage": {
+            "status": "partial",
+            "tracks": [
+              "audio"
+            ]
+          }
+        },
+        "asset_id": "ref-3",
+        "facts": [
+          {
+            "analyzer_version": "contextir-playground-native/v1",
+            "id": "ref-3.native-1",
+            "text": "An adult male voice speaks in English with a deliberate, oratorical cadence and strong projection: \"And so, my fellow Americans: ask not what your country can do for you—ask what you can do for your country.\"",
+            "source": {
+              "asset_id": "ref-3",
+              "track": "audio"
+            }
+          },
+          {
+            "analyzer_version": "contextir-playground-native/v1",
+            "id": "ref-3.native-2",
+            "text": "The audio has a vintage public-address recording texture with background hiss, slight microphone clipping on stressed syllables, deliberate pauses between clauses, and crowd applause starting immediately after the final word.",
+            "source": {
+              "asset_id": "ref-3",
+              "track": "audio"
+            }
+          },
+          {
+            "analyzer_version": "contextir-playground-native/v1",
+            "id": "ref-3.native-3",
+            "text": "No musical accompaniment is audible in the recording.",
+            "source": {
+              "asset_id": "ref-3",
+              "track": "audio"
+            }
+          }
+        ],
+        "model": "gemini-4-argon",
+        "analyzer_version": "contextir-playground-native/v1",
+        "limitations": [
+          "Audio-only attachment; no visual track is present to observe subjects, framing, lighting, or visible text.",
+          "Speaker identity and historical context are not inferred from the voice alone.",
+          "The original uploaded bytes were sent to the native model. Native sampling and exact temporal coverage are unknown; no extracted frames, observed frame count or invented sample times are claimed. Empty acoustic properties do not establish silence."
+        ],
+        "coverage": {
+          "status": "partial",
+          "tracks": [
+            "audio"
+          ]
+        }
+      }
+    ],
+    "subjects": [
+      {
+        "kind": "person",
+        "descriptor": "East Asian adult",
+        "attributes": [
+          "dark hair in a top bun with shaved sides",
+          "black tactical-style jacket and dark pants"
+        ],
+        "origin": "observed",
+        "id": "subject-1",
+        "description": "East Asian adult; dark hair in a top bun with shaved sides, black tactical-style jacket and dark pants",
+        "sources": [
+          {
+            "source": {
+              "asset_id": "ref-2",
+              "track": "visual"
+            },
+            "role": "edit_source"
+          }
+        ],
+        "retention": "fully_preserved",
+        "retention_details": "Preserve this canonical target identity and its listed stable attributes.",
+        "shot_ids": [
+          "shot-1",
+          "shot-2"
+        ]
+      }
+    ],
+    "references": [
+      {
+        "id": "reference-ref-4-1",
+        "kind": "picture",
+        "source": {
+          "asset_id": "ref-4",
+          "track": "visual"
+        },
+        "roles": [
+          "style"
+        ],
+        "description": "Visual style and composition reference only, without importing its depicted subjects or setting.",
+        "retention": "weak_reference",
+        "retention_details": "Only the declared aesthetic properties are followed; source contents are not reproduced.",
+        "shot_ids": [
+          "shot-1",
+          "shot-2"
+        ]
+      },
+      {
+        "id": "reference-ref-2-2",
+        "kind": "video",
+        "source": {
+          "asset_id": "ref-2",
+          "track": "visual"
+        },
+        "roles": [
+          "edit_source"
+        ],
+        "description": "The source video being edited.",
+        "retention": "fully_preserved",
+        "retention_details": "Preserve the source except for the caller's explicitly authorised edit; do not introduce unrelated replacements.",
+        "shot_ids": [
+          "shot-1",
+          "shot-2"
+        ]
+      },
+      {
+        "id": "reference-ref-3-3",
+        "kind": "audio",
+        "source": {
+          "asset_id": "ref-3",
+          "track": "audio"
+        },
+        "roles": [
+          "voice"
+        ],
+        "description": "Voice timbre and delivery property reference for the reciprocally bound target vocal speaker only; it does not supply mechanical sound, ambience, music or timing.",
+        "retention": "reference",
+        "retention_details": "Only that target speaker's vocal timbre and delivery are referenced; the source recording and its words are not copied. Without an authorized vocal performance the binding remains dormant, while independent newly generated ambience remains allowed.",
+        "shot_ids": [
+          "shot-1",
+          "shot-2"
+        ],
+        "speaker_id": "speaker-1"
+      }
+    ],
+    "speakers": [
+      {
+        "onscreen": false,
+        "id": "speaker-1",
+        "description": "Off-screen adult male narrator delivering the public address in a resonant, deliberate oratorical cadence following the vocal timbre and delivery of reference-ref-3-3.",
+        "voice_reference_id": "reference-ref-3-3"
+      }
+    ],
+    "dialogue": [
+      {
+        "id": "line-1",
+        "speaker_ids": [
+          "speaker-1"
+        ],
+        "language": "en",
+        "text": "And so, my fellow Americans: ask not what your country can do for you—ask what you can do for your country.",
+        "voiceover": true
+      }
+    ],
+    "summary": [
+      {
+        "text": "A 15-second edit of "
+      },
+      {
+        "reference_id": "reference-ref-2-2"
+      },
+      {
+        "text": " rendered in the photorealistic live-action cinematic style of "
+      },
+      {
+        "reference_id": "reference-ref-4-1"
+      },
+      {
+        "text": ", preserving the horizontal side-by-side split-screen layout, inherited frame lettering, rainy nighttime urban walkway setting, and the actions of "
+      },
+      {
+        "subject_id": "subject-1"
+      },
+      {
+        "text": ". In the first shot, "
+      },
+      {
+        "subject_id": "subject-1"
+      },
+      {
+        "text": " walks along the wet railed walkway beside an illuminated city skyline as the left panel pulls back and arcs around and the right panel tracks from behind. In the second shot, the left panel completes its arc to a rear view while the right panel cuts to a close-up side profile of "
+      },
+      {
+        "subject_id": "subject-1"
+      },
+      {
+        "text": " looking downward, turning slightly, and holding a natural final pose through 15 seconds, accompanied by newly generated rain and footstep ambience and an off-screen voiceover guided by "
+      },
+      {
+        "reference_id": "reference-ref-3-3"
+      },
+      {
+        "text": ", with no music."
+      }
+    ],
+    "style": "Photorealistic live-action, cinematic",
+    "shots": [
+      {
+        "id": "shot-1",
+        "start_ms": 0,
+        "end_ms": 6000,
+        "description": [
+          {
+            "text": "Rendered in the photorealistic live-action cinematic style of "
+          },
+          {
+            "reference_id": "reference-ref-4-1"
+          },
+          {
+            "text": ", the edit preserves the horizontal side-by-side split-screen layout and inherited bottom-left frame pixels from "
+          },
+          {
+            "reference_id": "reference-ref-2-2"
+          },
+          {
+            "text": " under low-key nighttime urban lighting with cool bluish-teal ambient tones, warm amber building lights, and bright streetlamp reflections on wet pavement. In both panels, "
+          },
+          {
+            "subject_id": "subject-1"
+          },
+          {
+            "text": ", an East Asian adult with dark hair in a top bun with shaved sides wearing a black tactical-style jacket and dark pants, walks along a rain-slicked urban walkway bordered by metal railings beside an illuminated city skyline. In the left panel, "
+          },
+          {
+            "subject_id": "subject-1"
+          },
+          {
+            "text": " walks forward as the viewpoint pulls back and begins arcing around toward a rear angle; in the right panel, "
+          },
+          {
+            "subject_id": "subject-1"
+          },
+          {
+            "text": " walks away along the wet pavement."
+          }
+        ],
+        "events": [
+          {
+            "kind": "action",
+            "at_ms": 0,
+            "description": [
+              {
+                "text": "In the side-by-side split screen of "
+              },
+              {
+                "reference_id": "reference-ref-2-2"
+              },
+              {
+                "text": ", "
+              },
+              {
+                "subject_id": "subject-1"
+              },
+              {
+                "text": " strides along the wet railed walkway at night as the left panel arcs around the advancing figure and the right panel follows from behind."
+              }
+            ]
+          },
+          {
+            "kind": "sound",
+            "at_ms": 0,
+            "description": [
+              {
+                "text": "Steady falling rain patters against the wet pavement accompanied by footsteps stepping along the slick walkway."
+              }
+            ]
+          },
+          {
+            "kind": "camera",
+            "description": [
+              {
+                "text": "The camera tracks with the subject with small amplitude at slow speed."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "shot-2",
+        "start_ms": 6000,
+        "end_ms": 15000,
+        "transition": "the shot cuts to",
+        "description": [
+          {
+            "text": "Continuing the side-by-side split-screen comparison from "
+          },
+          {
+            "reference_id": "reference-ref-2-2"
+          },
+          {
+            "text": " with the photorealistic live-action visual treatment of "
+          },
+          {
+            "reference_id": "reference-ref-4-1"
+          },
+          {
+            "text": ", the left panel completes its continuous arc to follow "
+          },
+          {
+            "subject_id": "subject-1"
+          },
+          {
+            "text": " from behind along the wet railed walkway under cool teal night light and warm city reflections. Simultaneously, the right panel cuts to a close-up side profile of "
+          },
+          {
+            "subject_id": "subject-1"
+          },
+          {
+            "text": " standing before the softly blurred nighttime city skyline, looking downward, turning the head slightly, and maintaining that poised final hold through the end of the 15-second edit while the off-screen narrator delivers the scheduled voiceover."
+          }
+        ],
+        "events": [
+          {
+            "kind": "action",
+            "at_ms": 6000,
+            "description": [
+              {
+                "text": "The left panel finishes arcing into a rear tracking view of "
+              },
+              {
+                "subject_id": "subject-1"
+              },
+              {
+                "text": " walking away, while the right panel cuts to a close-up side profile as "
+              },
+              {
+                "subject_id": "subject-1"
+              },
+              {
+                "text": " looks down, turns the head slightly, and holds the calm final pose against the blurred city lights."
+              }
+            ]
+          },
+          {
+            "kind": "sound",
+            "at_ms": 6000,
+            "description": [
+              {
+                "text": "Continuous pattering rain falls steadily across the nighttime urban walkway."
+              }
+            ]
+          },
+          {
+            "kind": "camera",
+            "description": [
+              {
+                "text": "The camera holds a static shot."
+              }
+            ]
+          },
+          {
+            "kind": "dialogue",
+            "dialogue": {
+              "line_id": "line-1",
+              "text": "And so, my fellow Americans: ask not what your country can do for you—ask what you can do for your country."
+            }
+          }
+        ]
+      }
+    ],
+    "soundscape": "Newly generated nighttime urban rain ambience with steady pattering raindrops on wet pavement and footsteps along the walkway, accompanied in the second shot by an off-screen voiceover performed with the resonant oratorical baritone timbre and deliberate delivery style of the voice reference, with no music.",
+    "music": "N/A",
+    "constraints": [
+      {
+        "id": "compiler-no-music",
+        "kind": "no_music",
+        "text": "The target contains no music, including copied background music."
+      }
+    ],
+    "claims": [
+      {
+        "id": "claim-user-1",
+        "origin": "user",
+        "text": "Create a 15-second edit of the supplied video preserving its observed person, split-screen layout, action sequence, transitions, and existing visible words while applying only the visual rendering style of the supplied image."
+      },
+      {
+        "id": "claim-user-2",
+        "origin": "user",
+        "text": "Include an off-screen voiceover performing the recognized words from the supplied audio once in English using its vocal timbre and delivery without replaying the source recording, and add no music or new visible text."
+      },
+      {
+        "id": "claim-obs-1",
+        "origin": "observed",
+        "text": "The source video presents a horizontal side-by-side split screen with an East Asian adult in a black tactical-style jacket, dark pants, and dark hair in a top bun walking along a rainy nighttime urban walkway beside an illuminated city skyline.",
+        "sources": [
+          {
+            "asset_id": "ref-2",
+            "track": "visual"
+          }
+        ]
+      },
+      {
+        "id": "claim-obs-2",
+        "origin": "observed",
+        "text": "In the left panel the camera pulls back ahead of the walking figure and arcs around to a rear view, while in the right panel the camera tracks behind the figure and cuts to a close-up side profile looking downward and turning slightly.",
+        "sources": [
+          {
+            "asset_id": "ref-2",
+            "track": "visual"
+          }
+        ]
+      },
+      {
+        "id": "claim-obs-3",
+        "origin": "observed",
+        "text": "The reference audio features a projected adult male voice with a resonant mid-to-high baritone register and deliberate oratorical cadence.",
+        "sources": [
+          {
+            "asset_id": "ref-3",
+            "track": "audio"
+          }
+        ]
+      }
+    ]
+  },
+  "artifact": {
+    "version": "contextir-h3/artifact-v1",
+    "compiler_version": "contextir-h3/v1.3",
+    "format_version": "minimax-h3/prompt-v1",
+    "mode": "ref2va",
+    "target": {
+      "duration_ms": 15000,
+      "frame_count": 360,
+      "aspect_ratio": "16:9",
+      "fps": {
+        "numerator": 24,
+        "denominator": 1
+      },
+      "width": 1344,
+      "height": 768
+    },
+    "profile": {
+      "name": "h3-published-format-v1",
+      "format": "minimax-h3/prompt-v1",
+      "fps": {
+        "numerator": 24,
+        "denominator": 1
+      },
+      "modes": [
+        "t2va",
+        "i2va",
+        "l2va",
+        "fl2va",
+        "ref2va"
+      ],
+      "limits": {
+        "pictures": 0,
+        "videos": 0,
+        "video_audio": 0,
+        "standalone_audio": 0
+      },
+      "supports_reference_frame_anchors": true,
+      "supports_source_intervals": true
+    },
+    "prompt": "subject_definitions:\n<Subject 1> is East Asian adult; dark hair in a top bun with shaved sides, black tactical-style jacket and dark pants. Its source video for the target video edit is referenced from <Video 1>\n<Picture 1> is Visual style and composition reference only, without importing its depicted subjects or setting. Its role is visual style.\n<Video 1> is The source video being edited. Its role is source video for the target video edit.\n<Audio 1> is Voice timbre and delivery property reference for the reciprocally bound target vocal speaker only; it does not supply mechanical sound, ambience, music or timing. Its role is voice timbre and delivery. It supplies the voice reference for the speaker (S1). Speaker description: Off-screen adult male narrator delivering the public address in a resonant, deliberate oratorical cadence following the vocal timbre and delivery of reference-ref-3-3.\n\nsummary:\n[video editing + reference generation + audio reference] The target video is an edited version of <Video 1>. A 15-second edit of <Video 1> rendered in the photorealistic live-action cinematic style of <Picture 1>, preserving the horizontal side-by-side split-screen layout, inherited frame lettering, rainy nighttime urban walkway setting, and the actions of <Subject 1>. In the first shot, <Subject 1> walks along the wet railed walkway beside an illuminated city skyline as the left panel pulls back and arcs around and the right panel tracks from behind. In the second shot, the left panel completes its arc to a rear view while the right panel cuts to a close-up side profile of <Subject 1> looking downward, turning slightly, and holding a natural final pose through 15 seconds, accompanied by newly generated rain and footstep ambience and an off-screen voiceover guided by <Audio 1>, with no music.\n\nretention_analysis:\n<Subject 1> (appears in [Shot 1], [Shot 2]): fully_preserved - Preserve this canonical target identity and its listed stable attributes.\n<Picture 1> ([Shot 1], [Shot 2]; visual style): weak_reference - Only the declared aesthetic properties are followed; source contents are not reproduced.\n<Video 1> ([Shot 1], [Shot 2]; source video for the target video edit): fully_preserved - Preserve the source except for the caller's explicitly authorised edit; do not introduce unrelated replacements.\n<Audio 1>: reference - Only that target speaker's vocal timbre and delivery are referenced; the source recording and its words are not copied. Without an authorized vocal performance the binding remains dormant, while independent newly generated ambience remains allowed. Applicable scope: ([Shot 1], [Shot 2]; voice timbre and delivery).\n\ndetailed_description:\nThe target video is in photorealistic live-action style, cinematic.\n[Shot 1] Rendered in the photorealistic live-action cinematic style of <Picture 1>, the edit preserves the horizontal side-by-side split-screen layout and inherited bottom-left frame pixels from <Video 1> under low-key nighttime urban lighting with cool bluish-teal ambient tones, warm amber building lights, and bright streetlamp reflections on wet pavement. In both panels, <Subject 1>, an East Asian adult with dark hair in a top bun with shaved sides wearing a black tactical-style jacket and dark pants, walks along a rain-slicked urban walkway bordered by metal railings beside an illuminated city skyline. In the left panel, <Subject 1> walks forward as the viewpoint pulls back and begins arcing around toward a rear angle; in the right panel, <Subject 1> walks away along the wet pavement. <Audio 1> applies in this shot as voice timbre and delivery. Its defined audible characteristics are referenced without copying the source signal. At 00:00.000, In the side-by-side split screen of <Video 1>, <Subject 1> strides along the wet railed walkway at night as the left panel arcs around the advancing figure and the right panel follows from behind. At 00:00.000, Steady falling rain patters against the wet pavement accompanied by footsteps stepping along the slick walkway. The camera tracks with the subject with small amplitude at slow speed. Throughout the target video: The target contains no music, including copied background music.\n[Shot 2] At 00:06.000, the shot cuts to. Continuing the side-by-side split-screen comparison from <Video 1> with the photorealistic live-action visual treatment of <Picture 1>, the left panel completes its continuous arc to follow <Subject 1> from behind along the wet railed walkway under cool teal night light and warm city reflections. Simultaneously, the right panel cuts to a close-up side profile of <Subject 1> standing before the softly blurred nighttime city skyline, looking downward, turning the head slightly, and maintaining that poised final hold through the end of the 15-second edit while the off-screen narrator delivers the scheduled voiceover. <Audio 1> applies in this shot as voice timbre and delivery. Its defined audible characteristics are referenced without copying the source signal. At 00:06.000, The left panel finishes arcing into a rear tracking view of <Subject 1> walking away, while the right panel cuts to a close-up side profile as <Subject 1> looks down, turns the head slightly, and holds the calm final pose against the blurred city lights. At 00:06.000, Continuous pattering rain falls steadily across the nighttime urban walkway. The camera holds a static shot. Off-screen adult male narrator delivering the public address in a resonant, deliberate oratorical cadence following the vocal timbre and delivery of reference-ref-3-3., using the voice timbre referenced from <Audio 1> (S1) says in an off-screen voiceover: <d>[en] And so, my fellow Americans: ask not what your country can do for you—ask what you can do for your country.</d>\n\noverall_soundscape:\nNewly generated nighttime urban rain ambience with steady pattering raindrops on wet pavement and footsteps along the walkway, accompanied in the second shot by an off-screen voiceover performed with the resonant oratorical baritone timbre and deliberate delivery style of the voice reference, with no music.\n\nnon_diegetic_music:\nN/A\n",
+    "manifest": {
+      "media": [
+        {
+          "preparation": {
+            "sizing": "match",
+            "width": 736,
+            "height": 1088
+          },
+          "source_metadata": {
+            "width": 733,
+            "height": 1100,
+            "fps": {
+              "numerator": 0,
+              "denominator": 0
+            }
+          },
+          "label": "<Picture 1>",
+          "kind": "picture",
+          "source": {
+            "asset_id": "ref-4",
+            "track": "visual"
+          },
+          "uri": "upload://ref-4/e23d00458c9c493d6a8bd2f539a58e180e8caaeabf31d288e7c0d1ee4d648237",
+          "sha256": "e23d00458c9c493d6a8bd2f539a58e180e8caaeabf31d288e7c0d1ee4d648237",
+          "socket": "ref_image_1",
+          "target_uses": [
+            {
+              "reference_id": "reference-ref-4-1",
+              "roles": [
+                "style"
+              ],
+              "retention": "weak_reference",
+              "shots": [
+                {
+                  "id": "shot-1",
+                  "index": 1,
+                  "interval": {
+                    "start_ms": 0,
+                    "end_ms": 6000
+                  }
+                },
+                {
+                  "id": "shot-2",
+                  "index": 2,
+                  "interval": {
+                    "start_ms": 6000,
+                    "end_ms": 15000
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "preparation": {
+            "width": 1344,
+            "height": 768
+          },
+          "source_metadata": {
+            "duration_ms": 10125,
+            "width": 1280,
+            "height": 356,
+            "fps": {
+              "numerator": 24,
+              "denominator": 1
+            }
+          },
+          "label": "<Video 1>",
+          "kind": "video",
+          "source": {
+            "asset_id": "ref-2",
+            "track": "visual"
+          },
+          "uri": "upload://ref-2/4f04793f4ab19a618cf47bd8981496ad7df330c5beb148374ba78ccfceda2fbe",
+          "sha256": "4f04793f4ab19a618cf47bd8981496ad7df330c5beb148374ba78ccfceda2fbe",
+          "socket": "ref_video_1",
+          "target_uses": [
+            {
+              "reference_id": "reference-ref-2-2",
+              "roles": [
+                "edit_source"
+              ],
+              "retention": "fully_preserved",
+              "shots": [
+                {
+                  "id": "shot-1",
+                  "index": 1,
+                  "interval": {
+                    "start_ms": 0,
+                    "end_ms": 6000
+                  }
+                },
+                {
+                  "id": "shot-2",
+                  "index": 2,
+                  "interval": {
+                    "start_ms": 6000,
+                    "end_ms": 15000
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "preparation": {},
+          "source_metadata": {
+            "duration_ms": 11000,
+            "fps": {
+              "numerator": 0,
+              "denominator": 0
+            }
+          },
+          "label": "<Audio 1>",
+          "kind": "audio",
+          "source": {
+            "asset_id": "ref-3",
+            "track": "audio"
+          },
+          "uri": "upload://ref-3/63a4b1e4c1dc655ac70961ffbf518acd249df237e5a0152faae9a4a836949715",
+          "sha256": "63a4b1e4c1dc655ac70961ffbf518acd249df237e5a0152faae9a4a836949715",
+          "socket": "ref_audio_1",
+          "target_uses": [
+            {
+              "reference_id": "reference-ref-3-3",
+              "roles": [
+                "voice"
+              ],
+              "retention": "reference",
+              "speaker_id": "speaker-1",
+              "shots": [
+                {
+                  "id": "shot-1",
+                  "index": 1,
+                  "interval": {
+                    "start_ms": 0,
+                    "end_ms": 6000
+                  }
+                },
+                {
+                  "id": "shot-2",
+                  "index": 2,
+                  "interval": {
+                    "start_ms": 6000,
+                    "end_ms": 15000
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "subjects": [
+        {
+          "id": "subject-1",
+          "label": "<Subject 1>"
+        }
+      ],
+      "references": [
+        {
+          "id": "reference-ref-4-1",
+          "label": "<Picture 1>"
+        },
+        {
+          "id": "reference-ref-2-2",
+          "label": "<Video 1>"
+        },
+        {
+          "id": "reference-ref-3-3",
+          "label": "<Audio 1>"
+        }
+      ],
+      "speakers": [
+        {
+          "id": "speaker-1",
+          "label": "(S1)"
+        }
+      ]
+    },
+    "frames": 360,
+    "effective_duration_seconds": {
+      "numerator": 15,
+      "denominator": 1
+    },
+    "document_sha256": "fbc425a30f5935bd7fb8190deadbfb095230cef71eb390c72600b86140c43227",
+    "profile_sha256": "ce4364d3f1242f5aeb2216db44195fb3897f4828dd9e145c4c16c64315786ab6",
+    "prompt_sha256": "444b48c06b0c623b1d7ad8da0afd017509e2d04cd30a55f38e7f720f41553606",
+    "manifest_sha256": "2a9fa39f37693f6a5174155c6e2d4597eac9aa49c90e53db63512ca9e6b929f9",
+    "sha256": "0ed415f3e992165da7e77ec5f6e2d19c9537bb95bdd6daf6d637308a9004bbb6"
+  },
+  "evidence": [
+    {
+      "card": {
+        "asset_id": "ref-4",
+        "summary": "An eight-panel photorealistic character reference sheet of a stern East Asian woman in all-black tactical attire, featuring a rainy night hero shot on top, front/side/back full-body turnarounds in the middle, and close-up details of her scarred face, jacket collar, hands, and boots at the bottom.",
+        "subjects": [
+          {
+            "kind": "person",
+            "descriptor": "Female tactical operative character shown across full-body turnaround views and close-up detail insets",
+            "attributes": [
+              "East Asian woman",
+              "shaved sides haircut with dark hair tied in a small back bun",
+              "vertical scar cutting through left eyebrow",
+              "weathered skin texture",
+              "black high-collar tactical jacket with shoulder buckle straps",
+              "dark crew-neck undershirt",
+              "black tactical cargo pants",
+              "black lace-up combat boots",
+              "veined weathered hands"
+            ],
+            "pose": [
+              "standing wide-stanced looking camera-left in hero panel",
+              "standing front-facing",
+              "standing in left side profile",
+              "standing rear-facing",
+              "close-up face portrait",
+              "close-up detail of collar, hands, and boots"
+            ]
+          }
+        ],
+        "environment": "Top panel shows a dark, rain-slicked urban industrial walkway or rooftop at night with metal railings and warm distant lights; middle and bottom panels use a plain dark gray studio backdrop",
+        "lighting": "Moody low-key cinematic lighting with cool rim light and warm background practicals in the top scene, and controlled directional studio key lighting on the turnaround and detail panels",
+        "palette": [
+          "black",
+          "charcoal gray",
+          "dark slate blue",
+          "warm amber",
+          "muted skin tone"
+        ],
+        "framing": "Three-row grid layout: one wide full-body top panel, three full-body turnaround panels in the middle row, and four close-up detail panels in the bottom row",
+        "style": "Photorealistic live-action cinematic character concept sheet",
+        "visible_text": [
+          "HERO",
+          "FRONT",
+          "SIDE PROFILE",
+          "BACK",
+          "FACE",
+          "JACKET COLLAR",
+          "HANDS",
+          "BOOTS"
+        ],
+        "camera": "Multi-panel character turnaround and detail sheet combining full-body eye-level views and close-up detail crops",
+        "composition": "composed_scene",
+        "is_reference_sheet": true,
+        "analyzer_version": "contextir-playground-native/v1",
+        "model": "gemini-4-argon",
+        "coverage": {
+          "status": "partial",
+          "tracks": [
+            "visual"
+          ]
+        }
+      },
+      "asset_id": "ref-4",
+      "facts": [
+        {
+          "analyzer_version": "contextir-playground-native/v1",
+          "id": "ref-4.native-1",
+          "text": "The image is an eight-panel character reference sheet organized into three horizontal rows with uppercase white labels below each panel: HERO, FRONT, SIDE PROFILE, BACK, FACE, JACKET COLLAR, HANDS, and BOOTS.",
+          "source": {
+            "asset_id": "ref-4",
+            "track": "visual"
+          }
+        },
+        {
+          "analyzer_version": "contextir-playground-native/v1",
+          "id": "ref-4.native-2",
+          "text": "The subject is an East Asian woman with shaved sides, a small dark topknot/bun at the back of her head, and a vertical scar over her left eyebrow.",
+          "source": {
+            "asset_id": "ref-4",
+            "track": "visual"
+          }
+        },
+        {
+          "analyzer_version": "contextir-playground-native/v1",
+          "id": "ref-4.native-3",
+          "text": "She wears a black high-collar tactical jacket with matte black buckle straps on the shoulders, a dark gray undershirt, black cargo trousers, and black lace-up combat boots.",
+          "source": {
+            "asset_id": "ref-4",
+            "track": "visual"
+          }
+        },
+        {
+          "analyzer_version": "contextir-playground-native/v1",
+          "id": "ref-4.native-4",
+          "text": "The top HERO panel depicts her standing on a wet, rain-swept dark walkway bordered by metal railings at night, with cool light from the upper left and warm amber lights glowing on a dark building structure to the right.",
+          "source": {
+            "asset_id": "ref-4",
+            "track": "visual"
+          }
+        },
+        {
+          "analyzer_version": "contextir-playground-native/v1",
+          "id": "ref-4.native-5",
+          "text": "The bottom row displays close-up detail crops of her face, the black jacket collar and shoulder strap buckle, her bare weathered hands hanging below the jacket cuffs, and her worn black lace-up boots.",
+          "source": {
+            "asset_id": "ref-4",
+            "track": "visual"
+          }
+        }
+      ],
+      "model": "gemini-4-argon",
+      "analyzer_version": "contextir-playground-native/v1",
+      "limitations": [
+        "Single still image; no audio, motion, or temporal information is present.",
+        "Noticeable visual discrepancy between panels: in the top HERO and middle FRONT/SIDE PROFILE panels she wears dark fingerless gloves, whereas in the bottom HANDS close-up panel her hands are bare.",
+        "The original uploaded bytes were sent to the native model. Native sampling and exact temporal coverage are unknown; no extracted frames, observed frame count or invented sample times are claimed. Empty acoustic properties do not establish silence."
+      ],
+      "coverage": {
+        "status": "partial",
+        "tracks": [
+          "visual"
+        ]
+      }
+    },
+    {
+      "card": {
+        "asset_id": "ref-2",
+        "summary": "A side-by-side split-screen video comparing two rainy nighttime urban scenes of a person in dark tactical clothing with a topknot walking along a wet walkway next to a city skyline, labeled 'your sentence, sent raw' on the left and 'compiled by open-h3-ir' on the right, accompanied by piano music and rain sound effects.",
+        "subjects": [
+          {
+            "kind": "person",
+            "descriptor": "East Asian adult",
+            "attributes": [
+              "dark hair in a top bun with shaved sides",
+              "black tactical-style jacket and dark pants"
+            ],
+            "pose": [
+              "walking along a wet walkway",
+              "standing in profile looking down"
+            ]
+          }
+        ],
+        "environment": "Rainy urban walkway or bridge at night with metal railings, streetlamps, adjacent building facades, and an illuminated city skyline in the background.",
+        "lighting": "Low-key nighttime urban lighting with cool bluish-teal ambient tones, warm orange window lights, and bright streetlamp reflections on wet pavement.",
+        "palette": [
+          "dark blue",
+          "teal",
+          "black",
+          "warm amber",
+          "gray"
+        ],
+        "framing": "Side-by-side split screen featuring full/medium-long shots transitioning to medium and close-up views.",
+        "style": "Photorealistic, cinematic, moody urban night aesthetic",
+        "visible_text": [
+          "your sentence, sent raw",
+          "compiled by open-h3-ir"
+        ],
+        "motion": "In the left panel, the person walks toward the camera as the camera arcs around to their back. In the right panel, the person walks away from the camera, followed by a hard cut to a close-up where the person looks downward and turns their head slightly.",
+        "camera": "Split-screen comparison. In the left panel, a continuous tracking camera pulls backward ahead of the walking subject before arcing around to a rear view. In the right panel, the camera tracks behind the walking subject and then cuts to a close-up side profile shot.",
+        "characterisation": "Live-action cinematic style",
+        "composition": "composed_scene",
+        "timbre": "Soft acoustic piano with steady, pattering rain ambiance.",
+        "music": "Slow, melancholic piano melody played over continuous ambient rain sounds.",
+        "analyzer_version": "contextir-playground-native/v1",
+        "model": "gemini-4-argon",
+        "coverage": {
+          "status": "partial",
+          "tracks": [
+            "visual",
+            "audio"
+          ]
+        }
+      },
+      "asset_id": "ref-2",
+      "facts": [
+        {
+          "analyzer_version": "contextir-playground-native/v1",
+          "id": "ref-2.native-1",
+          "text": "The video is presented as a horizontal side-by-side split screen with white text in the bottom-left of the left panel reading 'your sentence, sent raw' and in the bottom-left of the right panel reading 'compiled by open-h3-ir'.",
+          "source": {
+            "asset_id": "ref-2",
+            "track": "visual"
+          }
+        },
+        {
+          "analyzer_version": "contextir-playground-native/v1",
+          "id": "ref-2.native-2",
+          "text": "In the left panel, a person with dark hair tied in a top bun and shaved sides, wearing a black jacket and dark pants, walks forward along a wet, railed urban walkway at night while a single continuous camera shot pulls back and arcs around to show the person from behind.",
+          "source": {
+            "asset_id": "ref-2",
+            "track": "visual"
+          }
+        },
+        {
+          "analyzer_version": "contextir-playground-native/v1",
+          "id": "ref-2.native-3",
+          "text": "In the right panel, the first shot shows the same person from behind walking away along the wet railed walkway at night, then cuts to a close-up profile shot of the person looking down and slightly turning their head against a blurred city skyline.",
+          "source": {
+            "asset_id": "ref-2",
+            "track": "visual"
+          }
+        },
+        {
+          "analyzer_version": "contextir-playground-native/v1",
+          "id": "ref-2.native-4",
+          "text": "The audio track contains a slow, melancholic piano melody layered with the continuous sound of falling rain and footsteps on wet ground, with no spoken dialogue.",
+          "source": {
+            "asset_id": "ref-2",
+            "track": "audio"
+          }
+        }
+      ],
+      "model": "gemini-4-argon",
+      "analyzer_version": "contextir-playground-native/v1",
+      "limitations": [
+        "No spoken words are audible in the audio stream.",
+        "The original uploaded bytes were sent to the native model. Native sampling and exact temporal coverage are unknown; no extracted frames, observed frame count or invented sample times are claimed. Empty acoustic properties do not establish silence."
+      ],
+      "coverage": {
+        "status": "partial",
+        "tracks": [
+          "visual",
+          "audio"
+        ]
+      }
+    },
+    {
+      "card": {
+        "asset_id": "ref-3",
+        "summary": "An adult male voice with a New England accent delivers an emphatic public address in English over a vintage public-address audio recording, stating, \"And so, my fellow Americans: ask not what your country can do for you—ask what you can do for your country,\" followed immediately by rising applause at the end of the clip.",
+        "characterisation": "Declamatory, oratorical public speech delivered with deliberate pacing, emphatic pauses, and strong vocal projection over an amplified microphone system, concluding as crowd applause begins.",
+        "transcript": "And so, my fellow Americans: ask not what your country can do for you—ask what you can do for your country.",
+        "language": "en",
+        "timbre": "Projected adult male voice with a resonant, slightly nasal mid-to-high baritone register, pronounced New England regional vowels, and vintage public-address microphone distortion and ambient hiss.",
+        "analyzer_version": "contextir-playground-native/v1",
+        "model": "gemini-4-argon",
+        "coverage": {
+          "status": "partial",
+          "tracks": [
+            "audio"
+          ]
+        }
+      },
+      "asset_id": "ref-3",
+      "facts": [
+        {
+          "analyzer_version": "contextir-playground-native/v1",
+          "id": "ref-3.native-1",
+          "text": "An adult male voice speaks in English with a deliberate, oratorical cadence and strong projection: \"And so, my fellow Americans: ask not what your country can do for you—ask what you can do for your country.\"",
+          "source": {
+            "asset_id": "ref-3",
+            "track": "audio"
+          }
+        },
+        {
+          "analyzer_version": "contextir-playground-native/v1",
+          "id": "ref-3.native-2",
+          "text": "The audio has a vintage public-address recording texture with background hiss, slight microphone clipping on stressed syllables, deliberate pauses between clauses, and crowd applause starting immediately after the final word.",
+          "source": {
+            "asset_id": "ref-3",
+            "track": "audio"
+          }
+        },
+        {
+          "analyzer_version": "contextir-playground-native/v1",
+          "id": "ref-3.native-3",
+          "text": "No musical accompaniment is audible in the recording.",
+          "source": {
+            "asset_id": "ref-3",
+            "track": "audio"
+          }
+        }
+      ],
+      "model": "gemini-4-argon",
+      "analyzer_version": "contextir-playground-native/v1",
+      "limitations": [
+        "Audio-only attachment; no visual track is present to observe subjects, framing, lighting, or visible text.",
+        "Speaker identity and historical context are not inferred from the voice alone.",
+        "The original uploaded bytes were sent to the native model. Native sampling and exact temporal coverage are unknown; no extracted frames, observed frame count or invented sample times are claimed. Empty acoustic properties do not establish silence."
+      ],
+      "coverage": {
+        "status": "partial",
+        "tracks": [
+          "audio"
+        ]
+      }
+    }
+  ],
+  "decisions": [
+    {
+      "field": "assets.ref-4.metadata",
+      "source": "configured_asset_inspector",
+      "value": {
+        "width": 733,
+        "height": 1100,
+        "fps": {
+          "numerator": 0,
+          "denominator": 0
+        }
+      },
+      "explanation": "Container/header facts were measured before target preparation, budgeting and mode geometry. Explicit caller metadata is preserved; this is not semantic media observation."
+    },
+    {
+      "field": "assets.ref-2.metadata",
+      "source": "configured_asset_inspector",
+      "value": {
+        "duration_ms": 10125,
+        "width": 1280,
+        "height": 356,
+        "fps": {
+          "numerator": 24,
+          "denominator": 1
+        }
+      },
+      "explanation": "Container/header facts were measured before target preparation, budgeting and mode geometry. Explicit caller metadata is preserved; this is not semantic media observation."
+    },
+    {
+      "field": "assets.ref-3.metadata",
+      "source": "configured_asset_inspector",
+      "value": {
+        "duration_ms": 11000,
+        "fps": {
+          "numerator": 0,
+          "denominator": 0
+        }
+      },
+      "explanation": "Container/header facts were measured before target preparation, budgeting and mode geometry. Explicit caller metadata is preserved; this is not semantic media observation."
+    },
+    {
+      "field": "target",
+      "source": "computed",
+      "value": {
+        "effective_seconds": 15,
+        "frame_count": 360,
+        "nominal_seconds": 15,
+        "policy": "exact"
+      },
+      "explanation": "Effective timing and nominal duration are recorded separately; generated cuts use effective timing."
+    },
+    {
+      "field": "canvas",
+      "source": "computed",
+      "value": [
+        1344,
+        768
+      ],
+      "explanation": "Native short-edge canvas is aligned to 32 pixels; explicit megapixels replaces the native area budget."
+    },
+    {
+      "field": "assets.ref-4.sizing",
+      "source": "default",
+      "value": "match",
+      "explanation": "The default reference-image sizing matches the target pixel-area budget."
+    },
+    {
+      "field": "assets.ref-4.preparation",
+      "source": "required_adapter_instruction",
+      "value": {
+        "sizing": "match",
+        "width": 736,
+        "height": 1088
+      },
+      "explanation": "These required input transforms are recorded separately from the original source metadata; the compiler has not executed media IO."
+    },
+    {
+      "field": "assets.ref-2.preparation",
+      "source": "required_adapter_instruction",
+      "value": {
+        "width": 1344,
+        "height": 768
+      },
+      "explanation": "These required input transforms are recorded separately from the original source metadata; the compiler has not executed media IO."
+    },
+    {
+      "field": "execution",
+      "source": "explicit_adapter_policy",
+      "value": {
+        "effort": "standard"
+      },
+      "explanation": "The injected adapters and explicit compiler repair configuration implement standard effort."
+    },
+    {
+      "field": "mode",
+      "source": "caller-override",
+      "value": {
+        "clarification_policy": "require",
+        "confidence_kind": "routing_policy",
+        "aspect_mismatch": false,
+        "needs_clarification": false,
+        "mode": "ref2va",
+        "confidence": 1,
+        "rule": "caller-override",
+        "signals": [
+          "Mode follows explicit structured choices and media socket requirements."
+        ]
+      },
+      "explanation": "Mode follows the production typed routing contract; publication capabilities are checked separately."
+    },
+    {
+      "field": "content_scope",
+      "source": "typed_request_interpretation",
+      "value": {
+        "transcript_uses": [
+          {
+            "asset_id": "ref-3",
+            "text": "And so, my fellow Americans: ask not what your country can do for you—ask what you can do for your country.",
+            "language": "en",
+            "speaker_hint": "the off-screen narrator for ref-3",
+            "voiceover": true
+          }
+        ],
+        "music_constraint": "no_music",
+        "conflict_policy": "reject",
+        "requested": {
+          "speech": true,
+          "music": false,
+          "onscreen_text": false,
+          "magnitude": ""
+        },
+        "forbidden": {
+          "speech": false,
+          "music": true,
+          "onscreen_text": true,
+          "magnitude": ""
+        },
+        "allowed": {
+          "speech": true,
+          "music": false,
+          "onscreen_text": false,
+          "magnitude": "plain"
+        },
+        "dialogue": [
+          {
+            "text": "And so, my fellow Americans: ask not what your country can do for you—ask what you can do for your country.",
+            "language": "en",
+            "speaker_hint": "the off-screen narrator for ref-3",
+            "voiceover": true,
+            "kind": "",
+            "delivery": ""
+          }
+        ],
+        "onscreen_text": [],
+        "reasoning": "The caller explicitly requests an offscreen voiceover performing the recognized words from the supplied audio ref-3 (speech requested, not forbidden) and explicitly instructs to add no music and no new visible text (music and onscreen_text forbidden, not requested).",
+        "calls": [
+          {
+            "stage": "scope",
+            "attempt": 1,
+            "model": "gemini-4-argon",
+            "usage": {
+              "input_tokens": 2574,
+              "output_tokens": 1032
+            },
+            "valid": true
+          }
+        ]
+      },
+      "explanation": "Caller requests and prohibitions are interpreted before code applies the explicit creativity level."
+    },
+    {
+      "field": "reference_licence",
+      "source": "typed_attribute_precedence",
+      "value": {
+        "reference_permissions": {
+          "action": true,
+          "framing": true,
+          "lighting": true,
+          "medium": true,
+          "palette": true,
+          "wardrobe": true
+        },
+        "medium_decision": {
+          "rendering_permission": {
+            "kind": "rendering_transformation",
+            "disposition": "convert",
+            "operation_quote": "Apply only the supplied image's visual rendering style",
+            "target": "the supplied image's visual rendering style",
+            "reasoning": "The caller explicitly instructs to 'Apply only the supplied image's visual rendering style' to the edit of the supplied video, which is an express rendering transformation directive targeting the style of the attached image reference.",
+            "calls": [
+              {
+                "stage": "rendering_permission",
+                "attempt": 1,
+                "model": "gemini-4-argon",
+                "usage": {
+                  "input_tokens": 940,
+                  "output_tokens": 97
+                },
+                "valid": true
+              }
+            ]
+          },
+          "disposition": "convert",
+          "operation_quote": "Apply only the supplied image's visual rendering style",
+          "target": "the supplied image's visual rendering style",
+          "requested_style": "Photorealistic live-action",
+          "reference_medium": "live-action",
+          "requested_medium": "live-action",
+          "treatments": [
+            "cinematic"
+          ],
+          "reasoning": "The edit-source video (ref-2) is observed as photorealistic live-action ('Photorealistic, cinematic, moody urban night aesthetic' / 'Live-action cinematic style'), giving reference_medium 'live-action'. The caller explicitly authorizes converting the rendering style to the supplied style reference image (ref-4), whose visual rendering style is photorealistic live-action with a cinematic treatment (excluding the character concept sheet layout packaging), giving requested_medium 'live-action', requested_style 'Photorealistic live-action', and treatment 'cinematic'.",
+          "calls": [
+            {
+              "stage": "rendering_permission",
+              "attempt": 1,
+              "model": "gemini-4-argon",
+              "usage": {
+                "input_tokens": 940,
+                "output_tokens": 97
+              },
+              "valid": true
+            },
+            {
+              "stage": "medium",
+              "attempt": 1,
+              "model": "gemini-4-argon",
+              "usage": {
+                "input_tokens": 2664,
+                "output_tokens": 1003
+              },
+              "valid": true
+            }
+          ]
+        },
+        "identity": [
+          {
+            "descriptor_source": "reference",
+            "kind": "person",
+            "label": "<Subject 1>",
+            "descriptor": "East Asian adult",
+            "retained_attributes": [
+              "dark hair in a top bun with shaved sides",
+              "black tactical-style jacket and dark pants"
+            ],
+            "requested_attributes": [],
+            "request_quote": "",
+            "wardrobe_attributes": [
+              "black tactical-style jacket and dark pants"
+            ]
+          }
+        ],
+        "governs": {
+          "action": "reference",
+          "framing": "reference",
+          "lighting": "reference",
+          "medium": "request",
+          "palette": "reference",
+          "wardrobe": "reference"
+        },
+        "reasons": {
+          "action": "The caller explicitly instructs to preserve the edit-source video's action order (with only a natural final hold to fit the duration) and adds an offscreen voiceover rather than a new on-screen subject performance, so the reference governs action.",
+          "framing": "The caller explicitly asks to preserve the edit-source video's scene layout and transitions without adopting the style image's composition, so the reference governs framing.",
+          "lighting": "No lighting direction, illuminating source, or lighting quality change is requested, so the edit-source reference governs lighting.",
+          "medium": "The caller explicitly instructs to apply the supplied image's visual rendering style, so the request governs medium.",
+          "palette": "The request specifies applying only the visual rendering style and makes no explicit color palette or tonal grading instruction, so the reference governs palette.",
+          "wardrobe": "The caller preserves the observed person from the edit-source video with no clothing or accessory changes requested, so the reference governs wardrobe."
+        },
+        "transform_phrase": "Apply only the supplied image's visual rendering style",
+        "transform_target": "the supplied image's visual rendering style",
+        "medium_transferred": true,
+        "style": {
+          "observed_phrase": "Photorealistic, cinematic, moody urban night aesthetic, low-key nighttime urban lighting with cool bluish-teal ambient tones, warm orange window lights, and bright streetlamp reflections on wet pavement",
+          "phrase": "Photorealistic live-action, cinematic",
+          "source": "request",
+          "reference_medium": "live-action",
+          "requested_medium": "live-action",
+          "discrepancy": false,
+          "note": ""
+        },
+        "subjects": [
+          {
+            "label": "<Subject 1>",
+            "kind": "person",
+            "sources": [
+              "<Video 1>"
+            ],
+            "descriptor": "East Asian adult",
+            "attributes": [
+              "dark hair in a top bun with shaved sides",
+              "black tactical-style jacket and dark pants"
+            ],
+            "pose": [
+              "walking along a wet walkway",
+              "standing in profile looking down"
+            ],
+            "pose_licensed": false,
+            "retention": "fully_preserved",
+            "retention_note": "",
+            "appears_in": [],
+            "taken_over_by": ""
+          }
+        ],
+        "calls": [
+          {
+            "stage": "rendering_permission",
+            "attempt": 1,
+            "model": "gemini-4-argon",
+            "usage": {
+              "input_tokens": 940,
+              "output_tokens": 97
+            },
+            "valid": true
+          },
+          {
+            "stage": "medium",
+            "attempt": 1,
+            "model": "gemini-4-argon",
+            "usage": {
+              "input_tokens": 2664,
+              "output_tokens": 1003
+            },
+            "valid": true
+          },
+          {
+            "stage": "identity_requirements",
+            "attempt": 1,
+            "model": "gemini-4-argon",
+            "usage": {
+              "input_tokens": 2149,
+              "output_tokens": 291
+            },
+            "valid": true
+          },
+          {
+            "stage": "licence",
+            "attempt": 1,
+            "model": "gemini-4-argon",
+            "usage": {
+              "input_tokens": 4696,
+              "output_tokens": 592
+            },
+            "valid": true
+          }
+        ]
+      },
+      "explanation": "Each attribute follows explicit request or observed reference; poses and reference-sheet presentation are not subject identity."
+    },
+    {
+      "field": "dialogue",
+      "source": "host_literal_slots",
+      "value": [
+        {
+          "placeholder": "{{D1}}",
+          "line_id": "line-1",
+          "shot_id": "shot-2",
+          "speaker_ids": [
+            "speaker-1"
+          ],
+          "speaker_hint": "the off-screen narrator for ref-3",
+          "language": "en",
+          "voiceover": true,
+          "words": 21
+        }
+      ],
+      "explanation": "The structure stage fixes placement; the host restores exact dialogue after prose. The writer does not author the supplied words."
+    },
+    {
+      "field": "shots.camera",
+      "source": "host_template",
+      "value": [
+        {
+          "subjects": [
+            "subject-1"
+          ],
+          "sync_sound": [
+            "steady falling rain hitting the wet pavement",
+            "footsteps stepping along the wet walkway"
+          ],
+          "start_ms": 0,
+          "purpose": "establish",
+          "framing": "medium wide",
+          "action": "In a horizontal side-by-side split screen labeled 'your sentence, sent raw' at the bottom-left of the left panel and 'compiled by open-h3-ir' at the bottom-left of the right panel, the East Asian adult in a black tactical-style jacket and dark pants with dark hair in a top bun walks along a wet, railed urban walkway at night beside an illuminated city skyline; in the left panel the subject walks forward as the camera pulls back and begins arcing around, while in the right panel the subject walks away from the camera along the wet pavement.",
+          "what_changes": "The subject progresses along the rain-slicked walkway in both split-screen panels while the left camera arcs toward a rear view and the right camera tracks behind.",
+          "camera": {
+            "type": "Tracking Shot",
+            "amplitude": "small",
+            "speed": "slow"
+          }
+        },
+        {
+          "subjects": [
+            "subject-1"
+          ],
+          "sync_sound": [
+            "continuous pattering rain on the urban walkway"
+          ],
+          "start_ms": 6000,
+          "purpose": "resolve",
+          "framing": "close",
+          "action": "Maintaining the side-by-side split-screen layout and its existing bottom-left labels 'your sentence, sent raw' and 'compiled by open-h3-ir', the left panel completes its continuous arc to follow the walking subject from behind along the wet railed walkway, while the right panel hard-cuts to a close-up side profile of the subject standing against the blurred nighttime city skyline, looking downward, turning their head slightly, and holding that poised final expression through the end of the 15-second edit.",
+          "what_changes": "The right panel transitions from the rear walking view to a close-up side profile as the subject looks down, turns their head slightly, and holds a natural final pose while the left panel finishes its rear tracking view.",
+          "camera": {
+            "type": "Static Shot",
+            "amplitude": "",
+            "speed": ""
+          }
+        }
+      ],
+      "explanation": "Canonical camera events are assembled from the typed structural plan after prose."
+    },
+    {
+      "field": "subjects.shot_ids",
+      "source": "typed_actual_use_projection",
+      "value": [
+        {
+          "kind": "person",
+          "descriptor": "East Asian adult",
+          "attributes": [
+            "dark hair in a top bun with shaved sides",
+            "black tactical-style jacket and dark pants"
+          ],
+          "origin": "observed",
+          "id": "subject-1",
+          "description": "East Asian adult; dark hair in a top bun with shaved sides, black tactical-style jacket and dark pants",
+          "sources": [
+            {
+              "source": {
+                "asset_id": "ref-2",
+                "track": "visual"
+              },
+              "role": "edit_source"
+            }
+          ],
+          "retention": "fully_preserved",
+          "retention_details": "Preserve this canonical target identity and its listed stable attributes.",
+          "shot_ids": [
+            "shot-1",
+            "shot-2"
+          ]
+        }
+      ],
+      "explanation": "High-level target appearances derive only from actual RichText and speaker-dialogue bindings. Removed figures carry their incoming replacement's transfer scope; unused source observations remain in Evidence."
+    },
+    {
+      "field": "creativity",
+      "source": "caller_or_default",
+      "value": {
+        "speech": true,
+        "music": false,
+        "onscreen_text": false,
+        "magnitude": "plain"
+      },
+      "explanation": "Scope reflects requested elements, explicit prohibitions, and the selected four-position creativity control."
+    }
+  ],
+  "calls": [
+    {
+      "asset_id": "ref-4",
+      "stage": "image_perception",
+      "attempt": 1,
+      "model": "gemini-4-argon",
+      "usage": {
+        "input_tokens": 3864,
+        "output_tokens": 1078
+      },
+      "valid": true
+    },
+    {
+      "asset_id": "ref-2",
+      "stage": "video_perception",
+      "attempt": 1,
+      "model": "gemini-4-argon",
+      "usage": {
+        "input_tokens": 3835,
+        "output_tokens": 804
+      },
+      "valid": true
+    },
+    {
+      "asset_id": "ref-3",
+      "stage": "audio_perception",
+      "attempt": 1,
+      "model": "gemini-4-argon",
+      "usage": {
+        "input_tokens": 3116,
+        "output_tokens": 444
+      },
+      "valid": true
+    },
+    {
+      "stage": "scope",
+      "attempt": 1,
+      "model": "gemini-4-argon",
+      "usage": {
+        "input_tokens": 2574,
+        "output_tokens": 1032
+      },
+      "valid": true
+    },
+    {
+      "stage": "rendering_permission",
+      "attempt": 1,
+      "model": "gemini-4-argon",
+      "usage": {
+        "input_tokens": 940,
+        "output_tokens": 97
+      },
+      "valid": true
+    },
+    {
+      "stage": "medium",
+      "attempt": 1,
+      "model": "gemini-4-argon",
+      "usage": {
+        "input_tokens": 2664,
+        "output_tokens": 1003
+      },
+      "valid": true
+    },
+    {
+      "stage": "identity_requirements",
+      "attempt": 1,
+      "model": "gemini-4-argon",
+      "usage": {
+        "input_tokens": 2149,
+        "output_tokens": 291
+      },
+      "valid": true
+    },
+    {
+      "stage": "licence",
+      "attempt": 1,
+      "model": "gemini-4-argon",
+      "usage": {
+        "input_tokens": 4696,
+        "output_tokens": 592
+      },
+      "valid": true
+    },
+    {
+      "stage": "structure",
+      "attempt": 1,
+      "model": "gemini-4-argon",
+      "usage": {
+        "input_tokens": 8227,
+        "output_tokens": 775
+      },
+      "valid": true
+    },
+    {
+      "stage": "plan",
+      "attempt": 1,
+      "model": "gemini-4-argon",
+      "usage": {
+        "input_tokens": 14664,
+        "output_tokens": 2557
+      },
+      "valid": true
+    },
+    {
+      "stage": "plan",
+      "attempt": 2,
+      "model": "gemini-4-argon",
+      "usage": {
+        "input_tokens": 14773,
+        "output_tokens": 2209
+      },
+      "valid": true
+    },
+    {
+      "stage": "semantic_review",
+      "attempt": 1,
+      "model": "gemini-4-argon",
+      "usage": {
+        "input_tokens": 8251,
+        "output_tokens": 295
+      },
+      "valid": true
+    }
+  ],
+  "prompt": "subject_definitions:\n<Subject 1> is East Asian adult; dark hair in a top bun with shaved sides, black tactical-style jacket and dark pants. Its source video for the target video edit is referenced from <Video 1>\n<Picture 1> is Visual style and composition reference only, without importing its depicted subjects or setting. Its role is visual style.\n<Video 1> is The source video being edited. Its role is source video for the target video edit.\n<Audio 1> is Voice timbre and delivery property reference for the reciprocally bound target vocal speaker only; it does not supply mechanical sound, ambience, music or timing. Its role is voice timbre and delivery. It supplies the voice reference for the speaker (S1). Speaker description: Off-screen adult male narrator delivering the public address in a resonant, deliberate oratorical cadence following the vocal timbre and delivery of reference-ref-3-3.\n\nsummary:\n[video editing + reference generation + audio reference] The target video is an edited version of <Video 1>. A 15-second edit of <Video 1> rendered in the photorealistic live-action cinematic style of <Picture 1>, preserving the horizontal side-by-side split-screen layout, inherited frame lettering, rainy nighttime urban walkway setting, and the actions of <Subject 1>. In the first shot, <Subject 1> walks along the wet railed walkway beside an illuminated city skyline as the left panel pulls back and arcs around and the right panel tracks from behind. In the second shot, the left panel completes its arc to a rear view while the right panel cuts to a close-up side profile of <Subject 1> looking downward, turning slightly, and holding a natural final pose through 15 seconds, accompanied by newly generated rain and footstep ambience and an off-screen voiceover guided by <Audio 1>, with no music.\n\nretention_analysis:\n<Subject 1> (appears in [Shot 1], [Shot 2]): fully_preserved - Preserve this canonical target identity and its listed stable attributes.\n<Picture 1> ([Shot 1], [Shot 2]; visual style): weak_reference - Only the declared aesthetic properties are followed; source contents are not reproduced.\n<Video 1> ([Shot 1], [Shot 2]; source video for the target video edit): fully_preserved - Preserve the source except for the caller's explicitly authorised edit; do not introduce unrelated replacements.\n<Audio 1>: reference - Only that target speaker's vocal timbre and delivery are referenced; the source recording and its words are not copied. Without an authorized vocal performance the binding remains dormant, while independent newly generated ambience remains allowed. Applicable scope: ([Shot 1], [Shot 2]; voice timbre and delivery).\n\ndetailed_description:\nThe target video is in photorealistic live-action style, cinematic.\n[Shot 1] Rendered in the photorealistic live-action cinematic style of <Picture 1>, the edit preserves the horizontal side-by-side split-screen layout and inherited bottom-left frame pixels from <Video 1> under low-key nighttime urban lighting with cool bluish-teal ambient tones, warm amber building lights, and bright streetlamp reflections on wet pavement. In both panels, <Subject 1>, an East Asian adult with dark hair in a top bun with shaved sides wearing a black tactical-style jacket and dark pants, walks along a rain-slicked urban walkway bordered by metal railings beside an illuminated city skyline. In the left panel, <Subject 1> walks forward as the viewpoint pulls back and begins arcing around toward a rear angle; in the right panel, <Subject 1> walks away along the wet pavement. <Audio 1> applies in this shot as voice timbre and delivery. Its defined audible characteristics are referenced without copying the source signal. At 00:00.000, In the side-by-side split screen of <Video 1>, <Subject 1> strides along the wet railed walkway at night as the left panel arcs around the advancing figure and the right panel follows from behind. At 00:00.000, Steady falling rain patters against the wet pavement accompanied by footsteps stepping along the slick walkway. The camera tracks with the subject with small amplitude at slow speed. Throughout the target video: The target contains no music, including copied background music.\n[Shot 2] At 00:06.000, the shot cuts to. Continuing the side-by-side split-screen comparison from <Video 1> with the photorealistic live-action visual treatment of <Picture 1>, the left panel completes its continuous arc to follow <Subject 1> from behind along the wet railed walkway under cool teal night light and warm city reflections. Simultaneously, the right panel cuts to a close-up side profile of <Subject 1> standing before the softly blurred nighttime city skyline, looking downward, turning the head slightly, and maintaining that poised final hold through the end of the 15-second edit while the off-screen narrator delivers the scheduled voiceover. <Audio 1> applies in this shot as voice timbre and delivery. Its defined audible characteristics are referenced without copying the source signal. At 00:06.000, The left panel finishes arcing into a rear tracking view of <Subject 1> walking away, while the right panel cuts to a close-up side profile as <Subject 1> looks down, turns the head slightly, and holds the calm final pose against the blurred city lights. At 00:06.000, Continuous pattering rain falls steadily across the nighttime urban walkway. The camera holds a static shot. Off-screen adult male narrator delivering the public address in a resonant, deliberate oratorical cadence following the vocal timbre and delivery of reference-ref-3-3., using the voice timbre referenced from <Audio 1> (S1) says in an off-screen voiceover: <d>[en] And so, my fellow Americans: ask not what your country can do for you—ask what you can do for your country.</d>\n\noverall_soundscape:\nNewly generated nighttime urban rain ambience with steady pattering raindrops on wet pavement and footsteps along the walkway, accompanied in the second shot by an off-screen voiceover performed with the resonant oratorical baritone timbre and deliberate delivery style of the voice reference, with no music.\n\nnon_diegetic_music:\nN/A\n",
+  "elapsed_ms": 225553
+}

@@ -63,6 +63,28 @@ caller-provided media remain subject to their own applicable terms.
 
 ## External tools and services
 
+### Real-speech integration fixture
+
+`integration/testdata/audio/jfk.flac` is retained without modification from
+[OpenAI Whisper](https://github.com/openai/whisper/tree/86098128c0b4f24f0e2aa2994de830614b474227)
+at revision `86098128c0b4f24f0e2aa2994de830614b474227`. The original repository
+[MIT license](integration/testdata/audio/WHISPER_LICENSE.txt), copyright 2022
+OpenAI, is preserved. This records the upstream repository license without making
+an additional file-specific rights assertion.
+
+The independent post-recognition expected-word reference comes from the unbatched
+`test_transcribe` assertion in
+[SYSTRAN faster-whisper](https://github.com/SYSTRAN/faster-whisper/blob/9e472ae9de8bb374552f531f752654554b76b2d6/tests/test_transcribe.py)
+at revision `9e472ae9de8bb374552f531f752654554b76b2d6`; its original
+[MIT license](integration/testdata/audio/FASTER_WHISPER_LICENSE.txt), copyright
+2023 SYSTRAN, is retained. The [fixture manifest](integration/testdata/audio/manifest.json)
+records immutable URLs, byte counts, digests and the scope of that assertion.
+Expected words are not recognition inputs. No speech-recognition model weights
+are bundled, and fixture provenance does not establish perception or generation
+quality.
+
+### Optional SDK and runtime dependencies
+
 The optional `chatcompat` model conversion and local-service tools depend on the official
 [OpenAI Go SDK v3.73.0](https://github.com/openai/openai-go/tree/v3.73.0),
 distributed under [Apache-2.0](https://github.com/openai/openai-go/blob/v3.73.0/LICENSE).

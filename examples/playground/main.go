@@ -14,23 +14,31 @@ import (
 )
 
 type settings struct {
-	address       string
-	baseURL       string
-	model         string
-	api           string
-	allowedModels []string
-	key           string
-	samplePath    string
+	address         string
+	baseURL         string
+	model           string
+	api             string
+	allowedModels   []string
+	key             string
+	samplePath      string
+	ffprobe         string
+	ffmpeg          string
+	sampleVideoPath string
+	sampleAudioPath string
 }
 
 func main() {
 	address := flag.String("addr", "127.0.0.1:8090", "Loopback listen address")
-	baseURL := flag.String("base-url", "https://api.deepseek.com/", "OpenAI-compatible API base URL")
+	baseURL := flag.String("base-url", "https://api.deepseek.com/", "Model API base URL")
 	model := flag.String("model", "deepseek-flash", "Requested model ID")
-	api := flag.String("api", "responses", "responses or chat_completions")
+	api := flag.String("api", "responses", "responses, chat_completions or gemini")
+	ffprobe := flag.String("ffprobe", "ffprobe", "Explicit ffprobe executable for uploaded video/audio validation")
+	ffmpeg := flag.String("ffmpeg", "ffmpeg", "Explicit ffmpeg executable for uploaded video/audio validation")
 	aliases := flag.String("allowed-response-models", "", "Explicit comma-separated accepted response model names")
 	keyEnv := flag.String("key-env", "DEEPSEEK_API_KEY", "Optional environment variable containing the API key")
 	sample := flag.String("sample-image", "third_party/open-h3-ir/testdata/golden/assets/ref1.png", "Optional sample PNG or JPEG path; empty disables the sample")
+	sampleVideo := flag.String("sample-video", "compiler/testdata/remaining_media/off-vs-on.mp4", "Optional sample video path; empty disables the sample")
+	sampleAudio := flag.String("sample-audio", "integration/testdata/audio/jfk.flac", "Optional sample audio path; empty disables the sample")
 	flag.Parse()
 	if flag.NArg() != 0 || !loopbackAddress(*address) {
 		fmt.Fprintln(os.Stderr, "Use a loopback -addr such as 127.0.0.1:8090 and named flags only.")
@@ -40,7 +48,7 @@ func main() {
 	if *keyEnv != "" {
 		key = os.Getenv(*keyEnv)
 	}
-	handler, err := newServer(settings{address: *address, baseURL: *baseURL, model: *model, api: *api, allowedModels: splitModels(*aliases), key: key, samplePath: *sample})
+	handler, err := newServer(settings{address: *address, baseURL: *baseURL, model: *model, api: *api, allowedModels: splitModels(*aliases), key: key, samplePath: *sample, ffprobe: *ffprobe, ffmpeg: *ffmpeg, sampleVideoPath: *sampleVideo, sampleAudioPath: *sampleAudio})
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "Invalid playground connection settings.")
 		os.Exit(1)

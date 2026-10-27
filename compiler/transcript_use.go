@@ -26,6 +26,9 @@ func transcriptSources(b Brief) (map[string]string, error) {
 		if card.Transcript == "" {
 			continue
 		}
+		if asset, ok := assetID(b.Assets, card.AssetID); ok && asset.Kind == contextir.MediaVideo && sourceFor(asset, asset.Role).Track != contextir.TrackAudio {
+			continue
+		}
 		if text, exists := out[card.AssetID]; exists && text != card.Transcript {
 			return nil, invalid("transcripts", "Caller transcript and supplied card transcript disagree for the same source; resolve them explicitly.")
 		}

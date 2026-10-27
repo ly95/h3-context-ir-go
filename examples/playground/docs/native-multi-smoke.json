@@ -1,0 +1,108 @@
+{
+  "date": "2026-10-26",
+  "provider": "opencode-go",
+  "model": "gemini-4-argon",
+  "workflow": "Chrome mixed example -> remove original image ref-1 -> add same public PNG as ref-4 -> move ref-4 first -> explicit style role -> submit three original Blob files using references JSON and media.<id>.",
+  "stable_order_and_source_ids_verified": true,
+  "source_assets": [
+    {
+      "id": "ref-4",
+      "kind": "image",
+      "role": "style",
+      "source_sha256": "e23d00458c9c493d6a8bd2f539a58e180e8caaeabf31d288e7c0d1ee4d648237",
+      "source_bytes": 966540
+    },
+    {
+      "id": "ref-2",
+      "kind": "video",
+      "role": "edit_source",
+      "source_sha256": "4f04793f4ab19a618cf47bd8981496ad7df330c5beb148374ba78ccfceda2fbe",
+      "source_bytes": 993203
+    },
+    {
+      "id": "ref-3",
+      "kind": "audio",
+      "role": "voice_timbre",
+      "source_sha256": "63a4b1e4c1dc655ac70961ffbf518acd249df237e5a0152faae9a4a836949715",
+      "source_bytes": 1152693
+    }
+  ],
+  "status": "compiled",
+  "elapsed_ms": 225553,
+  "calls": 12,
+  "stages": {
+    "image_perception": 1,
+    "video_perception": 1,
+    "audio_perception": 1,
+    "scope": 1,
+    "rendering_permission": 1,
+    "medium": 1,
+    "identity_requirements": 1,
+    "licence": 1,
+    "structure": 1,
+    "plan": 2,
+    "semantic_review": 1
+  },
+  "perception_calls": [
+    {
+      "asset_id": "ref-4",
+      "stage": "image_perception",
+      "attempt": 1,
+      "model": "gemini-4-argon",
+      "usage": {
+        "input_tokens": 3864,
+        "output_tokens": 1078
+      },
+      "valid": true
+    },
+    {
+      "asset_id": "ref-2",
+      "stage": "video_perception",
+      "attempt": 1,
+      "model": "gemini-4-argon",
+      "usage": {
+        "input_tokens": 3835,
+        "output_tokens": 804
+      },
+      "valid": true
+    },
+    {
+      "asset_id": "ref-3",
+      "stage": "audio_perception",
+      "attempt": 1,
+      "model": "gemini-4-argon",
+      "usage": {
+        "input_tokens": 3116,
+        "output_tokens": 444
+      },
+      "valid": true
+    }
+  ],
+  "input_tokens": 69753,
+  "output_tokens": 11177,
+  "usage_complete": true,
+  "artifact_recompiled_from_authoritative_document": true,
+  "bindings": {
+    "picture_visual_style": "ref-4",
+    "video_editing_source": "ref-2",
+    "audio_voice_and_original_words": "ref-3"
+  },
+  "independent_word_order_matches": true,
+  "word_count": 22,
+  "actual_transcript_preserved_once": true,
+  "model_review_passed": true,
+  "independent_quality_limits": [
+    "Specific visual camera/identity inferences remain uncertain.",
+    "Audio acoustic and accent claims were not independently heard and verified.",
+    "Target cut at 6 seconds does not prove exact preservation of source cut timing."
+  ],
+  "result_sha256": "279aae5a8014240389d78801aed6f2d47dab4d0b762a3014cf7f2f7b26574064",
+  "screenshot_sha256": "6bf3c49cbfe1db9c03165a9eb63adb77882b6a56567e81522e7b8a51fe7d8840",
+  "artifact_sha256": "0ed415f3e992165da7e77ec5f6e2d19c9537bb95bdd6daf6d637308a9004bbb6",
+  "prompt_sha256": "444b48c06b0c623b1d7ad8da0afd017509e2d04cd30a55f38e7f720f41553606",
+  "verification": [
+    "go test ./...",
+    "go test -race ./...",
+    "go vet ./..."
+  ]
+}
